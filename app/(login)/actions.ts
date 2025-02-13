@@ -25,6 +25,8 @@ import {
   validatedAction,
   validatedActionWithUser,
 } from '@/lib/auth/middleware';
+import { use } from 'react';
+// import nodemailer from 'nodemailer';
 
 async function logActivity(
   teamId: number | null | undefined,
@@ -423,13 +425,13 @@ export const inviteTeamMember = validatedActionWithUser(
     }
 
     // Create a new invitation
-    await db.insert(invitations).values({
+    const [newInvitation] = await db.insert(invitations).values({
       teamId: userWithTeam.teamId,
       email,
       role,
       invitedBy: user.id,
       status: 'pending',
-    });
+    }).returning();
 
     await logActivity(
       userWithTeam.teamId,
@@ -437,9 +439,53 @@ export const inviteTeamMember = validatedActionWithUser(
       ActivityType.INVITE_TEAM_MEMBER,
     );
 
-    // TODO: Send invitation email and include ?inviteId={id} to sign-up URL
-    // await sendInvitationEmail(email, userWithTeam.team.name, role)
+    // Send invitation email and include ?inviteId={id} to sign-up URL
+    await sendInvitationEmail(email, role, newInvitation.id);
 
     return { success: 'Invitation sent successfully' };
   },
 );
+
+async function sendInvitationEmail(email: string, role: string, inviteId: number) {
+  const inviteUrl = `https://yourapp.com/sign-up?inviteId=${inviteId}`;
+  const subject = 'You are invited to join a team on SalesSaaA';
+  const body = `
+    Hi,
+
+    You have been invited to join the team  as a ${role}.
+
+    Please click the link below to accept the invitation:
+    ${inviteUrl}
+
+    If you did not expect this invitation, you can safely ignore this email.
+
+    Best regards,
+    SalesSaaA Team
+  `;
+
+  // Use your preferred email sending service here
+  await sendEmail(email, subject, body);
+}
+
+async function sendEmail(to: string, subject: string, body: string) {
+  // TODO Implement your email sending logic here, e.g., using nodemailer or any email service API
+  // const transporter = nodemailer.createTransport({
+  //   host: 'smtp.example.com', // Replace with your SMTP server
+  //   port: 587,
+  //   secure: false, // true for 465, false for other ports
+  //   auth: {
+  //     user: 'your-email@example.com', // Replace with your email
+  //     pass: 'your-email-password', // Replace with your email password
+  //   },
+  // });
+
+  // await transporter.sendMail({
+  //   from: '"SalesSaaA Team" <your-email@example.com>', // Replace with your email
+  //   to,
+  //   subject,
+  //   text: body,
+  // });
+  // console.log(`Sending email to ${to} with subject "${subject}" and body "${body}"`);
+}
+
+
