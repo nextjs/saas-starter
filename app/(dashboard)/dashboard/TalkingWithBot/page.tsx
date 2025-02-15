@@ -101,7 +101,7 @@ export default function BotPage() {
               </Button>
             )}
             <div
-              name="transcriptbox"
+             
               className="h-96 overflow-y-auto border p-2 mb-4"
               onWheel={(e) => e.stopPropagation()}
               id="messageContainer"
