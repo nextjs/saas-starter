@@ -21,9 +21,9 @@ export function Conversation() {
   }
 
   interface Conversation {
-    startSession: (options: { agentId: string }) => Promise<void>;
+    startSession: (options: { agentId: string }) => Promise<string>;
     endSession: () => Promise<void>;
-    status: 'connected' | 'disconnected';
+    status: 'connected' | 'disconnected' | 'connecting' | 'disconnecting';
     isSpeaking: boolean;
   }
 
