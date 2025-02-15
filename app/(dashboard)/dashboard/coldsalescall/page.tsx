@@ -9,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { useUser } from '@/lib/auth';
 import { updateAccount } from '@/app/(login)/actions';
+import { Conversation } from 'components/ui/conversation';
+
 
 type ActionState = {
   error?: string;
@@ -58,6 +60,7 @@ export default function GeneralPage() {
             <Label htmlFor="context" className="text-sm text-black">
               Tell the AI what it already knows.
             </Label>
+            
             <textarea
               id="coldSalesCallprompttText"
               name="context"
@@ -78,8 +81,8 @@ export default function GeneralPage() {
                   type="button"
                   className="bg-blue-500 text-white"
                   onClick={() => {
-                    const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
-                    
+                  const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
+                  window.location.href = '/dashboard/TalkingWithBot';
                   }}
                 >
                   Finish
