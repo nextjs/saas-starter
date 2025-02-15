@@ -4,11 +4,34 @@ import { useConversation } from '@11labs/react';
 import { useCallback } from 'react';
 
 export function Conversation() {
-  const conversation = useConversation({
+  interface ConversationMessage {
+    text: string;
+    sender: string;
+  }
+
+  interface ConversationError {
+    message: string;
+  }
+
+  interface UseConversationOptions {
+    onConnect: () => void;
+    onDisconnect: () => void;
+    onMessage: (message: ConversationMessage) => void;
+    onError: (error: ConversationError) => void;
+  }
+
+  interface Conversation {
+    startSession: (options: { agentId: string }) => Promise<void>;
+    endSession: () => Promise<void>;
+    status: 'connected' | 'disconnected';
+    isSpeaking: boolean;
+  }
+
+  const conversation: Conversation = useConversation({
     onConnect: () => console.log('Connected'),
     onDisconnect: () => console.log('Disconnected'),
-    onMessage: (message) => console.log('Message:', message),
-    onError: (error) => console.error('Error:', error),
+    onMessage: (message: ConversationMessage) => console.log('Message:', message),
+    onError: (error: ConversationError) => console.error('Error:', error),
   });
 
 
