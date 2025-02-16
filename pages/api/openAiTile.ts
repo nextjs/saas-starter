@@ -45,11 +45,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
       const pollyResponse = await polly.synthesizeSpeech(pollyParams).promise();
-      const audioUrl = `data:audio/mp3;base64,${Buffer.from(pollyResponse.AudioStream).toString('base64')}`;
+      const audioStream = pollyResponse.AudioStream as Buffer;
+      const audioUrl = `data:audio/mp3;base64,${audioStream.toString('base64')}`;
 
       res.status(200).json({ result: botMessage, audioUrl });
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      const errorMessage = (error as Error).message;
+      res.status(500).json({ error: errorMessage });
     }
   } else {
     res.setHeader('Allow', 'POST');
