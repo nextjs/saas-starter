@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
+import { Conversation } from '@/components/ui/conversation';
 
 export default function BotPage() {
   const [charCount, setCharCount] = useState(0);
@@ -100,6 +101,12 @@ export default function BotPage() {
                 End Recording
               </Button>
             )}
+             <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+        <h1 className="text-4xl font-bold mb-8 text-center">
+          ElevenLabs Conversational AI
+        </h1>
+        <Conversation />
+      </div>
             <div
              
               className="h-96 overflow-y-auto border p-2 mb-4"

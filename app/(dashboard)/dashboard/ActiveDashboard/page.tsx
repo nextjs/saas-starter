@@ -60,7 +60,12 @@ export default function GeneralPage() {
             >
               Customize
             </Button>
-            <Button className="bg-blue-500 text-white font-bold">Play</Button>
+            <Button 
+              className="bg-blue-500 text-white font-bold"
+              onClick={() => window.location.href = '/dashboard/TalkingWithBot'}
+            >
+              Play
+            </Button>
           </div>
         </CardContent>
       </Card>
