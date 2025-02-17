@@ -6,6 +6,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Conversation } from '@/components/ui/conversation';
 
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+
 export default function BotPage() {
   const [charCount, setCharCount] = useState(0);
   const [messages, setMessages] = useState<string[]>([]);
@@ -85,55 +87,71 @@ export default function BotPage() {
     }
   };
 
+  useEffect(() => {
+    const videoElement = document.getElementById('webcam') as HTMLVideoElement;
+
+    if (navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then((stream) => {
+          videoElement.srcObject = stream;
+        })
+        .catch((error) => {
+          console.error('Error accessing webcam:', error);
+        });
+    }
+
+    return () => {
+      if (videoElement.srcObject) {
+        const tracks = (videoElement.srcObject as MediaStream).getTracks();
+        tracks.forEach(track => track.stop());
+      }
+    };
+  }, []);
+
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
         Cold Call Roleplay
       </h1>
+      
       <Card>
         <CardContent>
-          <div className="mb-4">
-            <Button className="mb-4" onClick={() => setIsListening(!isListening)}>
-              {isListening ? 'Stop Listening' : 'Connect to Bot'}
-            </Button>
-            {isListening && (
-              <Button className="mb-4 ml-2" onClick={disconnectMicrophone}>
-                End Recording
-              </Button>
-            )}
-             <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
-        <h1 className="text-4xl font-bold mb-8 text-center">
-          ElevenLabs Conversational AI
-        </h1>
-        <Conversation />
-      </div>
-            <div
+            <div className="flex mb-4">
+            <div className="flex flex-col w-1/3 mr-4 hidden lg:flex">
+              <Card className="mb-4">
+              <CardContent>
+              <div className="mb-4">
+              </div>
+              <div className="h-48 bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-500">Bot Picture Placeholder</span>
+              </div>
+              </CardContent>
+              </Card>
              
-              className="h-96 overflow-y-auto border p-2 mb-4"
-              onWheel={(e) => e.stopPropagation()}
-              id="messageContainer"
-              ref={(el) => {
-                if (el) {
-                  el.scrollTop = el.scrollHeight;
-                }
-              }}
-            >
-              {messages.map((message, index) => (
-                <div key={index} className="mb-2">
-                  <Label>{message}</Label>
-                </div>
-              ))}
             </div>
-          </div>
-          <div className="flex">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 mr-2"
-            />
-            <Button onClick={() => handleSend(input)}>Send</Button>
-          </div>
+            <Card className="flex-2 lg:w-1/3">
+              <CardContent>
+              <div className="h-full flex flex-col">
+              <div className="flex-1 mb-4">
+              <div className="mb-4">
+              </div>
+              <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+              <Conversation />
+              </div>
+              </div>
+              <div className="flex items-center">
+            
+              </div>
+             
+              </div>
+              <div className="h-75
+              ">
+              <video id="webcam" className="w-full h-24 lg:h-70 bg-gray-200" autoPlay playsInline></video>
+              </div>
+              </CardContent>
+            </Card>
+            </div>
+          
         </CardContent>
       </Card>
     </section>

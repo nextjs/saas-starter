@@ -70,7 +70,7 @@ export default function GeneralPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="hidden lg:block">
         <CardHeader>
         <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
