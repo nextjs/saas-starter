@@ -9,104 +9,105 @@ import { Conversation } from '@/components/ui/conversation';
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 export default function BotPage() {
-  const [charCount, setCharCount] = useState(0);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [input, setInput] = useState('');
-  const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+// Old bot code
+//TODO change when chatGPT is ready
+// const [charCount, setCharCount] = useState(0);
+// const [messages, setMessages] = useState<string[]>([]);
+// const [input, setInput] = useState('');
+// const [isListening, setIsListening] = useState(false);
+  // useEffect(() => {
+  //   if (isListening) {
+  //     const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  //     recognition.lang = 'en-US';
+  //     recognition.interimResults = false;
+  //     recognition.maxAlternatives = 1;
+  //     recognition.continuous = true;
 
-  useEffect(() => {
-    if (isListening) {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'en-US';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-      recognition.continuous = true;
+  //     recognition.onresult = (event: SpeechRecognitionEvent) => {
+  //       const transcript = event.results[event.results.length - 1][0].transcript;
+  //       setInput(transcript);
+  //       setCharCount(transcript.length);
+  //       handleSend(transcript);
+  //     };
 
-      recognition.onresult = (event: SpeechRecognitionEvent) => {
-        const transcript = event.results[event.results.length - 1][0].transcript;
-        setInput(transcript);
-        setCharCount(transcript.length);
-        handleSend(transcript);
-      };
+  //     recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
+  //       console.error('Speech recognition error', event.error);
+  //     };
 
-      recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error('Speech recognition error', event.error);
-      };
+  //     recognition.onend = () => {
+  //       if (isListening) {
+  //         recognition.start();
+  //       }
+  //     };
 
-      recognition.onend = () => {
-        if (isListening) {
-          recognition.start();
-        }
-      };
+  //     recognition.start();
+  //     recognitionRef.current = recognition;
+  //   } else {
+  //     recognitionRef.current?.stop();
+  //   }
 
-      recognition.start();
-      recognitionRef.current = recognition;
-    } else {
-      recognitionRef.current?.stop();
-    }
+  //   return () => {
+  //     recognitionRef.current?.stop();
+  //   };
+  // }, [isListening]);
 
-    return () => {
-      recognitionRef.current?.stop();
-    };
-  }, [isListening]);
+  // const handleSend = async (message: string) => {
+  //   try {
+  //     setMessages((prevMessages) => [...prevMessages, `User: ${message}`]);
 
-  const handleSend = async (message: string) => {
-    try {
-      setMessages((prevMessages) => [...prevMessages, `User: ${message}`]);
+  //     const response = await fetch('/api/openAiTile', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ message }),
+  //     });
 
-      const response = await fetch('/api/openAiTile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
-      });
+  //     if (!response.ok) {
+  //       throw new Error('Network response was not ok');
+  //     }
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  //     const data = await response.json();
+  //     setMessages((prevMessages) => [...prevMessages, `Bot: ${data.result}`]);
 
-      const data = await response.json();
-      setMessages((prevMessages) => [...prevMessages, `Bot: ${data.result}`]);
+  //     // Play the audio response
+  //     const audio = new Audio(data.audioUrl);
+  //     audio.play();
 
-      // Play the audio response
-      const audio = new Audio(data.audioUrl);
-      audio.play();
+  //     setInput('');
+  //   } catch (error) {
+  //     console.error('Error sending message to bot:', error);
+  //   }
+  // };
 
-      setInput('');
-    } catch (error) {
-      console.error('Error sending message to bot:', error);
-    }
-  };
+  // const disconnectMicrophone = () => {
+  //   if (recognitionRef.current) {
+  //     recognitionRef.current.stop();
+  //     setIsListening(false);
+  //   }
+  // };
 
-  const disconnectMicrophone = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-  };
+  // useEffect(() => {
+  //   const videoElement = document.getElementById('webcam') as HTMLVideoElement;
 
-  useEffect(() => {
-    const videoElement = document.getElementById('webcam') as HTMLVideoElement;
+  //   if (navigator.mediaDevices.getUserMedia) {
+  //     navigator.mediaDevices.getUserMedia({ video: true })
+  //       .then((stream) => {
+  //         videoElement.srcObject = stream;
+  //       })
+  //       .catch((error) => {
+  //         console.error('Error accessing webcam:', error);
+  //       });
+  //   }
 
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-          videoElement.srcObject = stream;
-        })
-        .catch((error) => {
-          console.error('Error accessing webcam:', error);
-        });
-    }
-
-    return () => {
-      if (videoElement.srcObject) {
-        const tracks = (videoElement.srcObject as MediaStream).getTracks();
-        tracks.forEach(track => track.stop());
-      }
-    };
-  }, []);
+  //   return () => {
+  //     if (videoElement.srcObject) {
+  //       const tracks = (videoElement.srcObject as MediaStream).getTracks();
+  //       tracks.forEach(track => track.stop());
+  //     }
+  //   };
+  // }, []);
 
   return (
     <section className="flex-1 p-4 lg:p-8">
