@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
 import { useUser } from '@/lib/auth';
-import { updateAccount } from '@/app/(login)/actions';
+import { updateAccount, updateColdCallPrompt } from '@/app/(login)/actions';
 import { Conversation } from 'components/ui/conversation';
 
 
@@ -16,6 +16,7 @@ type ActionState = {
   error?: string;
   success?: string;
 };
+
 
 export default function GeneralPage() {
   const { userPromise } = useUser();
@@ -40,6 +41,8 @@ export default function GeneralPage() {
   };
 
   const [charCount, setCharCount] = React.useState(0);
+
+ 
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -86,6 +89,22 @@ export default function GeneralPage() {
                   }}
                 >
                   Finish
+                </Button>
+                <Button
+                  type="button"
+                  className="bg-green-500 text-white"
+                  onClick={() => {
+                    startTransition(() => {
+                      const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
+                      if (user) {
+                        updateColdCallPrompt(textAreaValue, user);
+                      } else {
+                        console.error('User is null');
+                      }
+                    });
+                  }}
+                >
+                  Update
                 </Button>
               </div>
         </CardContent>

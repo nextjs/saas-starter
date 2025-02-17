@@ -489,3 +489,16 @@ async function sendEmail(to: string, subject: string, body: string) {
 }
 
 
+export async function updateColdCallPrompt(coldCallPrompt: string, user: User) {
+  const userWithTeam = await getUserWithTeam(user.id);
+
+  await Promise.all([
+    db.update(users).set({ ColdCallPrompt: coldCallPrompt }).where(eq(users.id, user.id)),
+    logActivity(userWithTeam?.teamId, user.id, ActivityType.UPDATE_COLD_CALL_PROMPT),
+  ]);
+
+  return { success: 'Cold call prompt updated successfully.' };
+}
+
+
+

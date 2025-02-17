@@ -17,6 +17,7 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),
+  ColdCallPrompt: text('ColdCallPrompt'),
 });
 
 export const teams = pgTable('teams', {
@@ -139,4 +140,5 @@ export enum ActivityType {
   REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  UPDATE_COLD_CALL_PROMPT = 'UPDATE_COLD_CALL_PROMPT',
 }
