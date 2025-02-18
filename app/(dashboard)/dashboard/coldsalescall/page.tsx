@@ -84,16 +84,6 @@ export default function GeneralPage() {
                   type="button"
                   className="bg-blue-500 text-white"
                   onClick={() => {
-                  const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
-                  window.location.href = '/dashboard/TalkingWithBot';
-                  }}
-                >
-                  Finish
-                </Button>
-                <Button
-                  type="button"
-                  className="bg-green-500 text-white"
-                  onClick={() => {
                     startTransition(() => {
                       const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
                       if (user) {
@@ -104,8 +94,9 @@ export default function GeneralPage() {
                     });
                   }}
                 >
-                  Update
+                  Finish
                 </Button>
+              
               </div>
         </CardContent>
       </Card>
