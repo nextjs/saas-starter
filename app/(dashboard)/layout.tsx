@@ -56,7 +56,7 @@ function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="flex flex-col gap-1">
                 <DropdownMenuItem className="cursor-pointer">
-                  <Link href="/dashboard" className="flex w-full items-center">
+                  <Link href="/dashboard/ActiveDashboard" className="flex w-full items-center">
                     <Home className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </Link>

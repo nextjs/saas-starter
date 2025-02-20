@@ -39,9 +39,9 @@ export default function BotPage() {
               <div className="flex-1 mb-4">
               <div className="mb-4">
               </div>
-              <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
-              <Conversation />
-              </div>
+                <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+                <Conversation />
+                </div>
               </div>
               <div className="flex items-center">
             
@@ -50,7 +50,21 @@ export default function BotPage() {
               </div>
               <div className="h-75
               ">
-              <video id="webcam" className="w-full h-24 lg:h-70 bg-gray-200" autoPlay playsInline></video>
+                <video id="webcam" className="w-full h-24 lg:h-70 bg-gray-200" autoPlay playsInline></video>
+                <script>
+                {`
+                  navigator.mediaDevices.getUserMedia({ video: true })
+                  .then(stream => {
+                    const video = document.getElementById('webcam');
+                    if (video) {
+                    video.srcObject = stream;
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error accessing webcam:', error);
+                  });
+                `}
+                </script>
               </div>
               </CardContent>
             </Card>
