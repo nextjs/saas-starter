@@ -1,5 +1,5 @@
 'use client';
-
+import { startTransition, use, useActionState } from 'react';
 import { useConversation } from '@11labs/react';
 import { useCallback } from 'react';
 import { useUser } from '@/lib/auth';
@@ -28,6 +28,7 @@ export function Conversation() {
     isSpeaking: boolean;
   }
 
+  const user = useUser();
   const conversation: Conversation = useConversation({
     onConnect: () => console.log('Connected'),
     onDisconnect: () => console.log('Disconnected'),
@@ -35,26 +36,25 @@ export function Conversation() {
     onError: (error: ConversationError) => console.error('Error:', error),
   });
 
+  const { userPromise } = useUser();
+  const user1 = use(userPromise);
+
   const startConversation = useCallback(async () => {
     try {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // // Start the conversation with your agent
-      // Fetch user data from the database
-     
+      // Start the conversation with your agent
       await conversation.startSession({
         agentId: 'sEqbEPthhvQ2SvcUAd7z', // Replace with your agent ID
-
         dynamicVariables: {
-          //GET USER DATA FROM DATABASE
-        //  InterviewQuestions:
+          InterviewQuestions: user1?.ColdCallPrompt ?? '',
         },
       });
     } catch (error) {
       console.error('Failed to start conversation:', error);
     }
-  }, [conversation]);
+  }, [conversation, user]);
 
   const stopConversation = useCallback(async () => {
     await conversation.endSession();
