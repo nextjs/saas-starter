@@ -2,6 +2,7 @@
 
 import { useConversation } from '@11labs/react';
 import { useCallback } from 'react';
+import { useUser } from '@/lib/auth';
 
 export function Conversation() {
   interface ConversationMessage {
@@ -21,7 +22,7 @@ export function Conversation() {
   }
 
   interface Conversation {
-    startSession: (options: { agentId: string }) => Promise<string>;
+    startSession: (options: { agentId: string; dynamicVariables?: { [key: string]: string } }) => Promise<string>;
     endSession: () => Promise<void>;
     status: 'connected' | 'disconnected' | 'connecting' | 'disconnecting';
     isSpeaking: boolean;
@@ -34,17 +35,22 @@ export function Conversation() {
     onError: (error: ConversationError) => console.error('Error:', error),
   });
 
-
   const startConversation = useCallback(async () => {
     try {
       // Request microphone permission
       await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Start the conversation with your agent
+      // // Start the conversation with your agent
+      // Fetch user data from the database
+     
       await conversation.startSession({
         agentId: 'sEqbEPthhvQ2SvcUAd7z', // Replace with your agent ID
-      });
 
+        dynamicVariables: {
+          //GET USER DATA FROM DATABASE
+        //  InterviewQuestions:
+        },
+      });
     } catch (error) {
       console.error('Failed to start conversation:', error);
     }
@@ -80,3 +86,5 @@ export function Conversation() {
     </div>
   );
 }
+
+

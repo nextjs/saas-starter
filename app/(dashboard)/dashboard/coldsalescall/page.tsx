@@ -52,25 +52,23 @@ export default function GeneralPage() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>What’s the context of this cold sales call?</CardTitle>
+            <CardTitle>What’s the context of this interview?</CardTitle>
         </CardHeader>
         <CardContent>
             <p className="text-sm text-black">
               Add specific information about the product or service that will be discussed during the conversation. This is not shown to users.
-              For the best results, write this in the form of directions to the AI. E.g. "You know that..." or "You should..."
+              For the best results, write this in the form of directions to the AI. E.g. "1. Can you ..." or "2. What are ...",
             </p>
-            <div className="my-4"></div>
-            <Label htmlFor="context" className="text-sm text-black">
-              Tell the AI what it already knows.
-            </Label>
-            
+            <p className="text-sm text-black mt-4">
+              What type of interview questions would you like to ask? Please provide 5 questions.
+            </p>
             <textarea
-              id="coldSalesCallprompttText"
-              name="context"
+              id="interviewQuestions"
+              name="interviewQuestions"
               className="mt-2 p-2 border rounded w-full"
-              rows={4}
+              placeholder={user?.ColdCallPrompt || "1. Can you tell me about yourself?\n2. What are your strengths and weaknesses?\n3. Why do you want to work here?\n4. Can you describe a challenging situation you faced and how you handled it?\n5. Where do you see yourself in five years?"}
+              rows={5}
               maxLength={5000}
-              placeholder="You're quite busy. You're open to a cold sales call, but only if the product being sold fills a specific need of yours, and the sales rep is very mindful of your time. Unless the caller has established the value of their product, you should not be helpful. If the caller is successful establishing rapport and trust, you are more likely to be helpful and willing to discuss further"
               onChange={(e) => setCharCount(e.target.value.length)}
             />
             <div className="text-sm text-gray-500 mt-2">
@@ -84,14 +82,16 @@ export default function GeneralPage() {
                   type="button"
                   className="bg-blue-500 text-white"
                   onClick={() => {
-                    startTransition(() => {
-                      const textAreaValue = (document.getElementById('coldSalesCallprompttText') as HTMLTextAreaElement).value;
-                      if (user) {
-                        updateColdCallPrompt(textAreaValue, user);
-                      } else {
-                        console.error('User is null');
-                      }
-                    });
+                  startTransition(() => {
+                    const textAreaValue = (document.getElementById('interviewQuestions') as HTMLTextAreaElement).value;
+                    if (user) {
+                    updateColdCallPrompt(textAreaValue, user);
+                      
+                    window.location.href = '/dashboard/TalkingWithBot';
+                    } else {
+                    console.error('User is null');
+                    }
+                  });
                   }}
                 >
                   Finish

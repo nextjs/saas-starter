@@ -46,13 +46,13 @@ export default function GeneralPage() {
       <Card>
         <CardHeader>
         <CardTitle>
-          <div className="flex items-center">
-            <span className="mr-2">❄️</span> Cold Sales Call
-          </div>
+            <div className="flex items-center">
+            <span className="mr-2">🗣️</span> Interview Coach
+            </div>
         </CardTitle>
         </CardHeader>
         <CardContent>
-          <p>Try your hand at booking a meeting from a cold sales call</p>
+            <p>Try our interview bot and pre-interview future hires</p>
           <div className="flex justify-between mt-4">
             <Button 
               className="bg-white text-blue-500 border border-blue-500 font-bold"
