@@ -1,8 +1,11 @@
+
+'use client'
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 // import { getCandidates } from '@/lib/db/queries';
 
-export default async function CandidatesPage() {
-  // const allCandidates = await getCandidates();
+export default function CandidatesPage() {
+  // const allCandidates = getCandidates();
   interface Candidate {
     id: string;
     name: string;
@@ -26,10 +29,49 @@ export default async function CandidatesPage() {
   return (
     <div>
       <Card>
+    
         <CardHeader>
           <CardTitle>Candidates Table</CardTitle>
         </CardHeader>
+        <div className="flex p-4">
+        <button
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        onClick={() => {
+        const name = prompt('Enter candidate name:') || 'New Candidate';
+        const email = prompt('Enter candidate email:') || 'new@example.com';
+        const status = prompt('Enter candidate status:') || 'Active';
+        const rating = prompt('Enter candidate rating:') || '5';
+
+        const newCandidate: Candidate = {
+          id: (candidates.length + 1).toString(),
+          name,
+          email,
+          status,
+          rating,
+          userId: (candidates.length + 1).toString(),
+          lastModified: new Date(),
+        };
+        candidates.push(newCandidate);
+        const tableBody = document.getElementById('candidates');
+        if (tableBody) {
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${newCandidate.name}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${newCandidate.email}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${newCandidate.status}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${newCandidate.rating}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${newCandidate.lastModified.toLocaleDateString()}</td>
+          `;
+          tableBody.appendChild(newRow);
+        }
+        }}
+        >
+          Add Candidate
+        </button>
+      </div>
+        
         <CardContent>
+          
             <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
@@ -50,7 +92,7 @@ export default async function CandidatesPage() {
               </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-200" id='candidates'>
               {candidates.map((candidate) => (
               <tr key={candidate.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{candidate.name}</td>
