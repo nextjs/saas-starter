@@ -10,20 +10,22 @@ export default function CandidatesPage() {
     id: string;
     name: string;
     email: string;
-    status: string;
+    status: Status;
     rating: string;
     userId: string;
     lastModified: Date;
   }
 
-  interface User {
-    id: string;
+  enum Status {
+    Pending = 'Pending',
+    Completed= 'Completed',
   }
 
+
   const candidates: Candidate[] = [
-    { id: '1', name: 'John Doe', email: 'john@example.com', status: 'Active', rating: '5', userId: '1', lastModified: new Date('2023-10-01') },
-    { id: '2', name: 'Jane Smith', email: 'jane@example.com', status: 'Inactive', rating: '4', userId: '2', lastModified: new Date('2023-10-02') },
-    { id: '3', name: 'Alice Johnson', email: 'alice@example.com', status: 'Active', rating: '3', userId: '3', lastModified: new Date('2023-10-03') },
+    { id: '1', name: 'John Doe', email: 'john@example.com', status: Status.Pending, rating: '5', userId: '1', lastModified: new Date('2023-10-01') },
+    { id: '2', name: 'Jane Smith', email: 'jane@example.com', status: Status.Pending, rating: '4', userId: '2', lastModified: new Date('2023-10-02') },
+    { id: '3', name: 'Alice Johnson', email: 'alice@example.com', status: Status.Pending, rating: '3', userId: '3', lastModified: new Date('2023-10-03') },
   ];
 
   return (
@@ -39,7 +41,8 @@ export default function CandidatesPage() {
         onClick={() => {
         const name = prompt('Enter candidate name:') || 'New Candidate';
         const email = prompt('Enter candidate email:') || 'new@example.com';
-        const status = prompt('Enter candidate status:') || 'Active';
+        const statusInput = prompt('Enter candidate status:') || 'Pending';
+        const status = statusInput === 'Completed' ? Status.Completed : Status.Pending;
         const rating = prompt('Enter candidate rating:') || '5';
 
         const newCandidate: Candidate = {
