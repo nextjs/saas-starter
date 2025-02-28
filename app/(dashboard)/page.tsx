@@ -1,37 +1,184 @@
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, Database } from 'lucide-react';
-import { Terminal } from './terminal';
+"use client";
+
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  ArrowRight,
+  CreditCard,
+  Database,
+  CloudUpload,
+  PlusCircle,
+  MinusCircle,
+} from "lucide-react";
+import { Terminal } from "./terminal";
 
 export default function HomePage() {
+  const banks = [
+    {
+      name: "BNP Paribas",
+      logo: "https://bankstatementwizard.com/_next/static/media/bnp_paribas.4f3fb75c.svg",
+    },
+    {
+      name: "Bank of America",
+      logo: "https://bankstatementwizard.com/_next/static/media/bank_of_america.b00ec101.svg",
+    },
+    {
+      name: "Barclays",
+      logo: "https://bankstatementwizard.com/_next/static/media/barclays.98b989f2.svg",
+    },
+    {
+      name: "Citibank",
+      logo: "https://bankstatementwizard.com/_next/static/media/citibank.c6845233.svg",
+    },
+    {
+      name: "HSBC",
+      logo: "https://bankstatementwizard.com/_next/static/media/hsbc.98c37690.svg",
+    },
+    {
+      name: "UniCredit",
+      logo: "https://bankstatementwizard.com/_next/static/media/unicredit.e3feb2c5.svg",
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "How does the conversion of the pdf to excel or csv work?",
+      answer:
+        "First, you'll upload your PDF bank statement through the converter's website. The converter will then extract the text from the PDF using OCR technology and organize it into structured data, including transaction dates, descriptions, amounts, and running totals. After that, the data is cleaned to ensure accuracy. You'll have the chance to review the converted data for any errors or inaccuracies, and once you're satisfied, you can download it in either Excel or CSV format.",
+    },
+    {
+      question: "How is my data handled and processed?",
+      answer:
+        "We take data privacy very seriously. Your data is treated with the utmost care and respect. We use it solely for the purpose of converting your bank statements to the desired format (Excel or CSV), and we do not store your data beyond the duration of your session. Our system is designed to ensure that your sensitive financial information remains secure and confidential throughout the conversion process. You can learn more about our data privacy and security measures in our privacy policy, which outlines our commitment to safeguarding your information.",
+    },
+    {
+      question: "Is this a subscription service? Can I cancel anytime?",
+      answer:
+        "Yes, this is a subscription service, but you can cancel anytime. We offer flexible plans that allow you to choose the best option for your needs. If you decide to cancel your subscription, you can do so at any time without any hassle. After canceling, you'll still have access to the service until the end of your billing cycle, so you can continue to use it until then.",
+    },
+    {
+      question: "Which PDF formats are compatible with the service?",
+      answer:
+        "Our service supports a wide range of PDF formats, including digital, image, and scanned PDFs. Whether your bank statement is in a standard digital format, an image-based PDF, or a scanned document, our converter is designed to handle and process them effectively, allowing you to convert your bank statements to Excel or CSV with ease.",
+    },
+    {
+      question: "Is it necessary to install any software?",
+      answer:
+        "No, you don't need to install any software. Everything runs directly in your web browser, making it a hassle-free and convenient experience.",
+    },
+    {
+      question: "What is the pricing for this service?",
+      answer:
+        "The pricing for this service offers flexibility to suit your needs. We have a free plan that supports up to 10 pages per month. If you need more, our lowest paid plan starts at just $30 per month and allows you to convert up to 400 pages. We also offer larger plans for more extensive usage. It's important to note that by using our service, you not only save money but also valuable time that you'd otherwise spend manually entering data.",
+    },
+    {
+      question: "How can I contact customer support?",
+      answer:
+        "If you have any questions, concerns, or feedback, you can reach out to our customer support team via email at support@bankstatementwizard.com. Our team is more than happy to assist you with any issues or inquiries you may have.",
+    },
+    // ... additional FAQs
+  ];
+
+  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
+  const [expandedFAQs, setExpandedFAQs] = useState({});
+
   return (
     <main>
       <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-18">
+          <div className="lg:grid lg:grid-cols-12 lg:gap-28">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+                Convert Your BankStatements
+                <span className="block text-blue-500">Faster Than Ever</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
+                No more manual data entry. No more copy and paste. No more Excel
+                formulas. Just upload your bank statement PDF and we will
+                convert it to Excel or CSV for you.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
-                  href="https://vercel.com/templates/next.js/next-js-saas-starter"
-                  target="_blank"
+                  href="#"
+                  // target="_blank"
                 >
-                  <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-lg px-8 py-4 inline-flex items-center justify-center">
-                    Deploy your own
+                  <Button className="bg-blue-500 hover:bg-gray-100 text-white border hover:text-blue-500 border-gray-200 hover:border-blue-500 rounded-full text-lg px-8 py-4 inline-flex items-center justify-center">
+                    Open Converter
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
               </div>
             </div>
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Terminal />
+              <div className="border-dashed border-2 border-gray-300 bg-blue-50 hover:bg-blue-100 h-75 w-120 rounded-lg flex flex-col items-center justify-center cursor-pointer">
+                <CloudUpload className="h-20 w-20 text-blue-400 mb-4" />
+                <p className="text-gray-500">
+                  Click to upload or drag and drop
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 bg-white w-full">
+        <div className="overflow-hidden">
+          <div className="py-16 sm:px-2">
+            <div className="mx-auto flex mb-10 max-w-screen-xl items-center justify-center">
+              <div className="grid max-w-6xl grid-cols-3 gap-4 items-center">
+                <svg
+                  width="100%"
+                  height="2"
+                  viewBox="0 0 100 1"
+                  preserveAspectRatio="none"
+                  className="self-center"
+                >
+                  <line
+                    x1="0"
+                    y1="50%"
+                    x2="100"
+                    y2="50%"
+                    stroke="#ccc"
+                    strokeWidth="1"
+                  />
+                </svg>
+                <a
+                  className="text-center font-inter font-medium text-gray-600 hover:underline hover:text-gray-800 self-center"
+                  href="/banks"
+                >
+                  We convert statements from more than 600 banks worldwide
+                </a>
+                <svg
+                  width="100%"
+                  height="2"
+                  viewBox="0 0 100 1"
+                  preserveAspectRatio="none"
+                  className="self-center"
+                >
+                  <line
+                    x1="0"
+                    y1="50%"
+                    x2="100"
+                    y2="50%"
+                    stroke="#ccc"
+                    strokeWidth="1"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="mx-auto grid gap-8 max-w-screen-xl">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-18">
+                {banks.map((bank, index) => (
+                  <div key={index} className="flex items-center justify-center">
+                    <img
+                      src={bank.logo}
+                      alt={`${bank.name} logo`}
+                      className="h-15 object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -40,8 +187,8 @@ export default function HomePage() {
       <section className="py-16 bg-white w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            <div>
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+            <div className="mt-0 bg-gradient-to-br from-gray-100 to-violet-200">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-300 text-white">
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
                     fill="currentColor"
@@ -51,41 +198,45 @@ export default function HomePage() {
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
+                  No Compromise Security
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
+                  Every connection is 256-bit encrypted. We take your privacy
+                  seriously. As an EU based company, we are bound by the
+                  strictest data protection laws in the world. If you want us to
+                  delete your data, we will do it immediatly. Also we are
+                  required to do so by law.
                 </p>
               </div>
             </div>
 
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+            <div className="mt-10 bg-gradient-to-br from-gray-100 to-sky-200 lg:mt-0">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-300 text-white">
                 <Database className="h-6 w-6" />
               </div>
               <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
+                <h2 className="text-lg font-medium  text-gray-900">
+                  Automatic Reconciliation with your Balance
                 </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
+                <p className="mt-2 text-base  text-gray-500">
+                  We make it easy to check every transaction against your
+                  balance. If something doesn't add up, we will let you know.
                 </p>
               </div>
             </div>
 
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+            <div className="mt-10 bg-gradient-to-br from-gray-100 to-fuchsia-200 lg:mt-0">
+              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-blue-300 text-white">
                 <CreditCard className="h-6 w-6" />
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
+                  Get valuable insights that inform
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
+                  See the daily change in your balance. Get a breakdown of your
+                  expenses and credits. Obivously, you can export all of this to
+                  Excel or CSV.
                 </p>
               </div>
             </div>
@@ -95,28 +246,33 @@ export default function HomePage() {
 
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
-              </h2>
-              <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don't waste time on boilerplate - focus on
-                what makes your product unique.
-              </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a
-                href="https://github.com/nextjs/saas-starter"
-                target="_blank"
-              >
-                <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-xl px-12 py-6 inline-flex items-center justify-center">
-                  View the code
-                  <ArrowRight className="ml-3 h-6 w-6" />
-                </Button>
-              </a>
-            </div>
+          <h2 className="text-4xl font-bold mb-8">
+            Frequently Asked Questions
+          </h2>
+          <div className="space-y-4">
+            {faqs.map((faq, index) => (
+              <div key={index}>
+                <button
+                  className="w-full text-xl text-left flex justify-between items-center"
+                  onClick={() =>
+                    setExpandedFAQs((prev) => ({
+                      ...prev,
+                      [index]: !prev[index],
+                    }))
+                  }
+                >
+                  <span className="font-bold">{faq.question}</span>
+                  {expandedFAQs[index] ? (
+                    <MinusCircle className="flex-shrink-0" />
+                  ) : (
+                    <PlusCircle className="flex-shrink-0" />
+                  )}
+                </button>
+                {expandedFAQs[index] && (
+                  <p className="mt-2 text-lg text-gray-600">{faq.answer}</p>
+                )}
+              </div>
+            ))}
           </div>
         </div>
       </section>
