@@ -104,7 +104,7 @@ In your Vercel project settings (or during deployment), add all the necessary en
 
 ## Other Templates
 
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
+While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured :
 
 - https://achromatic.dev
 - https://shipfa.st
