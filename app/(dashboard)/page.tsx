@@ -81,7 +81,7 @@ export default function HomePage() {
   ];
 
   const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
-  const [expandedFAQs, setExpandedFAQs] = useState({});
+  const [expandedFAQs, setExpandedFAQs] = useState<Record<number, boolean>>({});
 
   return (
     <main>
