@@ -36,6 +36,12 @@ function Header() {
         </Link>
         <div className="flex items-center space-x-4">
           <Link
+            href="/converter"
+            className="text-xl font-medium text-blue-500 hover:text-green-300"
+          >
+            Converter
+          </Link>
+          <Link
             href="/pricing"
             className="text-xl font-medium text-blue-500 hover:text-green-300"
           >

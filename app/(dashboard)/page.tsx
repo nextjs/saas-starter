@@ -11,7 +11,6 @@ import {
   PlusCircle,
   MinusCircle,
 } from "lucide-react";
-import { Terminal } from "./terminal";
 
 export default function HomePage() {
   const banks = [
@@ -80,11 +79,11 @@ export default function HomePage() {
     // ... additional FAQs
   ];
 
-  const [selectedPlanIndex, setSelectedPlanIndex] = useState(0);
   const [expandedFAQs, setExpandedFAQs] = useState<Record<number, boolean>>({});
 
   return (
     <main>
+      {/* hero section */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-18">
           <div className="lg:grid lg:grid-cols-12 lg:gap-28">
@@ -100,7 +99,7 @@ export default function HomePage() {
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
-                  href="#"
+                  href="/converter"
                   // target="_blank"
                 >
                   <Button className="bg-blue-500 hover:bg-gray-100 text-white border hover:text-blue-500 border-gray-200 hover:border-blue-500 rounded-full text-lg px-8 py-4 inline-flex items-center justify-center">
@@ -122,6 +121,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* banks section */}
       <section className="py-16 bg-white w-full">
         <div className="overflow-hidden">
           <div className="py-16 sm:px-2">
@@ -184,6 +184,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* features section */}
       <section className="py-16 bg-white w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
@@ -244,6 +245,10 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* pricing plan section */}
+
+
+      {/* FAQ section */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold mb-8">
