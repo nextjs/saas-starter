@@ -29,8 +29,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.4",
-    "drizzle-orm": "^0.39.1",
     "jose": "^5.9.6",
     "lucide-react": "^0.474.0",
     "next": "15.2.0-canary.33",
@@ -46,5 +44,11 @@
     "tailwindcss-react-aria-components": "1.2.0",
     "typescript": "^5.7.3",
     "zod": "^3.24.1"
+  },
+  "packageManager": "pnpm@9.15.2+sha512.93e57b0126f0df74ce6bff29680394c0ba54ec47246b9cf321f0121d8d9bb03f750a705f24edc3c1180853afd7c2c3b94196d0a3d53d3e069d9e2793ef11f321",
+  "devDependencies": {
+    "drizzle-kit": "^0.30.5",
+    "drizzle-orm": "^0.39.1",
+    "pg": "^8.13.3"
   }
 }
