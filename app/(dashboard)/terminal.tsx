@@ -32,7 +32,7 @@ export function Terminal() {
   };
 
   return (
-    <div className="w-full rounded-lg shadow-lg overflow-hidden bg-gray-900 text-white font-mono text-sm relative">
+    <div className="w-full rounded-lg shadow-lg overflow-hidden bg-gray-900 dark:bg-background text-white font-mono text-sm relative">
       <div className="p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-2">
