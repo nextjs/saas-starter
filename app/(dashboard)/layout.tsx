@@ -86,7 +86,7 @@ function Header() {
           >
             Pricing
           </Link>
-          <Suspense fallback={null}>
+          <Suspense fallback={<div className="size-9" />}>
             <UserMenu />
           </Suspense>
         </div>
