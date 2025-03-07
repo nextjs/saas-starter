@@ -15,7 +15,7 @@ export async function middleware(request: NextRequest) {
 
   let res = NextResponse.next();
 
-  if (sessionCookie) {
+  if (sessionCookie && request.method === "GET") {
     try {
       const parsed = await verifyToken(sessionCookie.value);
       const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
