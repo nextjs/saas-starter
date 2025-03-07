@@ -107,10 +107,7 @@ export default function HomePage() {
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a
-                href="https://github.com/nextjs/saas-starter"
-                target="_blank"
-              >
+              <a href="https://github.com/nextjs/saas-starter" target="_blank">
                 <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-xl px-12 py-6 inline-flex items-center justify-center">
                   View the code
                   <ArrowRight className="ml-3 h-6 w-6" />
