@@ -81,7 +81,7 @@
 - **Dialog Component**:
   - Added size variants (default, sm, lg, xl, full)
   - Added a fullWidth prop for dialogs that need to span the container
-  - Improved close button styling with orange hover effect
+  - Changed the default close button to use orange variant
   - Added proper TypeScript interface for the DialogContent props
   - Maintained all existing accessibility features and animations
 
@@ -148,6 +148,16 @@
   - Added unit tests to verify correct functionality
   - Verified tests pass successfully with all test cases
 
+- **CSS Tooling**:
+  - Updated global CSS to use Tailwind CSS v4 directives
+  - Replaced `@tailwind base` with `@import "tailwindcss/preflight"`
+  - Removed deprecated `@tailwind components` directive
+  - Added comprehensive Stylelint configuration for Tailwind CSS
+  - Configured VS Code settings for optimal CSS linting
+  - Added clear semantic comments for color variables
+  - Organized CSS variables with consistent naming patterns
+  - Added success, warning, and info color variables
+
 ### Added
 - **Theme Provider**:
   - Added a theme provider component using next-themes
@@ -164,6 +174,12 @@
   - Created Jest-specific TypeScript configuration
   - Added global type declarations for Jest
   - Verified all tests pass successfully
+
+- **Development Tooling**:
+  - Added Stylelint for CSS linting with Tailwind CSS support
+  - Configured VS Code for optimal CSS development
+  - Added Tailwind CSS IntelliSense extension support
+  - Added npm script for CSS linting (`lint:css`)
 
 ### Updated
 - **Root Layout**:
