@@ -160,6 +160,25 @@
   - Ensured proper form validation with Zod schema
   - Added proper error handling and success messaging
 
+- **Settings Page**:
+  - Added a new Organization Information card to display organization details
+  - Enhanced the Team Subscription section with additional customer information
+  - Simplified the Team Members section to focus on the team owner
+  - Removed team member removal functionality for cleaner UI
+  - Maintained the team invitation functionality
+  - Improved layout and information hierarchy
+  - Added date formatting for better readability
+  - Ensured consistent styling with the rest of the application
+
+- **Dashboard Navigation**:
+  - Added new navigation links for Organization, Bots, and Workflows
+  - Implemented appropriate icons for each new navigation item
+  - Added descriptive tooltips for better user guidance
+  - Included placeholder for future role-based access control
+  - Ensured mobile responsiveness in the Dialog-based mobile menu
+  - Maintained consistent styling with existing navigation items
+  - Used the orange variant for active links and ghost variant for inactive links
+
 - **Utils**:
   - Enhanced `cn` function with comprehensive JSDoc documentation
   - Added explicit return type for better type safety
@@ -224,6 +243,12 @@
   - Updated database schema and TypeScript types to reflect these changes
   - Ensured backward compatibility with existing code
 
+- **Navigation Structure**:
+  - Added new sections for Organization, Bots, and Workflows management
+  - Prepared foundation for role-based access control with commented code
+  - Added appropriate icons from Lucide React library
+  - Included helpful tooltips with descriptive text for each navigation item
+
 ### Updated
 - **Root Layout**:
   - Integrated the Toaster component with improved positioning
@@ -237,6 +262,8 @@
   - Used orange variant for active navigation items
   - Added descriptive tooltips for each navigation item
   - Improved visual hierarchy with consistent styling
+  - Added new navigation links for Organization, Bots, and Workflows
+  - Implemented placeholder for future role-based access control
 
 - **Dashboard Parent Layout**:
   - Completely redesigned with modern UI components
@@ -260,6 +287,14 @@
   - Improved error handling with more specific error messages
   - Added support for optional fields with proper null handling
   - Maintained backward compatibility with existing account management features
+
+- **Team Management**:
+  - Simplified the team members display to focus on the team owner
+  - Removed the team member removal functionality
+  - Maintained the team invitation system
+  - Added organization information display
+  - Enhanced subscription information with additional details
+  - Improved the overall layout and information hierarchy
 
 ## [0.1.0] - 2025-03-07
 

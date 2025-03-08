@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, Building, Bot, GitBranch } from 'lucide-react';
 
 export default function DashboardLayout({
   children,
@@ -19,10 +19,19 @@ export default function DashboardLayout({
   // Navigation items with descriptions for tooltips
   const navItems = [
     { href: '/dashboard', icon: Users, label: 'Team', description: 'Manage your team members and their accounts' },
+    { href: '/dashboard/organization', icon: Building, label: 'Organization', description: 'Manage your organization settings and members', roles: ['owner', 'admin'] },
+    { href: '/dashboard/bots', icon: Bot, label: 'Bots', description: 'Create and manage your AI bots' },
+    { href: '/dashboard/workflows', icon: GitBranch, label: 'Workflows', description: 'Design and manage your AI workflows' },
     { href: '/dashboard/general', icon: Settings, label: 'General', description: 'View and update your general settings' },
     { href: '/dashboard/activity', icon: Activity, label: 'Activity', description: 'See your account activity and events' },
     { href: '/dashboard/security', icon: Shield, label: 'Security', description: 'Manage your security preferences' },
   ];
+
+  // For future RBAC implementation - currently showing all links
+  // const filteredNavItems = navItems.filter(item => {
+  //   if (!item.roles) return true;
+  //   return item.roles.includes(userRole);
+  // });
 
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
