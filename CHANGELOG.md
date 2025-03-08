@@ -140,12 +140,30 @@
   - Added proper TypeScript interfaces for all component props
   - Improved arrow styling to match the tooltip variant
 
+- **Utils**:
+  - Enhanced `cn` function with comprehensive JSDoc documentation
+  - Added explicit return type for better type safety
+  - Added detailed examples covering basic usage, conditional classes, conflict resolution, arbitrary values, and complex variants
+  - Ensured proper handling of Tailwind CSS edge cases
+  - Added unit tests to verify correct functionality
+  - Verified tests pass successfully with all test cases
+
 ### Added
 - **Theme Provider**:
   - Added a theme provider component using next-themes
   - Implemented system theme detection and preference
   - Added support for light and dark mode
   - Added suppressHydrationWarning to prevent flashing during page load
+
+- **Testing Infrastructure**:
+  - Added Jest configuration for unit testing
+  - Set up testing environment with jest-environment-jsdom
+  - Added test for the `cn` utility function to verify class merging behavior
+  - Added npm scripts for running tests (`test` and `test:watch`)
+  - Added TypeScript support for Jest with proper type definitions
+  - Created Jest-specific TypeScript configuration
+  - Added global type declarations for Jest
+  - Verified all tests pass successfully
 
 ### Updated
 - **Root Layout**:
