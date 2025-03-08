@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  uuid,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -17,6 +18,14 @@ export const users = pgTable('users', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
   deletedAt: timestamp('deleted_at'),
+  firstName: varchar('first_name', { length: 255 }),
+  lastName: varchar('last_name', { length: 255 }),
+  avatarUrl: text('avatar_url'),
+  phoneNumber: varchar('phone_number', { length: 20 }),
+  telegramUsername: varchar('telegram_username', { length: 255 }),
+  organizationId: uuid('organization_id'),
+  roleId: uuid('role_id'),
+  teamId: uuid('team_id'),
 });
 
 export const teams = pgTable('teams', {

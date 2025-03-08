@@ -140,6 +140,26 @@
   - Added proper TypeScript interfaces for all component props
   - Improved arrow styling to match the tooltip variant
 
+- **Login Component**:
+  - Redesigned using Shadcn UI Card components for a cleaner, more modern look
+  - Added first_name and last_name fields for the signup mode
+  - Improved accessibility with proper aria attributes (aria-describedby, aria-busy, role="alert")
+  - Enhanced form validation with updated Zod schema
+  - Added responsive grid layout for name fields
+  - Added Terms of Service and Privacy Policy links
+  - Maintained compatibility with existing authentication flow
+  - Improved error message display and form field association
+
+- **User Profile Component**:
+  - Enhanced the General Settings page with comprehensive user profile fields
+  - Added first_name and last_name fields in a responsive two-column layout
+  - Added avatar_url field for profile image management
+  - Added phone_number and telegram_username fields for additional contact information
+  - Implemented responsive grid layouts for better organization of related fields
+  - Maintained consistent styling with existing form elements
+  - Ensured proper form validation with Zod schema
+  - Added proper error handling and success messaging
+
 - **Utils**:
   - Enhanced `cn` function with comprehensive JSDoc documentation
   - Added explicit return type for better type safety
@@ -194,6 +214,16 @@
   - Added npm script for CSS linting (`lint:css`)
   - Created common-typescript-errors.md to document and solve common TypeScript issues
 
+- **User Schema Extensions**:
+  - Added new fields to the user schema for enhanced profile information
+  - Implemented firstName and lastName fields for better name handling
+  - Added avatarUrl field for profile images
+  - Added phoneNumber field for contact information
+  - Added telegramUsername field for additional contact options
+  - Added organizationId, roleId, and teamId fields for improved user organization management
+  - Updated database schema and TypeScript types to reflect these changes
+  - Ensured backward compatibility with existing code
+
 ### Updated
 - **Root Layout**:
   - Integrated the Toaster component with improved positioning
@@ -216,6 +246,20 @@
   - Added mobile-friendly navigation using Dialog component
   - Improved accessibility with proper ARIA attributes and keyboard navigation
   - Added dark mode support with appropriate styling
+
+- **Authentication Flow**:
+  - Updated sign-up schema to include optional first_name and last_name fields
+  - Enhanced user creation process to handle new fields
+  - Improved form validation with more descriptive error messages
+  - Maintained backward compatibility with existing authentication system
+  - Added proper field validation and error handling
+
+- **Account Management**:
+  - Enhanced the updateAccount action to support new user profile fields
+  - Updated Zod validation schema to include new fields with proper validation rules
+  - Improved error handling with more specific error messages
+  - Added support for optional fields with proper null handling
+  - Maintained backward compatibility with existing account management features
 
 ## [0.1.0] - 2025-03-07
 

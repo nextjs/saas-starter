@@ -103,11 +103,13 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
   inviteId: z.string().optional(),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password, inviteId } = data;
+  const { email, password, first_name, last_name, inviteId } = data;
 
   const existingUser = await db
     .select()
@@ -129,6 +131,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     email,
     passwordHash,
     role: 'owner', // Default role, will be overridden if there's an invitation
+    name: first_name ? `${first_name} ${last_name || ''}`.trim() : null,
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
@@ -324,16 +327,29 @@ export const deleteAccount = validatedActionWithUser(
 const updateAccountSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   email: z.string().email('Invalid email address'),
+  first_name: z.string().max(255).optional(),
+  last_name: z.string().max(255).optional(),
+  avatar_url: z.string().url('Invalid URL format').max(1000).optional().or(z.literal('')),
+  phone_number: z.string().max(20).optional(),
+  telegram_username: z.string().max(255).optional(),
 });
 
 export const updateAccount = validatedActionWithUser(
   updateAccountSchema,
   async (data, _, user) => {
-    const { name, email } = data;
+    const { name, email, first_name, last_name, avatar_url, phone_number, telegram_username } = data;
     const userWithTeam = await getUserWithTeam(user.id);
 
     await Promise.all([
-      db.update(users).set({ name, email }).where(eq(users.id, user.id)),
+      db.update(users).set({ 
+        name, 
+        email, 
+        firstName: first_name || null, 
+        lastName: last_name || null,
+        avatarUrl: avatar_url || null,
+        phoneNumber: phone_number || null,
+        telegramUsername: telegram_username || null
+      }).where(eq(users.id, user.id)),
       logActivity(userWithTeam?.teamId, user.id, ActivityType.UPDATE_ACCOUNT),
     ]);
 

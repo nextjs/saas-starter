@@ -86,6 +86,77 @@ interface ComponentProps {
 }
 ```
 
+## Form Validation with Zod and Server Actions
+
+### Error: Type 'FormData' is not assignable to parameter of type 'ZodType'
+
+**Error Message:**
+```
+Type 'FormData' is not assignable to parameter of type 'ZodType<any, ZodTypeDef, any>'.
+```
+
+**Solution:**
+When using Zod with Server Actions, ensure you're properly parsing the FormData:
+
+```typescript
+// Incorrect
+const result = schema.parse(formData);
+
+// Correct
+const result = schema.safeParse(Object.fromEntries(formData));
+```
+
+**Explanation:**
+FormData is a collection of key/value pairs, but Zod expects a plain object. Use `Object.fromEntries(formData)` to convert FormData to a plain object before validation.
+
+### Error: Property 'fieldName' does not exist on type 'ZodType'
+
+**Error Message:**
+```
+Property 'fieldName' does not exist on type 'z.infer<typeof schema>'.
+```
+
+**Solution:**
+Ensure your Zod schema includes all fields that you're trying to access:
+
+```typescript
+// Incorrect
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+});
+
+// Later trying to access: data.firstName
+
+// Correct
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(8),
+  firstName: z.string().optional(),
+});
+```
+
+### Error: Type 'unknown' is not assignable to type 'string'
+
+**Error Message:**
+```
+Type 'unknown' is not assignable to type 'string'.
+```
+
+**Solution:**
+When extracting values from FormData, TypeScript doesn't know the type. Use type assertions or proper validation:
+
+```typescript
+// Using type assertion (use with caution)
+const email = formData.get('email') as string;
+
+// Better: Using Zod for validation
+const result = schema.safeParse(Object.fromEntries(formData));
+if (result.success) {
+  const { email } = result.data; // email is properly typed as string
+}
+```
+
 ## Import/Export Errors
 
 ### Error: Cannot Find Module
@@ -203,9 +274,54 @@ async function ServerComponent({ ... }: Props): Promise<ReactNode> {
 
 2. Use the correct file extension (`.tsx` for components with JSX)
 
+## Server Actions and Form Handling
+
+### Error: Property 'formAction' does not exist on type 'JSX.IntrinsicElements.form'
+
+**Error Message:**
+```
+Property 'formAction' does not exist on type 'JSX.IntrinsicElements.form'.
+```
+
+**Solution:**
+When using Server Actions with forms, ensure you're using the correct action attribute:
+
+```tsx
+// Incorrect
+<form formAction={serverAction}>
+
+// Correct
+<form action={serverAction}>
+```
+
+### Error: Type '(prevState: ActionState, formData: FormData) => Promise<T>' is not assignable to type 'FormAction'
+
+**Error Message:**
+```
+Type '(prevState: ActionState, formData: FormData) => Promise<T>' is not assignable to type 'FormAction'.
+```
+
+**Solution:**
+Ensure your Server Action has the correct signature and is properly typed:
+
+```typescript
+// For useActionState hook
+const [state, formAction, pending] = useActionState<ActionState, FormData>(
+  serverAction,
+  initialState
+);
+
+// The serverAction should have this signature:
+async function serverAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  // ...
+}
+```
+
 ## Additional Resources
 
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 - [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
 - [Next.js TypeScript Documentation](https://nextjs.org/docs/basic-features/typescript)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs) 
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Zod Documentation](https://zod.dev/)
+- [Next.js Server Actions Documentation](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions) 

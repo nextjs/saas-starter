@@ -48,16 +48,38 @@ export default function GeneralPage() {
         </CardHeader>
         <CardContent>
           <form className="space-y-4" onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="first_name">First Name</Label>
+                <Input
+                  id="first_name"
+                  name="first_name"
+                  placeholder="Enter your first name"
+                  defaultValue={user?.firstName || ''}
+                />
+              </div>
+              <div>
+                <Label htmlFor="last_name">Last Name</Label>
+                <Input
+                  id="last_name"
+                  name="last_name"
+                  placeholder="Enter your last name"
+                  defaultValue={user?.lastName || ''}
+                />
+              </div>
+            </div>
+            
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">Full Name</Label>
               <Input
                 id="name"
                 name="name"
-                placeholder="Enter your name"
+                placeholder="Enter your full name"
                 defaultValue={user?.name || ''}
                 required
               />
             </div>
+            
             <div>
               <Label htmlFor="email">Email</Label>
               <Input
@@ -69,6 +91,39 @@ export default function GeneralPage() {
                 required
               />
             </div>
+            
+            <div>
+              <Label htmlFor="avatar_url">Avatar URL</Label>
+              <Input
+                id="avatar_url"
+                name="avatar_url"
+                type="url"
+                placeholder="https://example.com/avatar.jpg"
+                defaultValue={user?.avatarUrl || ''}
+              />
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="phone_number">Phone Number</Label>
+                <Input
+                  id="phone_number"
+                  name="phone_number"
+                  placeholder="Enter your phone number"
+                  defaultValue={user?.phoneNumber || ''}
+                />
+              </div>
+              <div>
+                <Label htmlFor="telegram_username">Telegram Username</Label>
+                <Input
+                  id="telegram_username"
+                  name="telegram_username"
+                  placeholder="@username"
+                  defaultValue={user?.telegramUsername || ''}
+                />
+              </div>
+            </div>
+            
             {state.error && (
               <p className="text-red-500 text-sm">{state.error}</p>
             )}
