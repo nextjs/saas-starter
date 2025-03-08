@@ -15,6 +15,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
+- Comprehensive UI component library with accessibility features
 
 ## Tech Stack
 
@@ -23,6 +24,37 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+
+## UI Components
+
+The starter includes a comprehensive set of customized UI components:
+
+### Layout Components
+- **Card**: Container with header, content, and footer sections with multiple variants
+- **Dialog**: Modal dialog for displaying content on top of the main view
+- **Alert Dialog**: Confirmation dialog for critical actions
+- **Table**: Data display with header, body, and footer
+
+### Form Components
+- **Button**: Multi-variant button with loading state, rounded variants, and orange highlight
+- **Input**: Text input with prefix/suffix support, error states, and size variants
+- **Label**: Form label with required indicator and error states
+- **Radio Group**: Selection control with customizable styling and orientation options
+
+### Feedback Components
+- **Alert**: Contextual feedback messages
+- **Progress**: Visual indicator for operations
+- **Skeleton**: Loading placeholder
+- **Sonner**: Toast notifications
+
+### Navigation Components
+- **Dropdown Menu**: Menu with nested items and keyboard navigation
+- **Tooltip**: Contextual information on hover
+
+### Display Components
+- **Avatar**: User profile image with fallback and size variants
+
+All components are built with accessibility in mind, support dark mode, and use consistent styling through Tailwind CSS and class-variance-authority.
 
 ## Getting Started
 
