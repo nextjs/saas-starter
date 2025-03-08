@@ -5,7 +5,9 @@
 @import "tailwindcss/preflight";
 @tailwind utilities;
 
-@import 'tailwindcss';
+/* Remove the direct import of tailwindcss */
+/* @import 'tailwindcss'; */
+
 /*
   ---break---
 */
@@ -235,52 +237,75 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
+    outline-color: hsl(var(--ring) / 0.5);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
   /* Typography scale */
   h1 {
-    @apply text-4xl font-bold tracking-tight lg:text-5xl;
+    font-size: 2.25rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+  
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: 3rem;
+    }
   }
   
   h2 {
-    @apply text-3xl font-semibold tracking-tight;
+    font-size: 1.875rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
   
   h3 {
-    @apply text-2xl font-semibold tracking-tight;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
   
   h4 {
-    @apply text-xl font-semibold tracking-tight;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
   }
   
   p {
-    @apply leading-7;
+    line-height: 1.75rem;
   }
   
   small {
-    @apply text-sm font-medium leading-none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
   }
   
   .lead {
-    @apply text-xl text-muted-foreground;
+    font-size: 1.25rem;
+    color: hsl(var(--muted-foreground));
   }
   
   .large {
-    @apply text-lg font-semibold;
+    font-size: 1.125rem;
+    font-weight: 600;
   }
   
   .small {
-    @apply text-sm font-medium leading-none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1;
   }
   
   .muted {
-    @apply text-sm text-muted-foreground;
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
   }
 }
 
@@ -341,17 +366,17 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-track {
-    @apply bg-secondary/50;
+    background-color: hsl(var(--secondary) / 0.5);
     border-radius: 4px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    @apply bg-muted-foreground/30;
+    background-color: hsl(var(--muted-foreground) / 0.3);
     border-radius: 4px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground/50;
+    background-color: hsl(var(--muted-foreground) / 0.5);
   }
 
   /* Firefox */

@@ -317,6 +317,123 @@ async function serverAction(prevState: ActionState, formData: FormData): Promise
 }
 ```
 
+## Next.js and Supabase Integration Errors
+
+### Error: Route "/" used `cookies().get()`. `cookies()` should be awaited before using its value.
+
+**Error Message:**
+```
+Error: Route "/" used `cookies().get('sb-xxx-auth-token')`. `cookies()` should be awaited before using its value.
+```
+
+**Solution:**
+In Next.js, the `cookies()` function returns a Promise in some versions. You need to await it before accessing its methods:
+
+```typescript
+// Incorrect
+const cookieStore = cookies()
+const cookie = cookieStore.get(name)
+
+// Correct
+const cookieStore = cookies()
+const cookieJar = await cookieStore
+const cookie = cookieJar.get(name)
+```
+
+**Explanation:**
+The Next.js cookies API changed to be asynchronous in some versions. When integrating with Supabase, you need to properly await the cookies function before trying to access or modify cookies.
+
+### Error: Content Security Policy blocks the use of 'eval' in JavaScript
+
+**Error Message:**
+```
+Content Security Policy of your site blocks the use of 'eval' in JavaScript
+```
+
+**Solution:**
+When using Supabase Auth, you need to modify your Content Security Policy to allow certain operations:
+
+1. Using middleware:
+```typescript
+// In middleware.ts
+const isDevelopment = process.env.NODE_ENV === 'development'
+
+if (!isDevelopment) {
+  // Only set CSP in production
+  requestHeaders.set(
+    'Content-Security-Policy',
+    `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;`
+  )
+} else {
+  // Remove any existing CSP in development
+  requestHeaders.delete('Content-Security-Policy')
+}
+```
+
+2. Using next.config.js:
+```javascript
+// In next.config.js
+const nextConfig = {
+  headers: async () => {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: process.env.NODE_ENV === 'development' 
+              ? '' // Empty in development
+              : "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+3. Using meta tag in layout.tsx:
+```tsx
+// In app/layout.tsx
+export const metadata: Metadata = {
+  // ...other metadata
+  other: {
+    'content-security-policy': "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;"
+  }
+}
+```
+
+**Explanation:**
+Supabase Auth requires 'unsafe-eval' and connections to Supabase domains. In development, it's often easier to disable CSP entirely, while in production you should use a more restrictive policy that still allows the necessary operations.
+
+### Error: Type 'string' is not assignable to type 'number'
+
+**Error Message:**
+```
+Type 'string' is not assignable to type 'number'.
+```
+
+**Solution:**
+When integrating Supabase Auth with a database that uses numeric IDs, you need to handle the type conversion:
+
+```typescript
+// When using Supabase Auth with numeric database IDs
+// Find the user by email instead of ID
+const dbUser = await db
+  .select()
+  .from(users)
+  .where(eq(users.email, user.email))
+  .limit(1);
+
+if (dbUser.length > 0) {
+  const userData = dbUser[0];
+  // Now userData.id is a number that can be used with other database operations
+}
+```
+
+**Explanation:**
+Supabase Auth uses string UUIDs for user IDs, while your database might use numeric IDs. Instead of trying to convert between them, it's often easier to use email as the lookup field since it's unique and present in both systems.
+
 ## Additional Resources
 
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)

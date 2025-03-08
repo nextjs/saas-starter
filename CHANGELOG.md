@@ -249,6 +249,15 @@
   - Added appropriate icons from Lucide React library
   - Included helpful tooltips with descriptive text for each navigation item
 
+- **Supabase Auth Integration**:
+  - Integrated Supabase Authentication for user management
+  - Updated schema to use integer IDs for users instead of UUIDs
+  - Modified database queries to work with Supabase Auth
+  - Added proper type definitions for Supabase database
+  - Updated cookie handling in Supabase client for Next.js compatibility
+  - Added CSP configuration to allow Supabase scripts and connections
+  - Implemented email lookup for user identification instead of direct ID matching
+
 ### Updated
 - **Root Layout**:
   - Integrated the Toaster component with improved positioning
@@ -295,6 +304,19 @@
   - Added organization information display
   - Enhanced subscription information with additional details
   - Improved the overall layout and information hierarchy
+
+### Fixed
+- **Database Schema Compatibility**:
+  - Fixed foreign key constraints between users and related tables
+  - Updated column types from text/varchar to more appropriate types
+  - Ensured consistent ID types across related tables
+  - Resolved type mismatches between Supabase Auth and database schema
+
+- **Authentication Flow**:
+  - Fixed user creation process to work with Supabase Auth
+  - Updated sign-in and sign-up functions to use Supabase client
+  - Resolved cookie handling issues with Next.js and Supabase
+  - Fixed activity logging to work with numeric user IDs
 
 ## [0.1.0] - 2025-03-07
 

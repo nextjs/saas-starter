@@ -1,7 +1,7 @@
 'use server';
 
 import { z } from 'zod';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, sql, desc } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import {
   User,
@@ -20,11 +20,12 @@ import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { createCheckoutSession } from '@/lib/payments/stripe';
-import { getUser, getUserWithTeam } from '@/lib/db/queries';
+import { getUser, getUserWithTeam, getTeamForUser } from '@/lib/db/queries';
 import {
   validatedAction,
   validatedActionWithUser,
 } from '@/lib/auth/middleware';
+import { createClient } from '@/utils/supabase/server';
 
 async function logActivity(
   teamId: number | null | undefined,
@@ -49,56 +50,52 @@ const signInSchema = z.object({
   password: z.string().min(8).max(100),
 });
 
-export const signIn = validatedAction(signInSchema, async (data, formData) => {
-  const { email, password } = data;
-
-  const userWithTeam = await db
-    .select({
-      user: users,
-      team: teams,
-    })
-    .from(users)
-    .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
-    .leftJoin(teams, eq(teamMembers.teamId, teams.id))
-    .where(eq(users.email, email))
-    .limit(1);
-
-  if (userWithTeam.length === 0) {
+export async function signIn(prevState: any, formData: FormData) {
+  const validatedFields = signInSchema.safeParse(Object.fromEntries(formData));
+  
+  if (!validatedFields.success) {
     return {
-      error: 'Invalid email or password. Please try again.',
-      email,
-      password,
+      error: validatedFields.error.errors[0].message,
+      email: formData.get('email') as string
     };
   }
-
-  const { user: foundUser, team: foundTeam } = userWithTeam[0];
-
-  const isPasswordValid = await comparePasswords(
-    password,
-    foundUser.passwordHash,
-  );
-
-  if (!isPasswordValid) {
+  
+  const { email, password } = validatedFields.data;
+  const supabase = createClient();
+  
+  const { error } = await supabase.auth.signInWithPassword({
+    email,
+    password
+  });
+  
+  if (error) {
     return {
-      error: 'Invalid email or password. Please try again.',
-      email,
-      password,
+      error: error.message,
+      email
     };
   }
-
-  await Promise.all([
-    setSession(foundUser),
-    logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN),
-  ]);
-
+  
+  // Get the user data after successful authentication
+  const { data: { user } } = await supabase.auth.getUser();
+  
+  if (user && user.email) {
+    // Find the user in your database by email
+    const dbUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, user.email))
+      .limit(1);
+    
+    if (dbUser.length > 0) {
+      const userData = dbUser[0];
+      const teamData = await getTeamForUser(userData.id);
+      await logActivity(teamData?.id, userData.id, ActivityType.SIGN_IN);
+    }
+  }
+  
   const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: foundTeam, priceId });
-  }
-
-  redirect('/dashboard');
-});
+  redirect(redirectTo || '/dashboard');
+}
 
 const signUpSchema = z.object({
   email: z.string().email(),
@@ -110,33 +107,30 @@ const signUpSchema = z.object({
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const { email, password, first_name, last_name, inviteId } = data;
+  const supabase = createClient();
 
-  const existingUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
-
-  if (existingUser.length > 0) {
-    return {
-      error: 'Failed to create user. Please try again.',
-      email,
-      password,
-    };
-  }
-
-  const passwordHash = await hashPassword(password);
-
-  const newUser: NewUser = {
+  // First, create the user in Supabase Auth
+  const { data: authData, error: authError } = await supabase.auth.signUp({
     email,
-    passwordHash,
-    role: 'owner', // Default role, will be overridden if there's an invitation
-    name: first_name ? `${first_name} ${last_name || ''}`.trim() : null,
-  };
+    password,
+    options: {
+      data: {
+        first_name,
+        last_name,
+        full_name: first_name ? `${first_name} ${last_name || ''}`.trim() : email
+      }
+    }
+  });
 
-  const [createdUser] = await db.insert(users).values(newUser).returning();
+  if (authError) {
+    return {
+      error: authError.message,
+      email,
+      password
+    };
+  }
 
-  if (!createdUser) {
+  if (!authData.user) {
     return {
       error: 'Failed to create user. Please try again.',
       email,
@@ -144,10 +138,12 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     };
   }
 
+  // Proceed with your existing team creation logic
   let teamId: number;
   let userRole: string;
   let createdTeam: typeof teams.$inferSelect | null = null;
 
+  // Handle invitation logic similar to before
   if (inviteId) {
     // Check if there's a valid invitation
     const [invitation] = await db
@@ -170,6 +166,16 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
         .update(invitations)
         .set({ status: 'accepted' })
         .where(eq(invitations.id, invitation.id));
+
+      // Create a user record in your database linked to the Supabase Auth user
+      const newUser: NewUser = {
+        email,
+        passwordHash: '', // No need to store this anymore
+        role: userRole as "owner" | "admin" | "member",
+        name: first_name ? `${first_name} ${last_name || ''}`.trim() : null,
+      };
+
+      const [createdUser] = await db.insert(users).values(newUser).returning();
 
       await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
 
@@ -200,20 +206,36 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     teamId = createdTeam.id;
     userRole = 'owner';
 
+    // Create a user record in your database linked to the Supabase Auth user
+    const newUser: NewUser = {
+      email,
+      passwordHash: '', // No need to store this anymore
+      role: userRole as "owner" | "admin" | "member",
+      name: first_name ? `${first_name} ${last_name || ''}`.trim() : null,
+    };
+
+    const [createdUser] = await db.insert(users).values(newUser).returning();
+
     await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
   }
 
+  // Move this outside the if/else to use the createdUser from either branch
+  // Get the most recently created user to ensure we have the right one
+  const [latestUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .orderBy(desc(users.createdAt))
+    .limit(1);
+
   const newTeamMember: NewTeamMember = {
-    userId: createdUser.id,
+    userId: latestUser.id,
     teamId: teamId,
     role: userRole,
   };
 
-  await Promise.all([
-    db.insert(teamMembers).values(newTeamMember),
-    logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
-    setSession(createdUser),
-  ]);
+  await db.insert(teamMembers).values(newTeamMember);
+  await logActivity(teamId, latestUser.id, ActivityType.SIGN_UP);
 
   const redirectTo = formData.get('redirect') as string | null;
   if (redirectTo === 'checkout') {
@@ -225,10 +247,21 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 });
 
 export async function signOut() {
-  const user = (await getUser()) as User;
-  const userWithTeam = await getUserWithTeam(user.id);
-  await logActivity(userWithTeam?.teamId, user.id, ActivityType.SIGN_OUT);
-  (await cookies()).delete('session');
+  const user = await getUser();
+  if (user) {
+    const userWithTeam = await getUserWithTeam(user.id);
+    try {
+      await logActivity(userWithTeam?.teamId, user.id, ActivityType.SIGN_OUT);
+    } catch (error) {
+      console.error('Error logging sign-out activity:', error);
+    }
+  }
+  
+  // Sign out with Supabase Auth
+  const supabase = createClient();
+  await supabase.auth.signOut();
+  
+  redirect('/sign-in');
 }
 
 const updatePasswordSchema = z

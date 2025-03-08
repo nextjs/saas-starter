@@ -50,10 +50,14 @@ export async function setSession(user: NewUser) {
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
+  
+  // Check if we're in development mode
+  const isDevEnvironment = process.env.NODE_ENV === 'development';
+  
   (await cookies()).set('session', encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
-    secure: true,
+    secure: !isDevEnvironment, // Only use secure in production
     sameSite: 'lax',
   });
 }
