@@ -6,6 +6,8 @@ import { Copy, Check } from 'lucide-react';
 export function Terminal() {
   const [terminalStep, setTerminalStep] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  
   const terminalSteps = [
     'git clone https://github.com/nextjs/saas-starter',
     'pnpm install',
@@ -16,20 +18,45 @@ export function Terminal() {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTerminalStep((prev) =>
-        prev < terminalSteps.length - 1 ? prev + 1 : prev
-      );
-    }, 500);
+    try {
+      const timer = setTimeout(() => {
+        setTerminalStep((prev: number) =>
+          prev < terminalSteps.length - 1 ? prev + 1 : prev
+        );
+      }, 500);
 
-    return () => clearTimeout(timer);
-  }, [terminalStep]);
+      return () => clearTimeout(timer);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error'));
+      console.error('Error in Terminal component:', err);
+    }
+  }, [terminalStep, terminalSteps.length]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(terminalSteps.join('\n'));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    try {
+      navigator.clipboard.writeText(terminalSteps.join('\n'));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
   };
+
+  // If there's an error, display a fallback UI
+  if (error) {
+    return (
+      <div className="w-full rounded-lg shadow-lg overflow-hidden bg-gray-900 text-white font-mono text-sm p-4">
+        <p className="text-red-500">Error loading terminal animation</p>
+        <div className="mt-2">
+          {terminalSteps.map((step, index) => (
+            <div key={index}>
+              <span className="text-green-400">$</span> {step}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full rounded-lg shadow-lg overflow-hidden bg-gray-900 text-white font-mono text-sm relative">

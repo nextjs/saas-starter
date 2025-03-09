@@ -5,17 +5,17 @@ import { Database } from '@/types/supabase'
 export function createClient() {
   const cookieStore = cookies()
   
-  return createServerClient<Database>(
+  return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        async get(name) {
+        async get(name: string) {
           const cookieJar = await cookieStore
           const cookie = cookieJar.get(name)
           return cookie?.value
         },
-        async set(name, value, options) {
+        async set(name: string, value: string, options: { path?: string; maxAge?: number; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
           try {
             const cookieJar = await cookieStore
             cookieJar.set(name, value, options)
@@ -25,7 +25,7 @@ export function createClient() {
             // user sessions.
           }
         },
-        async remove(name, options) {
+        async remove(name: string, options: { path?: string; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
           try {
             const cookieJar = await cookieStore
             cookieJar.set(name, '', { ...options, maxAge: 0 })

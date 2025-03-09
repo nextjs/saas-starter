@@ -21,17 +21,17 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name) {
+        get(name: string) {
           return request.cookies.get(name)?.value
         },
-        set(name, value, options) {
+        set(name: string, value: string, options: { path?: string; maxAge?: number; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
           response.cookies.set({
             name,
             value,
             ...options
           })
         },
-        remove(name, options) {
+        remove(name: string, options: { path?: string; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
           response.cookies.set({
             name,
             value: '',
@@ -57,15 +57,15 @@ export async function middleware(request: NextRequest) {
   // Clone the request headers
   const requestHeaders = new Headers(request.headers)
   
-  if (!isDevelopment) {
-    // Only set CSP in production
+  // In development mode, completely remove CSP to avoid any issues
+  if (isDevelopment) {
+    requestHeaders.delete('Content-Security-Policy')
+  } else {
+    // In production, set a secure CSP
     requestHeaders.set(
       'Content-Security-Policy',
       `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;`
     )
-  } else {
-    // Remove any existing CSP in development
-    requestHeaders.delete('Content-Security-Policy')
   }
   
   // Create a new response with the modified headers
