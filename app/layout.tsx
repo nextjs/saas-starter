@@ -1,14 +1,13 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { UserProvider } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from '@/components/ui/sonner';
+import { ThemeProvider } from '@/components/theme-provider';
+import { AuthProvider } from '@/lib/auth';
 
 export const metadata: Metadata = {
   title: 'AI SaaS Starter',
-  description: 'A starter template for AI SaaS applications'
+  description: 'Next.js SaaS starter template with Supabase Auth and Stripe',
 };
 
 export const viewport: Viewport = {
@@ -22,9 +21,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let userPromise = getUser();
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
   return (
     <html
       lang="en"
@@ -32,12 +28,10 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {!isDevelopment && (
-          <meta 
-            httpEquiv="Content-Security-Policy" 
-            content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;" 
-          />
-        )}
+        <meta 
+          httpEquiv="Content-Security-Policy" 
+          content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;" 
+        />
       </head>
       <body className="min-h-[100dvh] bg-gray-50">
         <ThemeProvider
@@ -46,13 +40,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <UserProvider userPromise={userPromise}>
+          <AuthProvider>
             {children}
-            <Toaster 
-              position="top-right"
-              closeButton={true}
-            />
-          </UserProvider>
+            <Toaster position="bottom-right" />
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

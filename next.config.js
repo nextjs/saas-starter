@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'localhost'],
+      bodySizeLimit: '2mb'
+    }
+  },
   // Configure CSP for both development and production
   headers: async () => {
     // In development, don't set any CSP headers
@@ -21,6 +27,6 @@ const nextConfig = {
       }
     ];
   }
-}
+};
 
-module.exports = nextConfig 
+module.exports = nextConfig; 

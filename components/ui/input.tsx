@@ -1,6 +1,7 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+'use client';
 
+import { type ComponentPropsWithoutRef, forwardRef } from 'react'
+import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const inputVariants = cva(
@@ -33,18 +34,59 @@ const inputVariants = cva(
   }
 )
 
-export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size" | "prefix" | "suffix">,
-    VariantProps<typeof inputVariants> {
-  error?: boolean
-  prefix?: React.ReactNode
-  suffix?: React.ReactNode
+export type InputVariants = VariantProps<typeof inputVariants>
+
+type BaseInputProps = Omit<ComponentPropsWithoutRef<"input">, "size" | "prefix" | "suffix">
+
+export interface InputProps extends BaseInputProps, InputVariants {
+  error?: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ 
+interface InputWrapperProps extends ComponentPropsWithoutRef<"div"> {
+  disabled?: boolean;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
+}
+
+function InputWrapper({
+  children,
+  className,
+  disabled,
+  prefix,
+  suffix,
+  ...props
+}: InputWrapperProps) {
+  return (
+    <div 
+      className={cn(
+        "relative flex items-center",
+        disabled && "opacity-50 cursor-not-allowed",
+        className
+      )}
+      {...props}
+    >
+      {prefix && (
+        <div className="absolute left-2 flex items-center pointer-events-none" aria-hidden="true">
+          {prefix}
+        </div>
+      )}
+      {children}
+      {suffix && (
+        <div className="absolute right-2 flex items-center pointer-events-none" aria-hidden="true">
+          {suffix}
+        </div>
+      )}
+    </div>
+  );
+}
+InputWrapper.displayName = "InputWrapper";
+
+const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  { 
     className, 
-    type, 
+    type = "text", 
     variant, 
     size, 
     error, 
@@ -53,39 +95,31 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     suffix,
     disabled,
     ...props 
-  }, ref) => {
-    return (
-      <div className={cn(
-        "relative flex items-center",
-        disabled && "opacity-50 cursor-not-allowed"
-      )}>
-        {prefix && (
-          <div className="absolute left-2 flex items-center pointer-events-none">
-            {prefix}
-          </div>
+  }, 
+  ref
+) {
+  return (
+    <InputWrapper
+      disabled={disabled}
+      prefix={prefix}
+      suffix={suffix}
+    >
+      <input
+        type={type}
+        className={cn(
+          inputVariants({ variant, size, error, rounded }),
+          prefix && "pl-8",
+          suffix && "pr-8",
+          className
         )}
-        <input
-          type={type}
-          className={cn(
-            inputVariants({ variant, size, error, rounded }),
-            prefix && "pl-8",
-            suffix && "pr-8",
-            className
-          )}
-          ref={ref}
-          disabled={disabled}
-          aria-invalid={error ? "true" : undefined}
-          {...props}
-        />
-        {suffix && (
-          <div className="absolute right-2 flex items-center pointer-events-none">
-            {suffix}
-          </div>
-        )}
-      </div>
-    )
-  }
-)
-Input.displayName = "Input"
+        ref={ref}
+        disabled={disabled}
+        aria-invalid={error ? "true" : undefined}
+        {...props}
+      />
+    </InputWrapper>
+  );
+});
+Input.displayName = "Input";
 
 export { Input, inputVariants }

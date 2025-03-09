@@ -8,8 +8,20 @@ import {
 } from '@/lib/db/queries';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-01-27.acacia'
+  apiVersion: '2025-02-24.acacia'
 });
+
+function isValidTeam(team: Team | null): team is Team {
+  return team !== null && 
+    typeof team.stripeCustomerId === 'string' && 
+    team.stripeCustomerId.length > 0;
+}
+
+function isValidStripeProduct(product: string | Stripe.Product | Stripe.DeletedProduct): product is Stripe.Product {
+  return typeof product !== 'string' && 
+    'name' in product && 
+    'active' in product;
+}
 
 export async function createCheckoutSession({
   team,
@@ -22,6 +34,7 @@ export async function createCheckoutSession({
 
   if (!team || !user) {
     redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
+    throw new Error('Redirect failed');
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -43,12 +56,17 @@ export async function createCheckoutSession({
     }
   });
 
-  redirect(session.url!);
+  if (!session.url) {
+    throw new Error('Failed to create checkout session');
+  }
+
+  redirect(session.url);
 }
 
 export async function createCustomerPortalSession(team: Team) {
-  if (!team.stripeCustomerId || !team.stripeProductId) {
+  if (!isValidTeam(team)) {
     redirect('/pricing');
+    throw new Error('Redirect failed');
   }
 
   let configuration: Stripe.BillingPortal.Configuration;
@@ -57,8 +75,12 @@ export async function createCustomerPortalSession(team: Team) {
   if (configurations.data.length > 0) {
     configuration = configurations.data[0];
   } else {
+    if (!team.stripeProductId) {
+      throw new Error('No product ID found for team');
+    }
+
     const product = await stripe.products.retrieve(team.stripeProductId);
-    if (!product.active) {
+    if (!product.active || !isValidStripeProduct(product)) {
       throw new Error("Team's product is not active in Stripe");
     }
 
@@ -104,6 +126,11 @@ export async function createCustomerPortalSession(team: Team) {
     });
   }
 
+  // Ensure we have a valid customer ID
+  if (!team.stripeCustomerId) {
+    throw new Error('No Stripe customer ID found');
+  }
+
   return stripe.billingPortal.sessions.create({
     customer: team.stripeCustomerId,
     return_url: `${process.env.BASE_URL}/dashboard`,
@@ -114,7 +141,11 @@ export async function createCustomerPortalSession(team: Team) {
 export async function handleSubscriptionChange(
   subscription: Stripe.Subscription
 ) {
-  const customerId = subscription.customer as string;
+  if (typeof subscription.customer !== 'string') {
+    throw new Error('Invalid customer ID in subscription');
+  }
+
+  const customerId = subscription.customer;
   const subscriptionId = subscription.id;
   const status = subscription.status;
 
@@ -127,10 +158,17 @@ export async function handleSubscriptionChange(
 
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
+    if (!plan?.product) {
+      throw new Error('No product found in subscription plan');
+    }
+
+    const productId = typeof plan.product === 'string' ? plan.product : plan.product.id;
+    const productName = isValidStripeProduct(plan.product) ? plan.product.name : 'Unknown Plan';
+
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,
-      stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
+      stripeProductId: productId,
+      planName: productName,
       subscriptionStatus: status
     });
   } else if (status === 'canceled' || status === 'unpaid') {

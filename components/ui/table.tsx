@@ -29,7 +29,7 @@ const tableVariants = cva(
 )
 
 export interface TableProps 
-  extends React.ComponentProps<"table">,
+  extends React.ComponentPropsWithoutRef<"table">,
     VariantProps<typeof tableVariants> {
   stickyHeader?: boolean;
   loading?: boolean;
@@ -95,7 +95,7 @@ function Table({
 }
 
 export interface TableHeaderProps 
-  extends React.ComponentProps<"thead"> {
+  extends React.ComponentPropsWithoutRef<"thead"> {
   sticky?: boolean;
 }
 
@@ -117,7 +117,7 @@ function TableHeader({
   )
 }
 
-function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+function TableBody({ className, ...props }: React.ComponentPropsWithoutRef<"tbody">) {
   return (
     <tbody
       data-slot="table-body"
@@ -127,7 +127,7 @@ function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
   )
 }
 
-function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+function TableFooter({ className, ...props }: React.ComponentPropsWithoutRef<"tfoot">) {
   return (
     <tfoot
       data-slot="table-footer"
@@ -141,7 +141,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
 }
 
 export interface TableRowProps 
-  extends React.ComponentProps<"tr"> {
+  extends React.ComponentPropsWithoutRef<"tr"> {
   selected?: boolean;
   hoverable?: boolean;
 }
@@ -168,7 +168,7 @@ function TableRow({
 }
 
 export interface TableHeadProps 
-  extends React.ComponentProps<"th"> {
+  extends React.ComponentPropsWithoutRef<"th"> {
   sortable?: boolean;
   sorted?: "asc" | "desc" | null;
 }
@@ -215,7 +215,7 @@ function TableHead({
   )
 }
 
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+function TableCell({ className, ...props }: React.ComponentPropsWithoutRef<"td">) {
   return (
     <td
       data-slot="table-cell"
@@ -231,7 +231,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
 function TableCaption({
   className,
   ...props
-}: React.ComponentProps<"caption">) {
+}: React.ComponentPropsWithoutRef<"caption">) {
   return (
     <caption
       data-slot="table-caption"

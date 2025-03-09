@@ -9,12 +9,13 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
-  type LucideIcon,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
 import { getActivityLogs } from '@/lib/db/queries';
 
-const iconMap: Record<ActivityType, LucideIcon> = {
+type IconType = typeof Settings;
+
+const iconMap: Record<ActivityType, IconType> = {
   [ActivityType.SIGN_UP]: UserPlus,
   [ActivityType.SIGN_IN]: UserCog,
   [ActivityType.SIGN_OUT]: LogOut,

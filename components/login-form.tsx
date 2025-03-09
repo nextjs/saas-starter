@@ -1,5 +1,6 @@
 'use client';
 
+import { type ReactNode, Suspense } from 'react'
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,47 +13,82 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useActionState } from "react"
-import { signIn as signInOriginal, signUp as signUpOriginal } from "@/app/(login)/actions"
-import { ActionState } from "@/lib/auth/middleware"
+import { useActionState } from "@/lib/hooks/useActionState"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { createBrowserClient } from '@supabase/ssr'
+import { AuthError } from '@supabase/supabase-js'
 
-// Create a wrapper function for signIn that ensures it always returns an ActionState
-const signIn = async (prevState: ActionState, formData: FormData): Promise<ActionState> => {
-  const result = await signInOriginal(prevState, formData);
-  // If result is undefined, return a default ActionState
-  if (!result) {
-    return { error: '' };
+export interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
+  mode?: 'signin' | 'signup';
+}
+
+interface LoginState {
+  error?: string;
+  success?: string;
+  email?: string;
+  password?: string;
+}
+
+function isAuthError(error: unknown): error is AuthError {
+  return error instanceof Error && 'status' in error;
+}
+
+const signIn = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
+  const supabase = createBrowserClient();
+  try {
+    const { error } = await supabase.auth.signInWithPassword({
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+    });
+    
+    if (error) throw error;
+    return { success: 'Signed in successfully' };
+  } catch (error) {
+    if (isAuthError(error)) {
+      return { error: error.message };
+    }
+    return { error: 'An unexpected error occurred' };
   }
-  // Otherwise, return the result
-  return result as ActionState;
 };
 
-// Create a wrapper function for signUp that ensures it always returns an ActionState
-const signUp = async (prevState: ActionState, formData: FormData): Promise<ActionState> => {
-  const result = await signUpOriginal(prevState, formData);
-  // If result is undefined, return a default ActionState
-  if (!result) {
-    return { error: '' };
+const signUp = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
+  const supabase = createBrowserClient();
+  try {
+    const { error } = await supabase.auth.signUp({
+      email: formData.get('email') as string,
+      password: formData.get('password') as string,
+      options: {
+        data: {
+          first_name: formData.get('first_name'),
+          last_name: formData.get('last_name'),
+        },
+      },
+    });
+    
+    if (error) throw error;
+    return { success: 'Check your email to confirm your account' };
+  } catch (error) {
+    if (isAuthError(error)) {
+      return { error: error.message };
+    }
+    return { error: 'An unexpected error occurred' };
   }
-  // Otherwise, return the result
-  return result as ActionState;
 };
 
-export function LoginForm({
+function LoginFormContent({
   className,
   mode = "signin",
   ...props
-}: React.ComponentPropsWithoutRef<"div"> & { mode?: "signin" | "signup" }) {
+}: LoginFormProps) {
   const searchParams = useSearchParams();
   const redirect = searchParams?.get('redirect') || '';
   const priceId = searchParams?.get('priceId') || '';
   const inviteId = searchParams?.get('inviteId') || '';
   
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+  const [state, formAction, isPending] = useActionState<LoginState, FormData>(
     mode === 'signin' ? signIn : signUp,
-    { error: '' },
+    { error: '' }
   );
 
   return (
@@ -67,7 +103,10 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          <form action={formAction}>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            formAction(new FormData(e.currentTarget));
+          }}>
             <input type="hidden" name="redirect" value={redirect} />
             <input type="hidden" name="priceId" value={priceId} />
             <input type="hidden" name="inviteId" value={inviteId} />
@@ -145,8 +184,7 @@ export function LoginForm({
                 type="submit" 
                 className="w-full"
                 variant="orange"
-                disabled={pending}
-                isLoading={pending}
+                isLoading={isPending}
               >
                 {mode === 'signin' ? 'Sign in' : 'Create account'}
               </Button>
@@ -211,5 +249,13 @@ export function LoginForm({
         </CardFooter>
       </Card>
     </div>
-  )
+  );
+}
+
+export function LoginForm(props: LoginFormProps) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginFormContent {...props} />
+    </Suspense>
+  );
 }

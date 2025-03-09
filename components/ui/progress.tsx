@@ -55,12 +55,13 @@ const indicatorVariants = cva(
 )
 
 export interface ProgressProps
-  extends React.ComponentProps<typeof ProgressPrimitive.Root>,
+  extends React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>,
     VariantProps<typeof progressVariants> {
   indicatorVariant?: VariantProps<typeof indicatorVariants>["variant"];
   indeterminate?: boolean;
   showValueLabel?: boolean;
   label?: string;
+  value?: number;
 }
 
 function Progress({

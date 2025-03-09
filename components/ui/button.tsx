@@ -1,8 +1,9 @@
-import * as React from "react"
+'use client';
+
+import { forwardRef, type ButtonHTMLAttributes } from 'react'
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { Loader2 } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
@@ -32,9 +33,6 @@ const buttonVariants = cva(
         default: "rounded-md",
         full: "rounded-full",
       },
-      fullWidth: {
-        true: "w-full",
-      },
     },
     defaultVariants: {
       variant: "default",
@@ -44,53 +42,55 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+export type ButtonVariants = VariantProps<typeof buttonVariants>
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, ButtonVariants {
   asChild?: boolean
   isLoading?: boolean
+  fullWidth?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { 
     className, 
     variant, 
     size, 
-    rounded,
-    fullWidth,
+    rounded = "default" as const, 
+    fullWidth = false,
     asChild = false, 
-    isLoading = false,
+    isLoading = false, 
+    children, 
     disabled,
-    children,
     ...props 
-  }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    return (
-      <Comp
-        className={cn(buttonVariants({ 
-          variant, 
-          size, 
-          rounded,
-          fullWidth,
-          className 
-        }))}
-        ref={ref}
-        disabled={disabled || isLoading}
-        aria-busy={isLoading}
-        {...props}
-      >
-        {isLoading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            {children}
-          </>
-        ) : (
-          children
-        )}
-      </Comp>
-    )
-  }
-)
+  }: ButtonProps,
+  ref
+) {
+  const Comp = asChild ? Slot : "button"
+  return (
+    <Comp
+      className={cn(buttonVariants({ 
+        variant, 
+        size, 
+        rounded 
+      }), className, {
+        'w-full': fullWidth
+      })}
+      ref={ref}
+      disabled={disabled || isLoading}
+      aria-disabled={disabled || isLoading}
+      {...props}
+    >
+      {isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          {children}
+        </>
+      ) : (
+        children
+      )}
+    </Comp>
+  )
+})
 Button.displayName = "Button"
 
 export { Button, buttonVariants }

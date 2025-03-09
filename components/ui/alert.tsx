@@ -1,7 +1,8 @@
-import * as React from "react"
+'use client';
+
+import { type ComponentPropsWithoutRef } from 'react'
 import { cva, type VariantProps } from "class-variance-authority"
 import { X } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
@@ -34,13 +35,16 @@ const alertVariants = cva(
   }
 )
 
-export interface AlertProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof alertVariants> {
+export type AlertVariants = VariantProps<typeof alertVariants>
+
+export interface AlertProps extends ComponentPropsWithoutRef<"div">, AlertVariants {
   onClose?: () => void;
 }
 
-function Alert({
+export interface AlertTitleProps extends ComponentPropsWithoutRef<"div"> {}
+export interface AlertDescriptionProps extends ComponentPropsWithoutRef<"div"> {}
+
+export function Alert({
   className,
   variant,
   size,
@@ -50,53 +54,47 @@ function Alert({
 }: AlertProps) {
   return (
     <div
-      data-slot="alert"
       role="alert"
-      aria-live={variant === "destructive" ? "assertive" : "polite"}
       className={cn(alertVariants({ variant, size }), className)}
       {...props}
     >
-      {children}
       {onClose && (
-        <button 
+        <button
           onClick={onClose}
-          className="absolute top-2 right-2 p-1 rounded-full hover:bg-background/80 focus:outline-none focus:ring-2 focus:ring-ring"
-          aria-label="Close alert"
+          className="absolute right-2 top-2 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground"
         >
           <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
         </button>
       )}
+      {children}
     </div>
   )
 }
+Alert.displayName = "Alert"
 
-function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="alert-title"
-      className={cn(
-        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function AlertDescription({
+export function AlertTitle({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: AlertTitleProps) {
   return (
     <div
-      data-slot="alert-description"
-      className={cn(
-        "text-muted-foreground col-start-2 grid justify-items-start gap-1 text-sm [&_p]:leading-relaxed",
-        className
-      )}
+      className={cn("font-medium leading-none tracking-tight", className)}
       {...props}
     />
   )
 }
+AlertTitle.displayName = "AlertTitle"
 
-export { Alert, AlertTitle, AlertDescription }
+export function AlertDescription({
+  className,
+  ...props
+}: AlertDescriptionProps) {
+  return (
+    <div
+      className={cn("text-sm [&_p]:leading-relaxed", className)}
+      {...props}
+    />
+  )
+}
+AlertDescription.displayName = "AlertDescription"

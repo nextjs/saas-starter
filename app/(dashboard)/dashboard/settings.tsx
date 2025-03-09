@@ -4,16 +4,24 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
-import { useActionState } from 'react';
 import { TeamDataWithMembers, User } from '@/lib/db/schema';
 import { InviteTeamMember } from './invite-team';
-
-type ActionState = {
-  error?: string;
-  success?: string;
-};
+import { useActionState } from '@/lib/hooks/useActionState';
+import { Loader2 } from 'lucide-react';
 
 export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
+  const [portalState, portalAction, isPortalPending] = useActionState<
+    { error?: string },
+    FormData
+  >(async (prevState, formData) => {
+    try {
+      await customerPortalAction(formData);
+      return {};
+    } catch (error) {
+      return { error: 'Failed to open customer portal' };
+    }
+  }, {});
+
   const getUserDisplayName = (user: Pick<User, 'id' | 'name' | 'email'>) => {
     return user.name || user.email || 'Unknown User';
   };
@@ -75,9 +83,19 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                   </p>
                 )}
               </div>
-              <form action={customerPortalAction}>
-                <Button type="submit" variant="outline">
-                  Manage Subscription
+              <form action={portalAction}>
+                {portalState.error && (
+                  <p className="text-sm text-destructive mb-2">{portalState.error}</p>
+                )}
+                <Button type="submit" variant="outline" disabled={isPortalPending}>
+                  {isPortalPending ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Opening Portal...
+                    </>
+                  ) : (
+                    'Manage Subscription'
+                  )}
                 </Button>
               </form>
             </div>

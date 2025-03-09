@@ -36,6 +36,13 @@
       "when": 1741457363673,
       "tag": "0004_foamy_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1741541345787,
+      "tag": "0005_magenta_kronos",
+      "breakpoints": true
     }
   ]
 }

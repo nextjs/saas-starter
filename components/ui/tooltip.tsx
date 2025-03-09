@@ -6,7 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
-const tooltipVariants = cva(
+export const tooltipVariants = cva(
   "animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 z-50 w-fit rounded-md px-3 py-1.5 text-xs text-balance",
   {
     variants: {
@@ -28,100 +28,48 @@ const tooltipVariants = cva(
   }
 )
 
-export interface TooltipProviderProps extends React.ComponentProps<typeof TooltipPrimitive.Provider> {
-  delayDuration?: number;
-}
+const TooltipTrigger = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Trigger>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
+  <TooltipPrimitive.Trigger
+    ref={ref}
+    className={cn("outline-none", className)}
+    {...props}
+  />
+))
+TooltipTrigger.displayName = TooltipPrimitive.Trigger.displayName
 
-function TooltipProvider({
-  delayDuration = 300,
-  ...props
-}: TooltipProviderProps) {
-  return (
-    <TooltipPrimitive.Provider
-      data-slot="tooltip-provider"
-      delayDuration={delayDuration}
-      {...props}
-    />
-  )
-}
-
-export interface TooltipProps extends React.ComponentProps<typeof TooltipPrimitive.Root> {
-  delayDuration?: number;
-}
-
-function Tooltip({
-  delayDuration,
-  ...props
-}: TooltipProps) {
-  return (
-    <TooltipProvider delayDuration={delayDuration}>
-      <TooltipPrimitive.Root data-slot="tooltip" {...props} />
-    </TooltipProvider>
-  )
-}
-
-function TooltipTrigger({
-  ...props
-}: React.ComponentProps<typeof TooltipPrimitive.Trigger>) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
-}
-
-export interface TooltipContentProps 
-  extends React.ComponentProps<typeof TooltipPrimitive.Content>,
-    VariantProps<typeof tooltipVariants> {
-  side?: "top" | "right" | "bottom" | "left";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-  alignOffset?: number;
-  maxWidth?: number | string;
-  showArrow?: boolean;
-}
-
-function TooltipContent({
-  className,
+const TooltipContent = React.forwardRef<
+  React.ElementRef<typeof TooltipPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content> & VariantProps<typeof tooltipVariants>
+>(({ 
+  className, 
+  sideOffset = 4, 
   variant,
   size,
-  side = "top",
-  align = "center",
-  sideOffset = 4,
-  alignOffset = 0,
-  maxWidth = 250,
-  showArrow = true,
-  children,
-  ...props
-}: TooltipContentProps) {
-  return (
-    <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Content
-        data-slot="tooltip-content"
-        side={side}
-        align={align}
-        sideOffset={sideOffset}
-        alignOffset={alignOffset}
-        className={cn(
-          tooltipVariants({ variant, size }),
-          className
-        )}
-        style={{ 
-          ...props.style,
-          maxWidth: typeof maxWidth === 'number' ? `${maxWidth}px` : maxWidth
-        }}
-        {...props}
-      >
-        {children}
-        {showArrow && (
-          <TooltipPrimitive.Arrow 
-            className={cn(
-              "fill-current z-50 size-2.5 translate-y-[calc(-50%_-_2px)] rotate-45 rounded-[2px]",
-              variant === "default" && "bg-primary fill-primary",
-              variant === "orange" && "bg-orange-500 fill-orange-500",
-              variant === "muted" && "bg-muted fill-muted"
-            )} 
-          />
-        )}
-      </TooltipPrimitive.Content>
-    </TooltipPrimitive.Portal>
-  )
-}
+  children, 
+  ...props 
+}, ref) => (
+  <TooltipPrimitive.Portal>
+    <TooltipPrimitive.Content
+      ref={ref}
+      sideOffset={sideOffset}
+      className={cn(tooltipVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </TooltipPrimitive.Content>
+  </TooltipPrimitive.Portal>
+))
+TooltipContent.displayName = TooltipPrimitive.Content.displayName
 
-export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }
+const Tooltip = TooltipPrimitive.Root
+const TooltipProvider = TooltipPrimitive.Provider
+
+export {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+}

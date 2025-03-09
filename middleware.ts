@@ -1,92 +1,69 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-const protectedRoutes = '/dashboard'
-const isDevelopment = process.env.NODE_ENV === 'development'
-
-export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl
-  const isProtectedRoute = pathname.startsWith(protectedRoutes)
+export async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
   
-  // Create a response object that we can modify
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers
-    }
-  })
-
-  // Create the Supabase client using cookies from the request
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
         get(name: string) {
-          return request.cookies.get(name)?.value
+          return req.cookies.get(name)?.value;
         },
-        set(name: string, value: string, options: { path?: string; maxAge?: number; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
-          response.cookies.set({
+        set(name: string, value: string, options: { path: string; maxAge?: number; domain?: string; secure?: boolean }) {
+          res.cookies.set({
             name,
             value,
-            ...options
-          })
+            ...options,
+          });
         },
-        remove(name: string, options: { path?: string; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
-          response.cookies.set({
+        remove(name: string, options: { path: string }) {
+          res.cookies.set({
             name,
             value: '',
             ...options,
-            maxAge: 0
-          })
-        }
-      }
+            maxAge: 0,
+          });
+        },
+      },
     }
-  )
+  );
 
-  // Get the session from Supabase (this also refreshes the session if needed)
-  const { data: { session } } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
 
-  // If we're on a protected route and there's no session, redirect to sign-in
-  if (isProtectedRoute && !session) {
-    const redirectUrl = new URL('/sign-in', request.url)
-    // Add original path as a parameter to redirect back after sign-in
-    redirectUrl.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(redirectUrl)
+  // If no session and trying to access protected routes
+  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = '/login';
+    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
-  // Clone the request headers
-  const requestHeaders = new Headers(request.headers)
-  
-  // In development mode, completely remove CSP to avoid any issues
-  if (isDevelopment) {
-    requestHeaders.delete('Content-Security-Policy')
-  } else {
-    // In production, set a secure CSP
-    requestHeaders.set(
-      'Content-Security-Policy',
-      `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;`
-    )
+  // If session exists and trying to access auth pages
+  if (session && (req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup')) {
+    const redirectUrl = req.nextUrl.clone();
+    redirectUrl.pathname = '/dashboard';
+    return NextResponse.redirect(redirectUrl);
   }
-  
-  // Create a new response with the modified headers
-  const modifiedResponse = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  })
 
-  return modifiedResponse
+  return res;
 }
 
 export const config = {
   matcher: [
     /*
-     * Match all request paths except:
+     * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder
+     * - public (public files)
+     * - api (API routes)
      */
-    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+    '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
   ],
-}
+};

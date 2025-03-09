@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Copy, Check } from 'lucide-react';
 
 export function Terminal() {
-  const [terminalStep, setTerminalStep] = useState(0);
-  const [copied, setCopied] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [terminalStep, setTerminalStep] = React.useState<number>(0);
+  const [copied, setCopied] = React.useState(false);
+  const [error, setError] = React.useState<Error | null>(null);
   
   const terminalSteps = [
     'git clone https://github.com/nextjs/saas-starter',
@@ -17,12 +17,11 @@ export function Terminal() {
     'pnpm dev 🎉',
   ];
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       const timer = setTimeout(() => {
-        setTerminalStep((prev: number) =>
-          prev < terminalSteps.length - 1 ? prev + 1 : prev
-        );
+        const nextStep = terminalStep < terminalSteps.length - 1 ? terminalStep + 1 : terminalStep;
+        setTerminalStep(nextStep);
       }, 500);
 
       return () => clearTimeout(timer);

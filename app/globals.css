@@ -2,7 +2,9 @@
 /* stylelint-disable */
 /* This file uses Tailwind CSS directives which may trigger linting errors */
 
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -156,6 +158,47 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Typography scale */
+  h1 {
+    @apply text-4xl font-bold tracking-tight lg:text-5xl;
+  }
+  
+  h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  
+  h3 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  
+  h4 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  
+  p {
+    @apply leading-7;
+  }
+  
+  small {
+    @apply text-sm font-medium;
+  }
+  
+  .lead {
+    @apply text-xl text-muted-foreground;
+  }
+  
+  .large {
+    @apply text-lg font-semibold;
+  }
+  
+  .small {
+    @apply text-sm font-medium;
+  }
+  
+  .muted {
+    @apply text-sm text-muted-foreground;
+  }
 }
 
 /*
@@ -238,82 +281,46 @@
   body {
     font-family: 'Manrope', Arial, Helvetica, sans-serif;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
+  /* Custom scrollbar styling */
+  .scrollbar-thin::-webkit-scrollbar {
+    @apply w-2 h-2;
   }
 
-  /* Typography scale */
-  h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
-    letter-spacing: -0.025em;
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-secondary/50 rounded-sm;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-sm hover:bg-muted-foreground/50;
+  }
+
+  /* Firefox */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground)/0.3) hsl(var(--secondary)/0.5);
   }
   
-  @media (min-width: 1024px) {
-    h1 {
-      font-size: 3rem;
+  /* Animation utilities */
+  .animate-in {
+    animation-duration: 150ms;
+    animation-timing-function: cubic-bezier(0.1, 0.99, 0.1, 1);
+    animation-fill-mode: both;
+  }
+
+  .fade-in {
+    animation-name: fadeIn;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
-  
-  h2 {
-    font-size: 1.875rem;
-    font-weight: 600;
-    letter-spacing: -0.025em;
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: -0.025em;
-  }
-  
-  h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: -0.025em;
-  }
-  
-  p {
-    line-height: 1.75rem;
-  }
-  
-  small {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1;
-  }
-  
-  .lead {
-    font-size: 1.25rem;
-    color: hsl(var(--muted-foreground));
-  }
-  
-  .large {
-    font-size: 1.125rem;
-    font-weight: 600;
-  }
-  
-  .small {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1;
-  }
-  
-  .muted {
-    font-size: 0.875rem;
-    color: hsl(var(--muted-foreground));
-  }
 }
-
-/*
-  ---break---
-*/
 
 @theme inline {
   --color-background: var(--background);
@@ -349,52 +356,3 @@
 /*
   ---break---
 */
-
-/* Custom scrollbar styling */
-@layer utilities {
-  /* Chrome, Edge, and Safari */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background-color: hsl(var(--secondary) / 0.5);
-    border-radius: 4px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground) / 0.3);
-    border-radius: 4px;
-  }
-
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
-
-  /* Firefox */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground)/0.3) hsl(var(--secondary)/0.5);
-  }
-  
-  /* Animation utilities */
-  .animate-in {
-    animation-duration: 150ms;
-    animation-timing-function: cubic-bezier(0.1, 0.99, 0.1, 1);
-    animation-fill-mode: both;
-  }
-
-  .fade-in {
-    animation-name: fadeIn;
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-}

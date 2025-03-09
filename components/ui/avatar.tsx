@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { type ComponentPropsWithoutRef, forwardRef } from "react"
 import * as AvatarPrimitive from "@radix-ui/react-avatar"
 import { cva, type VariantProps } from "class-variance-authority"
 
@@ -24,13 +25,13 @@ const avatarVariants = cva(
 )
 
 export interface AvatarProps
-  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
+  extends ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>,
     VariantProps<typeof avatarVariants> {
   asChild?: boolean
 }
 
-const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
+const Avatar = forwardRef<
+  HTMLDivElement,
   AvatarProps
 >(({ className, size, ...props }, ref) => (
   <AvatarPrimitive.Root
@@ -42,12 +43,12 @@ const Avatar = React.forwardRef<
 Avatar.displayName = AvatarPrimitive.Root.displayName
 
 export interface AvatarImageProps
-  extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
+  extends ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> {
   alt: string // Make alt required
 }
 
-const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
+const AvatarImage = forwardRef<
+  HTMLImageElement,
   AvatarImageProps
 >(({ className, alt, ...props }, ref) => (
   <AvatarPrimitive.Image
@@ -59,9 +60,9 @@ const AvatarImage = React.forwardRef<
 ))
 AvatarImage.displayName = AvatarPrimitive.Image.displayName
 
-const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
+const AvatarFallback = forwardRef<
+  HTMLDivElement,
+  ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
 >(({ className, ...props }, ref) => (
   <AvatarPrimitive.Fallback
     ref={ref}
