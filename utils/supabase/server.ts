@@ -9,6 +9,14 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
+      options: {
+        auth: {
+          flowType: process.env.NODE_ENV === 'development' ? 'implicit' : 'pkce',
+          detectSessionInUrl: true,
+          persistSession: true,
+          autoRefreshToken: true,
+        }
+      },
       cookies: {
         async get(name: string) {
           const cookieJar = await cookieStore
