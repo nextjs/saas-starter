@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label"
 import { useActionState } from "@/lib/hooks/useActionState"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { createBrowserClient } from '@supabase/ssr'
+import { createClient } from '@/utils/supabase/client'
 import { AuthError } from '@supabase/supabase-js'
 
 export interface LoginFormProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -35,7 +35,7 @@ function isAuthError(error: unknown): error is AuthError {
 }
 
 const signIn = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
   try {
     const { error } = await supabase.auth.signInWithPassword({
       email: formData.get('email') as string,
@@ -53,7 +53,7 @@ const signIn = async (prevState: LoginState, formData: FormData): Promise<LoginS
 };
 
 const signUp = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
-  const supabase = createBrowserClient();
+  const supabase = createClient();
   try {
     const { error } = await supabase.auth.signUp({
       email: formData.get('email') as string,
@@ -149,6 +149,7 @@ function LoginFormContent({
                   required
                   defaultValue={state.email}
                   className="rounded-md"
+                  autoComplete="email"
                 />
               </div>
               <div className="grid gap-2">

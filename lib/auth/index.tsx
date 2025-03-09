@@ -1,8 +1,8 @@
 'use client';
 
-import * as React from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+import { createContext, useContext, useState, useEffect, useMemo, type ReactNode } from 'react';
 import type { User, AuthError, Session, AuthChangeEvent } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/client';
 
 // Define AuthUser type as shown in documentation
 type AuthUser = User & {
@@ -20,7 +20,7 @@ export interface AuthContextType {
 }
 
 // Create context with proper type guard
-const AuthContext = React.createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 AuthContext.displayName = 'AuthContext';
 
 // Type guard for auth user as shown in documentation
@@ -29,7 +29,7 @@ function isAuthUser(user: User | null): user is AuthUser {
 }
 
 export function useAuth() {
-  const context = React.useContext(AuthContext);
+  const context = useContext(AuthContext);
   if (context === null) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
@@ -37,20 +37,29 @@ export function useAuth() {
 }
 
 export interface AuthProviderProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = React.useState<AuthUser | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = useMemo(() => {
+    try {
+      return createClient();
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to create Supabase client'));
+      return null;
+    }
+  }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session }, error }: { data: { session: Session | null }, error: AuthError | null }) => {
       if (error) {
@@ -75,7 +84,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase]);
 
   // Create value object with proper typing
   const contextValue: AuthContextType = {

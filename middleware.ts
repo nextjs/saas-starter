@@ -1,9 +1,17 @@
-import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  // Set CSP headers based on environment
+  const cspHeader = isDevelopment
+    ? "default-src 'self' 'unsafe-inline' 'unsafe-eval' blob: data: https://*.supabase.co wss://*.supabase.co; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;"
+    : "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data: https://*.supabase.co; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-src 'self' https://*.supabase.co;";
+
+  res.headers.set('Content-Security-Policy', cspHeader);
   
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,26 +40,31 @@ export async function middleware(req: NextRequest) {
     }
   );
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
-  // If no session and trying to access protected routes
-  if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    // Handle root path first
+    if (req.nextUrl.pathname === '/') {
+      return NextResponse.redirect(new URL(session ? '/dashboard' : '/login', req.url));
+    }
+
+    // Protected routes
+    if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
+      return NextResponse.redirect(new URL('/login', req.url));
+    }
+
+    // Auth pages when logged in
+    if (session && ['/login', '/signup'].includes(req.nextUrl.pathname)) {
+      return NextResponse.redirect(new URL('/dashboard', req.url));
+    }
+
+    return res;
+  } catch (error) {
+    // If there's an error, redirect to login
+    return NextResponse.redirect(new URL('/login', req.url));
   }
-
-  // If session exists and trying to access auth pages
-  if (session && (req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/signup')) {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/dashboard';
-    return NextResponse.redirect(redirectUrl);
-  }
-
-  return res;
 }
 
 export const config = {

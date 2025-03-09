@@ -1,6 +1,7 @@
 /// <reference types="react" />
 /// <reference types="react-dom" />
 /// <reference types="node" />
+/// <reference types="@testing-library/jest-dom" />
 
 declare module 'react' {
   interface JSX {
@@ -9,6 +10,7 @@ declare module 'react' {
   
   export function useState<T>(initialState: T | (() => T)): [T, (newState: T | ((prevState: T) => T)) => void];
   export function useEffect(effect: () => void | (() => void), deps?: ReadonlyArray<any>): void;
+  export function useMemo<T>(factory: () => T, deps: ReadonlyArray<any> | undefined): T;
 
   // Add Suspense component
   export interface SuspenseProps {
@@ -40,6 +42,17 @@ declare module 'react' {
     | null
     | undefined
     | Iterable<ReactNode>;
+}
+
+// Add Jest matchers
+declare global {
+  namespace jest {
+    interface Matchers<R> {
+      toBeInTheDocument(): R;
+      toHaveTextContent(text: string | RegExp): R;
+      toHaveAttribute(attr: string, value?: string): R;
+    }
+  }
 }
 
 declare module '@radix-ui/react-dialog' {

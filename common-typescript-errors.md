@@ -1585,4 +1585,92 @@ import { type SomeType, someFunction } from 'package' // Mixed type/value import
 - Type declaration conflicts can occur with mixed import styles
 - Path alias issues can cause module resolution failures
 - Case sensitivity can cause issues on different operating systems
-``` 
+```
+
+## Configuration File Consistency
+
+### Configuration File Extensions
+
+When working with configuration files in a TypeScript project, maintain consistency in file extensions:
+
+- Use `.js` for configuration files:
+  ```
+  jest.config.js
+  jest.setup.js
+  next.config.js
+  postcss.config.js
+  tailwind.config.js
+  ```
+
+- Only use `.ts` for actual TypeScript code and type declarations:
+  ```
+  types/*.d.ts
+  src/**/*.ts
+  src/**/*.tsx
+  ```
+
+**Common Mistake:**
+```typescript
+// ❌ Don't mix .ts and .js for config files
+vitest.config.ts
+jest.config.js
+
+// ✅ Keep all config files as .js
+jest.config.js
+jest.setup.js
+```
+
+**Why This Matters:**
+1. Configuration files are typically consumed by build tools that expect JavaScript
+2. TypeScript configuration in config files adds unnecessary complexity
+3. Maintaining consistency makes the project structure more predictable
+4. Most config files don't benefit from TypeScript's type checking
+
+### Testing Configuration Best Practices
+
+When setting up testing in a TypeScript project:
+
+1. Choose one testing framework and stick with it:
+```json
+// ❌ Don't mix testing frameworks
+{
+  "scripts": {
+    "test": "vitest",
+    "test:jest": "jest"
+  }
+}
+
+// ✅ Use one testing framework consistently
+{
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
+  }
+}
+```
+
+2. Keep test setup files consistent with config files:
+```javascript
+// ✅ jest.setup.js
+import '@testing-library/jest-dom';
+
+// ❌ jest.setup.ts
+import '@testing-library/jest-dom';
+```
+
+3. Maintain proper type declarations for tests:
+```typescript
+// ✅ Let the testing library handle type declarations
+import '@testing-library/jest-dom';
+
+// ❌ Don't create unnecessary type declaration files
+// types/jest.d.ts
+declare namespace jest {
+  interface Matchers<R> {
+    toBeInTheDocument(): R;
+  }
+}
+```
+
+// ... existing content ... 

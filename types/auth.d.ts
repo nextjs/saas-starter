@@ -1,6 +1,7 @@
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { Database } from './supabase';
 import type { ReactNode } from 'react';
+import { AuthError } from '@supabase/supabase-js';
 
 declare global {
   // Enhanced AuthUser type with proper metadata typing
@@ -53,6 +54,13 @@ declare module '@/lib/auth' {
     email?: string;
     password?: string;
   }
+}
+
+export interface AuthResponse {
+  data: {
+    user: { id: string } | null;
+  };
+  error: AuthError | null;
 }
 
 export {}; 
