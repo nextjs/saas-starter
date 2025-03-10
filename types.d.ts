@@ -47,6 +47,8 @@ declare module 'react' {
 // Add Jest matchers
 declare global {
   namespace jest {
+    function fail(message?: string): never;
+    
     interface Matchers<R> {
       toBeInTheDocument(): R;
       toHaveTextContent(text: string | RegExp): R;
@@ -185,4 +187,18 @@ declare module 'next/navigation' {
     back: () => void;
   };
 }
-declare module 'tailwindcss-animate'; 
+declare module 'tailwindcss-animate';
+
+declare module '@testing-library/user-event' {
+  import { type UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+  
+  const userEvent: {
+    setup(): UserEvent;
+    clear: (element: HTMLElement) => Promise<void>;
+    click: (element: HTMLElement) => Promise<void>;
+    type: (element: HTMLElement, text: string) => Promise<void>;
+    keyboard: (text: string) => Promise<void>;
+  };
+  
+  export default userEvent;
+} 

@@ -15,7 +15,9 @@ const customJestConfig = {
   transform: {
     '^.+\\.(ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
-  testMatch: ['**/__tests__/**/*.test.[jt]s?(x)'],
+  testMatch: [
+    '<rootDir>/__tests__/**/*.test.[jt]s?(x)'
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: [
     'components/**/*.{js,jsx,ts,tsx}',

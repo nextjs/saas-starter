@@ -1,8 +1,9 @@
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { LoginForm } from '@/components/login-form';
 import { AuthError } from '@supabase/supabase-js';
 import type { AuthResponse } from '@/types/auth.d';
+import userEvent from '@testing-library/user-event';
 
 // Mock next-themes
 jest.mock('next-themes', () => ({
@@ -21,8 +22,8 @@ jest.mock('next/navigation', () => ({
 
 // Mock Supabase client
 const mockAuth = {
-  signInWithPassword: jest.fn(),
-  signUp: jest.fn()
+  signInWithPassword: jest.fn<Promise<AuthResponse>, [any]>(),
+  signUp: jest.fn<Promise<AuthResponse>, [any]>()
 };
 
 jest.mock('@supabase/ssr', () => ({
@@ -32,6 +33,8 @@ jest.mock('@supabase/ssr', () => ({
 }));
 
 describe('LoginForm', () => {
+  const user = userEvent.setup();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -59,17 +62,11 @@ describe('LoginForm', () => {
 
     it('handles successful sign in', async () => {
       mockAuth.signInWithPassword.mockResolvedValueOnce(mockSignInSuccess);
-
       render(<LoginForm mode="signin" />);
 
-      await fireEvent.change(screen.getByRole('textbox', { name: /email/i }), {
-        target: { value: 'test@example.com' }
-      });
-      await fireEvent.change(screen.getByLabelText(/password/i), {
-        target: { value: 'password123' }
-      });
-
-      await fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+      await user.type(screen.getByRole('textbox', { name: /email/i }), 'test@example.com');
+      await user.type(screen.getByLabelText(/password/i), 'password123');
+      await user.click(screen.getByRole('button', { name: /sign in/i }));
 
       await waitFor(() => {
         expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({
@@ -84,14 +81,9 @@ describe('LoginForm', () => {
 
       render(<LoginForm mode="signin" />);
 
-      await fireEvent.change(screen.getByRole('textbox', { name: /email/i }), {
-        target: { value: 'test@example.com' }
-      });
-      await fireEvent.change(screen.getByLabelText(/password/i), {
-        target: { value: 'wrong-password' }
-      });
-
-      await fireEvent.click(screen.getByRole('button', { name: /sign in/i }));
+      await user.type(screen.getByRole('textbox', { name: /email/i }), 'test@example.com');
+      await user.type(screen.getByLabelText(/password/i), 'wrong-password');
+      await user.click(screen.getByRole('button', { name: /sign in/i }));
 
       await waitFor(() => {
         expect(screen.getByRole('alert')).toHaveTextContent(/invalid credentials/i);
@@ -120,20 +112,12 @@ describe('LoginForm', () => {
 
       render(<LoginForm mode="signup" />);
 
-      await fireEvent.change(screen.getByRole('textbox', { name: /first name/i }), {
-        target: { value: 'John' }
-      });
-      await fireEvent.change(screen.getByRole('textbox', { name: /last name/i }), {
-        target: { value: 'Doe' }
-      });
-      await fireEvent.change(screen.getByRole('textbox', { name: /email/i }), {
-        target: { value: 'test@example.com' }
-      });
-      await fireEvent.change(screen.getByLabelText(/password/i), {
-        target: { value: 'password123' }
-      });
+      await user.type(screen.getByRole('textbox', { name: /first name/i }), 'John');
+      await user.type(screen.getByRole('textbox', { name: /last name/i }), 'Doe');
+      await user.type(screen.getByRole('textbox', { name: /email/i }), 'test@example.com');
+      await user.type(screen.getByLabelText(/password/i), 'password123');
 
-      await fireEvent.click(screen.getByRole('button', { name: /create account/i }));
+      await user.click(screen.getByRole('button', { name: /create account/i }));
 
       await waitFor(() => {
         expect(mockAuth.signUp).toHaveBeenCalledWith({
