@@ -176,5 +176,13 @@ declare module '@/components/login-form' {
 declare module 'lucide-react';
 declare module '@supabase/ssr';
 declare module 'tailwindcss';
-declare module 'next/navigation';
+declare module 'next/navigation' {
+  export function redirect(url: string): never;
+  export function useRouter(): {
+    push: (url: string) => void;
+    replace: (url: string) => void;
+    refresh: () => void;
+    back: () => void;
+  };
+}
 declare module 'tailwindcss-animate'; 

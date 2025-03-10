@@ -2,13 +2,20 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { createClient } from '@/utils/supabase/client';
 
 export default function HomePage() {
   const router = useRouter();
+  const supabase = createClient();
   
   useEffect(() => {
-    router.push('/dashboard');
-  }, [router]);
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      router.push(session ? '/dashboard' : '/sign-in');
+    };
+    
+    checkSession();
+  }, [router, supabase.auth]);
   
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">

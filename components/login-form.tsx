@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, Suspense } from 'react'
+import { type ReactNode, Suspense, useEffect } from 'react' // Import useEffect
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useActionState } from "@/lib/hooks/useActionState"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation" // Import useRouter
 import Link from "next/link"
 import { createClient } from '@/utils/supabase/client'
 import { AuthError } from '@supabase/supabase-js'
@@ -37,14 +37,20 @@ function isAuthError(error: unknown): error is AuthError {
 const signIn = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
   const supabase = createClient();
   try {
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log("signIn called with formData:", formData);
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.get('email') as string,
       password: formData.get('password') as string,
     });
-    
+    console.log("signIn result:", { data, error });
+
     if (error) throw error;
+    if (!data.user) {
+      return { error: 'Failed to sign in. No user data returned.'};
+    }
     return { success: 'Signed in successfully' };
   } catch (error) {
+    console.error("signIn error:", error);
     if (isAuthError(error)) {
       return { error: error.message };
     }
@@ -55,7 +61,8 @@ const signIn = async (prevState: LoginState, formData: FormData): Promise<LoginS
 const signUp = async (prevState: LoginState, formData: FormData): Promise<LoginState> => {
   const supabase = createClient();
   try {
-    const { error } = await supabase.auth.signUp({
+    console.log("signUp called with formData:", formData);
+    const { data, error } = await supabase.auth.signUp({
       email: formData.get('email') as string,
       password: formData.get('password') as string,
       options: {
@@ -65,10 +72,15 @@ const signUp = async (prevState: LoginState, formData: FormData): Promise<LoginS
         },
       },
     });
-    
+    console.log("signUp result:", { data, error });
+
     if (error) throw error;
+    if (!data.user) {
+      return { error: 'Failed to sign up. No user data returned.'};
+    }
     return { success: 'Check your email to confirm your account' };
   } catch (error) {
+    console.error("signUp error:", error);
     if (isAuthError(error)) {
       return { error: error.message };
     }
@@ -82,14 +94,25 @@ function LoginFormContent({
   ...props
 }: LoginFormProps) {
   const searchParams = useSearchParams();
-  const redirect = searchParams?.get('redirect') || '';
+  const redirectParam = searchParams?.get('redirect') || ''; // Get redirect parameter, rename to avoid conflict
   const priceId = searchParams?.get('priceId') || '';
   const inviteId = searchParams?.get('inviteId') || '';
-  
+    const router = useRouter(); // Get the router instance
+
   const [state, formAction, isPending] = useActionState<LoginState, FormData>(
     mode === 'signin' ? signIn : signUp,
     { error: '' }
   );
+    useEffect(() => {
+        console.log("LoginForm state:", state);
+        // Redirect on successful sign-in/sign-up
+        if (state.success) {
+            const redirectTo = redirectParam || '/dashboard';
+            console.log("Redirecting to:", redirectTo)
+            router.push(redirectTo);
+        }
+    }, [state, router, redirectParam]); // Depend on state AND router
+
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
@@ -107,10 +130,11 @@ function LoginFormContent({
             e.preventDefault();
             formAction(new FormData(e.currentTarget));
           }}>
-            <input type="hidden" name="redirect" value={redirect} />
+           {/* Hidden Fields */}
+            <input type="hidden" name="redirect" value={redirectParam} />
             <input type="hidden" name="priceId" value={priceId} />
             <input type="hidden" name="inviteId" value={inviteId} />
-            
+
             <div className="grid gap-4">
               {mode === 'signup' && (
                 <div className="grid grid-cols-2 gap-3">
@@ -138,7 +162,7 @@ function LoginFormContent({
                   </div>
                 </div>
               )}
-              
+
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -164,25 +188,25 @@ function LoginFormContent({
                     </Link>
                   )}
                 </div>
-                <Input 
-                  id="password" 
-                  name="password" 
-                  type="password" 
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
                   required
                   defaultValue={state.password}
                   autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
                   className="rounded-md"
                 />
               </div>
-              
+
               {state?.error && (
                 <div className="text-sm font-medium text-destructive" role="alert">
                   {state.error}
                 </div>
               )}
-              
-              <Button 
-                type="submit" 
+
+              <Button
+                type="submit"
                 className="w-full"
                 variant="orange"
                 isLoading={isPending}
@@ -191,7 +215,7 @@ function LoginFormContent({
               </Button>
             </div>
           </form>
-          
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t" />
@@ -202,7 +226,7 @@ function LoginFormContent({
               </span>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-2 gap-3">
             <Button variant="outline" type="button" className="rounded-md">
               <svg className="mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -227,9 +251,9 @@ function LoginFormContent({
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-sm">
             {mode === 'signin' ? "Don't have an account? " : "Already have an account? "}
-            <Link 
+            <Link
               href={`${mode === 'signin' ? '/sign-up' : '/sign-in'}${
-                redirect ? `?redirect=${redirect}` : ''
+                redirectParam ? `?redirect=${redirectParam}` : ''
               }${priceId ? `&priceId=${priceId}` : ''}`}
               className="text-orange-600 underline-offset-4 hover:underline"
             >

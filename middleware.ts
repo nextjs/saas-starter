@@ -4,31 +4,27 @@ import { createServerClient } from '@supabase/ssr';
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next();
-  
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-      options: {
-        auth: {
-          flowType: process.env.NODE_ENV === 'development' ? 'implicit' : 'pkce',
-          detectSessionInUrl: true,
-          persistSession: true,
-          autoRefreshToken: true,
-        }
-      },
       cookies: {
         get(name: string) {
-          return req.cookies.get(name)?.value;
+          const value = req.cookies.get(name)?.value;
+          console.log(`middleware: get('${name}') => ${value}`);
+          return value;
         },
-        set(name: string, value: string, options: { path: string; maxAge?: number; domain?: string; secure?: boolean }) {
+        set(name: string, value: string, options: { path: string; maxAge?: number; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
+          console.log(`middleware: set('${name}', '${value}', ${JSON.stringify(options)}`);
           res.cookies.set({
             name,
             value,
             ...options,
           });
         },
-        remove(name: string, options: { path: string }) {
+        remove(name: string, options: { path: string; domain?: string; secure?: boolean; sameSite?: 'strict' | 'lax' | 'none' }) {
+          console.log(`middleware: remove('${name}', ${JSON.stringify(options)}`);
           res.cookies.set({
             name,
             value: '',
@@ -44,39 +40,30 @@ export async function middleware(req: NextRequest) {
     const {
       data: { session },
     } = await supabase.auth.getSession();
-
-    // Handle root path first
-    if (req.nextUrl.pathname === '/') {
-      return NextResponse.redirect(new URL(session ? '/dashboard' : '/login', req.url));
-    }
+    console.log("middleware: session:", session);
 
     // Protected routes
     if (!session && req.nextUrl.pathname.startsWith('/dashboard')) {
-      return NextResponse.redirect(new URL('/login', req.url));
+      const redirectUrl = new URL('/sign-in', req.url);
+      // Preserve the original URL to redirect back after login
+      redirectUrl.searchParams.set('redirect', req.nextUrl.pathname);
+      return NextResponse.redirect(redirectUrl);
     }
 
     // Auth pages when logged in
-    if (session && ['/login', '/signup'].includes(req.nextUrl.pathname)) {
+    if (session && ['/login', '/signup', '/sign-in', '/sign-up'].includes(req.nextUrl.pathname)) {
       return NextResponse.redirect(new URL('/dashboard', req.url));
     }
 
     return res;
   } catch (error) {
-    // If there's an error, redirect to login
-    return NextResponse.redirect(new URL('/login', req.url));
+    console.error("middleware: Error getting session:", error);
+    return res;
   }
 }
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public (public files)
-     * - api (API routes)
-     */
     '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
   ],
 };

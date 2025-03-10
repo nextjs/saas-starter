@@ -6,9 +6,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
-import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
+import { createClient } from '@/utils/supabase/client';
 
 type ActionState = {
   error?: string;
@@ -18,10 +18,7 @@ type ActionState = {
 export default function GeneralPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient();
   const [state, setState] = useState<ActionState>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 

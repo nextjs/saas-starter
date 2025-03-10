@@ -30,7 +30,7 @@ export default async function SettingsPage() {
 
   if (!user) {
     redirect('/sign-in');
-    return null; // This line is never reached but satisfies TypeScript
+    return null;
   }
 
   try {

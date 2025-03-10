@@ -1673,4 +1673,43 @@ declare namespace jest {
 }
 ```
 
-// ... existing content ... 
+### Error: Redirect Function Type Issues
+
+**Error Messages:**
+```
+This expression is not callable.
+Type 'String' has no call signatures.
+
+Cannot invoke an object which is possibly 'undefined'.
+```
+
+**Solution:**
+1. Add proper type declarations for the redirect function:
+```typescript
+// In types.d.ts
+declare module 'next/navigation' {
+  export function redirect(url: string): never;
+  export function useRouter(): {
+    push: (url: string) => void;
+    replace: (url: string) => void;
+    refresh: () => void;
+    back: () => void;
+  };
+}
+```
+
+2. Handle undefined redirect values:
+```typescript
+// Instead of
+redirect(redirect || '/dashboard');
+
+// Use
+const redirectUrl = redirect || '/dashboard';
+redirect(redirectUrl);
+```
+
+**Explanation:**
+- The `redirect` function from Next.js needs proper type declarations
+- When using redirect as both a parameter name and function, TypeScript gets confused
+- Always handle potentially undefined values before calling redirect
+- The redirect function should be typed to return `never` as it throws an error

@@ -3,9 +3,11 @@
 import * as React from "react"
 import { ThemeProvider as NextThemesProvider } from "next-themes"
 
+type Attribute = 'class' | 'data-theme';
+
 interface ThemeProviderProps {
   children: React.ReactNode;
-  attribute?: string;
+  attribute?: Attribute | Attribute[];
   defaultTheme?: string;
   enableSystem?: boolean;
   disableTransitionOnChange?: boolean;

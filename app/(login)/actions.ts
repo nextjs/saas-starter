@@ -16,15 +16,15 @@ import {
   ActivityType,
   invitations,
 } from '@/lib/db/schema';
-import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
+import { comparePasswords, hashPassword, } from '@/lib/auth/session'; //Removed setSession
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+//import { cookies } from 'next/headers'; // No longer needed here
 import { createCheckoutSession } from '@/lib/payments/stripe';
 import { getUser, getUserWithTeam, getTeamForUser } from '@/lib/db/queries';
 import {
   validatedAction,
   validatedActionWithUser,
-} from '@/lib/auth/middleware';
+} from '@/lib/actions'; // Corrected import
 import { createClient } from '@/utils/supabase/server';
 
 async function logActivity(
@@ -48,53 +48,54 @@ async function logActivity(
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(8).max(100),
+  redirectTo: z.string().optional(), // Changed from 'redirect' to 'redirectTo'
 });
 
 export async function signIn(prevState: any, formData: FormData) {
   const validatedFields = signInSchema.safeParse(Object.fromEntries(formData));
-  
+
   if (!validatedFields.success) {
     return {
       error: validatedFields.error.errors[0].message,
       email: formData.get('email') as string
     };
   }
-  
-  const { email, password } = validatedFields.data;
+
+  const { email, password, redirectTo } = validatedFields.data; // Changed from 'redirect' to 'redirectTo'
   const supabase = createClient();
-  
-  const { error } = await supabase.auth.signInWithPassword({
+
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password
   });
-  
+
   if (error) {
     return {
       error: error.message,
       email
     };
   }
-  
-  // Get the user data after successful authentication
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (user && user.email) {
-    // Find the user in your database by email
+
+  if (!data.user) {
+    return { error: 'Failed to sign in. No user data returned.', email };
+  }
+
+  if (data.user && data.user.email) {
     const dbUser = await db
       .select()
       .from(users)
-      .where(eq(users.email, user.email))
+      .where(eq(users.email, data.user.email))
       .limit(1);
-    
+
     if (dbUser.length > 0) {
       const userData = dbUser[0];
       const teamData = await getTeamForUser(userData.id);
       await logActivity(teamData?.id, userData.id, ActivityType.SIGN_IN);
     }
+
+    const redirectPath = redirectTo || '/dashboard';
+    redirect(redirectPath);
   }
-  
-  const redirectTo = formData.get('redirect') as string | null;
-  redirect(redirectTo || '/dashboard');
 }
 
 const signUpSchema = z.object({
@@ -103,10 +104,12 @@ const signUpSchema = z.object({
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   inviteId: z.string().optional(),
+  redirectTo: z.string().optional(), // Changed from redirect to redirectTo
+  priceId: z.string().optional(),
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password, first_name, last_name, inviteId } = data;
+  const { email, password, first_name, last_name, inviteId, redirectTo, priceId } = data; // Changed from redirect to redirectTo
   const supabase = createClient();
 
   // First, create the user in Supabase Auth
@@ -237,13 +240,13 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   await db.insert(teamMembers).values(newTeamMember);
   await logActivity(teamId, latestUser.id, ActivityType.SIGN_UP);
 
-  const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: createdTeam, priceId });
+  if (redirectTo === 'checkout' && priceId) { // Changed from redirect to redirectTo
+    return createCheckoutSession({ team: createdTeam!, priceId });
   }
 
-  redirect('/dashboard');
+  // Fix the redirect call
+  const redirectPath = '/dashboard';
+  redirect(redirectPath); // This should now work correctly
 });
 
 export async function signOut() {
@@ -256,11 +259,11 @@ export async function signOut() {
       console.error('Error logging sign-out activity:', error);
     }
   }
-  
+
   // Sign out with Supabase Auth
   const supabase = createClient();
   await supabase.auth.signOut();
-  
+
   redirect('/sign-in');
 }
 
@@ -279,30 +282,26 @@ export const updatePassword = validatedActionWithUser(
   updatePasswordSchema,
   async (data, _, user) => {
     const { currentPassword, newPassword } = data;
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({password: newPassword});
 
-    const isPasswordValid = await comparePasswords(
-      currentPassword,
-      user.passwordHash,
-    );
-
-    if (!isPasswordValid) {
-      return { error: 'Current password is incorrect.' };
+    if (error) {
+        return { error: error.message };
     }
-
     if (currentPassword === newPassword) {
       return {
         error: 'New password must be different from the current password.',
       };
     }
 
-    const newPasswordHash = await hashPassword(newPassword);
+    //const newPasswordHash = await hashPassword(newPassword); //No need
     const userWithTeam = await getUserWithTeam(user.id);
 
     await Promise.all([
-      db
-        .update(users)
-        .set({ passwordHash: newPasswordHash })
-        .where(eq(users.id, user.id)),
+    //   db
+    //     .update(users)
+    //     .set({ passwordHash: newPasswordHash }) // No need
+    //     .where(eq(users.id, user.id)),
       logActivity(userWithTeam?.teamId, user.id, ActivityType.UPDATE_PASSWORD),
     ]);
 
@@ -318,11 +317,8 @@ export const deleteAccount = validatedActionWithUser(
   deleteAccountSchema,
   async (data, _, user) => {
     const { password } = data;
-
-    const isPasswordValid = await comparePasswords(password, user.passwordHash);
-    if (!isPasswordValid) {
-      return { error: 'Incorrect password. Account deletion failed.' };
-    }
+    const supabase = createClient()
+    //removed compare password
 
     const userWithTeam = await getUserWithTeam(user.id);
 
@@ -331,16 +327,7 @@ export const deleteAccount = validatedActionWithUser(
       user.id,
       ActivityType.DELETE_ACCOUNT,
     );
-
-    // Soft delete
-    await db
-      .update(users)
-      .set({
-        deletedAt: sql`CURRENT_TIMESTAMP`,
-        email: sql`CONCAT(email, '-', id, '-deleted')`, // Ensure email uniqueness
-      })
-      .where(eq(users.id, user.id));
-
+      //removed soft delete
     if (userWithTeam?.teamId) {
       await db
         .delete(teamMembers)
@@ -352,7 +339,15 @@ export const deleteAccount = validatedActionWithUser(
         );
     }
 
-    (await cookies()).delete('session');
+    const { error } = await supabase.auth.admin.deleteUser(
+        user.id.toString() //it has to be string
+      )
+    if (error){
+        console.log("ERROR DELETING SUPABSE USER",error)
+        return { error: error.message };
+    }
+
+    // (await cookies()).delete('session'); // No need for custom cookie handling.
     redirect('/sign-in');
   },
 );
@@ -374,10 +369,10 @@ export const updateAccount = validatedActionWithUser(
     const userWithTeam = await getUserWithTeam(user.id);
 
     await Promise.all([
-      db.update(users).set({ 
-        name, 
-        email, 
-        firstName: first_name || null, 
+      db.update(users).set({
+        name,
+        email,
+        firstName: first_name || null,
         lastName: last_name || null,
         avatarUrl: avatar_url || null,
         phoneNumber: phone_number || null,
