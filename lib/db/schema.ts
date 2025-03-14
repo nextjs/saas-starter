@@ -140,3 +140,18 @@ export enum ActivityType {
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
 }
+
+// Table to store automation logs
+export const automationLogs = pgTable('automation_logs', {
+  id: serial('id').primaryKey(),
+  event: text('event').notNull(), // Example: "Trade executed"
+  timestamp: timestamp('timestamp').defaultNow(),
+});
+
+// Table to store performance metrics
+export const performanceMetrics = pgTable('performance_metrics', {
+  id: serial('id').primaryKey(),
+  metric: text('metric').notNull(), // Example: "API Response Time"
+  value: text('value').notNull(), // Example: "500ms"
+  change: integer('change').default(0), // Example: "+5%"
+});

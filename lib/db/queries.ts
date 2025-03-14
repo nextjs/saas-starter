@@ -99,6 +99,21 @@ export async function getActivityLogs() {
     .limit(10);
 }
 
+/*
+export async function getAutomationLogs() {
+  return db.automation_logs.findMany({
+    orderBy: { timestamp: 'desc' },
+    take: 10,
+  });
+}
+
+export async function getPerformanceMetrics() {
+  return db.performance_metrics.findMany({
+    orderBy: { metric: 'asc' },
+  });
+}
+*/
+
 export async function getTeamForUser(userId: number) {
   const result = await db.query.users.findFirst({
     where: eq(users.id, userId),
