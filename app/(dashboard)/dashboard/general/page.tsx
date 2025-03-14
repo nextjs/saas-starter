@@ -18,60 +18,100 @@ export default function GeneralPage() {
   const { userPromise } = useUser();
   const user = use(userPromise);
 
+  // The server action for saving the entire form data:
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     updateAccount,
     { error: "", success: "" }
   );
 
-  // Trading Preferences state
+  //
+  // 1) State for *unsaved* Trading Preferences:
+  //
   const [pollFrequency, setPollFrequency] = useState("month");
-
-  // Dollar Cap is purely optional now (enabled/disabled independently of Investment Method).
   const [dollarCapEnabled, setDollarCapEnabled] = useState(false);
   const [dollarCap, setDollarCap] = useState("500.00");
 
-  // Investment Method unsaved state (inputs)
+  // 2) State for *unsaved* Investment Method:
   const [dcaMethod, setDcaMethod] = useState("percentageCash");
   const [dcaValue, setDcaValue] = useState("5");
 
-  // Investment Method saved state (shown in "Current Settings")
+  //
+  // 3) State for *saved* Trading Preferences (shown in "Current Settings"):
+  //
+  const [savedPollFrequency, setSavedPollFrequency] = useState("month");
+  const [savedDollarCapEnabled, setSavedDollarCapEnabled] = useState(false);
+  const [savedDollarCap, setSavedDollarCap] = useState("500.00");
+
+  // 4) State for *saved* Investment Method (shown in "Current Settings"):
   const [savedDcaMethod, setSavedDcaMethod] = useState("percentageCash");
   const [savedDcaValue, setSavedDcaValue] = useState("5");
 
-  useEffect(() => {
-    setPollFrequency(sessionStorage.getItem("pollFrequency") || "month");
-    setDollarCapEnabled(sessionStorage.getItem("dollarCapEnabled") === "true");
-    setDollarCap(sessionStorage.getItem("dollarCap") || "500.00");
+  // We only track local validation errors for the "percentageCash" method.
+  const [localError, setLocalError] = useState<string | null>(null);
 
-    const storedDcaMethod =
-      sessionStorage.getItem("dcaMethod") || "percentageCash";
+  // On mount, restore only the *Trading Preferences* + *Investment Method* from sessionStorage
+  // but NOT the Account fields (name, email).
+  useEffect(() => {
+    const storedPollFrequency = sessionStorage.getItem("pollFrequency") || "month";
+    const storedDollarCapEnabled = sessionStorage.getItem("dollarCapEnabled") === "true";
+    const storedDollarCap = sessionStorage.getItem("dollarCap") || "500.00";
+    const storedDcaMethod = sessionStorage.getItem("dcaMethod") || "percentageCash";
     const storedDcaValue = sessionStorage.getItem("dcaValue") || "5";
+
+    setPollFrequency(storedPollFrequency);
+    setDollarCapEnabled(storedDollarCapEnabled);
+    setDollarCap(storedDollarCap);
     setDcaMethod(storedDcaMethod);
     setDcaValue(storedDcaValue);
+
+    // Also set the saved states (shown in Current Settings)
+    setSavedPollFrequency(storedPollFrequency);
+    setSavedDollarCapEnabled(storedDollarCapEnabled);
+    setSavedDollarCap(storedDollarCap);
     setSavedDcaMethod(storedDcaMethod);
     setSavedDcaValue(storedDcaValue);
   }, []);
 
-  // This function updates session storage for non-Investment Method fields immediately.
+  // A helper to update sessionStorage for trading preferences, investment method, etc.
   const handleSessionUpdate = (key: string, value: string) => {
     sessionStorage.setItem(key, value);
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setLocalError(null);
+
+    // Validate if using "percentageCash"
+    if (dcaMethod === "percentageCash") {
+      const numericVal = parseFloat(dcaValue);
+      if (isNaN(numericVal) || numericVal < 0 || numericVal > 100) {
+        setLocalError("Percentage must be between 0 and 100.");
+        return; // Stop submission
+      }
+    }
+
     startTransition(() => {
-      // Update sessionStorage for Trading Preferences immediately.
+      // 1) Update sessionStorage with the *current* state values (NOT name/email).
       handleSessionUpdate("pollFrequency", pollFrequency);
       handleSessionUpdate("dollarCapEnabled", dollarCapEnabled.toString());
       handleSessionUpdate("dollarCap", dollarCap);
-
-      // For Investment Method, update saved state on submit.
       handleSessionUpdate("dcaMethod", dcaMethod);
       handleSessionUpdate("dcaValue", dcaValue);
+
+      // 2) Update the "saved" states for the "Current Settings" display.
+      setSavedPollFrequency(pollFrequency);
+      setSavedDollarCapEnabled(dollarCapEnabled);
+      setSavedDollarCap(dollarCap);
       setSavedDcaMethod(dcaMethod);
       setSavedDcaValue(dcaValue);
 
+      // 3) Invoke the server action (for DB update).
+      //    The name/email fields will be passed along as well, but we don't store them locally.
       formAction(new FormData(event.currentTarget));
+
+      // (Optional) Clear out the name + email fields after save if you want them to “disappear”:
+      // const form = event.currentTarget as HTMLFormElement;
+      // form.reset();
     });
   };
 
@@ -102,7 +142,7 @@ export default function GeneralPage() {
         General Settings
       </h1>
 
-      {/* Wrap everything in a single form, with one "Save Changes" button at the bottom. */}
+      {/* Wrap everything in a single form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
         {/* --- Trading Preferences Card --- */}
         <Card>
@@ -149,7 +189,7 @@ export default function GeneralPage() {
               <Label htmlFor="dollarCapToggle">Enable Dollar Cap per Asset</Label>
             </div>
 
-            {/* Dollar Cap Input (independent of investment method) */}
+            {/* Dollar Cap Input */}
             <div>
               <Label htmlFor="dollarCap">Dollar Cap per Asset</Label>
               <Input
@@ -200,17 +240,25 @@ export default function GeneralPage() {
                   </div>
                 </div>
 
-                {/* Current Settings Sub-section (reflects the last saved values) */}
+                {/* "Current Settings" panel showing *saved* (last committed) values */}
                 <div className="flex-1 border border-gray-200 p-4 rounded bg-gray-50">
                   <h3 className="text-sm font-semibold text-gray-700 mb-2">
                     Current Settings
                   </h3>
                   <p>
+                    <span className="font-medium">Poll Frequency:</span>{" "}
+                    {savedPollFrequency}
+                  </p>
+                  <p>
+                    <span className="font-medium">Dollar Cap per Asset:</span>{" "}
+                    {savedDollarCapEnabled ? savedDollarCap : "Disabled"}
+                  </p>
+                  <p>
                     <span className="font-medium">Method:</span>{" "}
                     {getMethodLabel(savedDcaMethod)}
                   </p>
                   <p>
-                    <span className="font-medium">Value:</span>{" "}
+                    <span className="font-medium">Method Amount:</span>{" "}
                     {savedDcaValue || "Not set"}
                   </p>
                 </div>
@@ -228,12 +276,17 @@ export default function GeneralPage() {
                 <Input
                   type="number"
                   step="0.01"
+                  min={dcaMethod === "percentageCash" ? "0" : undefined}
+                  max={dcaMethod === "percentageCash" ? "100" : undefined}
                   id="dcaValue"
                   name="dcaValue"
                   value={dcaValue}
                   onChange={(e) => setDcaValue(e.target.value)}
                   placeholder={investmentPlaceholder}
                 />
+                {localError && (
+                  <p className="text-sm text-red-600 mt-1">{localError}</p>
+                )}
               </div>
             </div>
           </CardContent>
@@ -245,6 +298,10 @@ export default function GeneralPage() {
             <CardTitle>Account Information</CardTitle>
           </CardHeader>
           <CardContent>
+            {/* 
+              We do NOT store name/email in sessionStorage or any local state.
+              They are simply form fields passed to the server on submit.
+            */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="name">Name</Label>
@@ -264,7 +321,6 @@ export default function GeneralPage() {
                   type="email"
                   placeholder="Enter your email"
                   defaultValue={user?.email || ""}
-                  required
                 />
               </div>
             </div>
