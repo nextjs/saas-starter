@@ -56,7 +56,7 @@ function UserMenu() {
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger>
-        <Avatar className="cursor-pointer size-9">
+        <Avatar className="cursor-pointer size-15 bg-[rgb(192, 76, 48)]">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback>
             {user.email
@@ -101,8 +101,8 @@ function Header() {
             <Image
               src="/FullLogo_Transparent_NoBuffer.png"
               alt="Brand Logo"
-              width={150}
-              height={40}
+              width={135}
+              height={32}
               priority
             />
           </Link>
@@ -119,6 +119,8 @@ function Header() {
     </>
   );
 }
+
+// Removed duplicate UserMenu function
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
