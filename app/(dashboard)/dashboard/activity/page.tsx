@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Settings,
@@ -9,11 +12,46 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
+  DollarSign,
+  Coins,
   type LucideIcon,
 } from 'lucide-react';
-import { ActivityType } from '@/lib/db/schema';
-import { getActivityLogs } from '@/lib/db/queries';
 
+/**
+ * Extended ActivityType enum to handle deposit, withdrawal, and automation changes.
+ */
+export enum ActivityType {
+  SIGN_UP = 'SIGN_UP',
+  SIGN_IN = 'SIGN_IN',
+  SIGN_OUT = 'SIGN_OUT',
+  UPDATE_PASSWORD = 'UPDATE_PASSWORD',
+  DELETE_ACCOUNT = 'DELETE_ACCOUNT',
+  UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
+  CREATE_TEAM = 'CREATE_TEAM',
+  REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
+  INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
+  ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+
+  DEPOSIT = 'DEPOSIT',
+  WITHDRAW = 'WITHDRAW',
+
+  AUTOMATION_CHANGE = 'AUTOMATION_CHANGE',
+}
+
+/**
+ * Activity Log structure with optional meta fields.
+ */
+interface ActivityLog {
+  id: string;
+  action: ActivityType;
+  timestamp: string;
+  ipAddress?: string;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Map each ActivityType to a Lucide icon.
+ */
 const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.SIGN_UP]: UserPlus,
   [ActivityType.SIGN_IN]: UserCog,
@@ -25,23 +63,31 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
   [ActivityType.INVITE_TEAM_MEMBER]: Mail,
   [ActivityType.ACCEPT_INVITATION]: CheckCircle,
+
+  [ActivityType.DEPOSIT]: DollarSign,
+  [ActivityType.WITHDRAW]: Coins,
+  [ActivityType.AUTOMATION_CHANGE]: Settings,
 };
 
+/**
+ * Convert a timestamp into a relative time string (e.g., "2 hours ago").
+ */
 function getRelativeTime(date: Date) {
   const now = new Date();
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  const diffSec = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'just now';
-  if (diffInSeconds < 3600)
-    return `${Math.floor(diffInSeconds / 60)} minutes ago`;
-  if (diffInSeconds < 86400)
-    return `${Math.floor(diffInSeconds / 3600)} hours ago`;
-  if (diffInSeconds < 604800)
-    return `${Math.floor(diffInSeconds / 86400)} days ago`;
+  if (diffSec < 60) return 'just now';
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)} minutes ago`;
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)} hours ago`;
+  if (diffSec < 604800) return `${Math.floor(diffSec / 86400)} days ago`;
   return date.toLocaleDateString();
 }
 
-function formatAction(action: ActivityType): string {
+/**
+ * Formats log descriptions with meta details for deposits, withdrawals, and automation changes.
+ */
+function formatAction(log: ActivityLog): string {
+  const { action, meta } = log;
   switch (action) {
     case ActivityType.SIGN_UP:
       return 'You signed up';
@@ -63,13 +109,50 @@ function formatAction(action: ActivityType): string {
       return 'You invited a team member';
     case ActivityType.ACCEPT_INVITATION:
       return 'You accepted an invitation';
+
+    case ActivityType.DEPOSIT:
+      return `Account ${meta?.accountMask || '*****????'} deposited $${meta?.amount?.toFixed(2)}`;
+    case ActivityType.WITHDRAW:
+      return `Account ${meta?.accountMask || '*****????'} withdrew $${meta?.amount?.toFixed(2)}`;
+    case ActivityType.AUTOMATION_CHANGE:
+      const oldPurchase = meta?.oldPurchaseType ? `from ${meta.oldPurchaseType} (%) ` : '';
+      const newPurchase = meta?.newPurchaseType ? `to ${meta.newPurchaseType} (#) ` : '';
+      const note = meta?.note ? `(${meta.note})` : '';
+      return `Automation changed ${oldPurchase}${newPurchase}${note}`;
+
     default:
       return 'Unknown action occurred';
   }
 }
 
-export default async function ActivityPage() {
-  const logs = await getActivityLogs();
+/**
+ * Client Component: Activity Page (fetches logs on mount)
+ */
+export default function ActivityPage() {
+  const [logs, setLogs] = useState<ActivityLog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  /**
+   * Fetches activity logs on page load.
+   */
+  useEffect(() => {
+    async function fetchLogs() {
+      setLoading(true);
+      const fakeLogs: ActivityLog[] = [
+        { id: '1', action: ActivityType.SIGN_IN, timestamp: new Date().toISOString(), ipAddress: '192.168.1.10' },
+        { id: '2', action: ActivityType.DEPOSIT, timestamp: new Date(Date.now() - 10 * 60_000).toISOString(), meta: { accountMask: '*****3422', amount: 250.0 } },
+        { id: '3', action: ActivityType.WITHDRAW, timestamp: new Date(Date.now() - 1 * 60 * 60_000).toISOString(), meta: { accountMask: '*****3422', amount: 120.0 } },
+        { id: '4', action: ActivityType.AUTOMATION_CHANGE, timestamp: new Date(Date.now() - 2 * 60 * 60_000).toISOString(), meta: { oldPurchaseType: 'percent', newPurchaseType: 'shares' } },
+        { id: '5', action: ActivityType.AUTOMATION_CHANGE, timestamp: new Date(Date.now() - 24 * 60 * 60_000).toISOString(), meta: { note: 'Per asset cap protection enabled' } },
+      ];
+      
+      // Sort logs in **descending order** (most recent first)
+      setLogs(fakeLogs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+      setLoading(false);
+    }
+
+    fetchLogs();
+  }, []);
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -81,13 +164,13 @@ export default async function ActivityPage() {
           <CardTitle>Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
-          {logs.length > 0 ? (
+          {loading ? (
+            <p className="text-gray-500 text-sm">Loading activity...</p>
+          ) : logs.length > 0 ? (
             <ul className="space-y-4">
               {logs.map((log) => {
-                const Icon = iconMap[log.action as ActivityType] || Settings;
-                const formattedAction = formatAction(
-                  log.action as ActivityType
-                );
+                const Icon = iconMap[log.action] || Settings;
+                const description = formatAction(log);
 
                 return (
                   <li key={log.id} className="flex items-center space-x-4">
@@ -96,7 +179,7 @@ export default async function ActivityPage() {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">
-                        {formattedAction}
+                        {description}
                         {log.ipAddress && ` from IP ${log.ipAddress}`}
                       </p>
                       <p className="text-xs text-gray-500">
@@ -114,8 +197,8 @@ export default async function ActivityPage() {
                 No activity yet
               </h3>
               <p className="text-sm text-gray-500 max-w-sm">
-                When you perform actions like signing in or updating your
-                account, they'll appear here.
+                When you perform actions like depositing funds or changing automations,
+                they’ll appear here.
               </p>
             </div>
           )}
