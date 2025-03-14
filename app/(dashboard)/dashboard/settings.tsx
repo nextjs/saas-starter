@@ -6,32 +6,155 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
 import { TeamDataWithMembers } from '@/lib/db/schema';
 
-// We'll remove Chart.js and the Pie import, since we no longer use them.
-
-const ITEMS_PER_PAGE = 5;
-
 // Helper to create a 7x24 zeroed matrix
 function createDayHourMatrix(): number[][] {
   // dayHourMatrix[dayOfWeek][hour]
   return Array.from({ length: 7 }, () => Array(24).fill(0));
 }
 
-// Simple helper to color cells by count
+// Simple helper to color cells by count for the Heatmap
 function getColorByCount(count: number): string {
-  // E.g. a basic approach: no triggers -> #eee, more triggers -> darker shade of green
+  // Just a simple gradient from #eee to dark green
   if (count === 0) return '#eee';
-  // Scale or clamp if needed
-  const intensity = Math.min(count, 10); // cap at 10
-  // We'll do a light green to dark green
-  // For instance, lighten => f0fff0, dark => #006400
-  // This is approximate for demonstration:
+  const intensity = Math.min(count, 10);
   const greenBase = 100 - intensity * 7; // from 100 down
   return `hsl(120, 50%, ${greenBase}%)`; // 120 is green hue
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
   /*******************************************************
-   * EXAMPLE AUTOMATION DATA + PAGINATION SETUP
+   * EXAMPLE PORTFOLIO DATA
+   *******************************************************/
+  const initialPortfolioData = [
+    { symbol: 'JPM', marketPrice: 183.27, avgPrice: 160.45, amount: 15 },
+    { symbol: 'GS', marketPrice: 452.68, avgPrice: 410.21, amount: 8 },
+    { symbol: 'SPY', marketPrice: 529.42, avgPrice: 480.3, amount: 20 },
+    { symbol: 'BTC-USD', marketPrice: 63241.75, avgPrice: 48750.3, amount: 0.5 },
+    { symbol: 'TGT', marketPrice: 156.78, avgPrice: 170.25, amount: 25 },
+    { symbol: 'AAPL', marketPrice: 175.05, avgPrice: 182.0, amount: 10 },
+    { symbol: 'TSLA', marketPrice: 250.0, avgPrice: 210.4, amount: 8 },
+  ];
+
+  // We’ll make them all appear as columns:
+  // symbol, marketPrice, avgPrice, amount, marketValue, ROI
+
+  // Sort/pagination state for Portfolio
+  const [portPage, setPortPage] = useState(0);
+  const [portSortKey, setPortSortKey] = useState<string | null>(null);
+  const [portSortDir, setPortSortDir] = useState<'asc' | 'desc'>('asc');
+
+  // Handle column header click for the Portfolio
+  const handlePortSort = (key: string) => {
+    if (portSortKey === key) {
+      // toggle the dir if same column
+      setPortSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setPortSortKey(key);
+      setPortSortDir('asc');
+    }
+    setPortPage(0); // reset pagination
+  };
+
+  // Sorting logic for Portfolio (including derived fields)
+  const sortedPortfolioData = useMemo(() => {
+    if (!portSortKey) return initialPortfolioData;
+
+    return [...initialPortfolioData].sort((a, b) => {
+      // Compute the relevant field based on portSortKey
+      const getValue = (row: typeof a) => {
+        if (portSortKey === 'symbol') return row.symbol;
+        if (portSortKey === 'marketPrice') return row.marketPrice;
+        if (portSortKey === 'avgPrice') return row.avgPrice;
+        if (portSortKey === 'amount') return row.amount;
+        if (portSortKey === 'marketValue') {
+          return row.marketPrice * row.amount;
+        }
+        if (portSortKey === 'roi') {
+          return (row.marketPrice - row.avgPrice) / row.avgPrice; // ratio is enough
+        }
+        return ''; // fallback
+      };
+
+      const valA = getValue(a);
+      const valB = getValue(b);
+
+      // numeric vs. string
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return portSortDir === 'asc' ? valA - valB : valB - valA;
+      } else {
+        const strA = String(valA).toUpperCase();
+        const strB = String(valB).toUpperCase();
+        if (strA < strB) return portSortDir === 'asc' ? -1 : 1;
+        if (strA > strB) return portSortDir === 'asc' ? 1 : -1;
+        return 0;
+      }
+    });
+  }, [portSortKey, portSortDir]);
+
+  // Pagination slice for Portfolio
+  const totalPortPages = Math.ceil(sortedPortfolioData.length / ITEMS_PER_PAGE);
+  const portStartIndex = portPage * ITEMS_PER_PAGE;
+  const portPageData = sortedPortfolioData.slice(portStartIndex, portStartIndex + ITEMS_PER_PAGE);
+
+  // Pagination
+  const handlePortPrev = () => setPortPage((p) => Math.max(p - 1, 0));
+  const handlePortNext = () => setPortPage((p) => Math.min(p + 1, totalPortPages - 1));
+
+  /*******************************************************
+   * PRIORITY LIST: SORT & PAGINATION
+   *******************************************************/
+  const initialPriorityData = [
+    { ticker: 'JPM', priority: 1 },
+    { ticker: 'GS', priority: 2 },
+    { ticker: 'SPY', priority: 3 },
+    { ticker: 'BTC-USD', priority: 4 },
+    { ticker: 'TGT', priority: 5 },
+    { ticker: 'TSLA', priority: 6 },
+    { ticker: 'AAPL', priority: 7 },
+  ];
+
+  const [prioPage, setPrioPage] = useState(0);
+  const [prioSortKey, setPrioSortKey] = useState<keyof typeof initialPriorityData[number] | null>(null);
+  const [prioSortDir, setPrioSortDir] = useState<'asc' | 'desc'>('asc');
+
+  const handlePrioSort = (key: keyof typeof initialPriorityData[number]) => {
+    if (prioSortKey === key) {
+      setPrioSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setPrioSortKey(key);
+      setPrioSortDir('asc');
+    }
+    setPrioPage(0);
+  };
+
+  const sortedPriorityData = useMemo(() => {
+    if (!prioSortKey) return initialPriorityData;
+    return [...initialPriorityData].sort((a, b) => {
+      const valA = a[prioSortKey];
+      const valB = b[prioSortKey];
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return prioSortDir === 'asc' ? valA - valB : valB - valA;
+      } else {
+        const strA = String(valA).toUpperCase();
+        const strB = String(valB).toUpperCase();
+        if (strA < strB) return prioSortDir === 'asc' ? -1 : 1;
+        if (strA > strB) return prioSortDir === 'asc' ? 1 : -1;
+        return 0;
+      }
+    });
+  }, [prioSortKey, prioSortDir]);
+
+  const totalPrioPages = Math.ceil(sortedPriorityData.length / ITEMS_PER_PAGE);
+  const prioStartIndex = prioPage * ITEMS_PER_PAGE;
+  const prioPageData = sortedPriorityData.slice(prioStartIndex, prioStartIndex + ITEMS_PER_PAGE);
+
+  const handlePrioPrev = () => setPrioPage((p) => Math.max(p - 1, 0));
+  const handlePrioNext = () => setPrioPage((p) => Math.min(p + 1, totalPrioPages - 1));
+
+  /*******************************************************
+   * AUTOMATION HISTORY TABLE (unchanged) with pagination
    *******************************************************/
   const allAutomationData = [
     { ticker: 'JPM', time: '2023-10-01 10:00', amount: 10, purchaseType: 'shares' },
@@ -48,26 +171,17 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
     { ticker: 'NVDA', time: '2023-10-09 14:30', amount: 4, purchaseType: 'shares' },
   ];
 
-  // Pagination state
-  const [page, setPage] = useState(0);
-  const totalPages = Math.ceil(allAutomationData.length / ITEMS_PER_PAGE);
+  const [autoPage, setAutoPage] = useState(0);
+  const totalAutoPages = Math.ceil(allAutomationData.length / ITEMS_PER_PAGE);
+  const autoStartIndex = autoPage * ITEMS_PER_PAGE;
+  const autoPageData = allAutomationData.slice(autoStartIndex, autoStartIndex + ITEMS_PER_PAGE);
 
-  // Current slice of data
-  const startIndex = page * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentPageData = allAutomationData.slice(startIndex, endIndex);
-
-  const handlePrevPage = () => {
-    setPage((prev) => Math.max(prev - 1, 0));
-  };
-  const handleNextPage = () => {
-    setPage((prev) => Math.min(prev + 1, totalPages - 1));
-  };
+  const handleAutoPrev = () => setAutoPage((p) => Math.max(p - 1, 0));
+  const handleAutoNext = () => setAutoPage((p) => Math.min(p + 1, totalAutoPages - 1));
 
   /*******************************************************
    * DAY/TIME HEATMAP
    *******************************************************/
-
   // Build dayHourMatrix from allAutomationData
   // dayOfWeek: 0=Sun, 1=Mon, ... 6=Sat
   // hour: 0..23
@@ -82,12 +196,12 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
     return matrix;
   }, [allAutomationData]);
 
-  // We'll label each row: Sunday...Saturday
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  // We'll label each column as 0..23 or "12 AM," "1 AM," etc. 
-  // For brevity, let's just do numeric 0..23
   const hourLabels = Array.from({ length: 24 }, (_, i) => i);
 
+  /*******************************************************
+   * RENDER
+   *******************************************************/
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium mb-6">Dashboard</h1>
@@ -122,7 +236,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
         </CardContent>
       </Card>
 
-      {/* Portfolio View with Data Table */}
+      {/* Portfolio Table (sortable + paginated) */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Portfolio</CardTitle>
@@ -132,22 +246,46 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b bg-gray-100">
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Asset</th>
-                  <th className="text-right px-2 py-3 font-semibold uppercase text-sm">Market Price</th>
-                  <th className="text-right px-2 py-3 font-semibold uppercase text-sm">Average Price</th>
-                  <th className="text-right px-2 py-3 font-semibold uppercase text-sm">Amount</th>
-                  <th className="text-right px-2 py-3 font-semibold uppercase text-sm">Market Value</th>
-                  <th className="text-right px-2 py-3 font-semibold uppercase text-sm">ROI (%)</th>
+                  <th
+                    className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('symbol')}
+                  >
+                    Asset {portSortKey === 'symbol' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('marketPrice')}
+                  >
+                    Market Price {portSortKey === 'marketPrice' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('avgPrice')}
+                  >
+                    Average Price {portSortKey === 'avgPrice' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('amount')}
+                  >
+                    Amount {portSortKey === 'amount' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('marketValue')}
+                  >
+                    Market Value {portSortKey === 'marketValue' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePortSort('roi')}
+                  >
+                    ROI (%) {portSortKey === 'roi' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { symbol: 'JPM', marketPrice: 183.27, avgPrice: 160.45, amount: 15 },
-                  { symbol: 'GS', marketPrice: 452.68, avgPrice: 410.21, amount: 8 },
-                  { symbol: 'SPY', marketPrice: 529.42, avgPrice: 480.30, amount: 20 },
-                  { symbol: 'BTC-USD', marketPrice: 63241.75, avgPrice: 48750.30, amount: 0.5 },
-                  { symbol: 'TGT', marketPrice: 156.78, avgPrice: 170.25, amount: 25 },
-                ].map((asset) => {
+                {portPageData.map((asset) => {
                   const marketValue = asset.marketPrice * asset.amount;
                   const roi = ((asset.marketPrice - asset.avgPrice) / asset.avgPrice) * 100;
                   return (
@@ -158,9 +296,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                       <td className="text-right px-2 py-3">{asset.amount}</td>
                       <td className="text-right px-2 py-3">${marketValue.toFixed(2)}</td>
                       <td
-                        className={`text-right px-2 py-3 ${
-                          roi >= 0 ? 'text-green-600' : 'text-red-600'
-                        }`}
+                        className={`text-right px-2 py-3 ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}
                       >
                         {roi.toFixed(2)}%
                       </td>
@@ -177,10 +313,23 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
               </tfoot>
             </table>
           </div>
+
+          {/* Pagination controls for Portfolio */}
+          <div className="flex items-center mt-4 gap-2">
+            <Button variant="outline" disabled={portPage === 0} onClick={handlePortPrev}>
+              Prev
+            </Button>
+            <p className="text-sm">
+              Page {portPage + 1} of {totalPortPages}
+            </p>
+            <Button variant="outline" disabled={portPage === totalPortPages - 1} onClick={handlePortNext}>
+              Next
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Priority List Table */}
+      {/* Priority List Table (sortable + paginated) */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Asset Priority List</CardTitle>
@@ -190,18 +339,22 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b bg-gray-100">
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Ticker</th>
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Priority</th>
+                  <th
+                    className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePrioSort('ticker')}
+                  >
+                    Ticker {prioSortKey === 'ticker' ? (prioSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
+                  <th
+                    className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
+                    onClick={() => handlePrioSort('priority')}
+                  >
+                    Priority {prioSortKey === 'priority' ? (prioSortDir === 'asc' ? '▲' : '▼') : ''}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {[
-                  { ticker: 'JPM', priority: 1 },
-                  { ticker: 'GS', priority: 2 },
-                  { ticker: 'SPY', priority: 3 },
-                  { ticker: 'BTC-USD', priority: 4 },
-                  { ticker: 'TGT', priority: 5 },
-                ].map((item) => (
+                {prioPageData.map((item) => (
                   <tr key={item.ticker} className="border-b hover:bg-muted/50">
                     <td className="px-2 py-3">{item.ticker}</td>
                     <td className="px-2 py-3">{item.priority}</td>
@@ -210,13 +363,27 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
               </tbody>
             </table>
           </div>
+
           <Button variant="outline" className="p-4 mt-4">
             Update Priorities
           </Button>
+
+          {/* Pagination controls for Priority List */}
+          <div className="flex items-center mt-4 gap-2">
+            <Button variant="outline" disabled={prioPage === 0} onClick={handlePrioPrev}>
+              Prev
+            </Button>
+            <p className="text-sm">
+              Page {prioPage + 1} of {totalPrioPages}
+            </p>
+            <Button variant="outline" disabled={prioPage === totalPrioPages - 1} onClick={handlePrioNext}>
+              Next
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
-      {/* Automation Table Card (with pagination) */}
+      {/* Automation Table (with pagination only) */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Automation History Table</CardTitle>
@@ -233,7 +400,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                 </tr>
               </thead>
               <tbody>
-                {currentPageData.map((item, index) => (
+                {autoPageData.map((item, index) => (
                   <tr key={index} className="border-b hover:bg-muted/50">
                     <td className="px-2 py-3">{item.ticker}</td>
                     <td className="px-2 py-3">{item.time}</td>
@@ -244,15 +411,15 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
               </tbody>
             </table>
 
-            {/* Pagination controls */}
+            {/* Pagination for Automation History */}
             <div className="flex items-center mt-4 gap-2">
-              <Button variant="outline" disabled={page === 0} onClick={handlePrevPage}>
+              <Button variant="outline" disabled={autoPage === 0} onClick={handleAutoPrev}>
                 Prev
               </Button>
               <p className="text-sm">
-                Page {page + 1} of {totalPages}
+                Page {autoPage + 1} of {totalAutoPages}
               </p>
-              <Button variant="outline" disabled={page === totalPages - 1} onClick={handleNextPage}>
+              <Button variant="outline" disabled={autoPage === totalAutoPages - 1} onClick={handleAutoNext}>
                 Next
               </Button>
             </div>
@@ -260,19 +427,17 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
         </CardContent>
       </Card>
 
-      {/* Day/Time Heatmap Card */}
+      {/* Day/Time Heatmap Card (Restored) */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Automation Execution Heatmap (Day vs. Hour)</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* We'll use a table to visualize the 7x24 dayHourMatrix */}
           <div className="overflow-x-auto">
             <table className="border-collapse">
               <thead>
                 <tr>
                   <th className="p-1 text-sm"></th>
-                  {/* Hour labels across the top */}
                   {hourLabels.map((hour) => (
                     <th key={hour} className="p-1 text-xs text-center font-semibold">
                       {hour}
@@ -283,7 +448,6 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
               <tbody>
                 {dayHourMatrix.map((row, dayIndex) => (
                   <tr key={dayIndex}>
-                    {/* Day label in first column */}
                     <td className="p-1 text-xs font-medium">{dayLabels[dayIndex]}</td>
                     {row.map((count, hourIndex) => (
                       <td
@@ -297,7 +461,6 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                         }}
                         title={`Day: ${dayLabels[dayIndex]}, Hour: ${hourIndex}, Count: ${count}`}
                       >
-                        {/* Could show the count or keep blank */}
                         {count > 0 ? count : ''}
                       </td>
                     ))}
