@@ -17,26 +17,9 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 
-/**
- * Extended ActivityType enum to handle deposit, withdrawal, and automation changes.
- */
-export enum ActivityType {
-  SIGN_UP = 'SIGN_UP',
-  SIGN_IN = 'SIGN_IN',
-  SIGN_OUT = 'SIGN_OUT',
-  UPDATE_PASSWORD = 'UPDATE_PASSWORD',
-  DELETE_ACCOUNT = 'DELETE_ACCOUNT',
-  UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
-  CREATE_TEAM = 'CREATE_TEAM',
-  REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
-  INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
-  ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+import { ActivityType } from './types';
 
-  DEPOSIT = 'DEPOSIT',
-  WITHDRAW = 'WITHDRAW',
 
-  AUTOMATION_CHANGE = 'AUTOMATION_CHANGE',
-}
 
 /**
  * Activity Log structure with optional meta fields.
@@ -114,11 +97,12 @@ function formatAction(log: ActivityLog): string {
       return `Account ${meta?.accountMask || '*****????'} deposited $${meta?.amount?.toFixed(2)}`;
     case ActivityType.WITHDRAW:
       return `Account ${meta?.accountMask || '*****????'} withdrew $${meta?.amount?.toFixed(2)}`;
-    case ActivityType.AUTOMATION_CHANGE:
+    case ActivityType.AUTOMATION_CHANGE: {
       const oldPurchase = meta?.oldPurchaseType ? `from ${meta.oldPurchaseType} (%) ` : '';
       const newPurchase = meta?.newPurchaseType ? `to ${meta.newPurchaseType} (#) ` : '';
       const note = meta?.note ? `(${meta.note})` : '';
       return `Automation changed ${oldPurchase}${newPurchase}${note}`;
+    }
 
     default:
       return 'Unknown action occurred';
@@ -139,15 +123,45 @@ export default function ActivityPage() {
     async function fetchLogs() {
       setLoading(true);
       const fakeLogs: ActivityLog[] = [
-        { id: '1', action: ActivityType.SIGN_IN, timestamp: new Date().toISOString(), ipAddress: '192.168.1.10' },
-        { id: '2', action: ActivityType.DEPOSIT, timestamp: new Date(Date.now() - 10 * 60_000).toISOString(), meta: { accountMask: '*****3422', amount: 250.0 } },
-        { id: '3', action: ActivityType.WITHDRAW, timestamp: new Date(Date.now() - 1 * 60 * 60_000).toISOString(), meta: { accountMask: '*****3422', amount: 120.0 } },
-        { id: '4', action: ActivityType.AUTOMATION_CHANGE, timestamp: new Date(Date.now() - 2 * 60 * 60_000).toISOString(), meta: { oldPurchaseType: 'percent', newPurchaseType: 'shares' } },
-        { id: '5', action: ActivityType.AUTOMATION_CHANGE, timestamp: new Date(Date.now() - 24 * 60 * 60_000).toISOString(), meta: { note: 'Per asset cap protection enabled' } },
+        {
+          id: '1',
+          action: ActivityType.SIGN_IN,
+          timestamp: new Date().toISOString(),
+          ipAddress: '192.168.1.10',
+        },
+        {
+          id: '2',
+          action: ActivityType.DEPOSIT,
+          timestamp: new Date(Date.now() - 10 * 60_000).toISOString(),
+          meta: { accountMask: '*****3422', amount: 250.0 },
+        },
+        {
+          id: '3',
+          action: ActivityType.WITHDRAW,
+          timestamp: new Date(Date.now() - 60 * 60_000).toISOString(),
+          meta: { accountMask: '*****3422', amount: 120.0 },
+        },
+        {
+          id: '4',
+          action: ActivityType.AUTOMATION_CHANGE,
+          timestamp: new Date(Date.now() - 2 * 60 * 60_000).toISOString(),
+          meta: { oldPurchaseType: 'percent', newPurchaseType: 'shares' },
+        },
+        {
+          id: '5',
+          action: ActivityType.AUTOMATION_CHANGE,
+          timestamp: new Date(Date.now() - 24 * 60 * 60_000).toISOString(),
+          meta: { note: 'Per asset cap protection enabled' },
+        },
       ];
-      
-      // Sort logs in **descending order** (most recent first)
-      setLogs(fakeLogs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()));
+
+      // Sort logs in descending order (most recent first)
+      setLogs(
+        fakeLogs.sort(
+          (a, b) =>
+            new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        )
+      );
       setLoading(false);
     }
 
@@ -197,8 +211,8 @@ export default function ActivityPage() {
                 No activity yet
               </h3>
               <p className="text-sm text-gray-500 max-w-sm">
-                When you perform actions like depositing funds or changing automations,
-                they’ll appear here.
+                When you perform actions like depositing funds or changing
+                automations, they’ll appear here.
               </p>
             </div>
           )}

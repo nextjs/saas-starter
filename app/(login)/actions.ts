@@ -26,6 +26,7 @@ import {
   validatedActionWithUser,
 } from '@/lib/auth/middleware';
 
+
 async function logActivity(
   teamId: number | null | undefined,
   userId: number,
