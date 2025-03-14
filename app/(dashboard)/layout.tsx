@@ -30,7 +30,7 @@ function UserMenu() {
 
   if (!user) {
     return (
-      <>
+      <div className="flex items-center space-x-4">
         <Link
           href="/pricing"
           className="text-sm font-medium text-gray-700 hover:text-gray-900"
@@ -41,9 +41,15 @@ function UserMenu() {
           asChild
           className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-full"
         >
+          <Link href="/sign-in">Sign In</Link>
+        </Button>
+        <Button
+          asChild
+          className="bg-black hover:bg-gray-800 text-white text-sm px-4 py-2 rounded-full"
+        >
           <Link href="/sign-up">Sign Up</Link>
         </Button>
-      </>
+      </div>
     );
   }
 
@@ -86,14 +92,19 @@ function UserMenu() {
   );
 }
 
-
 function Header() {
   return (
     <>
       <header className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <Link href="/" className="flex items-center">
-            <Image src="/FullLogo_Transparent_NoBuffer.png" alt="Brand Logo" width={150} height={40} priority />
+            <Image
+              src="/FullLogo_Transparent_NoBuffer.png"
+              alt="Brand Logo"
+              width={150}
+              height={40}
+              priority
+            />
           </Link>
           <div className="flex items-center space-x-4">
             <Suspense fallback={<div className="h-9" />}>
@@ -103,7 +114,7 @@ function Header() {
         </div>
       </header>
       <div className="bg-gray-100 text-gray-700 text-sm text-center py-2">
-        Test Account: <strong>test@test.com</strong> / Password: <strong>admin123</strong>
+        Test Account: <strong>test@test.com</strong> / Password: <strong>admin1234</strong>
       </div>
     </>
   );
