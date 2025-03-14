@@ -4,8 +4,13 @@ import { useEffect, useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
+import { useActionState } from 'react';
 import { TeamDataWithMembers } from '@/lib/db/schema';
 
+type ActionState = {
+  error?: string;
+  success?: string;
+};
 // --- DnD Kit imports ---
 import {
   DndContext,
@@ -294,8 +299,8 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                   {teamData.subscriptionStatus === 'active'
                     ? 'Billed monthly'
                     : teamData.subscriptionStatus === 'trialing'
-                    ? 'Trial period'
-                    : 'No active subscription'}
+                      ? 'Trial period'
+                      : 'No active subscription'}
                 </p>
               </div>
               <form action={customerPortalAction}>
@@ -311,12 +316,19 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
       {/* Portfolio Table (sortable + paginated) */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Portfolio</CardTitle>
+          <CardTitle>Portfolio View</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <thead>
+                <tr className="border-b">
+                  <th className="text-left px-2 py-3 font-medium">Asset</th>
+                  <th className="text-right px-2 py-3 font-medium">Market Price</th>
+                  <th className="text-right px-2 py-3 font-medium">Average Price</th>
+                  <th className="text-right px-2 py-3 font-medium">Amount</th>
+                  <th className="text-right px-2 py-3 font-medium">Market Value</th>
+                  <th className="text-right px-2 py-3 font-medium">ROI (%)</th>
                 <tr className="border-b bg-gray-100">
                   <th
                     className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
@@ -401,6 +413,8 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                         ${asset.avgPrice.toFixed(2)}
                       </td>
                       <td className="text-right px-2 py-3">{asset.amount}</td>
+                      <td className="text-right px-2 py-3">${marketValue.toFixed(2)}</td>
+                      <td className={`text-right px-2 py-3 ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       <td className="text-right px-2 py-3">
                         ${marketValue.toFixed(2)}
                       </td>
@@ -451,9 +465,35 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
       {/* Priority List Table (DnD) */}
       <Card className="mb-8">
         <CardHeader>
+          <CardTitle>Priority List View</CardTitle>
           <CardTitle>Asset Priority List (Drag & Drop)</CardTitle>
         </CardHeader>
         <CardContent>
+          <div className="overflow-x-auto">
+        <table className="w-full border-collapse">
+          <thead>
+        <tr className="border-b">
+          <th className="text-left px-2 py-3 font-medium">Ticker</th>
+          <th className="text-left px-2 py-3 font-medium">Priority</th>
+        </tr>
+          </thead>
+          <tbody>
+        {[
+          { ticker: 'JPM', priority: 1 },
+          { ticker: 'GS', priority: 2 },
+          { ticker: 'SPY', priority: 3 },
+          { ticker: 'BTC-USD', priority: 4 },
+          { ticker: 'TGT', priority: 5 },
+        ].map((item) => (
+          <tr key={item.ticker} className="border-b hover:bg-muted/50">
+        <td className="px-2 py-3">{item.ticker}</td>
+        <td className="px-2 py-3">{item.priority}</td>
+          </tr>
+        ))}
+          </tbody>
+        </table>
+          </div>
+          <Button variant="outline" className="p-4 mt-4">Update Priorities</Button>
           {/* If user has unsaved changes, show a small warning */}
           {hasUnsavedChanges && (
             <p className="text-red-600 mb-2 text-sm">
