@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, Database } from 'lucide-react';
+import { ArrowRight, WandSparkles , TrendingUpDown , Cable  } from 'lucide-react';
 import { Terminal } from './terminal';
 
 export default function HomePage() {
@@ -42,7 +42,7 @@ export default function HomePage() {
             {/* Feature 1 - Alpaca Integration */}
             <div>
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <Database className="h-6 w-6" />
+                <Cable className="h-6 w-6" />
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
@@ -59,7 +59,7 @@ export default function HomePage() {
             {/* Feature 2 - Priority-Based Averaging Down */}
             <div className="mt-10 lg:mt-0">
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <Database className="h-6 w-6" />
+                <TrendingUpDown className="h-6 w-6" />
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
@@ -76,7 +76,7 @@ export default function HomePage() {
             {/* Feature 3 - Future Premium Features */}
             <div className="mt-10 lg:mt-0">
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <CreditCard className="h-6 w-6" />
+                <WandSparkles  className="h-6 w-6" />
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
