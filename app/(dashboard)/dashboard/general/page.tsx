@@ -1,56 +1,34 @@
 "use client";
 
-import { useState, useEffect, startTransition, use, useActionState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Loader2 } from "lucide-react";
-import { useUser } from "@/lib/auth";
-import { updateAccount } from "@/app/(login)/actions";
-
-type ActionState = {
-  error?: string;
-  success?: string;
-};
 
 export default function GeneralPage() {
-  const { userPromise } = useUser();
-  const user = use(userPromise);
-
-  // The server action for saving the entire form data:
-  const [state, formAction, isPending] = useActionState<ActionState, FormData>(
-    updateAccount,
-    { error: "", success: "" }
-  );
-
-  //
-  // 1) State for *unsaved* Trading Preferences:
-  //
-  const [pollFrequency, setPollFrequency] = useState("month");
+  // 1) State for *unsaved* Trading Preferences
+  const [pollFrequency, setPollFrequency] = useState("Month");
   const [dollarCapEnabled, setDollarCapEnabled] = useState(false);
   const [dollarCap, setDollarCap] = useState("500.00");
 
-  // 2) State for *unsaved* Investment Method:
+  // 2) State for *unsaved* Investment Method
   const [dcaMethod, setDcaMethod] = useState("percentageCash");
   const [dcaValue, setDcaValue] = useState("5");
 
-  //
-  // 3) State for *saved* Trading Preferences (shown in "Current Settings"):
-  //
-  const [savedPollFrequency, setSavedPollFrequency] = useState("month");
+  // 3) State for *saved* Trading Preferences (shown in "Current Settings")
+  const [savedPollFrequency, setSavedPollFrequency] = useState("Month");
   const [savedDollarCapEnabled, setSavedDollarCapEnabled] = useState(false);
   const [savedDollarCap, setSavedDollarCap] = useState("500.00");
 
-  // 4) State for *saved* Investment Method (shown in "Current Settings"):
+  // 4) State for *saved* Investment Method (shown in "Current Settings")
   const [savedDcaMethod, setSavedDcaMethod] = useState("percentageCash");
   const [savedDcaValue, setSavedDcaValue] = useState("5");
 
-  // We only track local validation errors for the "percentageCash" method.
+  // Local validation error for "percentageCash"
   const [localError, setLocalError] = useState<string | null>(null);
 
-  // On mount, restore only the *Trading Preferences* + *Investment Method* from sessionStorage
-  // but NOT the Account fields (name, email).
+  // On mount, restore from sessionStorage
   useEffect(() => {
     const storedPollFrequency = sessionStorage.getItem("pollFrequency") || "month";
     const storedDollarCapEnabled = sessionStorage.getItem("dollarCapEnabled") === "true";
@@ -64,7 +42,7 @@ export default function GeneralPage() {
     setDcaMethod(storedDcaMethod);
     setDcaValue(storedDcaValue);
 
-    // Also set the saved states (shown in Current Settings)
+    // Also set the "saved" states (shown in the "Current Settings" panel)
     setSavedPollFrequency(storedPollFrequency);
     setSavedDollarCapEnabled(storedDollarCapEnabled);
     setSavedDollarCap(storedDollarCap);
@@ -72,11 +50,12 @@ export default function GeneralPage() {
     setSavedDcaValue(storedDcaValue);
   }, []);
 
-  // A helper to update sessionStorage for trading preferences, investment method, etc.
+  // Helper to update sessionStorage
   const handleSessionUpdate = (key: string, value: string) => {
     sessionStorage.setItem(key, value);
   };
 
+  // Handle form submission
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLocalError(null);
@@ -86,36 +65,28 @@ export default function GeneralPage() {
       const numericVal = parseFloat(dcaValue);
       if (isNaN(numericVal) || numericVal < 0 || numericVal > 100) {
         setLocalError("Percentage must be between 0 and 100.");
-        return; // Stop submission
+        return;
       }
     }
 
-    startTransition(() => {
-      // 1) Update sessionStorage with the *current* state values (NOT name/email).
-      handleSessionUpdate("pollFrequency", pollFrequency);
-      handleSessionUpdate("dollarCapEnabled", dollarCapEnabled.toString());
-      handleSessionUpdate("dollarCap", dollarCap);
-      handleSessionUpdate("dcaMethod", dcaMethod);
-      handleSessionUpdate("dcaValue", dcaValue);
+    // Update sessionStorage with the current values
+    handleSessionUpdate("pollFrequency", pollFrequency);
+    handleSessionUpdate("dollarCapEnabled", dollarCapEnabled.toString());
+    handleSessionUpdate("dollarCap", dollarCap);
+    handleSessionUpdate("dcaMethod", dcaMethod);
+    handleSessionUpdate("dcaValue", dcaValue);
 
-      // 2) Update the "saved" states for the "Current Settings" display.
-      setSavedPollFrequency(pollFrequency);
-      setSavedDollarCapEnabled(dollarCapEnabled);
-      setSavedDollarCap(dollarCap);
-      setSavedDcaMethod(dcaMethod);
-      setSavedDcaValue(dcaValue);
+    // Update the "saved" states for the "Current Settings" display
+    setSavedPollFrequency(pollFrequency);
+    setSavedDollarCapEnabled(dollarCapEnabled);
+    setSavedDollarCap(dollarCap);
+    setSavedDcaMethod(dcaMethod);
+    setSavedDcaValue(dcaValue);
 
-      // 3) Invoke the server action (for DB update).
-      //    The name/email fields will be passed along as well, but we don't store them locally.
-      formAction(new FormData(event.currentTarget));
-
-      // (Optional) Clear out the name + email fields after save if you want them to “disappear”:
-      // const form = event.currentTarget as HTMLFormElement;
-      // form.reset();
-    });
+    // No real server call; just show the impression that it's "saved."
   };
 
-  // Dynamic placeholder for the Investment Method value input.
+  // Dynamic placeholder for the Investment Method value input
   const investmentPlaceholder =
     dcaMethod === "specificDollar"
       ? "e.g. 1000.00"
@@ -123,7 +94,7 @@ export default function GeneralPage() {
       ? "e.g. 10"
       : "e.g. 5";
 
-  // Helper to display full label for a given investment method.
+  // Display label for each method
   const getMethodLabel = (method: string) => {
     switch (method) {
       case "specificDollar":
@@ -142,9 +113,7 @@ export default function GeneralPage() {
         General Settings
       </h1>
 
-      {/* Wrap everything in a single form */}
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {/* --- Trading Preferences Card --- */}
         <Card>
           <CardHeader>
             <CardTitle>Trading Preferences</CardTitle>
@@ -163,14 +132,14 @@ export default function GeneralPage() {
                 }}
                 className="rounded-md border border-gray-300 p-2 w-full"
               >
-                <option value="minute">Minute</option>
-                <option value="hour">Hour</option>
-                <option value="day">Day</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="quarter">Quarter</option>
-                <option value="half">Half-Year</option>
-                <option value="year">Year</option>
+                <option value="Minute">Minute</option>
+                <option value="Hour">Hour</option>
+                <option value="Day">Day</option>
+                <option value="Week">Week</option>
+                <option value="Month">Month</option>
+                <option value="Quarter">Quarter</option>
+                <option value="Half">Half-Year</option>
+                <option value="Year">Year</option>
               </select>
             </div>
 
@@ -181,9 +150,9 @@ export default function GeneralPage() {
                 id="dollarCapToggle"
                 checked={dollarCapEnabled}
                 onChange={() => {
-                  const newValue = !dollarCapEnabled;
-                  setDollarCapEnabled(newValue);
-                  handleSessionUpdate("dollarCapEnabled", newValue.toString());
+                  const newVal = !dollarCapEnabled;
+                  setDollarCapEnabled(newVal);
+                  handleSessionUpdate("dollarCapEnabled", newVal.toString());
                 }}
               />
               <Label htmlFor="dollarCapToggle">Enable Dollar Cap per Asset</Label>
@@ -216,7 +185,6 @@ export default function GeneralPage() {
               <p className="text-sm text-gray-500">
                 Choose how you want to invest each time you trade.
               </p>
-
               <div className="flex flex-col md:flex-row gap-4">
                 {/* Radio Options */}
                 <div className="flex-1">
@@ -240,7 +208,7 @@ export default function GeneralPage() {
                   </div>
                 </div>
 
-                {/* "Current Settings" panel showing *saved* (last committed) values */}
+                {/* "Current Settings" panel (saved) */}
                 <div className="flex-1 border border-gray-200 p-4 rounded bg-gray-50">
                   <h3 className="text-sm font-semibold text-gray-700 mb-2">
                     Current Settings
@@ -292,55 +260,9 @@ export default function GeneralPage() {
           </CardContent>
         </Card>
 
-        {/* --- Account Information Card --- */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Information</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {/* 
-              We do NOT store name/email in sessionStorage or any local state.
-              They are simply form fields passed to the server on submit.
-            */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Enter your name"
-                  defaultValue={user?.name || ""}
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  defaultValue={user?.email || ""}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Save Button for entire form */}
-        <Button
-          type="submit"
-          className="bg-orange-500 hover:bg-orange-600 text-white mt-4"
-          disabled={isPending}
-        >
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Saving...
-            </>
-          ) : (
-            "Save Changes"
-          )}
+        {/* Save Button */}
+        <Button type="submit" className="bg-orange-500 hover:bg-orange-600 text-white mt-4">
+          Save Changes
         </Button>
       </form>
     </section>
