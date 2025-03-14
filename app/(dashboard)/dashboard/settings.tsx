@@ -1,28 +1,89 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
 import { TeamDataWithMembers } from '@/lib/db/schema';
 
-// Helper to create a 7x24 zeroed matrix
+// --- DnD Kit imports ---
+import {
+  DndContext,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+/*******************************************************
+ * HELPER UTILS
+ *******************************************************/
+
+// Helper to create a 7x24 zeroed matrix for the heatmap
 function createDayHourMatrix(): number[][] {
-  // dayHourMatrix[dayOfWeek][hour]
   return Array.from({ length: 7 }, () => Array(24).fill(0));
 }
 
 // Simple helper to color cells by count for the Heatmap
 function getColorByCount(count: number): string {
-  // Just a simple gradient from #eee to dark green
   if (count === 0) return '#eee';
   const intensity = Math.min(count, 10);
-  const greenBase = 100 - intensity * 7; // from 100 down
+  const greenBase = 100 - intensity * 7;
   return `hsl(120, 50%, ${greenBase}%)`; // 120 is green hue
 }
 
 const ITEMS_PER_PAGE = 10;
 
+/*******************************************************
+ * SORTABLE ROW COMPONENT
+ * We'll make each row "draggable" using useSortable.
+ *******************************************************/
+function SortablePriorityRow({
+  ticker,
+  priority,
+}: {
+  ticker: string;
+  priority: number;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: ticker });
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    transition,
+    ...(isDragging
+      ? {
+          backgroundColor: 'var(--accent)',
+          opacity: 0.8,
+        }
+      : {}),
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="border-b hover:bg-muted/50 cursor-grab"
+    >
+      <td className="px-2 py-3">{ticker}</td>
+      <td className="px-2 py-3">{priority}</td>
+    </tr>
+  );
+}
+
+/*******************************************************
+ * MAIN COMPONENT
+ *******************************************************/
 export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
   /*******************************************************
    * EXAMPLE PORTFOLIO DATA
@@ -37,9 +98,6 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
     { symbol: 'TSLA', marketPrice: 250.0, avgPrice: 210.4, amount: 8 },
   ];
 
-  // We’ll make them all appear as columns:
-  // symbol, marketPrice, avgPrice, amount, marketValue, ROI
-
   // Sort/pagination state for Portfolio
   const [portPage, setPortPage] = useState(0);
   const [portSortKey, setPortSortKey] = useState<string | null>(null);
@@ -48,13 +106,12 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
   // Handle column header click for the Portfolio
   const handlePortSort = (key: string) => {
     if (portSortKey === key) {
-      // toggle the dir if same column
       setPortSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setPortSortKey(key);
       setPortSortDir('asc');
     }
-    setPortPage(0); // reset pagination
+    setPortPage(0);
   };
 
   // Sorting logic for Portfolio (including derived fields)
@@ -62,7 +119,6 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
     if (!portSortKey) return initialPortfolioData;
 
     return [...initialPortfolioData].sort((a, b) => {
-      // Compute the relevant field based on portSortKey
       const getValue = (row: typeof a) => {
         if (portSortKey === 'symbol') return row.symbol;
         if (portSortKey === 'marketPrice') return row.marketPrice;
@@ -72,11 +128,10 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
           return row.marketPrice * row.amount;
         }
         if (portSortKey === 'roi') {
-          return (row.marketPrice - row.avgPrice) / row.avgPrice; // ratio is enough
+          return (row.marketPrice - row.avgPrice) / row.avgPrice;
         }
-        return ''; // fallback
+        return '';
       };
-
       const valA = getValue(a);
       const valB = getValue(b);
 
@@ -96,16 +151,22 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
   // Pagination slice for Portfolio
   const totalPortPages = Math.ceil(sortedPortfolioData.length / ITEMS_PER_PAGE);
   const portStartIndex = portPage * ITEMS_PER_PAGE;
-  const portPageData = sortedPortfolioData.slice(portStartIndex, portStartIndex + ITEMS_PER_PAGE);
+  const portPageData = sortedPortfolioData.slice(
+    portStartIndex,
+    portStartIndex + ITEMS_PER_PAGE
+  );
 
   // Pagination
   const handlePortPrev = () => setPortPage((p) => Math.max(p - 1, 0));
-  const handlePortNext = () => setPortPage((p) => Math.min(p + 1, totalPortPages - 1));
+  const handlePortNext = () =>
+    setPortPage((p) => Math.min(p + 1, totalPortPages - 1));
 
   /*******************************************************
-   * PRIORITY LIST: SORT & PAGINATION
+   * PRIORITY LIST (DnD) + Unsaved Changes
    *******************************************************/
-  const initialPriorityData = [
+  type PriorityItem = { ticker: string; priority: number };
+
+  const [priorityData, setPriorityData] = useState<PriorityItem[]>([
     { ticker: 'JPM', priority: 1 },
     { ticker: 'GS', priority: 2 },
     { ticker: 'SPY', priority: 3 },
@@ -113,45 +174,55 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
     { ticker: 'TGT', priority: 5 },
     { ticker: 'TSLA', priority: 6 },
     { ticker: 'AAPL', priority: 7 },
-  ];
+  ]);
 
-  const [prioPage, setPrioPage] = useState(0);
-  const [prioSortKey, setPrioSortKey] = useState<keyof typeof initialPriorityData[number] | null>(null);
-  const [prioSortDir, setPrioSortDir] = useState<'asc' | 'desc'>('asc');
+  // Track if user has unsaved changes
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const handlePrioSort = (key: keyof typeof initialPriorityData[number]) => {
-    if (prioSortKey === key) {
-      setPrioSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
-    } else {
-      setPrioSortKey(key);
-      setPrioSortDir('asc');
-    }
-    setPrioPage(0);
+  // Once user reorders, we set "hasUnsavedChanges" to true
+  const sensors = useSensors(useSensor(PointerSensor));
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = priorityData.findIndex((i) => i.ticker === active.id);
+    const newIndex = priorityData.findIndex((i) => i.ticker === over.id);
+    setPriorityData((prev) => {
+      const newArr = arrayMove(prev, oldIndex, newIndex);
+      // re-assign priority field automatically 1..N
+      const reassigned = newArr.map((item, idx) => ({
+        ...item,
+        priority: idx + 1,
+      }));
+      return reassigned;
+    });
+    setHasUnsavedChanges(true);
   };
 
-  const sortedPriorityData = useMemo(() => {
-    if (!prioSortKey) return initialPriorityData;
-    return [...initialPriorityData].sort((a, b) => {
-      const valA = a[prioSortKey];
-      const valB = b[prioSortKey];
-      if (typeof valA === 'number' && typeof valB === 'number') {
-        return prioSortDir === 'asc' ? valA - valB : valB - valA;
-      } else {
-        const strA = String(valA).toUpperCase();
-        const strB = String(valB).toUpperCase();
-        if (strA < strB) return prioSortDir === 'asc' ? -1 : 1;
-        if (strA > strB) return prioSortDir === 'asc' ? 1 : -1;
-        return 0;
-      }
-    });
-  }, [prioSortKey, prioSortDir]);
+  // If user tries to leave the page with unsaved changes, let's warn them:
+  useEffect(() => {
+    if (!hasUnsavedChanges) {
+      // If no unsaved changes, remove the listener
+      window.onbeforeunload = null;
+      return;
+    }
+    // Otherwise, set up a handler:
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+      return e.returnValue;
+    };
+    window.addEventListener('beforeunload', handler as any);
+    return () => {
+      window.removeEventListener('beforeunload', handler as any);
+    };
+  }, [hasUnsavedChanges]);
 
-  const totalPrioPages = Math.ceil(sortedPriorityData.length / ITEMS_PER_PAGE);
-  const prioStartIndex = prioPage * ITEMS_PER_PAGE;
-  const prioPageData = sortedPriorityData.slice(prioStartIndex, prioStartIndex + ITEMS_PER_PAGE);
-
-  const handlePrioPrev = () => setPrioPage((p) => Math.max(p - 1, 0));
-  const handlePrioNext = () => setPrioPage((p) => Math.min(p + 1, totalPrioPages - 1));
+  // "Save" the new order
+  const handleUpdatePriorities = () => {
+    sessionStorage.setItem('myPriorityList', JSON.stringify(priorityData));
+    setHasUnsavedChanges(false);
+    alert('Priority list saved to sessionStorage!');
+  };
 
   /*******************************************************
    * AUTOMATION HISTORY TABLE (unchanged) with pagination
@@ -174,17 +245,18 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
   const [autoPage, setAutoPage] = useState(0);
   const totalAutoPages = Math.ceil(allAutomationData.length / ITEMS_PER_PAGE);
   const autoStartIndex = autoPage * ITEMS_PER_PAGE;
-  const autoPageData = allAutomationData.slice(autoStartIndex, autoStartIndex + ITEMS_PER_PAGE);
+  const autoPageData = allAutomationData.slice(
+    autoStartIndex,
+    autoStartIndex + ITEMS_PER_PAGE
+  );
 
   const handleAutoPrev = () => setAutoPage((p) => Math.max(p - 1, 0));
-  const handleAutoNext = () => setAutoPage((p) => Math.min(p + 1, totalAutoPages - 1));
+  const handleAutoNext = () =>
+    setAutoPage((p) => Math.min(p + 1, totalAutoPages - 1));
 
   /*******************************************************
    * DAY/TIME HEATMAP
    *******************************************************/
-  // Build dayHourMatrix from allAutomationData
-  // dayOfWeek: 0=Sun, 1=Mon, ... 6=Sat
-  // hour: 0..23
   const dayHourMatrix = useMemo(() => {
     const matrix = createDayHourMatrix();
     allAutomationData.forEach((item) => {
@@ -250,53 +322,92 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                     className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('symbol')}
                   >
-                    Asset {portSortKey === 'symbol' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    Asset{' '}
+                    {portSortKey === 'symbol'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                   <th
                     className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('marketPrice')}
                   >
-                    Market Price {portSortKey === 'marketPrice' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    Market Price{' '}
+                    {portSortKey === 'marketPrice'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                   <th
                     className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('avgPrice')}
                   >
-                    Average Price {portSortKey === 'avgPrice' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    Average Price{' '}
+                    {portSortKey === 'avgPrice'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                   <th
                     className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('amount')}
                   >
-                    Amount {portSortKey === 'amount' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    Amount{' '}
+                    {portSortKey === 'amount'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                   <th
                     className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('marketValue')}
                   >
-                    Market Value {portSortKey === 'marketValue' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    Market Value{' '}
+                    {portSortKey === 'marketValue'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                   <th
                     className="text-right px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
                     onClick={() => handlePortSort('roi')}
                   >
-                    ROI (%) {portSortKey === 'roi' ? (portSortDir === 'asc' ? '▲' : '▼') : ''}
+                    ROI (%){' '}
+                    {portSortKey === 'roi'
+                      ? portSortDir === 'asc'
+                        ? '▲'
+                        : '▼'
+                      : ''}
                   </th>
                 </tr>
               </thead>
               <tbody>
                 {portPageData.map((asset) => {
                   const marketValue = asset.marketPrice * asset.amount;
-                  const roi = ((asset.marketPrice - asset.avgPrice) / asset.avgPrice) * 100;
+                  const roi =
+                    ((asset.marketPrice - asset.avgPrice) / asset.avgPrice) * 100;
                   return (
                     <tr key={asset.symbol} className="border-b hover:bg-muted/50">
                       <td className="px-2 py-3 font-medium">{asset.symbol}</td>
-                      <td className="text-right px-2 py-3">${asset.marketPrice.toFixed(2)}</td>
-                      <td className="text-right px-2 py-3">${asset.avgPrice.toFixed(2)}</td>
+                      <td className="text-right px-2 py-3">
+                        ${asset.marketPrice.toFixed(2)}
+                      </td>
+                      <td className="text-right px-2 py-3">
+                        ${asset.avgPrice.toFixed(2)}
+                      </td>
                       <td className="text-right px-2 py-3">{asset.amount}</td>
-                      <td className="text-right px-2 py-3">${marketValue.toFixed(2)}</td>
+                      <td className="text-right px-2 py-3">
+                        ${marketValue.toFixed(2)}
+                      </td>
                       <td
-                        className={`text-right px-2 py-3 ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}
+                        className={`text-right px-2 py-3 ${
+                          roi >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
                       >
                         {roi.toFixed(2)}%
                       </td>
@@ -316,70 +427,86 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
 
           {/* Pagination controls for Portfolio */}
           <div className="flex items-center mt-4 gap-2">
-            <Button variant="outline" disabled={portPage === 0} onClick={handlePortPrev}>
+            <Button
+              variant="outline"
+              disabled={portPage === 0}
+              onClick={handlePortPrev}
+            >
               Prev
             </Button>
             <p className="text-sm">
               Page {portPage + 1} of {totalPortPages}
             </p>
-            <Button variant="outline" disabled={portPage === totalPortPages - 1} onClick={handlePortNext}>
+            <Button
+              variant="outline"
+              disabled={portPage === totalPortPages - 1}
+              onClick={handlePortNext}
+            >
               Next
             </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Priority List Table (sortable + paginated) */}
+      {/* Priority List Table (DnD) */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Asset Priority List</CardTitle>
+          <CardTitle>Asset Priority List (Drag & Drop)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="border-b bg-gray-100">
-                  <th
-                    className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
-                    onClick={() => handlePrioSort('ticker')}
-                  >
-                    Ticker {prioSortKey === 'ticker' ? (prioSortDir === 'asc' ? '▲' : '▼') : ''}
-                  </th>
-                  <th
-                    className="text-left px-2 py-3 font-semibold uppercase text-sm cursor-pointer"
-                    onClick={() => handlePrioSort('priority')}
-                  >
-                    Priority {prioSortKey === 'priority' ? (prioSortDir === 'asc' ? '▲' : '▼') : ''}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {prioPageData.map((item) => (
-                  <tr key={item.ticker} className="border-b hover:bg-muted/50">
-                    <td className="px-2 py-3">{item.ticker}</td>
-                    <td className="px-2 py-3">{item.priority}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {/* If user has unsaved changes, show a small warning */}
+          {hasUnsavedChanges && (
+            <p className="text-red-600 mb-2 text-sm">
+              You have unsaved changes!
+            </p>
+          )}
 
-          <Button variant="outline" className="p-4 mt-4">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext
+              items={priorityData.map((item) => item.ticker)}
+              strategy={verticalListSortingStrategy}
+            >
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b bg-gray-100">
+                      <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                        Ticker
+                      </th>
+                      <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                        Priority
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {priorityData.map((item) => (
+                      <SortablePriorityRow
+                        key={item.ticker}
+                        ticker={item.ticker}
+                        priority={item.priority}
+                      />
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </SortableContext>
+          </DndContext>
+
+          <Button
+            variant="outline"
+            className="p-4 mt-4"
+            onClick={handleUpdatePriorities}
+          >
             Update Priorities
           </Button>
-
-          {/* Pagination controls for Priority List */}
-          <div className="flex items-center mt-4 gap-2">
-            <Button variant="outline" disabled={prioPage === 0} onClick={handlePrioPrev}>
-              Prev
-            </Button>
-            <p className="text-sm">
-              Page {prioPage + 1} of {totalPrioPages}
-            </p>
-            <Button variant="outline" disabled={prioPage === totalPrioPages - 1} onClick={handlePrioNext}>
-              Next
-            </Button>
-          </div>
+          <p className="text-sm mt-2 text-muted-foreground">
+            Drag rows to reorder. Then click &quot;Update Priorities&quot; to
+            save in sessionStorage.
+          </p>
         </CardContent>
       </Card>
 
@@ -393,10 +520,18 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b bg-gray-100">
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Ticker</th>
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Time</th>
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Amount</th>
-                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">Type</th>
+                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                    Ticker
+                  </th>
+                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                    Time
+                  </th>
+                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                    Amount
+                  </th>
+                  <th className="text-left px-2 py-3 font-semibold uppercase text-sm">
+                    Type
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -413,13 +548,21 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
 
             {/* Pagination for Automation History */}
             <div className="flex items-center mt-4 gap-2">
-              <Button variant="outline" disabled={autoPage === 0} onClick={handleAutoPrev}>
+              <Button
+                variant="outline"
+                disabled={autoPage === 0}
+                onClick={handleAutoPrev}
+              >
                 Prev
               </Button>
               <p className="text-sm">
                 Page {autoPage + 1} of {totalAutoPages}
               </p>
-              <Button variant="outline" disabled={autoPage === totalAutoPages - 1} onClick={handleAutoNext}>
+              <Button
+                variant="outline"
+                disabled={autoPage === totalAutoPages - 1}
+                onClick={handleAutoNext}
+              >
                 Next
               </Button>
             </div>
@@ -427,7 +570,7 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
         </CardContent>
       </Card>
 
-      {/* Day/Time Heatmap Card (Restored) */}
+      {/* Day/Time Heatmap Card */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Automation Execution Heatmap (Day vs. Hour)</CardTitle>
@@ -439,7 +582,10 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
                 <tr>
                   <th className="p-1 text-sm"></th>
                   {hourLabels.map((hour) => (
-                    <th key={hour} className="p-1 text-xs text-center font-semibold">
+                    <th
+                      key={hour}
+                      className="p-1 text-xs text-center font-semibold"
+                    >
                       {hour}
                     </th>
                   ))}
@@ -448,7 +594,9 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
               <tbody>
                 {dayHourMatrix.map((row, dayIndex) => (
                   <tr key={dayIndex}>
-                    <td className="p-1 text-xs font-medium">{dayLabels[dayIndex]}</td>
+                    <td className="p-1 text-xs font-medium">
+                      {dayLabels[dayIndex]}
+                    </td>
                     {row.map((count, hourIndex) => (
                       <td
                         key={hourIndex}
