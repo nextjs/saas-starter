@@ -1,5 +1,10 @@
+import { Suspense } from 'react';
 import { Login } from '../login';
 
 export default function SignInPage() {
-  return <Login mode="signin" />;
+  return (
+    <Suspense>
+      <Login mode="signin" />
+    </Suspense>
+  );
 }

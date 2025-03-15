@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useActionState } from 'react';
+import { startTransition, use, useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,7 +15,8 @@ type ActionState = {
 };
 
 export default function GeneralPage() {
-  const { user } = useUser();
+  const { userPromise } = useUser();
+  const user = use(userPromise);
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     updateAccount,
     { error: '', success: '' }

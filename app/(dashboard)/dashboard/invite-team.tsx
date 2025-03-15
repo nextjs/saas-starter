@@ -7,12 +7,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { useActionState } from 'react';
+import { use, useActionState } from 'react';
 import { inviteTeamMember } from '@/app/(login)/actions';
 import { useUser } from '@/lib/auth';
 
@@ -22,7 +22,8 @@ type ActionState = {
 };
 
 export function InviteTeamMember() {
-  const { user } = useUser();
+  const { userPromise } = useUser();
+  const user = use(userPromise);
   const isOwner = user?.role === 'owner';
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
