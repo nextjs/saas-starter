@@ -45,3 +45,4 @@ postgres_data/
 .cursor/
 .cursor/**/*
 *.mdc
+.env
