@@ -1,20 +1,24 @@
 import { FlowgladServer } from '@flowglad/nextjs/server'
-import { getUser, getUserWithTeam } from '@/lib/db/queries'
+import { getTeamForUser, getUser } from '@/lib/db/queries'
 
 export const flowgladServer = new FlowgladServer({
+  apiKey: process.env.FLOWGLAD_SECRET_KEY,
+  baseURL: 'https://app.flowglad.com',
   getRequestingCustomerProfile: async () => {
     const user = await getUser()
     if (!user) {
       throw new Error('User not found')
     }
-    const { teamId } = await getUserWithTeam(user.id)
-    if (!teamId) {
+    const team = await getTeamForUser(user.id)
+    if (!team) {
       throw new Error('Team not found')
     }
     return {
-      externalId: teamId.toString(),
-      name: user.name ?? '',
-      email: user.email,
+      externalId: team.id.toString(),
+      name: team.name,
+      email: team.teamMembers.find(
+        (teamMember) => teamMember.role === 'owner'
+      )?.user.email!,
     }
   },
 })
