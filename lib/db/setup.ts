@@ -97,7 +97,7 @@ volumes:
 async function getFlowgladSecretKey(): Promise<string> {
   console.log('Step 3: Getting Flowglad Secret Key')
   console.log(
-    'You can find your Flowglad Secret Key at: https://app.flowglad.com/apikeys'
+    'You can find your Flowglad Secret Key at: https://app.flowglad.com/settings'
   )
   return await question('Enter your Flowglad Secret Key: ')
 }
