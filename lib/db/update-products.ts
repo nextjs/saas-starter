@@ -35,7 +35,7 @@ async function updateStripeProducts() {
             // Crear un nuevo precio sin período de prueba
             const newPrice = await stripe.prices.create({
               product: product.id,
-              unit_amount: price.unit_amount,
+              unit_amount: price.unit_amount ?? 0,
               currency: price.currency,
               recurring: {
                 interval: price.recurring.interval as
