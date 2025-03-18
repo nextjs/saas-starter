@@ -1,84 +1,105 @@
-import { stripe } from '../payments/stripe';
-import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
-import { hashPassword } from '@/lib/auth/session';
+import { stripe } from "../payments/stripe";
+import { db } from "./drizzle";
+import { users } from "./schema";
+import { hashPassword } from "@/lib/auth/session";
+import { eq, sql } from "drizzle-orm";
 
 async function createStripeProducts() {
-  console.log('Creating Stripe products and prices...');
+  console.log("Creating Stripe products and prices...");
 
-  const baseProduct = await stripe.products.create({
-    name: 'Base',
-    description: 'Base subscription plan',
+  // Verificar si ya existen productos
+  const existingProducts = await stripe.products.list({
+    limit: 10,
   });
 
-  await stripe.prices.create({
-    product: baseProduct.id,
-    unit_amount: 800, // $8 in cents
-    currency: 'usd',
-    recurring: {
-      interval: 'month',
-      trial_period_days: 7,
-    },
-  });
+  // Crear producto Base si no existe
+  let baseProduct = existingProducts.data.find((p) => p.name === "Base");
+  if (!baseProduct) {
+    baseProduct = await stripe.products.create({
+      name: "Base",
+      description: "Base subscription plan",
+    });
 
-  const plusProduct = await stripe.products.create({
-    name: 'Plus',
-    description: 'Plus subscription plan',
-  });
+    await stripe.prices.create({
+      product: baseProduct.id,
+      unit_amount: 800, // $8 in cents
+      currency: "usd",
+      recurring: {
+        interval: "month",
+      },
+    });
+  }
 
-  await stripe.prices.create({
-    product: plusProduct.id,
-    unit_amount: 1200, // $12 in cents
-    currency: 'usd',
-    recurring: {
-      interval: 'month',
-      trial_period_days: 7,
-    },
-  });
+  // Crear producto Plus si no existe
+  let plusProduct = existingProducts.data.find((p) => p.name === "Plus");
+  if (!plusProduct) {
+    plusProduct = await stripe.products.create({
+      name: "Plus",
+      description: "Plus subscription plan",
+    });
 
-  console.log('Stripe products and prices created successfully.');
+    await stripe.prices.create({
+      product: plusProduct.id,
+      unit_amount: 1200, // $12 in cents
+      currency: "usd",
+      recurring: {
+        interval: "month",
+      },
+    });
+  }
+
+  console.log("Stripe products and prices verified/created.");
 }
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
+  try {
+    // Limpiar datos existentes
+    console.log("Cleaning existing data...");
 
-  const [user] = await db
-    .insert(users)
-    .values([
-      {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
-      },
-    ])
-    .returning();
+    // Eliminar los datos de usuario (borrado suave)
+    await db
+      .update(users)
+      .set({
+        deletedAt: new Date(),
+        email: sql`CONCAT(email, '-', id, '-deleted')`,
+      })
+      .where(eq(users.email, "test@test.com"));
 
-  console.log('Initial user created.');
+    console.log("Existing data cleaned.");
 
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
+    // Crear nuevo usuario
+    const email = "test@test.com";
+    const password = "admin123";
+    const passwordHash = await hashPassword(password);
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
+    const [user] = await db
+      .insert(users)
+      .values([
+        {
+          email: email,
+          passwordHash: passwordHash,
+          role: "owner",
+          name: "Test User",
+        },
+      ])
+      .returning();
 
-  await createStripeProducts();
+    console.log("Initial user created:", user);
+
+    await createStripeProducts();
+    console.log("Seed completed successfully.");
+  } catch (error) {
+    console.error("Error in seed process:", error);
+    throw error;
+  }
 }
 
 seed()
   .catch((error) => {
-    console.error('Seed process failed:', error);
+    console.error("Seed process failed:", error);
     process.exit(1);
   })
   .finally(() => {
-    console.log('Seed process finished. Exiting...');
+    console.log("Seed process finished. Exiting...");
     process.exit(0);
   });

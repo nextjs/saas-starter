@@ -1,15 +1,25 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { createCheckoutSession, createCustomerPortalSession } from './stripe';
-import { withTeam } from '@/lib/auth/middleware';
+import { redirect } from "next/navigation";
+import { createCheckoutSession, createCustomerPortalSession } from "./stripe";
+import { getUser } from "@/lib/db/queries";
 
-export const checkoutAction = withTeam(async (formData, team) => {
-  const priceId = formData.get('priceId') as string;
-  await createCheckoutSession({ team: team, priceId });
-});
+export const checkoutAction = async (formData: FormData) => {
+  const user = await getUser();
+  if (!user) {
+    redirect("/sign-in");
+  }
 
-export const customerPortalAction = withTeam(async (_, team) => {
-  const portalSession = await createCustomerPortalSession(team);
+  const priceId = formData.get("priceId") as string;
+  await createCheckoutSession({ user, priceId });
+};
+
+export const customerPortalAction = async () => {
+  const user = await getUser();
+  if (!user) {
+    redirect("/sign-in");
+  }
+
+  const portalSession = await createCustomerPortalSession(user);
   redirect(portalSession.url);
-});
+};
