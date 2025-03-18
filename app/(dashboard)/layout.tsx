@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/db/queries";
+import { Header } from "./header";
 
 export const metadata = {
   title: "Dashboard",
@@ -25,11 +26,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          {/* Header simple para layout */}
-        </div>
-      </header>
+      <Header />
       {children}
     </div>
   );

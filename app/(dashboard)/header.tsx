@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { use, useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { CircleIcon, Home, LogOut } from "lucide-react";
+import { CircleIcon, LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,17 +60,11 @@ function UserMenu() {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="flex flex-col gap-1">
-        <DropdownMenuItem className="cursor-pointer">
-          <Link href="/dashboard" className="flex w-full items-center">
-            <Home className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
-          </Link>
-        </DropdownMenuItem>
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
+              <span>Cerrar sesión</span>
             </DropdownMenuItem>
           </button>
         </form>
