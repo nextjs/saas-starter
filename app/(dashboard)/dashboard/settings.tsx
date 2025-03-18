@@ -8,10 +8,9 @@ import { User } from "@/lib/db/schema";
 export function Settings({ userData }: { userData: User }) {
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Mi suscripción</h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Gestionar suscripción</CardTitle>
+          <CardTitle>Bienvenido de nuevo {userData.name}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">

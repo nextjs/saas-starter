@@ -5,7 +5,6 @@ import { signToken, verifyToken } from "@/lib/auth/session";
 export const runtime = "nodejs";
 
 const protectedRoutes = "/dashboard";
-const adminRoutes = "/admin";
 const allowedRoutes = ["/pricing"];
 const publicRoutes = ["/"];
 
@@ -18,8 +17,7 @@ export async function middleware(request: NextRequest) {
 
   // Comprobar si estamos en una ruta protegida
   const isProtectedRoute =
-    (pathname.startsWith(protectedRoutes) ||
-      pathname.startsWith(adminRoutes)) &&
+    pathname.startsWith(protectedRoutes) &&
     !isHomePage &&
     !allowedRoutes.some((route) => pathname.startsWith(route));
 

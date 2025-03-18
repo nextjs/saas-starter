@@ -5,6 +5,8 @@ import { getUser } from "@/lib/db/queries";
 export default async function SettingsPage() {
   const user = await getUser();
 
+  // El AuthWrapper ya maneja la redirección, pero por seguridad
+  // verificamos también aquí para evitar errores de tipo
   if (!user) {
     redirect("/sign-in");
   }
