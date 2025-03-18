@@ -9,8 +9,8 @@ const nextConfig = {
   serverExternalPackages: [],
   // Configuración para manejo correcto de módulos
   transpilePackages: ["lucide-react"],
-  // Deshabilitar la salida standalone para evitar problemas con trazado de archivos
-  output: undefined,
+  // Omitiendo la opción output para usar el comportamiento por defecto
+  // Esto evita problemas con el trazado de archivos
 };
 
 module.exports = nextConfig;
