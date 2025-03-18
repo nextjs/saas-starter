@@ -23,8 +23,6 @@ export function Settings({ userData }: { userData: User }) {
                 <p className="text-sm text-muted-foreground">
                   {userData.subscriptionStatus === "active"
                     ? "Facturación mensual"
-                    : userData.subscriptionStatus === "trialing"
-                    ? "Suscripción activa"
                     : "Sin suscripción activa"}
                 </p>
               </div>

@@ -13,15 +13,14 @@ export default function HomePage() {
             <div className="lg:grid lg:grid-cols-12 lg:gap-8">
               <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
                 <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                  Build Your SaaS
+                  El SaaS más Salvajes de Internet
                   <span className="block text-orange-500">
-                    Faster Than Ever
+                    Más rápido que nunca
                   </span>
                 </h1>
                 <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                  Launch your SaaS product in record time with our powerful,
-                  ready-to-use template. Packed with modern technologies and
-                  essential integrations.
+                  Lanza tu producto SaaS en un tiempo record con nuestro
+                  poderoso, listo para usar plantilla.
                 </p>
                 <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                   <div className="flex flex-col sm:flex-row gap-4">
