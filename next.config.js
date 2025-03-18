@@ -2,14 +2,15 @@
 const nextConfig = {
   experimental: {
     nodeMiddleware: true,
-    // Ajustes adicionales para versión canaria
-    serverComponentsExternalPackages: [],
+    // Optimización de importaciones
     optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
   },
+  // Paquetes externos del servidor (nueva ubicación)
+  serverExternalPackages: [],
   // Configuración para manejo correcto de módulos
   transpilePackages: ["lucide-react"],
-  // Configuración recomendada para Vercel
-  output: "standalone",
+  // Deshabilitar la salida standalone para evitar problemas con trazado de archivos
+  output: undefined,
 };
 
 module.exports = nextConfig;
