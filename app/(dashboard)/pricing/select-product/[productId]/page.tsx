@@ -6,7 +6,7 @@ export default async function SelectProductPage({
   searchParams,
 }: {
   params: { productId: string };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const { productId } = params;
   const priceId = searchParams.priceId as string;

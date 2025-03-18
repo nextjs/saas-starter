@@ -10,7 +10,7 @@ export const revalidate = 3600;
 export default async function PricingPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Record<string, string | string[] | undefined>;
 }) {
   const [prices, products, user] = await Promise.all([
     getStripePrices(),

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { signToken, verifyToken } from "@/lib/auth/session";
 
+export const runtime = "nodejs";
+
 const protectedRoutes = "/dashboard";
 const adminRoutes = "/admin";
 const allowedRoutes = ["/pricing"];
