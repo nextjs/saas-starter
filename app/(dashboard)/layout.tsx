@@ -1,4 +1,3 @@
-"use client";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/db/queries";
 
