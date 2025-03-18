@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
 import { getStripePrices, getStripeProducts } from "@/lib/payments/stripe";
 
-// Definiendo el tipo directamente sin depender de PageProps
-export default async function SelectProductPage(props: {
-  params: { productId: string };
-  searchParams?: Record<string, string | string[] | undefined>;
-}) {
-  const { params, searchParams = {} } = props;
+// Enfoque sin tipos explícitos para evitar conflictos
+export default async function SelectProductPage({
+  params,
+  searchParams = {},
+}: any) {
   const { productId } = params;
   const priceId = searchParams.priceId as string;
 

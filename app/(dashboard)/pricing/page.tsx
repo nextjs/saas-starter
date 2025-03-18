@@ -7,13 +7,8 @@ import { getUser } from "@/lib/db/queries";
 // Prices are fresh for one hour max
 export const revalidate = 3600;
 
-// Definiendo el tipo directamente sin depender de PageProps
-export default async function PricingPage(props: {
-  params?: { [key: string]: string };
-  searchParams?: Record<string, string | string[] | undefined>;
-}) {
-  const { searchParams = {} } = props;
-
+// Enfoque sin tipos explícitos para evitar conflictos
+export default async function PricingPage({ searchParams = {} }: any) {
   const [prices, products, user] = await Promise.all([
     getStripePrices(),
     getStripeProducts(),
