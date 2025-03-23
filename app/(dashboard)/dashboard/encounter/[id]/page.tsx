@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { use } from "react";
+import { useParams, useRouter } from "next/navigation";
 import {
   Encounter,
   CodeEvidence,
@@ -23,7 +22,7 @@ import FormattedNotes from "@/components/dashboards/clinicdesk/FormattedNotes";
 import FormattedEncounter from "@/components/dashboards/clinicdesk/FormattedEncounter";
 
 export default function EncounterPage({ params }: { params: { id: string } }) {
-  const id = use(params); // Extract the encounter ID from the URL parameters
+  const { id } = useParams();
 
   // console.log('EncounterPage rendering with params:', params);
   const [encounter, setEncounter] = useState<Encounter | null>(null);

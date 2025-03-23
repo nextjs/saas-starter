@@ -1,12 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { useEncounters } from '@/hooks/useEncounters';
 import { Encounter, EncounterStatus } from '@/types/encounter';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -71,7 +69,7 @@ export default function EncountersPage() {
               className="ml-2"
             >
                 <img
-                src="/clinicdesk_logo.png"
+                src="/logo.png"
                 alt="Refresh"
                 width={16}
                 height={16}

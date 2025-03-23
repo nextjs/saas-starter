@@ -20,9 +20,9 @@ export function Sidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { href: "/dashboard", icon: Home, label: "Dashboard" },
+    { href: "/dashboard", icon: Home, label: "Home" },
     { href: "/dashboard/encounters", icon: FileText, label: "Encounters" },
-    { href: "/dashboard/team", icon: Users, label: "Team" },
+    // { href: "/dashboard/team", icon: Users, label: "Team" },
     { href: "/dashboard/activity", icon: Activity, label: "Activity" },
     { href: "/dashboard/general", icon: Settings, label: "General" },
     { href: "/dashboard/security", icon: Shield, label: "Security" },
@@ -56,7 +56,10 @@ export function Sidebar() {
         <nav className="h-full overflow-y-auto p-4">
           <div className="space-y-2">
             {navItems.map((item) => {
-              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === "/dashboard" || pathname === "/dashboard/"
+                  : pathname.startsWith(item.href);
 
               return (
                 <Link key={item.href} href={item.href} passHref>
