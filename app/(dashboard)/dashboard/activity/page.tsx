@@ -97,8 +97,8 @@ export default async function ActivityPage() {
 
                 return (
                   <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-orange-600" />
+                    <div className="bg-[#0DAE8F]/10 rounded-full p-2">
+                      <Icon className="w-5 h-5 text-[#0DAE8F]" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">

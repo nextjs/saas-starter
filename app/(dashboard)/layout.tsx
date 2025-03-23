@@ -15,6 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useUser } from '@/lib/auth';
 import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
+import { Sidebar } from '@/components/dashboards/Sidebar';
 
 // Client-only component wrapper to prevent hydration errors
 function ClientOnly({ children }: { children: React.ReactNode }) {
@@ -97,18 +98,19 @@ function UserMenu() {
 
 function Header() {
   return (
-    <header className="border-b border-gray-200">
+    <header className="bg-white border-b border-gray-200 z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
-          <Image
-            src="/clinicdesk_logo.png"
-            alt="ClinicDesk Logo"
-            width={160}
-            height={40}
-            quality={100}
-            className="h-10 w-auto"
-            priority
-          />
+          <div style={{ position: 'relative', width: '160px', height: '40px' }}>
+            <Image
+              src="/clinicdesk_logo.png"
+              alt="ClinicDesk Logo"
+              fill
+              sizes="160px"
+              style={{ objectFit: 'contain' }}
+              priority
+            />
+          </div>
           <span className="ml-2 text-xl font-semibold text-gray-900"></span>
         </Link>
         <div className="flex items-center space-x-4">
@@ -127,7 +129,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="flex flex-col min-h-screen">
       <Header />
-      {children}
+      <div className="flex flex-1 pt-0">
+        <Sidebar />
+        <div className="flex-1 lg:ml-64">
+          {children}
+        </div>
+      </div>
     </section>
   );
 }

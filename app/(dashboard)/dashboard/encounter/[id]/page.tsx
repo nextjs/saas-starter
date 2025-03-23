@@ -110,8 +110,6 @@ export default function EncounterPage({ params }: { params: { id: string } }) {
       }
 
       const data = await response.json();
-      console.log("Raw API response:", data);
-
       if (!data) {
         throw new Error("No data received from API");
       }

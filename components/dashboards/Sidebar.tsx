@@ -47,7 +47,7 @@ export function Sidebar() {
       {/* Sidebar for both mobile and desktop */}
       <aside
         className={`
-          bg-white border-r border-gray-200 w-64 fixed inset-y-0 left-0 z-40
+          border-r border-gray-200 w-64 fixed inset-y-0 left-0 z-40
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0 pt-16
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}

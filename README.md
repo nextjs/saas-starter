@@ -58,6 +58,12 @@ Finally, run the Next.js development server:
 
 ```bash
 pnpm dev
+
+# Kill port 3000 if it's in use
+lsof -i :3000 | awk '{print $2}' | xargs kill -9
+
+# Second way to kill port 3000 on Mac
+sudo lsof -t -i tcp:3000 | xargs kill -9
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.

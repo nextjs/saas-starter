@@ -1,0 +1,47 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: deps # Use the deps stage for development
+    command: npm run dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_URL=postgresql://postgres:postgres@db:5432/clinicdesk
+      - AUTH_SECRET=${AUTH_SECRET}
+      - BASE_URL=http://localhost:3000
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    restart: unless-stopped
+
+  api-server:
+    build:
+      context: ../clinicdesk-server
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      FLASK_ENV: development
+    develop:
+      watch:
+        - path: ./app.py
+          action: sync
+          target: /app/app.py
+        - path: ./lib
+          action: sync
+          target: /app/lib
+        - path: ./templates
+          action: sync
+          target: /app/templates
+        - path: ./bin
+          action: sync
+          target: /app/bin
+
+volumes:
+  postgres_data:
