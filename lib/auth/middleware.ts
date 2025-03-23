@@ -1,7 +1,9 @@
 import { z } from 'zod';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { getTeamForUser, getUser } from '@/lib/db/queries';
+// import { TeamDataWithMembers } from '@/lib/db/schema';
+// import { getTeamForUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
+import { getUser } from '@/utils/supabase/server';
 
 export type ActionState = {
   error?: string;
@@ -62,10 +64,28 @@ export function withTeam<T>(action: ActionWithTeamFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const user = await getUser();
     if (!user) {
+      // This redirect will throw an error, so we don't need to return anything after it
       redirect('/sign-in');
     }
 
-    const team = await getTeamForUser(user.id);
+    const team = {
+      id: 1, // Replace with actual logic to get the team for the user
+      name: "My Team", // Replace with actual team name
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      members: [
+        {
+          id: 1,
+          userId: parseInt(user.id),
+          role: "admin",
+          user: {
+            id: parseInt(user.id),
+            name: user.user_metadata.name || null,
+            email: user.email || ""
+          }
+        }
+      ]
+    }
     if (!team) {
       throw new Error('Team not found');
     }

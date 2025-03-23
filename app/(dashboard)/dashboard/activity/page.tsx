@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Settings,
   LogOut,
@@ -10,9 +10,8 @@ import {
   Mail,
   CheckCircle,
   type LucideIcon,
-} from 'lucide-react';
-import { ActivityType } from '@/lib/db/schema';
-import { getActivityLogs } from '@/lib/db/queries';
+} from "lucide-react";
+import { ActivityType } from "@/lib/db/schema";
 
 const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.SIGN_UP]: UserPlus,
@@ -31,7 +30,7 @@ function getRelativeTime(date: Date) {
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  if (diffInSeconds < 60) return 'just now';
+  if (diffInSeconds < 60) return "just now";
   if (diffInSeconds < 3600)
     return `${Math.floor(diffInSeconds / 60)} minutes ago`;
   if (diffInSeconds < 86400)
@@ -44,32 +43,39 @@ function getRelativeTime(date: Date) {
 function formatAction(action: ActivityType): string {
   switch (action) {
     case ActivityType.SIGN_UP:
-      return 'You signed up';
+      return "You signed up";
     case ActivityType.SIGN_IN:
-      return 'You signed in';
+      return "You signed in";
     case ActivityType.SIGN_OUT:
-      return 'You signed out';
+      return "You signed out";
     case ActivityType.UPDATE_PASSWORD:
-      return 'You changed your password';
+      return "You changed your password";
     case ActivityType.DELETE_ACCOUNT:
-      return 'You deleted your account';
+      return "You deleted your account";
     case ActivityType.UPDATE_ACCOUNT:
-      return 'You updated your account';
+      return "You updated your account";
     case ActivityType.CREATE_TEAM:
-      return 'You created a new team';
+      return "You created a new team";
     case ActivityType.REMOVE_TEAM_MEMBER:
-      return 'You removed a team member';
+      return "You removed a team member";
     case ActivityType.INVITE_TEAM_MEMBER:
-      return 'You invited a team member';
+      return "You invited a team member";
     case ActivityType.ACCEPT_INVITATION:
-      return 'You accepted an invitation';
+      return "You accepted an invitation";
     default:
-      return 'Unknown action occurred';
+      return "Unknown action occurred";
   }
 }
 
 export default async function ActivityPage() {
-  const logs = await getActivityLogs();
+  const logs = [
+    {
+      id: 1,
+      action: ActivityType.SIGN_UP,
+      ipAddress: "1.2.3.4",
+      timestamp: new Date(Date.now() - 10000000).toISOString(), // 2 hours ago
+    },
+  ];
 
   return (
     <section className="flex-1 p-4 lg:p-8">

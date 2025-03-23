@@ -1,26 +1,26 @@
-import './globals.css';
-import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
-import { UserProvider } from '@/lib/auth';
-import { getUser } from '@/lib/db/queries';
+import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import { Manrope } from "next/font/google";
+import { UserProvider, User as AuthUser } from "@/lib/auth";
+import { getUser } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.',
+  title: "ClinicDesk",
+  description: "Get started quickly with Next.js, Postgres, and Stripe.",
 };
 
 export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let userPromise = getUser();
+  let userPromise = getUser() as Promise<AuthUser | null>;
 
   return (
     <html

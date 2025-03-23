@@ -1,129 +1,119 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { createClient } from '@/utils/supabase/server';
+import { User } from '@supabase/supabase-js';
+import { TeamDataWithMembers } from './schema';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth/session';
+import { teams, teamMembers, users } from './schema';
+import { and, eq, sql } from 'drizzle-orm';
 
-export async function getUser() {
-  const sessionCookie = (await cookies()).get('session');
-  if (!sessionCookie || !sessionCookie.value) {
-    return null;
-  }
-
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'number'
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
-    return null;
-  }
-
-  const user = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
-    .limit(1);
-
-  if (user.length === 0) {
-    return null;
-  }
-
-  return user[0];
+// Get the current user from Supabase
+export async function getUser(): Promise<User | null> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  return user;
 }
 
-export async function getTeamByStripeCustomerId(customerId: string) {
-  const result = await db
-    .select()
-    .from(teams)
-    .where(eq(teams.stripeCustomerId, customerId))
-    .limit(1);
+// Get team for a user
+export async function getTeamForUser(userId: string): Promise<TeamDataWithMembers | null> {
+  try {
+    console.log(`Getting team for user ID: ${userId}`);
+    
+    // First get the user's team ID from the team_members table
+    const teamMembersResult = await db
+      .select({
+        teamId: teamMembers.teamId,
+      })
+      .from(teamMembers)
+      .where(sql`${teamMembers.userId} = ${userId}`)
+      .limit(1);
 
-  return result.length > 0 ? result[0] : null;
-}
+    if (teamMembersResult.length === 0) {
+      console.log(`No team found for user ID: ${userId}`);
+      return null;
+    }
 
-export async function updateTeamSubscription(
-  teamId: number,
-  subscriptionData: {
-    stripeSubscriptionId: string | null;
-    stripeProductId: string | null;
-    planName: string | null;
-    subscriptionStatus: string;
-  }
-) {
-  await db
-    .update(teams)
-    .set({
-      ...subscriptionData,
-      updatedAt: new Date(),
-    })
-    .where(eq(teams.id, teamId));
-}
+    const teamId = teamMembersResult[0].teamId;
+    console.log(`Found team ID: ${teamId} for user ID: ${userId}`);
 
-export async function getUserWithTeam(userId: number) {
-  const result = await db
-    .select({
-      user: users,
-      teamId: teamMembers.teamId,
-    })
-    .from(users)
-    .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
-    .where(eq(users.id, userId))
-    .limit(1);
+    // Then get the team data with members
+    const teamData = await db
+      .select({
+        id: teams.id,
+        name: teams.name,
+        createdAt: teams.createdAt,
+        updatedAt: teams.updatedAt,
+      })
+      .from(teams)
+      .where(eq(teams.id, teamId))
+      .limit(1);
 
-  return result[0];
-}
+    if (teamData.length === 0) {
+      console.log(`Team with ID: ${teamId} not found`);
+      return null;
+    }
 
-export async function getActivityLogs() {
-  const user = await getUser();
-  if (!user) {
-    throw new Error('User not authenticated');
-  }
-
-  return await db
-    .select({
-      id: activityLogs.id,
-      action: activityLogs.action,
-      timestamp: activityLogs.timestamp,
-      ipAddress: activityLogs.ipAddress,
-      userName: users.name,
-    })
-    .from(activityLogs)
-    .leftJoin(users, eq(activityLogs.userId, users.id))
-    .where(eq(activityLogs.userId, user.id))
-    .orderBy(desc(activityLogs.timestamp))
-    .limit(10);
-}
-
-export async function getTeamForUser(userId: number) {
-  const result = await db.query.users.findFirst({
-    where: eq(users.id, userId),
-    with: {
-      teamMembers: {
-        with: {
-          team: {
-            with: {
-              teamMembers: {
-                with: {
-                  user: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
+    // Get all team members
+    const members = await db
+      .select({
+        id: teamMembers.id,
+        userId: teamMembers.userId,
+        role: teamMembers.role,
+        user: {
+          id: users.id,
+          name: users.name,
+          email: users.email,
         },
-      },
-    },
-  });
+      })
+      .from(teamMembers)
+      .leftJoin(users, eq(teamMembers.userId, users.id))
+      .where(eq(teamMembers.teamId, teamId));
 
-  return result?.teamMembers[0]?.team || null;
+    // Filter out any null users and ensure the type is correct
+    const validMembers = members.filter(member => member.user !== null).map(member => ({
+      ...member,
+      user: member.user!  // Non-null assertion since we filtered nulls
+    }));
+
+    return {
+      ...teamData[0],
+      members: validMembers,
+    };
+  } catch (error) {
+    console.error('Error getting team for user:', error);
+    return null;
+  }
+}
+
+// Get user with team data
+export async function getUserWithTeam(userId: string) {
+  try {
+    const teamMembersResult = await db
+      .select({
+        teamId: teamMembers.teamId,
+        role: teamMembers.role,
+      })
+      .from(teamMembers)
+      .where(sql`${teamMembers.userId} = ${userId}`)
+      .limit(1);
+
+    if (teamMembersResult.length === 0) {
+      return null;
+    }
+
+    return teamMembersResult[0];
+  } catch (error) {
+    console.error('Error getting user with team:', error);
+    return null;
+  }
+}
+
+// Log activity (keeping this for compatibility, but it needs to be updated to work with string user IDs)
+export async function logActivity(
+  teamId: number,
+  userId: string,
+  action: string,
+  ipAddress?: string
+) {
+  console.log(`Activity logged: ${action} by user ${userId} in team ${teamId}`);
+  // This function would need to be updated to handle string user IDs
+  // For now, we'll just log the activity
 }

@@ -14,7 +14,7 @@ type ActionState = {
   success?: string;
 };
 
-export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
+export function Settings({ teamData }: { teamData: TeamDataWithMembers & { plan?: { name: string }, subscription?: { status: string } } }) {
   const [removeState, removeAction, isRemovePending] = useActionState<
     ActionState,
     FormData
@@ -36,12 +36,12 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
               <div className="mb-4 sm:mb-0">
                 <p className="font-medium">
-                  Current Plan: {teamData.planName || 'Free'}
+                  Current Plan: {teamData.plan?.name || 'Free'}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  {teamData.subscriptionStatus === 'active'
+                  {teamData.subscription?.status === 'active'
                     ? 'Billed monthly'
-                    : teamData.subscriptionStatus === 'trialing'
+                    : teamData.subscription?.status === 'trialing'
                       ? 'Trial period'
                       : 'No active subscription'}
                 </p>
@@ -61,12 +61,12 @@ export function Settings({ teamData }: { teamData: TeamDataWithMembers }) {
         </CardHeader>
         <CardContent>
           <ul className="space-y-4">
-            {teamData.teamMembers.map((member, index) => (
+            {teamData.members.map((member, index: number) => (
               <li key={member.id} className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <Avatar>
                     <AvatarImage
-                      src={`/placeholder.svg?height=32&width=32`}
+                      // src={`/placeholder.svg?height=32&width=32`}
                       alt={getUserDisplayName(member.user)}
                     />
                     <AvatarFallback>
