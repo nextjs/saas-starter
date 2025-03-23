@@ -49,7 +49,9 @@ export default function EncounterPage() {
     if (!encounter?.dob) return "";
 
     try {
-      return new Date(encounter.dob).toLocaleDateString();
+      // Don't use toLocaleDateString directly as it can cause hydration issues
+      const date = new Date(encounter.dob);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
     } catch (e) {
       console.error("Error formatting date:", e);
       return encounter.dob;
@@ -127,6 +129,14 @@ export default function EncounterPage() {
     }
   }, [id]);
 
+  // Add a state to track if we're on the client side
+  const [isClient, setIsClient] = useState(false);
+
+  // Use an effect to set isClient to true after hydration
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   function goBack() {
     router.push("/encounters");
   }
@@ -169,7 +179,7 @@ export default function EncounterPage() {
                             {encounter?.patientName}
                           </p>
                           <p>
-                            <strong>Date of Birth:</strong> {formattedDob}
+                            <strong>Date of Birth:</strong> {isClient ? formattedDob : encounter?.dob || ''}
                           </p>
                         </div>
                         <div className="col-md-6">
@@ -210,7 +220,7 @@ export default function EncounterPage() {
                           <h4 className="card-title mb-0">Encounter Notes</h4>
                         </div>
                         <div className="card-body">
-                          {encounter?.notes ? (
+                          {isClient && encounter?.notes ? (
                             <div className="mb-4">
                               <h5>Provider Notes</h5>
                               <FormattedNotes
@@ -220,7 +230,7 @@ export default function EncounterPage() {
                             </div>
                           ) : null}
 
-                          {encounter?.encounter ? (
+                          {isClient && encounter?.encounter ? (
                             <div>
                               <h5>Full Encounter</h5>
                               <div className="encounter-text p-3 bg-light rounded">
@@ -232,7 +242,7 @@ export default function EncounterPage() {
                             </div>
                           ) : null}
 
-                          {!encounter?.encounter && !encounter?.notes && (
+                          {isClient && !encounter?.encounter && !encounter?.notes && (
                             <div className="text-muted">
                               No encounter data available.
                             </div>

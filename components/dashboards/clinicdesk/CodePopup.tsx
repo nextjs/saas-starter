@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,9 +15,17 @@ interface CodePopupProps {
 const CodePopup: React.FC<CodePopupProps> = ({ code, position, onClose, onJumpToCode }) => {
   const popupRef = useRef<HTMLDivElement>(null);
   const [adjustedPosition, setAdjustedPosition] = useState(position);
+  const [isMounted, setIsMounted] = useState(false);
 
-  // Adjust position to ensure popup stays within viewport
+  // Set mounted state to true after component mounts (client-side only)
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Adjust position to ensure popup stays within viewport - only run on client
+  useEffect(() => {
+    if (!isMounted) return;
+
     if (popupRef.current) {
       const rect = popupRef.current.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
@@ -36,10 +46,12 @@ const CodePopup: React.FC<CodePopupProps> = ({ code, position, onClose, onJumpTo
 
       setAdjustedPosition({ x: newX, y: newY });
     }
-  }, [position, popupRef]);
+  }, [position, popupRef, isMounted]);
 
-  // Close popup when clicking outside
+  // Close popup when clicking outside - only run on client
   useEffect(() => {
+    if (!isMounted) return;
+
     const handleClickOutside = (event: MouseEvent) => {
       if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         onClose();
@@ -50,9 +62,9 @@ const CodePopup: React.FC<CodePopupProps> = ({ code, position, onClose, onJumpTo
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [onClose]);
+  }, [onClose, isMounted]);
 
-  if (!code) return null;
+  if (!code || !isMounted) return null;
 
   return (
     <div
@@ -75,7 +87,7 @@ const CodePopup: React.FC<CodePopupProps> = ({ code, position, onClose, onJumpTo
                 aria-label="Close"
               >
                 <img
-                  src="/clinicdesk_logo.png"
+                  src="/logo.png"
                   width={16}
                   height={16}
                   alt="Close"

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { CodeEvidence } from '@/types/encounter';
 import CodePopup from './CodePopup';
 
@@ -21,6 +23,12 @@ const FormattedNotes: React.FC<FormattedNotesProps> = ({
     code: any | null;
     position: { x: number; y: number };
   } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Set mounted state after component mounts (client-side only)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Function to highlight evidence in the notes
   const highlightEvidence = (text: string) => {
@@ -105,9 +113,9 @@ const FormattedNotes: React.FC<FormattedNotesProps> = ({
 
   return (
     <div className="p-3 bg-muted/50 rounded-md">
-      {highlightEvidence(notes)}
+      {isMounted ? highlightEvidence(notes) : <div>{notes}</div>}
       
-      {popupInfo && (
+      {isMounted && popupInfo && (
         <CodePopup
           code={popupInfo.code}
           position={popupInfo.position}

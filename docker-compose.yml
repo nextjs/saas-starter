@@ -13,12 +13,15 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_API_BASE_URL=http://api-server:5001
       - POSTGRES_URL=postgresql://postgres:postgres@db:5432/clinicdesk
       - AUTH_SECRET=${AUTH_SECRET}
       - BASE_URL=http://localhost:3000
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
       - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
     restart: unless-stopped
+    depends_on:
+      - api-server
 
   api-server:
     build:
@@ -42,6 +45,3 @@ services:
         - path: ./bin
           action: sync
           target: /app/bin
-
-volumes:
-  postgres_data:

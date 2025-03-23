@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { use } from "react";
 import {
   Encounter,
   CodeEvidence,
@@ -23,7 +23,7 @@ import FormattedNotes from "@/components/dashboards/clinicdesk/FormattedNotes";
 import FormattedEncounter from "@/components/dashboards/clinicdesk/FormattedEncounter";
 
 export default function EncounterPage({ params }: { params: { id: string } }) {
-  const id = React.use(params);
+  const id = use(params); // Extract the encounter ID from the URL parameters
 
   // console.log('EncounterPage rendering with params:', params);
   const [encounter, setEncounter] = useState<Encounter | null>(null);
@@ -126,8 +126,12 @@ export default function EncounterPage({ params }: { params: { id: string } }) {
   };
 
   useEffect(() => {
+    if (!id) {
+      throw new Error("Encounter ID is required");
+    }
     fetchEncounter();
   }, [id]);
+
   const goBack = () => {
     router.push("/dashboard/encounters");
   };

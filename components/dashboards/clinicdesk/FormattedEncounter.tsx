@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+"use client";
+
+import React, { useState, useEffect } from 'react';
 import { AiCode } from '@/types/encounter';
 import CodePopup from './CodePopup';
 
@@ -19,6 +21,12 @@ const FormattedEncounter: React.FC<FormattedEncounterProps> = ({
     code: AiCode | null;
     position: { x: number; y: number };
   } | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Set mounted state after component mounts (client-side only)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Function to highlight codes in the encounter text
   const highlightCodes = (text: string) => {
@@ -98,9 +106,12 @@ const FormattedEncounter: React.FC<FormattedEncounterProps> = ({
 
   return (
     <div className="overflow-x-auto">
-      {highlightCodes(encounterText)}
+      {isMounted 
+        ? highlightCodes(encounterText) 
+        : <pre className="font-sans whitespace-pre-wrap break-words">{encounterText}</pre>
+      }
       
-      {popupInfo && (
+      {isMounted && popupInfo && (
         <CodePopup
           code={popupInfo.code}
           position={popupInfo.position}

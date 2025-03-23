@@ -1,4 +1,10 @@
-FROM public.ecr.aws/docker/library/node:20-alpine AS base
+# syntax = docker/dockerfile:1
+
+ARG NODE_VERSION=22.14.0
+ARG NODE_DISTRO=bullseye-slim
+ARG PNPM_VERSION=10.6.5
+
+FROM public.ecr.aws/docker/library/node:${NODE_VERSION}-${NODE_DISTRO} AS base
 
 # Define build arguments with defaults
 ARG NODE_ENV=production
@@ -18,8 +24,7 @@ ENV HOSTNAME=$HOSTNAME
 FROM base AS deps
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 # Install dependencies based on the preferred package manager
 COPY package.json pnpm-lock.yaml* ./
@@ -29,16 +34,14 @@ RUN pnpm install --frozen-lockfile
 FROM base AS stage
 WORKDIR /app
 
-# Override NODE_ENV for development
 ENV NODE_ENV=development
 
 # Install pnpm in the development stage
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Expose development port
 EXPOSE $PORT
 
 # Run the development server with hot reloading
@@ -49,7 +52,7 @@ FROM base AS builder
 WORKDIR /app
 
 # Install pnpm in the builder stage too
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -79,7 +82,6 @@ COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /app/.next/standalone ./
 COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /app/.next/static ./.next/static
 
 USER $USER_NAME
-
 EXPOSE $PORT
 
 # server.js is created by next build from the standalone output

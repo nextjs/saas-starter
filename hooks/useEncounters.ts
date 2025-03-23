@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Encounter, transformEncounterFromApi } from '@/types/encounter';
 
 export function useEncounters() {
+  const [isClient, setIsClient] = useState(false);
   const [patientRecords, setPatientRecords] = useState<Encounter[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -16,22 +17,22 @@ export function useEncounters() {
 
     try {
       const response = await fetch('/api/encounters');
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
       }
-      
+
       const data = await response.json();
-      
+
       if (!data) {
         throw new Error('No data received from API');
       }
-      
+
       // Transform the API response to match our Encounter type
-      const transformedData = Array.isArray(data) 
+      const transformedData = Array.isArray(data)
         ? data.map(item => transformEncounterFromApi(item))
         : [];
-      
+
       setPatientRecords(transformedData);
     } catch (err: any) {
       console.error('Failed to fetch encounters:', err);
@@ -42,10 +43,11 @@ export function useEncounters() {
   };
 
   const navigateToEncounter = (chartId: string) => {
-    router.push(`/encounter/${chartId}`);
+    router.push(`/dashboard/encounter/${chartId}`);
   };
 
   useEffect(() => {
+    setIsClient(true);
     fetchEncounters();
   }, []);
 
