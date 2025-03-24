@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { User } from '@/lib/db/schema';
+import { User as SupabaseUser } from '@supabase/supabase-js';
 
 type UserContextType = {
-  userPromise: Promise<User | null>;
+  userPromise: Promise<SupabaseUser | null>;
 };
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -22,7 +22,7 @@ export function UserProvider({
   userPromise
 }: {
   children: ReactNode;
-  userPromise: Promise<User | null>;
+  userPromise: Promise<SupabaseUser | null>;
 }) {
   return (
     <UserContext.Provider value={{ userPromise }}>

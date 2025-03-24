@@ -1,5 +1,5 @@
 import { z } from 'zod';
-// import { TeamDataWithMembers } from '@/lib/db/schema';
+import { TeamDataWithMembers } from '@/lib/db/schema';
 // import { getTeamForUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
@@ -73,6 +73,11 @@ export function withTeam<T>(action: ActionWithTeamFunction<T>) {
       name: "My Team", // Replace with actual team name
       createdAt: new Date(),
       updatedAt: new Date(),
+      stripeCustomerId: null,
+      stripeSubscriptionId: null,
+      stripeProductId: null,
+      planName: null,
+      subscriptionStatus: null,
       members: [
         {
           id: 1,
@@ -80,7 +85,7 @@ export function withTeam<T>(action: ActionWithTeamFunction<T>) {
           role: "admin",
           user: {
             id: parseInt(user.id),
-            name: user.user_metadata.name || null,
+            name: user.user_metadata?.name || null,
             email: user.email || ""
           }
         }

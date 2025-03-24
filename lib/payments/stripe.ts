@@ -8,9 +8,51 @@ import { Team } from '@/lib/db/schema';
 // } from '@/lib/db/queries';
 import { getUser } from '@/utils/supabase/server';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-02-24.acacia'
-});
+// Create a mock or real Stripe instance based on environment
+// TODO: Enable when ready for Stripe integration
+// export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+//   apiVersion: '2025-02-24.acacia'
+// });
+export const stripe = new Proxy({}, {
+      get: (_, prop) => {
+        // Mock implementation for common Stripe operations
+        const mockMethods = {
+          checkout: {
+            sessions: {
+              create: async () => ({ url: 'https://mock-checkout-url.com' })
+            }
+          },
+          billingPortal: {
+            configurations: {
+              list: async () => ({ data: [] }),
+              create: async () => ({ id: 'mock_config_id' })
+            },
+            sessions: {
+              create: async () => ({ url: 'https://mock-portal-url.com' })
+            }
+          },
+          products: {
+            retrieve: async () => ({ id: 'mock_product', active: true }),
+            list: async () => ({
+              data: [{ id: 'mock_product', name: 'Mock Product', description: 'A mock product', default_price: 'price_mock' }]
+            })
+          },
+          prices: {
+            list: async () => ({
+              data: [{
+                id: 'price_mock',
+                product: 'mock_product',
+                unit_amount: 1000,
+                currency: 'usd',
+                recurring: { interval: 'month', trial_period_days: 14 }
+              }]
+            })
+          }
+        };
+
+        return prop in mockMethods ? mockMethods[prop as keyof typeof mockMethods] : {};
+      }
+    }) as unknown as Stripe
 
 export async function createCheckoutSession({
   team,

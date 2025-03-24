@@ -127,6 +127,11 @@ export type TeamDataWithMembers = {
   name: string;
   createdAt: Date;
   updatedAt: Date;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  stripeProductId: string | null;
+  planName: string | null;
+  subscriptionStatus: string | null;
   members: {
     id: number;
     userId: number;

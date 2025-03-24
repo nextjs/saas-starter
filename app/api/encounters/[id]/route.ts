@@ -1,17 +1,21 @@
 import { NextResponse } from 'next/server';
 import { fetchFromApi } from '@/lib/api-utils';
 
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
 /**
  * GET handler for /api/encounters/[id]
  * Fetches a single encounter by ID from the external API and processes it
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params, searchParams }: Props
 ) {
-  // console.log(`Params:`, { params });
+  const { id } = await params;
   try {
-    // const id = params.id;
     // console.log(`API Route: Fetching encounter with ID: ${id}`, { params });
 
     // TODO: Uncomment to hit the API again
@@ -77,10 +81,10 @@ export async function GET(
     // Process ai_codes
     if (data.ai_codes && Array.isArray(data.ai_codes)) {
       data.ai_codes = data.ai_codes.map((aiCode: any) => ({
-        code: aiCode.code || '',
-        description: aiCode.description || '',
+        code: aiCode.code || "",
+        description: aiCode.description || "",
         audit: aiCode.audit || aiCode.evidence || null,
-        icdCodes: aiCode.icdCodes || []
+        icdCodes: aiCode.icdCodes || [],
       }));
     } else {
       data.ai_codes = [];
@@ -89,10 +93,10 @@ export async function GET(
     // Process codes
     if (data.codes && Array.isArray(data.codes)) {
       data.codes = data.codes.map((code: any) => ({
-        code: code.code || code.id || '',
-        description: code.description || '',
+        code: code.code || code.id || "",
+        description: code.description || "",
         audit: code.audit || code.evidence || null,
-        icdCodes: code.icdCodes || []
+        icdCodes: code.icdCodes || [],
       }));
     } else {
       data.codes = [];
@@ -100,7 +104,7 @@ export async function GET(
 
     return NextResponse.json(data);
   } catch (error: any) {
-    console.error(`Failed to fetch encounter with ID ${params.id}:`, error);
+    console.error(`Failed to fetch encounter with ID ${id}:`, error);
 
     // Return error with appropriate status code
     return new NextResponse(

@@ -30,6 +30,15 @@ RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 COPY package.json pnpm-lock.yaml* ./
 RUN pnpm install --frozen-lockfile
 
+FROM base AS prod-deps
+WORKDIR /app
+
+RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
+
+# Install dependencies based on the preferred package manager
+COPY package.json pnpm-lock.yaml* ./
+RUN pnpm install --prod --frozen-lockfile
+
 # Development image for local development
 FROM base AS stage
 WORKDIR /app
@@ -54,7 +63,7 @@ WORKDIR /app
 # Install pnpm in the builder stage too
 RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=prod-deps /app/node_modules ./node_modules
 COPY . .
 
 # Build the application

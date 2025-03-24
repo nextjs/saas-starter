@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
-import { UserProvider, User as AuthUser } from "@/lib/auth";
+import { UserProvider } from "@/lib/auth";
 import { getUser } from "@/utils/supabase/server";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let userPromise = getUser() as Promise<AuthUser | null>;
+  let userPromise = getUser();
 
   return (
     <html

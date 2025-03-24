@@ -54,7 +54,7 @@ export default function GeneralPage() {
                 id="name"
                 name="name"
                 placeholder="Enter your name"
-                defaultValue={user?.name || ''}
+                defaultValue={user?.user_metadata?.name || ''}
                 required
               />
             </div>

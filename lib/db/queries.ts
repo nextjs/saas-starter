@@ -41,6 +41,11 @@ export async function getTeamForUser(userId: string): Promise<TeamDataWithMember
         name: teams.name,
         createdAt: teams.createdAt,
         updatedAt: teams.updatedAt,
+        stripeCustomerId: teams.stripeCustomerId,
+        stripeSubscriptionId: teams.stripeSubscriptionId,
+        stripeProductId: teams.stripeProductId,
+        planName: teams.planName,
+        subscriptionStatus: teams.subscriptionStatus,
       })
       .from(teams)
       .where(eq(teams.id, teamId))
@@ -76,6 +81,11 @@ export async function getTeamForUser(userId: string): Promise<TeamDataWithMember
     return {
       ...teamData[0],
       members: validMembers,
+      stripeCustomerId: teamData[0].stripeCustomerId || null,
+      stripeSubscriptionId: teamData[0].stripeSubscriptionId || null,
+      stripeProductId: teamData[0].stripeProductId || null,
+      planName: teamData[0].planName || null,
+      subscriptionStatus: teamData[0].subscriptionStatus || null,
     };
   } catch (error) {
     console.error('Error getting team for user:', error);

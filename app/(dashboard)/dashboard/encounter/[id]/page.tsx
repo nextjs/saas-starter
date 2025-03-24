@@ -9,20 +9,19 @@ import {
 } from "@/types/encounter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import MedicalCodes from "@/components/dashboards/clinicdesk/MedicalCodes";
 import FormattedNotes from "@/components/dashboards/clinicdesk/FormattedNotes";
 import FormattedEncounter from "@/components/dashboards/clinicdesk/FormattedEncounter";
 
-export default function EncounterPage({ params }: { params: { id: string } }) {
-  const { id } = useParams();
+
+type Props = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+};
+
+export default async function EncounterPage({ params }: Props) {
+  const { id } = await params;
+  console.log('EncounterPage params:', params);
 
   // console.log('EncounterPage rendering with params:', params);
   const [encounter, setEncounter] = useState<Encounter | null>(null);

@@ -14,6 +14,11 @@ export default async function SettingsPage() {
     name: "My Team",
     createdAt: new Date(),
     updatedAt: new Date(),
+    stripeCustomerId: null,
+    stripeSubscriptionId: null,
+    stripeProductId: null,
+    planName: null,
+    subscriptionStatus: null,
     members: [
       {
         id: 1,
@@ -21,7 +26,7 @@ export default async function SettingsPage() {
         role: "admin",
         user: {
           id: parseInt(user.id),
-          name: user.user_metadata.name || null,
+          name: user.user_metadata?.name || null,
           email: user.email || ""
         }
       }
