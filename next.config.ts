@@ -19,6 +19,7 @@ const nextConfig: NextConfig = {
   },
   webpack: (config, { dev }) => {
     if (!dev) {
+      // Disable source maps in production for faster builds
       config.devtool = false;
     }
     return config;

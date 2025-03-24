@@ -13,7 +13,7 @@ RUN apt-get update && \
   rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies based on the lockfile hash - better caching
 COPY package.json pnpm-lock.yaml* .npmrc* ./
 RUN corepack enable pnpm && pnpm i --frozen-lockfile
 

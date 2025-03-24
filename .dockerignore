@@ -3,10 +3,15 @@ node_modules
 npm-debug.log
 yarn-debug.log
 yarn-error.log
+pnpm-debug.log
+.pnpm-store/
+.npm
 
 # Next.js build output
 .next
 out
+.swc/
+.turbo
 
 # Docker files
 Dockerfile
@@ -15,6 +20,7 @@ docker-compose.yml
 
 # Git files
 .git
+.github
 .gitignore
 
 # Environment variables
@@ -42,3 +48,20 @@ logs
 # Testing
 coverage
 .nyc_output
+__tests__
+**/*.test.*
+**/*.spec.*
+jest.config.*
+
+# Cache
+.eslintcache
+.cache
+tsconfig.tsbuildinfo
+
+# Misc
+README.md
+LICENSE
+*.md
+.husky
+.storybook
+storybook-static

@@ -1,7 +1,8 @@
 import { createClient } from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
-import { TeamDataWithMembers } from './schema';
-import { teams, teamMembers, users } from './schema';
+// import { TeamDataWithMembers } from '@/types/team';
+// import { teams, teamMembers } from "@/types/team";
+// import { users } from "@/types/user";
 
 // Get the current user from Supabase
 export async function getUser(): Promise<User | null> {

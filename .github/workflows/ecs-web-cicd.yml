@@ -1,0 +1,62 @@
+name: ECS Web CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+env:
+  AWS_ACCOUNT_ID: 209479264707
+  AWS_DEFAULT_REGION: us-east-2
+  ECS_CLUSTER: clinicdesk-web-test
+  ECS_SERVICE: clinicdesk-web-test
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v4
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/clinicdesk-gh-oidc-tf-apply-role
+          role-session-name: clincidesk-beta_${{ github.run_id }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Export ENV Vars
+        run: |
+          # TODO: Uncomment in Beta launch
+          # echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV
+          echo "ECR_IMAGE_TAG=${{ steps.login-ecr.outputs.registry }}/${{ env.ECS_SERVICE }}:latest" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        # TODO: Use SHA_SHORT in tag ${{ env.GITHUB_SHA_SHORT }}
+        run: |
+          docker build --target prod -t "${{ env.ECS_CLUSTER }}:latest" .
+          docker tag "${{ env.ECS_CLUSTER }}:latest" "${{ env.ECR_IMAGE_TAG }}"
+
+      - name: Push Docker image to Amazon ECR
+        run: |
+          docker push ${{ env.ECR_IMAGE_TAG }}
+
+      - name: Force Update Amazon ECS service
+        run: |
+          aws ecs update-service \
+            --region "${{ env.AWS_DEFAULT_REGION }}" \
+            --cluster "${{ env.ECS_CLUSTER }}" \
+            --service "${{ env.ECS_SERVICE }}" \
+            --force-new-deployment
+
+      # Skipping service deployment validation to save runner minutes
+
+      # TODO: Enable task creation and service update
+      # https://github.com/aws-actions/amazon-ecs-deploy-task-definition?tab=readme-ov-file#task-definition-container-image-values
