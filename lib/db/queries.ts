@@ -1,9 +1,7 @@
 import { createClient } from '@/utils/supabase/server';
 import { User } from '@supabase/supabase-js';
 import { TeamDataWithMembers } from './schema';
-import { db } from './drizzle';
 import { teams, teamMembers, users } from './schema';
-import { and, eq, sql } from 'drizzle-orm';
 
 // Get the current user from Supabase
 export async function getUser(): Promise<User | null> {
@@ -13,10 +11,11 @@ export async function getUser(): Promise<User | null> {
 }
 
 // Get team for a user
+/*
 export async function getTeamForUser(userId: string): Promise<TeamDataWithMembers | null> {
   try {
     console.log(`Getting team for user ID: ${userId}`);
-    
+
     // First get the user's team ID from the team_members table
     const teamMembersResult = await db
       .select({
@@ -127,3 +126,4 @@ export async function logActivity(
   // This function would need to be updated to handle string user IDs
   // For now, we'll just log the activity
 }
+*/

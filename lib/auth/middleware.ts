@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { TeamDataWithMembers } from '@/lib/db/schema';
+import { TeamDataWithMembers } from '@/types/team';
 // import { getTeamForUser } from '@/lib/db/queries';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';

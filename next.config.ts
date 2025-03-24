@@ -2,20 +2,26 @@ import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
   experimental: {
-    ppr: true,
+    ppr: false,
   },
   images: {
     unoptimized: true,
   },
-  output: 'standalone', // Enable standalone output for Docker deployment
+  output: "standalone", // Enable standalone output for Docker deployment
   async redirects() {
     return [
       {
         source: "/sign-up",
         destination: "/sign-in",
-        permanent: true
+        permanent: true,
       },
     ];
+  },
+  webpack: (config, { dev }) => {
+    if (!dev) {
+      config.devtool = false;
+    }
+    return config;
   },
 };
 

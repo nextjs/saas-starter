@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
   Encounter,
@@ -13,15 +13,9 @@ import MedicalCodes from "@/components/dashboards/clinicdesk/MedicalCodes";
 import FormattedNotes from "@/components/dashboards/clinicdesk/FormattedNotes";
 import FormattedEncounter from "@/components/dashboards/clinicdesk/FormattedEncounter";
 
-
-type Props = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
-
-export default async function EncounterPage({ params }: Props) {
-  const { id } = await params;
-  console.log('EncounterPage params:', params);
+export default function EncounterPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
+  console.log("EncounterPage params:", params);
 
   // console.log('EncounterPage rendering with params:', params);
   const [encounter, setEncounter] = useState<Encounter | null>(null);

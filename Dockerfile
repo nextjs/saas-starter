@@ -1,4 +1,4 @@
-# syntax = docker/dockerfile:1
+# syntax=docker.io/docker/dockerfile:1
 
 ARG NODE_VERSION=22.14.0
 ARG NODE_DISTRO=bullseye-slim
@@ -6,93 +6,66 @@ ARG PNPM_VERSION=10.6.5
 
 FROM public.ecr.aws/docker/library/node:${NODE_VERSION}-${NODE_DISTRO} AS base
 
-# Define build arguments with defaults
-ARG NODE_ENV=production
-ARG PORT=3000
-ARG HOSTNAME="0.0.0.0"
-ARG USER_ID=1001
-ARG GROUP_ID=1001
-ARG USER_NAME=nextjs
-ARG GROUP_NAME=nodejs
-
-# Set environment variables that are common across stages
-ENV NEXT_TELEMETRY_DISABLED=1
-ENV PORT=$PORT
-ENV HOSTNAME=$HOSTNAME
-
 # Install dependencies only when needed
 FROM base AS deps
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends libc6 && \
+  rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
-
-# Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --frozen-lockfile
-
-FROM base AS prod-deps
-WORKDIR /app
-
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
-
-# Install dependencies based on the preferred package manager
-COPY package.json pnpm-lock.yaml* ./
-RUN pnpm install --prod --frozen-lockfile
-
-# Development image for local development
-FROM base AS stage
-WORKDIR /app
-
-ENV NODE_ENV=development
-
-# Install pnpm in the development stage
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-
-EXPOSE $PORT
-
-# Run the development server with hot reloading
-CMD ["pnpm", "run", "dev"]
+# Install dependencies
+COPY package.json pnpm-lock.yaml* .npmrc* ./
+RUN corepack enable pnpm && pnpm i --frozen-lockfile
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
-
-# Install pnpm in the builder stage too
-RUN corepack enable && corepack prepare pnpm@${PNPM_VERSION} --activate
-
-COPY --from=prod-deps /app/node_modules ./node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build the application
-RUN pnpm run build
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN corepack enable pnpm && pnpm run build
+
+FROM base AS stage
+WORKDIR /app
+ENV NODE_ENV=development
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+EXPOSE 3000
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+CMD ["pnpm", "run", "dev"]
 
 # Production image, copy all the files and run next
 FROM base AS prod
 WORKDIR /app
 
-# Set NODE_ENV from build arg
-ENV NODE_ENV=$NODE_ENV
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user and group
-RUN addgroup --system --gid $GROUP_ID $GROUP_NAME && \
-    adduser --system --uid $USER_ID $USER_NAME
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
 
-# Set the correct permission for prerender cache
-RUN mkdir .next && \
-    chown $USER_NAME:$GROUP_NAME .next
-
 # Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /app/.next/standalone ./
-COPY --from=builder --chown=$USER_NAME:$GROUP_NAME /app/.next/static ./.next/static
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-USER $USER_NAME
-EXPOSE $PORT
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT=3000
 
 # server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
+# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
+ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
