@@ -19,7 +19,7 @@ const PricingCardItem = ({
   return (
     <div
       className={cn(
-        "flex-1 min-w-[300px] rounded-lg p-4 relative xl:min-w-full",
+        "flex-1 min-w-full rounded-lg p-4 relative lg:min-w-[300px]",
         isHot ? 
           "bg-gradient-to-r from-[#ffe89a] to-[#ffcc26] p-[4px]" : 
           "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
