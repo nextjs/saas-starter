@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 /*
   ---break---
 */
@@ -9,6 +9,8 @@
 @variant dark (&:is(.dark *));
 
 @theme {
+  --font-normal: "Arial";
+  --font-bold: "Arial-Bold";
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
 
@@ -52,9 +54,69 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
   --color-sidebar-ring: hsl(var(--sidebar-ring));
 
+  --text-base: 16px;
+  --text-md: 14px;
+  --text-sm: 12px;
+  --text-xs: 10px;
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer utilities {
+  body {
+    font-family: "Manrope", Arial, Helvetica, sans-serif;
+  }
+
+  /* 定义动画关键帧 */
+  @keyframes float-right {
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(10px);
+    }
+    100% {
+      transform: translateX(0px);
+    }
+  }
+
+  /* 定义动画类 */
+  .animate-float-right {
+    animation: float-right 3s ease-in-out infinite;
+  }
+
+  /* 定义不同的动画持续时间 */
+  .float-duration-2 {
+    animation-duration: 2s;
+  }
+  .float-duration-4 {
+    animation-duration: 4s;
+  }
+
+  /* 定义不同的浮动距离 */
+  .float-distance-sm {
+    --float-distance: 5px;
+    animation-name: float-right-custom;
+  }
+  .float-distance-lg {
+    --float-distance: 20px;
+    animation-name: float-right-custom;
+  }
+
+  /* 自定义距离的动画 */
+  @keyframes float-right-custom {
+    0% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(var(--float-distance, 10px));
+    }
+    100% {
+      transform: translateX(0px);
+    }
+  }
 }
 
 /*
@@ -77,7 +139,7 @@
 
 @layer utilities {
   body {
-    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    font-family: "Manrope", Arial, Helvetica, sans-serif;
   }
 }
 
@@ -168,15 +230,15 @@
 */
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(240 10% 3.9%);
+  --background: hsl(210 40% 98%);
+  --foreground: hsl(0 0% 100%);
+  --secondary: hsl(142 69% 58%);
   --card: hsl(0 0% 100%);
   --card-foreground: hsl(240 10% 3.9%);
   --popover: hsl(0 0% 100%);
   --popover-foreground: hsl(240 10% 3.9%);
-  --primary: hsl(240 5.9% 10%);
+  --primary: hsl(229 84% 5%);
   --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(240 4.8% 95.9%);
   --secondary-foreground: hsl(240 5.9% 10%);
   --muted: hsl(240 4.8% 95.9%);
   --muted-foreground: hsl(240 3.8% 46.1%);
@@ -187,7 +249,7 @@
   --border: hsl(240 5.9% 90%);
   --input: hsl(240 5.9% 90%);
   --ring: hsl(240 10% 3.9%);
-  --chart-1: hsl(12 76% 61%);
+  --chart-1: hsl(0, 100%, 0%);
   --chart-2: hsl(173 58% 39%);
   --chart-3: hsl(197 37% 24%);
   --chart-4: hsl(43 74% 66%);
@@ -202,13 +264,13 @@
 .dark {
   --background: hsl(240 10% 3.9%);
   --foreground: hsl(0 0% 98%);
+  --secondary: hsl(142 69% 58%);
   --card: hsl(240 10% 3.9%);
   --card-foreground: hsl(0 0% 98%);
   --popover: hsl(240 10% 3.9%);
   --popover-foreground: hsl(0 0% 98%);
   --primary: hsl(0 0% 98%);
   --primary-foreground: hsl(240 5.9% 10%);
-  --secondary: hsl(240 3.7% 15.9%);
   --secondary-foreground: hsl(0 0% 98%);
   --muted: hsl(240 3.7% 15.9%);
   --muted-foreground: hsl(240 5% 64.9%);
@@ -271,5 +333,32 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  html,
+  body,
+  #root {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  * {
+    padding: 0;
+    margin: 0;
+    font-family: "Arial";
+    list-style: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* 针对部分浏览器 */
+    scroll-behavior: smooth;
+  }
+  div[data-radix-scroll-area-viewport] {
+    > div {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+    }
   }
 }
