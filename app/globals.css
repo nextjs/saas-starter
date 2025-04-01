@@ -62,6 +62,7 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: 20px;
 }
 
 @layer utilities {
@@ -82,9 +83,39 @@
     }
   }
 
+  @keyframes tilt {
+    0%,
+    100% {
+      transform: rotate(-1deg);
+    }
+    50% {
+      transform: rotate(1deg);
+    }
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
   /* 定义动画类 */
   .animate-float-right {
     animation: float-right 3s ease-in-out infinite;
+  }
+
+  .animate-tilt {
+    animation: tilt 0.3s ease-in-out infinite;
+  }
+
+  .animate-gradient {
+    animation: gradient 8s linear infinite;
   }
 
   /* 定义不同的动画持续时间 */
