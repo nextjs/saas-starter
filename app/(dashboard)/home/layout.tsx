@@ -31,8 +31,8 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const navItems = [
-    { href: "/home", icon: House, label: "Home" },
+  const navItems: any[] = [
+    // { href: "/home", icon: House, label: "Home" },
     // { href: "/home/general", icon: Grip, label: "Kol List" },
   ];
 
@@ -41,7 +41,7 @@ export default function DashboardLayout({
       {/* Mobile header */}
       <div className="md:hidden flex items-center justify-between bg-white shadow-sm p-2 text-primary">
         <div className="flex items-center">
-          <Link href="/" className="flex items-center">
+          <Link href="/home" className="flex items-center">
             <CircleIcon className="h-4 w-4 text-secondary md:w-6 md:h-6" />
             <span className="ml-2 text-base font-bold text-primary md:text-xl">
               KOL AGENT
@@ -73,7 +73,7 @@ export default function DashboardLayout({
         >
           <div className="w-full h-full flex flex-col">
             <div className="items-center justify-center py-6 pb-0 px-4 hidden md:flex">
-              <Link href="/" className="flex items-center">
+              <Link href="/home" className="flex items-center">
                 <CircleIcon className="h-6 w-6 text-secondary" />
                 <span className="ml-2 text-lg font-bold text-primary">
                   KOL AGENT

@@ -41,6 +41,7 @@
     "postgres": "^3.4.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
+    "react-icons": "^5.2.1",
     "sass": "^1.86.0",
     "server-only": "^0.0.1",
     "stripe": "^17.7.0",
