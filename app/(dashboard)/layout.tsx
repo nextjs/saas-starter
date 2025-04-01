@@ -83,7 +83,7 @@ function UserMenu() {
 function Header() {
   return (
     <header className="w-full absolute top-0 left-0 z-[10]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 flex justify-between items-center">
         <Link href="/" className="flex items-center">
           <CircleIcon className="h-6 w-6 text-secondary" />
           <span className="ml-2 text-xl font-bold text-white">
