@@ -20,9 +20,9 @@ const PricingCardItem = ({
     <div
       className={cn(
         "flex-1 min-w-full rounded-lg p-4 relative lg:min-w-[300px]",
-        isHot ? 
-          "bg-gradient-to-r from-[#ffe89a] to-[#ffcc26] p-[4px]" : 
-          "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
+        isHot
+          ? "bg-gradient-to-r from-[#ffe89a] to-[#ffcc26] p-[4px]"
+          : "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
       )}
     >
       <div className={cn("h-full w-full bg-white rounded-lg p-4")}>
@@ -35,7 +35,9 @@ const PricingCardItem = ({
               loop
             />
           )}
-          <span className="flex font-bold items-center gap-0 text-base">{name} Plan</span>
+          <span className="flex font-bold items-center gap-0 text-base">
+            {name} Plan
+          </span>
         </div>
         <div className="py-10 text-[#00d179] flex items-end gap-2">
           <span className="text-5xl font-bold">${price}</span>
@@ -79,7 +81,6 @@ export default function PricingCard() {
       isHot: true,
       price: 100,
       features: [
-        "1000 KOLs1000",
         "1000 KOLs",
         "1000 KOLs",
         "1000 KOLs",
