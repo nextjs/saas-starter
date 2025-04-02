@@ -19,7 +19,7 @@ const PricingCardItem = ({
   return (
     <div
       className={cn(
-        "flex-1 min-w-full rounded-lg p-4 relative lg:min-w-[300px]",
+        "w-full rounded-lg p-4 relative",
         isHot
           ? "bg-gradient-to-r from-[#ffe89a] to-[#ffcc26] p-[4px]"
           : "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
@@ -55,11 +55,11 @@ const PricingCardItem = ({
             {isHot ? "Active" : "Subscribe"}
           </Button>
         </div>
-        <ul>
+        <ul className="flex flex-col justify-start gap-1">
           {features.map((feature) => (
             <li key={feature} className="flex items-center gap-1">
-              <Check className="w-3 h-3 text-green-500" />
-              <span className="text-md text-primary/60">{feature}</span>
+              {/* <Check className="w-3 h-3 text-green-500" /> */}
+              <span className="text-md text-primary/60 text-left">{feature}</span>
             </li>
           ))}
         </ul>
@@ -71,34 +71,44 @@ const PricingCardItem = ({
 export default function PricingCard() {
   const pricingCardItems = [
     {
-      name: "Free",
-      price: 0,
-      features: ["1000 KOLs", "1000 KOLs", "1000 KOLs"],
+      name: "Platinum",
+      price: 1.99,
+      description: "To infinity and beyond",
+      period: "day",
+      features: ["✅ Bonus 200k credits/mo (About 8 replies/mo)", "✅ 1 active agent", "✅ Browser automation"],
       isHot: false,
     },
     {
-      name: "Pro",
+      name: "Diamond",
+      description: "Jump into another dimension",
+      price: 19.59,
+      period: "month",
       isHot: true,
-      price: 100,
       features: [
-        "1000 KOLs",
-        "1000 KOLs",
-        "1000 KOLs",
-        "1000 KOLs",
-        "1000 KOLs",
-        "1000 KOLs",
-        "1000 KOLs",
+        "✅ 750k credits/mo (About 30 replies/mo)",
+        "✅ 1 active agent",
+        "✅ Browser automation",
       ],
     },
     {
-      name: "Enterprise",
-      price: 1000,
-      features: ["1000 KOLs", "1000 KOLs", "1000 KOLs"],
+      name: "Gold",
+      description: "Massive AI power to your community",
+      price: 129.99,
+      period: "year",
+      features: ["✅ 3m credits/mo (About 150 replies/mo)", "✅ 3 active agents ⬆️", "✅ Browser automation", "✅ Priority generation queue"],
+      isHot: false,
+    },
+    {
+      name: "Silver",
+      description: "The way to go when you need more",
+      price: 199,
+      period: "permanent",
+      features: ["✅ 6m credits/mo (About 300 replies/mo)", "✅ 5 active agents ⬆️ ⬆️", "✅ Browser automation", "✅ Priority generation queue"],
       isHot: false,
     },
   ];
   return (
-    <div className="w-full flex gap-10 items-end text-primary flex-wrap">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {pricingCardItems.map((item) => (
         <PricingCardItem key={item.name} {...item} />
       ))}

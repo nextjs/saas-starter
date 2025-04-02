@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   experimental: {
     ppr: true
   },
+  // 重定向
   async redirects() {
     return [
       {
