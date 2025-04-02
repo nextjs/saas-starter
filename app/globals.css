@@ -105,6 +105,19 @@
     }
   }
 
+  @keyframes shine {
+    0% {
+      background-position: 100%;
+    }
+    100% {
+      background-position: -100%;
+    }
+  }
+
+  .animate-shine {
+    animation: shine 5s linear infinite;
+  }
+
   /* 定义动画类 */
   .animate-float-right {
     animation: float-right 3s ease-in-out infinite;
