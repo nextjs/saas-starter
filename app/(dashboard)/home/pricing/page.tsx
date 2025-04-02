@@ -1,20 +1,11 @@
 import React from "react";
 import PricingCard from "../../pricing/pricing-card";
 import GradientText from "@/components/TextAnimations/GradientText/GradientText";
-import Aurora from "@/components/Backgrounds/Aurora/Aurora";
 
 export default function page() {
   return (
-    <div className="w-full h-full flex flex-col gap-4 text-primary text-center">
-      <div className="absolute inset-0 w-full h-full">
-        {/* <Aurora
-          colorStops={["#45EC82", "#7079F3", "#75CEFC"]}
-          blend={1}
-          amplitude={2.0}
-          speed={0.5}
-        /> */}
-      </div>
-      <div className="p-4 md:p-8 w-full h-full flex flex-col items-center justify-center">
+    <div className="w-full h-auto text-primary text-center py-12">
+      <div className="p-4 md:p-8 w-full h-full">
         <GradientText
           colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
           animationSpeed={3}
