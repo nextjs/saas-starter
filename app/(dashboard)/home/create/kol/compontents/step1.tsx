@@ -341,13 +341,14 @@ export default function StepOne() {
               </FormItem>
             )}
           />
-
-          <Button
-            type="submit"
-            className="duration-350 h-10 flex items-center justify-center font-bold px-10 mt-10"
-          >
-            Next
-          </Button>
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              className="duration-350 h-10 flex items-center justify-center font-bold px-10 mt-10"
+            >
+              Next
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

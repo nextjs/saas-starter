@@ -11,10 +11,10 @@ import React from "react";
 
 export default function Page() {
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-full flex max-w-3xl mx-auto">
       <div className="w-full h-full">
         <Stepper
-          initialStep={2}
+          initialStep={1}
           stepText={[
             "1. Info",
             "2. Ability",
