@@ -22,6 +22,7 @@ import Image from "next/image";
 import UserCard from "./user-card";
 import ClickSpark from "@/components/Animations/ClickSpark/ClickSpark";
 import NullCreate from "@/app/components/slidebar/null-create";
+import Threads from "@/components/Backgrounds/Threads/Threads";
 
 export default function DashboardLayout({
   children,
@@ -37,7 +38,7 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="flex flex-col min-h-[calc(100dvh)] max-w-full mx-auto w-full">
+    <div className="flex flex-col min-h-[calc(100dvh)] max-w-full mx-auto w-full text-primary">
       {/* Mobile header */}
       <div className="md:hidden flex items-center justify-between bg-white shadow-sm p-2 text-primary">
         <div className="flex items-center">
@@ -82,10 +83,12 @@ export default function DashboardLayout({
             </div>
             <nav className="h-full overflow-y-auto p-4 flex flex-col gap-1">
               <div className="flex items-center justify-center my-2">
-                <Button className="w-full flex items-center justify-center gap-2">
-                  <Plus className="h-4 w-4" />
-                  <span className="text-base">Create KOL Agent</span>
-                </Button>
+                <Link href="/home/create/kol">
+                  <Button className="w-full flex items-center justify-center gap-2">
+                    <Plus className="h-4 w-4" />
+                    <span className="text-base">Create KOL Agent</span>
+                  </Button>
+                </Link>
               </div>
               {navItems.map((item) => (
                 <Link key={item.href} href={item.href} passHref>
@@ -131,6 +134,14 @@ export default function DashboardLayout({
             sparkCount={8}
             duration={400}
           >
+            <div className="w-full h-[400px] fixed z-[-1] top-0 -translate-y-1/2 opacity-80">
+              <Threads
+                amplitude={1}
+                // color={[0, 0, 0]}
+                distance={0}
+                enableMouseInteraction={true}
+              />
+            </div>
             <main className="w-full h-full">{children}</main>
           </ClickSpark>
         </ScrollArea>
