@@ -397,6 +397,9 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent; /* 针对部分浏览器 */
     scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
   div[data-radix-scroll-area-viewport] {
     > div {
