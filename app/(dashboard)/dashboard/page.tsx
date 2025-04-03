@@ -1,16 +1,15 @@
 import { redirect } from "next/navigation";
 import { Settings } from "./settings";
 import { getTeamForUser, getUser } from "@/lib/db/queries";
-import { getSession } from "@/lib/auth/session";
 
 export default async function SettingsPage() {
-  const userSession = await getSession();
+  const user = await getUser();
 
-  if (!userSession) {
+  if (!user) {
     redirect("/sign-in");
   }
 
-  const teamData = await getTeamForUser(userSession.user.id);
+  const teamData = await getTeamForUser(user.id);
 
   if (!teamData) {
     throw new Error("Team not found");
