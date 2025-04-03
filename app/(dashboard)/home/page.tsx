@@ -9,14 +9,6 @@ export default async function HomePage() {
   return (
     <div className="text-primary w-full h-full">
       <div className="w-full h-full">
-        <div className="w-full h-[400px] fixed z-[0] top-0 -translate-y-1/2 opacity-80">
-          <Threads
-            amplitude={1}
-            // color={[0, 0, 0]}
-            distance={0}
-            enableMouseInteraction={true}
-          />
-        </div>
         <div className="w-full h-full relative z-1">
           <section className="w-full p-4 pr-0 md:p-8">
             <div className="w-full h-full flex flex-col gap-2 mb-4">
