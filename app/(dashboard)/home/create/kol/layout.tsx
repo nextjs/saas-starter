@@ -8,7 +8,7 @@ import React from "react";
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="w-full h-full overflow-hidden flex flex-col">
-      <div className="w-full flex items-center justify-between pb-0 shadow-[0_10px_10px_20px_rgba(251,249,250,1)] pb-4">
+      <div className="w-full flex items-center justify-between shadow-[0_10px_10px_20px_rgba(251,249,250,1)] pb-4">
         <Link href="/home">
           <div className="flex items-center gap-2">
             <ChevronLeft className="w-6 h-6" />
