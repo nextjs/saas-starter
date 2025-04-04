@@ -56,7 +56,7 @@ export default function StepOne() {
         >
           <FormField
             control={form.control}
-            rules={{ required: "Ability is required" }} 
+            rules={{ required: "Ability is required" }}
             name="ability"
             render={({ field }) => (
               <FormItem>
