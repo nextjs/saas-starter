@@ -96,11 +96,14 @@ export async function createCustomerPortalSession(team: Team) {
               'missing_features',
               'switched_service',
               'unused',
-              'other'
-            ]
-          }
-        }
-      }
+              'other',
+            ],
+          },
+        },
+        payment_method_update: {
+          enabled: true,
+        },
+      },
     });
   }
 
