@@ -91,7 +91,7 @@ async function getPostgresURL(): Promise<string> {
     console.log(
       "You can find Postgres databases at: https://vercel.com/marketplace?category=databases"
     );
-    return await question("Enter your NEXT_PUBLIC_POSTGRES_URL: ");
+    return await question("Enter your POSTGRES_URL: ");
   }
 }
 
