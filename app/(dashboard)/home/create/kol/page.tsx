@@ -11,7 +11,7 @@ import React from "react";
 
 export default function Page() {
   return (
-    <div className="w-full h-full flex max-w-3xl mx-auto">
+    <div className="w-full h-full flex">
       <div className="w-full h-full">
         <Stepper
           initialStep={1}
@@ -45,10 +45,14 @@ export default function Page() {
             <StepFour />
           </Step>
           <Step>
-            <StepFive />
+            <ScrollArea className="w-full">
+              <StepFive />
+            </ScrollArea>
           </Step>
           <Step>
-            <StepSix />
+            <ScrollArea className="w-full">
+              <StepSix />
+            </ScrollArea>
           </Step>
         </Stepper>
       </div>

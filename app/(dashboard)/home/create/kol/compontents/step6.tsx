@@ -55,7 +55,7 @@ export default function StepSix() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col px-4 space-y-6">
+    <div className="w-full h-full flex flex-col space-y-6">
       <div className="space-y-1">
         <h3 className="text-xl font-bold capitalize">revenue</h3>
         <p className="text-md text-muted-foreground">
