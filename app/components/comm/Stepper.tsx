@@ -65,6 +65,14 @@ export default function Stepper({
     } else {
       onStepChange(newStep);
     }
+
+    const event = new CustomEvent("update-step", {
+      detail: {
+        step: newStep,
+      },
+    });
+
+    globalThis.dispatchEvent(event);
   };
 
   const handleBack = () => {
