@@ -51,10 +51,6 @@ export default async function HomePage() {
             </ScrollArea>
           </section>
         </div>
-
-        <div className="w-96 h-full fixed z-10 top-0 right-0 py-6">
-          <TwitterView />
-        </div>
       </div>
     </div>
   );
