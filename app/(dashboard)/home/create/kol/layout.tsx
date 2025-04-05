@@ -21,9 +21,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Button>
       </div>
       <div className="w-full flex-1 overflow-auto">{children}</div>
-      <div className="w-96 h-full fixed z-10 top-0 right-0 py-6">
-        <TwitterView />
-      </div>
     </div>
   );
 }
