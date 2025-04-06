@@ -48,7 +48,7 @@ export default function StepOne() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
+    <div className="w-full h-full flex flex-col gap-4 px-2">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -72,6 +72,7 @@ export default function StepOne() {
             <Button
               onClick={handleBack}
               variant="ghost"
+              type="button"
               className={`duration-350 h-10 rounded transition text-md ${
                 currentStep === 1
                   ? "pointer-events-none opacity-50 text-neutral-400"

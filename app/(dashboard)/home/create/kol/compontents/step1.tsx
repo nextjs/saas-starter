@@ -106,7 +106,7 @@ export default function StepOne() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4">
+    <div className="w-full h-full flex flex-col gap-4 px-2">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

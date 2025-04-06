@@ -11,7 +11,7 @@ import React from "react";
 
 export default function Page() {
   return (
-    <div className="w-full h-full flex">
+    <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">
         <Stepper
           initialStep={1}

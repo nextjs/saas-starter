@@ -42,7 +42,7 @@ export default function StepFour() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col space-y-6">
+    <div className="w-full h-full flex flex-col space-y-6 px-2">
       <div className="space-y-1">
         <h3 className="text-xl font-bold capitalize">topics</h3>
         <p className="text-md text-muted-foreground">
@@ -97,6 +97,7 @@ export default function StepFour() {
               <Button
                 onClick={handleBack}
                 variant="ghost"
+                type="button"
                 className={`duration-350 h-10 rounded transition text-md ${
                   currentStep === 1
                     ? "pointer-events-none opacity-50 text-neutral-400"
