@@ -1,5 +1,3 @@
-import { LoaderCircle } from "lucide-react";
-
 import PreviewLoader from "./preview-loader";
 import PreviewThinking from "./preview-thinking";
 
@@ -12,10 +10,6 @@ export default function PreviewStepThree() {
     <div className="px-4 space-y-4 text-md">
       <PreviewLoader text="思考中" time={22} />
       <PreviewThinking texts={texts} />
-      <div className="bg-background rounded-md px-4 py-2 flex items-center space-x-1">
-        <LoaderCircle className="w-4 h-4 animate-spin" />
-        <span>转推中…(用时10秒) 1/2</span>
-      </div>
       <PreviewLoader text="转推中" time={10} progress="1/2" />
       <PreviewLoader text="评论中" time={10} progress="1/2" />
     </div>
