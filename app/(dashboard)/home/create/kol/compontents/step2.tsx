@@ -48,7 +48,7 @@ export default function StepOne() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-4 px-4">
+    <div className="w-full h-full flex flex-col gap-4">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -56,7 +56,7 @@ export default function StepOne() {
         >
           <FormField
             control={form.control}
-            rules={{ required: "Ability is required" }} 
+            rules={{ required: "Ability is required" }}
             name="ability"
             render={({ field }) => (
               <FormItem>

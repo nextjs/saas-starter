@@ -134,14 +134,14 @@ export default function DashboardLayout({
             sparkCount={8}
             duration={400}
           >
-            <div className="w-full h-[400px] fixed z-[-1] top-0 -translate-y-1/2 opacity-80">
+            {/* <div className="w-full h-[400px] fixed z-[-1] top-0 -translate-y-1/2 opacity-80">
               <Threads
                 amplitude={1}
                 // color={[0, 0, 0]}
                 distance={0}
                 enableMouseInteraction={true}
               />
-            </div>
+            </div> */}
             <main className="w-full h-full">{children}</main>
           </ClickSpark>
         </ScrollArea>
