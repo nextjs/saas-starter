@@ -24,7 +24,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
         <div className="w-full flex-1 overflow-auto">{children}</div>
       </div>
-      <Preview />
+      <div className="hidden md:block">
+        <Preview />
+      </div>
     </div>
   );
 }

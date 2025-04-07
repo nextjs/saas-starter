@@ -6,6 +6,7 @@ import React, {
   useLayoutEffect,
   HTMLAttributes,
   ReactNode,
+  useEffect,
 } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -31,6 +32,7 @@ interface StepperProps extends HTMLAttributes<HTMLDivElement> {
     currentStep: number;
     onStepClick: (clicked: number) => void;
   }) => ReactNode;
+  completedContent?: ReactNode;
 }
 
 export default function Stepper({
@@ -49,6 +51,7 @@ export default function Stepper({
   nextButtonText = "Continue",
   disableStepIndicators = false,
   renderStepIndicator,
+  completedContent,
   ...rest
 }: StepperProps) {
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
@@ -99,6 +102,7 @@ export default function Stepper({
       value={{
         handleNext,
         handleBack,
+        handleComplete,
         currentStep,
         isLastStep,
         isCompleted,
@@ -151,6 +155,7 @@ export default function Stepper({
               currentStep={currentStep}
               direction={direction}
               className={`w-full ${contentClassName}`}
+              completedContent={completedContent}
             >
               {stepsArray[currentStep - 1]}
             </StepContentWrapper>
@@ -199,6 +204,7 @@ interface StepContentWrapperProps {
   direction: number;
   children: ReactNode;
   className?: string;
+  completedContent?: ReactNode;
 }
 
 function StepContentWrapper({
@@ -207,6 +213,7 @@ function StepContentWrapper({
   direction,
   children,
   className = "",
+  completedContent,
 }: StepContentWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -215,7 +222,7 @@ function StepContentWrapper({
       ref={containerRef}
       className={`relative ${className}`}
       style={{
-        overflow: isCompleted ? "hidden" : "visible",
+        // overflow: isCompleted ? "hidden" : "visible",
         height: isCompleted ? 0 : "auto",
         minHeight: "200px",
       }}
@@ -224,6 +231,11 @@ function StepContentWrapper({
         {!isCompleted && (
           <SlideTransition key={currentStep} direction={direction}>
             {children}
+          </SlideTransition>
+        )}
+        {isCompleted && (
+          <SlideTransition key={currentStep} direction={direction}>
+            {completedContent}
           </SlideTransition>
         )}
       </AnimatePresence>
@@ -280,7 +292,9 @@ interface StepProps {
 }
 
 export function Step({ children, className }: StepProps) {
-  return <div className={cn("pl-8", className)}>{children}</div>;
+  return (
+    <div className={cn("pl-2 md:pl-4 lg:pl-8", className)}>{children}</div>
+  );
 }
 
 interface StepIndicatorProps {

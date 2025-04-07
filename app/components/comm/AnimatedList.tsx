@@ -8,6 +8,8 @@ import React, {
   UIEvent,
 } from "react";
 import { motion, useInView } from "framer-motion";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface AnimatedItemProps {
   children: ReactNode;
@@ -31,11 +33,11 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
       ref={ref}
       data-index={index}
       onMouseEnter={onMouseEnter}
-      onClick={onClick}
+      // onClick={onClick}
       initial={{ scale: 0.7, opacity: 0 }}
       animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.7, opacity: 0 }}
       transition={{ duration: 0.2, delay }}
-      className="mb-4 cursor-pointer"
+      className=""
     >
       {children}
     </motion.div>
@@ -43,8 +45,8 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
 };
 
 interface AnimatedListProps {
-  items?: string[];
-  onItemSelect?: (item: string, index: number) => void;
+  items: React.JSX.Element[];
+  onItemSelect?: (item: React.JSX.Element, index: number) => void;
   showGradients?: boolean;
   enableArrowNavigation?: boolean;
   className?: string;
@@ -54,23 +56,7 @@ interface AnimatedListProps {
 }
 
 const AnimatedList: React.FC<AnimatedListProps> = ({
-  items = [
-    "Item 1",
-    "Item 2",
-    "Item 3",
-    "Item 4",
-    "Item 5",
-    "Item 6",
-    "Item 7",
-    "Item 8",
-    "Item 9",
-    "Item 10",
-    "Item 11",
-    "Item 12",
-    "Item 13",
-    "Item 14",
-    "Item 15",
-  ],
+  items,
   onItemSelect,
   showGradients = true,
   enableArrowNavigation = true,
@@ -86,13 +72,13 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
   const [topGradientOpacity, setTopGradientOpacity] = useState<number>(0);
   const [bottomGradientOpacity, setBottomGradientOpacity] = useState<number>(1);
 
-  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } =
-      e.target as HTMLDivElement;
+  const handleScroll = (e: Event) => {
+    const target = e.target as HTMLDivElement;
+    const { scrollTop, scrollHeight, clientHeight } = target;
     setTopGradientOpacity(Math.min(scrollTop / 50, 1));
     const bottomDistance = scrollHeight - (scrollTop + clientHeight);
     setBottomGradientOpacity(
-      scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1),
+      scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1)
     );
   };
 
@@ -127,7 +113,7 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     if (!keyboardNav || selectedIndex < 0 || !listRef.current) return;
     const container = listRef.current;
     const selectedItem = container.querySelector(
-      `[data-index="${selectedIndex}"]`,
+      `[data-index="${selectedIndex}"]`
     ) as HTMLElement | null;
     if (selectedItem) {
       const extraMargin = 50;
@@ -150,50 +136,52 @@ const AnimatedList: React.FC<AnimatedListProps> = ({
     setKeyboardNav(false);
   }, [selectedIndex, keyboardNav]);
 
+  useEffect(() => {
+    // 获取真实的滚动容器
+    const scrollContainer = listRef.current?.querySelector(
+      "[data-radix-scroll-area-viewport]"
+    );
+
+    if (scrollContainer) {
+      scrollContainer.addEventListener("scroll", handleScroll);
+
+      return () => {
+        scrollContainer.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, []);
+
   return (
-    <div className={`relative w-[500px] ${className}`}>
-      <div
-        ref={listRef}
-        className={`max-h-[400px] overflow-y-auto p-4 ${
-          displayScrollbar
-            ? "[&::-webkit-scrollbar]:w-[8px] [&::-webkit-scrollbar-track]:bg-[#060606] [&::-webkit-scrollbar-thumb]:bg-[#222] [&::-webkit-scrollbar-thumb]:rounded-[4px]"
-            : "scrollbar-hide"
-        }`}
-        onScroll={handleScroll}
-        style={{
-          scrollbarWidth: "thin",
-          scrollbarColor: "#222 #060606",
-        }}
-      >
-        {items.map((item, index) => (
-          <AnimatedItem
-            key={index}
-            delay={0.1}
-            index={index}
-            onMouseEnter={() => setSelectedIndex(index)}
-            onClick={() => {
-              setSelectedIndex(index);
-              if (onItemSelect) {
-                onItemSelect(item, index);
-              }
-            }}
-          >
-            <div
-              className={`p-4 bg-[#111] rounded-lg ${selectedIndex === index ? "bg-[#222]" : ""} ${itemClassName}`}
+    <div className={`relative w-full h-full`}>
+      <ScrollArea ref={listRef} className={`w-full h-full`}>
+        <div className={cn("flex flex-col gap-2 w-full", className)}>
+          {items.map((item, index) => (
+            <AnimatedItem
+              key={index}
+              delay={0.1}
+              index={index}
+              onMouseEnter={() => setSelectedIndex(index)}
+              onClick={() => {
+                setSelectedIndex(index);
+                if (onItemSelect) {
+                  onItemSelect(item, index);
+                }
+              }}
             >
-              <p className="text-white m-0">{item}</p>
-            </div>
-          </AnimatedItem>
-        ))}
-      </div>
+              <div className={`${itemClassName}`}>{item}</div>
+            </AnimatedItem>
+          ))}
+        </div>
+      </ScrollArea>
+
       {showGradients && (
         <>
           <div
-            className="absolute top-0 left-0 right-0 h-[50px] bg-gradient-to-b from-[#060606] to-transparent pointer-events-none transition-opacity duration-300 ease"
+            className="absolute -top-4 left-0 right-0 h-10 bg-gradient-to-b from-background via-background to-transparent pointer-events-none transition-opacity duration-300 ease"
             style={{ opacity: topGradientOpacity }}
           ></div>
           <div
-            className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-[#060606] to-transparent pointer-events-none transition-opacity duration-300 ease"
+            className="absolute -bottom-4 left-0 right-0 h-10 bg-gradient-to-t from-background via-background to-transparent pointer-events-none transition-opacity duration-300 ease"
             style={{ opacity: bottomGradientOpacity }}
           ></div>
         </>
