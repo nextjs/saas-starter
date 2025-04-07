@@ -15,6 +15,7 @@ import { useUser } from "@/lib/auth";
 import { signOut } from "@/app/(login)/actions";
 import { usePathname, useRouter } from "next/navigation";
 import Nav from "@/app/components/header/nav";
+import { Toaster } from "@/components/ui/sonner";
 
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

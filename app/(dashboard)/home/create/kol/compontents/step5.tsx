@@ -18,43 +18,75 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { useStepperContext } from "@/app/context/stepper-context";
+import QueryMask from "@/app/components/comm/QueryMask";
+import {
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
+import { CircleHelp } from "lucide-react";
 
 const formSchema = z.object({
   post: z
     .string()
     .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
+      (val) => Number.isInteger(Number(val)),
+      "Must be an integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 10,
+      "Must be between 1 and 10"
     ),
   repost: z
     .string()
     .refine(
       (val) => Number.isInteger(Number(val)) && Number(val) > 0,
       "Must be a positive integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 10,
+      "Must be between 1 and 10"
     ),
   quote: z
     .string()
     .refine(
       (val) => Number.isInteger(Number(val)) && Number(val) > 0,
       "Must be a positive integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 10,
+      "Must be between 1 and 10"
     ),
   like: z
     .string()
     .refine(
       (val) => Number.isInteger(Number(val)) && Number(val) > 0,
       "Must be a positive integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 200,
+      "Must be between 1 and 200"
     ),
   reply: z
     .string()
     .refine(
       (val) => Number.isInteger(Number(val)) && Number(val) > 0,
       "Must be a positive integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 10,
+      "Must be between 1 and 10"
     ),
   comment: z
     .string()
     .refine(
       (val) => Number.isInteger(Number(val)) && Number(val) > 0,
       "Must be a positive integer"
+    )
+    .refine(
+      (val) => Number(val) >= 1 && Number(val) <= 10,
+      "Must be between 1 and 10"
     ),
 });
 
@@ -67,7 +99,7 @@ export default function StepFive() {
       post: "10",
       repost: "10",
       quote: "10",
-      like: "10",
+      like: "200",
       reply: "10",
       comment: "10",
     },
@@ -95,24 +127,41 @@ export default function StepFive() {
               control={form.control}
               name="post"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          post
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Post
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 10 responses
+                                    per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute post
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter post frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -127,24 +176,41 @@ export default function StepFive() {
               control={form.control}
               name="repost"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          repost
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Repost
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 10 responses
+                                    per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute repost
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter repost frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -159,24 +225,41 @@ export default function StepFive() {
               control={form.control}
               name="quote"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          quote
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Quote
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 10 responses
+                                    per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute quote
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter quote frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -191,24 +274,41 @@ export default function StepFive() {
               control={form.control}
               name="like"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          like
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Like
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 200
+                                    responses per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute like
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter like frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -223,24 +323,41 @@ export default function StepFive() {
               control={form.control}
               name="reply"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          reply
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Reply
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 10 responses
+                                    per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute reply
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter reply frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -255,24 +372,41 @@ export default function StepFive() {
               control={form.control}
               name="comment"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
-                          comment
+                        <dt className="text-md font-bold capitalize flex items-center gap-1">
+                          <span className="text-primary font-bold text-md">
+                            Comment
+                          </span>
+                          <QueryMask>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <CircleHelp className="h-3 w-3 cursor-help" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>
+                                    It is recommended not to exceed 10 responses
+                                    per day.
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          </QueryMask>
                         </dt>
                         <dd className="text-sm text-muted-foreground">
-                          It is recommended not to exceed 10 responses per day.
+                          Set the frequency at which you want to execute comment
                         </dd>
                       </dl>
                       <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
                         <Input
                           {...field}
                           placeholder="Enter comment frequency"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           Counts / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>

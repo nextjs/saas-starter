@@ -4,6 +4,7 @@ import { createContext, useContext } from 'react';
 interface StepperContextType {
   handleNext: () => void;
   handleBack: () => void;
+  handleComplete: () => void;
   currentStep: number;
   isLastStep: boolean;
   isCompleted: boolean;

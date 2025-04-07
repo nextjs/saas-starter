@@ -33,7 +33,7 @@ export default function UserCard() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <CircleHelp className="h-3 w-3 cursor-help relative z-[100]" />
+                    <CircleHelp className="h-3 w-3 cursor-help" />
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>Add to library</p>

@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import '@/app/assets/font/font.scss';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Toaster } from '@/components/ui/sonner';
 
 export const metadata: Metadata = {
   title: 'KOL AGENT',
@@ -32,6 +33,7 @@ export default function RootLayout({
         <ScrollArea className="h-full w-full">
           {children}
         </ScrollArea>
+        <Toaster />
       </body>
     </html>
   );
