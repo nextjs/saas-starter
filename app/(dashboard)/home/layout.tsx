@@ -4,25 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  Users,
-  Settings,
-  Shield,
-  Activity,
-  Menu,
-  CircleIcon,
-  House,
-  List,
-  Grip,
-  Plus,
-} from "lucide-react";
+import { Menu, CircleIcon, Plus } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Twitter } from "@/app/assets/svg";
 import Image from "next/image";
 import UserCard from "./user-card";
 import ClickSpark from "@/components/Animations/ClickSpark/ClickSpark";
 import NullCreate from "@/app/components/slidebar/null-create";
-import Threads from "@/components/Backgrounds/Threads/Threads";
 
 export default function DashboardLayout({
   children,
@@ -38,9 +26,9 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="flex flex-col min-h-[calc(100dvh)] max-w-full mx-auto w-full text-primary">
+    <div className="flex flex-col h-[100dvh] max-w-full mx-auto w-full text-primary">
       {/* Mobile header */}
-      <div className="md:hidden flex items-center justify-between bg-white shadow-sm p-2 text-primary">
+      <div className="md:hidden flex items-center justify-between bg-white shadow-sm p-2 text-primary sticky top-0 left-0 z-50 w-full">
         <div className="flex items-center">
           <Link href="/home" className="flex items-center">
             <CircleIcon className="h-4 w-4 text-secondary md:w-6 md:h-6" />
@@ -58,11 +46,11 @@ export default function DashboardLayout({
         </Button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden h-full w-full relative">
+      <div className="flex flex-1 overflow-hidden w-full relative">
         {/* mask */}
         <div
-          className={`absolute inset-0 bg-black/20 z-30 transition-opacity duration-300 backdrop-blur-sm ease-in-out md:hidden ${
-            isSidebarOpen ? "opacity-100" : "opacity-0"
+          className={`absolute inset-0 bg-white/20 z-30 transition-opacity duration-300 backdrop-blur-sm ease-in-out md:hidden ${
+            isSidebarOpen ? "opacity-100" : "opacity-0 z-[-1]"
           }`}
           onClick={() => setIsSidebarOpen(false)}
         ></div>
@@ -134,14 +122,6 @@ export default function DashboardLayout({
             sparkCount={8}
             duration={400}
           >
-            {/* <div className="w-full h-[400px] fixed z-[-1] top-0 -translate-y-1/2 opacity-80">
-              <Threads
-                amplitude={1}
-                // color={[0, 0, 0]}
-                distance={0}
-                enableMouseInteraction={true}
-              />
-            </div> */}
             <main className="w-full h-full">{children}</main>
           </ClickSpark>
         </ScrollArea>

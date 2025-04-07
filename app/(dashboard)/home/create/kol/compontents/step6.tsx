@@ -36,7 +36,8 @@ const formSchema = z.object({
 });
 
 export default function StepSix() {
-  const { handleNext, handleBack, currentStep } = useStepperContext();
+  const { handleNext, handleBack, currentStep, handleComplete } =
+    useStepperContext();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,7 +52,8 @@ export default function StepSix() {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    handleNext();
+    // handleNext(); 
+    handleComplete();
   }
 
   return (
@@ -69,11 +71,11 @@ export default function StepSix() {
               control={form.control}
               name="day"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold">
+                        <dt className="text-md font-bold">
                           Post 2 tweets for 24 Hours.
                         </dt>
                         <dd className="text-sm text-muted-foreground">
@@ -84,9 +86,9 @@ export default function StepSix() {
                         <Input
                           {...field}
                           placeholder="Enter amount"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           USDT / <strong className="text-primary">24</strong>{" "}
                           Hours
                         </p>
@@ -101,11 +103,11 @@ export default function StepSix() {
               control={form.control}
               name="month"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex">
                   <FormControl>
-                    <div className="space-y-2">
+                    <div className="space-y-2 w-full">
                       <dl>
-                        <dt className="text-md font-semibold">
+                        <dt className="text-md font-bold">
                           Post at least 5 tweets.
                         </dt>
                         <dd className="text-sm text-muted-foreground">
@@ -116,9 +118,9 @@ export default function StepSix() {
                         <Input
                           {...field}
                           placeholder="Enter amount"
-                          className="text-md w-40 border-none shadow-none p-2"
+                          className="text-md w-full border-none shadow-none p-2"
                         />
-                        <p className="whitespace-nowrap text-md text-muted-foreground px-2">
+                        <p className="whitespace-nowrap text-md text-muted-foreground">
                           USDT / <strong className="text-primary">30</strong>{" "}
                           Days
                         </p>
@@ -137,7 +139,7 @@ export default function StepSix() {
                   <FormControl>
                     <div className="space-y-2">
                       <dl>
-                        <dt className="text-md font-semibold capitalize">
+                        <dt className="text-md font-bold capitalize">
                           recevie address
                         </dt>
                         <dd className="text-sm text-muted-foreground">
@@ -159,7 +161,7 @@ export default function StepSix() {
             />
             <div className="space-y-2">
               <dl>
-                <dt className="text-md font-semibold capitalize">
+                <dt className="text-md font-bold capitalize">
                   X hosting automation
                 </dt>
                 <dd className="text-sm text-muted-foreground">

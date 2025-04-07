@@ -10,11 +10,13 @@ const PricingCardItem = ({
   price,
   features,
   isHot,
+  description,
 }: {
   name: string;
   price: number;
   features: string[];
   isHot: boolean;
+  description: string;
 }) => {
   return (
     <div
@@ -25,19 +27,22 @@ const PricingCardItem = ({
           : "bg-white shadow-[0_0_10px_0_rgba(0,0,0,0.1)]"
       )}
     >
-      <div className={cn("h-full w-full bg-white rounded-lg p-4")}>
-        <div className="text-lg text-black/50 flex items-end gap-0 ">
-          {isHot && (
-            <DotLottieReact
-              className="w-10"
-              src="https://lottie.host/a29399ea-d1c9-48b1-b41a-faef7f9d83cb/gVmyM7MHgh.lottie"
-              autoplay
-              loop
-            />
-          )}
-          <span className="flex font-bold items-center gap-0 text-base">
-            {name} Plan
-          </span>
+      <div className={cn("h-full w-full bg-white rounded-lg", isHot && "p-4")}>
+        <div className="w-full flex flex-col gap-2">
+          <div className="text-lg text-black/50 flex items-end gap-0 ">
+            <span className="flex font-bold items-center gap-0 text-base">
+              {name} Plan
+            </span>
+            {isHot && (
+              <DotLottieReact
+                className="w-10"
+                src="/lottie/fire.lottie"
+                autoplay
+                loop
+              />
+            )}
+          </div>
+          <span className="flex text-left text-sm text-muted-foreground">{description}</span>
         </div>
         <div className="py-10 text-[#00d179] flex items-end gap-2">
           <span className="text-5xl font-bold">${price}</span>
@@ -59,7 +64,9 @@ const PricingCardItem = ({
           {features.map((feature) => (
             <li key={feature} className="flex items-center gap-1">
               {/* <Check className="w-3 h-3 text-green-500" /> */}
-              <span className="text-md text-primary/60 text-left">{feature}</span>
+              <span className="text-md text-primary/60 text-left">
+                {feature}
+              </span>
             </li>
           ))}
         </ul>
@@ -75,7 +82,11 @@ export default function PricingCard() {
       price: 1.99,
       description: "To infinity and beyond",
       period: "day",
-      features: ["✅ Bonus 200k credits/mo (About 8 replies/mo)", "✅ 1 active agent", "✅ Browser automation"],
+      features: [
+        "✅ Bonus 200k credits/mo (About 8 replies/mo)",
+        "✅ 1 active agent",
+        "✅ Browser automation",
+      ],
       isHot: false,
     },
     {
@@ -95,7 +106,12 @@ export default function PricingCard() {
       description: "Massive AI power to your community",
       price: 129.99,
       period: "year",
-      features: ["✅ 3m credits/mo (About 150 replies/mo)", "✅ 3 active agents ⬆️", "✅ Browser automation", "✅ Priority generation queue"],
+      features: [
+        "✅ 3m credits/mo (About 150 replies/mo)",
+        "✅ 3 active agents ⬆️",
+        "✅ Browser automation",
+        "✅ Priority generation queue",
+      ],
       isHot: false,
     },
     {
@@ -103,7 +119,12 @@ export default function PricingCard() {
       description: "The way to go when you need more",
       price: 199,
       period: "permanent",
-      features: ["✅ 6m credits/mo (About 300 replies/mo)", "✅ 5 active agents ⬆️ ⬆️", "✅ Browser automation", "✅ Priority generation queue"],
+      features: [
+        "✅ 6m credits/mo (About 300 replies/mo)",
+        "✅ 5 active agents ⬆️ ⬆️",
+        "✅ Browser automation",
+        "✅ Priority generation queue",
+      ],
       isHot: false,
     },
   ];
