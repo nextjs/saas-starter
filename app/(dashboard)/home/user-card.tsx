@@ -12,9 +12,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAppDispatch } from "@/app/store/hooks";
+import { updateIsLoggedIn } from "@/app/store/reducers/userSlice";
 
 export default function UserCard() {
   const [progress, setProgress] = useState(50);
+  const dispatch = useAppDispatch();
   return (
     <div className="w-full flex flex-col gap-2">
       <Link href="/home/pricing">
@@ -59,7 +62,7 @@ export default function UserCard() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <LogOut className="h-3 w-3 text-gray-400 cursor-pointer" />
+            <LogOut className="h-3 w-3 text-gray-400 cursor-pointer" onClick={() => dispatch(updateIsLoggedIn(false))}/>
           </div>
         </div>
       </div>

@@ -171,10 +171,11 @@ export default function StepOne() {
                         <DialogTrigger asChild>
                           <Button
                             className="w-fit flex items-center justify-center gap-2 relative"
+                            variant="foreground"
                             type="button"
                           >
                             <span className="text-sm font-bold">Templates</span>
-                            <div className="absolute z-[-1] -inset-0.5 bg-gradient-to-r from-sky-400 to-fuchsia-400 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                            {/* <div className="absolute z-[-1] -inset-0.5 bg-gradient-to-r from-sky-400 to-fuchsia-400 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div> */}
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="w-lg min-w-[300px] text-primary">
@@ -260,6 +261,7 @@ export default function StepOne() {
             </Button>
             <Button
               type="submit"
+              variant="primary"
               className="duration-350 h-10 flex items-center justify-center font-bold px-10"
             >
               Next

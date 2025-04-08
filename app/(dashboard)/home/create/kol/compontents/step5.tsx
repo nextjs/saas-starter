@@ -127,7 +127,7 @@ export default function StepFive() {
               control={form.control}
               name="post"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -176,7 +176,7 @@ export default function StepFive() {
               control={form.control}
               name="repost"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -225,7 +225,7 @@ export default function StepFive() {
               control={form.control}
               name="quote"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -274,7 +274,7 @@ export default function StepFive() {
               control={form.control}
               name="like"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -323,7 +323,7 @@ export default function StepFive() {
               control={form.control}
               name="reply"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -372,7 +372,7 @@ export default function StepFive() {
               control={form.control}
               name="comment"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -432,6 +432,7 @@ export default function StepFive() {
               </Button>
               <Button
                 type="submit"
+                variant="primary"
                 className="duration-350 h-10 flex items-center justify-center font-bold px-10"
               >
                 Next

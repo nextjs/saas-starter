@@ -11,6 +11,8 @@ import Image from "next/image";
 import UserCard from "./user-card";
 import ClickSpark from "@/components/Animations/ClickSpark/ClickSpark";
 import NullCreate from "@/app/components/slidebar/null-create";
+import Login from "./login";
+import { useAppSelector } from "@/app/store/hooks";
 
 export default function DashboardLayout({
   children,
@@ -19,6 +21,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
 
   const navItems: any[] = [
     // { href: "/home", icon: House, label: "Home" },
@@ -97,17 +100,10 @@ export default function DashboardLayout({
               </div>
             </nav>
             <div className="flex items-center justify-center p-4 mt-auto">
-              {true ? (
+              {isLoggedIn ? (
                 <UserCard />
               ) : (
-                <Button className="w-full flex items-center justify-center gap-2">
-                  <Image
-                    src={Twitter}
-                    alt="Twitter"
-                    className="h-4 w-4 text-white"
-                  />
-                  <span className="inline-block text-base">Sign In</span>
-                </Button>
+                <Login />
               )}
             </div>
           </div>
