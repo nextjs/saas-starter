@@ -71,7 +71,7 @@ export default function StepSix() {
               control={form.control}
               name="day"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -103,7 +103,7 @@ export default function StepSix() {
               control={form.control}
               name="month"
               render={({ field }) => (
-                <FormItem className="flex">
+                <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
                       <dl>
@@ -194,6 +194,7 @@ export default function StepSix() {
               </Button>
               <Button
                 type="submit"
+                variant="primary"
                 className="duration-350 h-10 flex items-center justify-center font-bold px-10"
               >
                 Create

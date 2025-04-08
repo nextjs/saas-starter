@@ -27,7 +27,7 @@ export default function Preview() {
   }, []);
 
   return (
-    <div className="w-2xs lg:w-lg bg-foreground h-dvh shadow-sm flex flex-col">
+    <div className="w-3xs lg:w-xs bg-foreground h-dvh shadow-sm flex flex-col">
       <div className="border-b border-border">
         <PreviewProfile />
       </div>

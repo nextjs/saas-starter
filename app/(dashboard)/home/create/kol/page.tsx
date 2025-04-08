@@ -13,8 +13,6 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 const CreateSuccess = () => {
-  const [showAnimation, setShowAnimation] = useState(true);
-
   return (
     <>
       <DotLottieReact
@@ -45,7 +43,7 @@ export default function Page() {
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">
         <Stepper
-          initialStep={6}
+          initialStep={1}
           stepText={[
             "1. Info",
             "2. Ability",
