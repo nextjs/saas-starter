@@ -248,7 +248,10 @@ export default function Login() {
   return (
     <Drawer open={open} onOpenChange={setOpen} direction="right">
       <DrawerTrigger asChild>
-        <Button className="w-full flex items-center justify-center gap-2">
+        <Button
+          variant="primary"
+          className="w-full flex items-center justify-center gap-2"
+        >
           <span className="inline-block text-base">Sign In</span>
         </Button>
       </DrawerTrigger>
