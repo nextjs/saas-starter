@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserInfo } from "./typs";
+import { UserInfo, Config } from "./typs";
 
 // 定义用户状态接口
-interface UserState {
+export interface UserState {
   theme: string;
   isLoggedIn: boolean;
   userInfo: UserInfo;
+  config: Config;
 }
 
 const initialState: UserState = {
@@ -19,6 +20,12 @@ const initialState: UserState = {
     member_id: 0,
     member_name: "",
     token: "",
+  },
+  config: {
+    region: [],
+    language: [],
+    character: [],
+    topic: [],
   },
 };
 
@@ -49,10 +56,17 @@ const userSlice = createSlice({
     updateUserInfo: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
     },
+    updateConfig: (
+      state,
+      action: PayloadAction<{ key: keyof Config; value: any[] }>
+    ) => {
+      const { key, value } = action.payload;
+      state.config[key] = value;
+    },
   },
 });
 
-export const { updateTheme, updateIsLoggedIn, updateUserInfo } =
+export const { updateTheme, updateIsLoggedIn, updateUserInfo, updateConfig } =
   userSlice.actions;
 
 export default userSlice.reducer;

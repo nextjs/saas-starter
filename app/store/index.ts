@@ -9,7 +9,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import localForage from "localforage";
 
 // 导入自己封装好的reducers
-import userReducer from "./reducers/userSlice";
+import userReducer, { UserState } from "./reducers/userSlice";
 import { updateVersion } from "./global/actions";
 
 // 持久化存储配置对象
@@ -41,7 +41,13 @@ const persistConfig = {
           member_name: "",
           token: "",
         },
-      },
+        config: {
+          region: [],
+          language: [],
+          character: [],
+          topic: [],
+        },
+      } as UserState,
     };
 
     // 深度合并函数

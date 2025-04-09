@@ -12,7 +12,9 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getConstants } from "@/app/request/api";
-
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { updateConfig } from "@/app/store/reducers/userSlice";
+import { useRouter } from "next/navigation";
 const CreateSuccess = () => {
   return (
     <>
@@ -40,19 +42,46 @@ const CreateSuccess = () => {
 };
 
 export default function Page() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push("/home");
+    }
+  }, [isLoggedIn]);
 
   const getConst = async () => {
     try {
-      const res = await getConstants()
-      console.log(res)
+      getConstants({
+        c_type: "region",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "region", value: res.data }));
+      });
+      getConstants({
+        c_type: "language",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "language", value: res.data }));
+      });
+      getConstants({
+        c_type: "character",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "character", value: res.data }));
+      });
+      getConstants({
+        c_type: "topic",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "topic", value: res.data }));
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    getConst()
-  }, [])
+    getConst();
+  }, []);
 
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">

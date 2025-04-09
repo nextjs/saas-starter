@@ -7,3 +7,10 @@ export interface UserInfo {
   member_name: string;
   token: string;
 }
+
+export type Config = {
+  region: any[];
+  language: any[];
+  character: any[];
+  topic: any[];
+}

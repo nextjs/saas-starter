@@ -276,6 +276,7 @@ export default function Login() {
       if (res && res.code === 200) {
         dispatch(updateUserInfo(res.data));
         dispatch(updateIsLoggedIn(true));
+        localStorage.setItem("token", res.data.token);
         closeDrawer();
       } else {
         toast.error(res.msg);
