@@ -1,14 +1,25 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserInfo } from "./typs";
 
 // 定义用户状态接口
 interface UserState {
   theme: string;
   isLoggedIn: boolean;
+  userInfo: UserInfo;
 }
 
 const initialState: UserState = {
   theme: "dark",
   isLoggedIn: false,
+  userInfo: {
+    id: 0,
+    username: "",
+    email: "",
+    identity: "",
+    member_id: 0,
+    member_name: "",
+    token: "",
+  },
 };
 
 const userSlice = createSlice({
@@ -20,14 +31,28 @@ const userSlice = createSlice({
       state.theme = action.payload;
     },
     updateIsLoggedIn: (state, action: PayloadAction<boolean>) => {
-      state.isLoggedIn = action.payload;
+      if (action.payload) {
+        state.isLoggedIn = action.payload;
+      } else {
+        state.isLoggedIn = false;
+        state.userInfo = {
+          id: 0,
+          username: "",
+          email: "",
+          identity: "",
+          member_id: 0,
+          member_name: "",
+          token: "",
+        };
+      }
+    },
+    updateUserInfo: (state, action: PayloadAction<UserInfo>) => {
+      state.userInfo = action.payload;
     },
   },
 });
 
-export const {
-  updateTheme,
-  updateIsLoggedIn,
-} = userSlice.actions;
+export const { updateTheme, updateIsLoggedIn, updateUserInfo } =
+  userSlice.actions;
 
 export default userSlice.reducer;
