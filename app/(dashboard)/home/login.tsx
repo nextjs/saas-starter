@@ -24,7 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { useAppDispatch } from "@/app/store/hooks";
-import { updateIsLoggedIn } from "@/app/store/reducers/userSlice";
+import {
+  updateIsLoggedIn,
+  updateUserInfo,
+} from "@/app/store/reducers/userSlice";
 import { AnimatePresence, motion } from "motion/react";
 import {
   InputOTP,
@@ -32,6 +35,13 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import {
+  login,
+  register,
+  resetPassword,
+  sendEmailCode,
+} from "@/app/request/api";
+import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
 
 const formSchema = z
   .object({
@@ -39,6 +49,7 @@ const formSchema = z
     password: z.string().min(8).optional(),
     newPassword: z.string().optional(),
     confirmPassword: z.string().optional(),
+    inviteCode: z.string().optional(),
   })
   .superRefine((data, ctx) => {
     // 只在重置密码流程中验证新密码
@@ -111,13 +122,13 @@ const formSchema = z
 enum Step {
   Login = 0,
   Register = 1,
-  VerifyCode = 2,
-  ForgotPassword = 3,
-  ResetPassword = 4,
+  ResetPassword = 2,
+  VerifyCode = 3,
+  ForgotPassword = 4,
 }
 
 export default function Login() {
-  const [open, setOpen] = useState(false);
+  const { isOpen, openDrawer, closeDrawer, toggleDrawer } = useLoginDrawer();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const dispatch = useAppDispatch();
@@ -153,7 +164,7 @@ export default function Login() {
     }
   }, [countdown]);
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     // 在提交前进行自定义验证
     if (step === Step.ResetPassword) {
       let hasError = false;
@@ -183,40 +194,99 @@ export default function Login() {
       }
 
       if (hasError) return;
+
+      // 如果没有错误，进入验证码步骤
+      setStep(Step.VerifyCode);
     }
 
-    // 原有的提交逻辑
+    // 注册流程需要验证邀请码
+    if (step === Step.Register) {
+      let hasError = false;
+
+      // 验证邀请码是否填写
+      if (!values.inviteCode) {
+        form.setError("inviteCode", {
+          message: "Invite code is required",
+        });
+        hasError = true;
+      }
+
+      if (hasError) return;
+    }
+
     console.log(values);
     if (step === Step.ForgotPassword) {
-      setIsLoading(true);
-      setTimeout(() => {
-        setIsLoading(false);
-        setStep(Step.VerifyCode);
-        setValue("");
-        setCountdown(60);
-      }, 2000);
+      // setIsLoading(true);
+      // setTimeout(() => {
+      //   setIsLoading(false);
+      setStep(Step.ResetPassword);
+      setValue("");
+      // }, 1000);
     } else if (step === Step.ResetPassword) {
-      setIsLoading(true);
-      setTimeout(() => {
+      console.log("xxxxx");
+      try {
+        setIsLoading(true);
+        await sendCode();
         setIsLoading(false);
+      } catch (error) {
+        setIsLoading(false);
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (step === Step.Register) {
+      registerSendEmailCode();
+    } else {
+      loginApi();
+    }
+  };
+
+  const resetPasswordApi = async () => {
+    try {
+      setIsLoading(true);
+      const res: any = await resetPassword({
+        email: form.getValues("email"),
+        code: value,
+        password: form.getValues("newPassword"),
+      });
+      setIsLoading(false);
+      if (res && res.code === 200) {
+        toast.success("Password reset successfully");
         setStep(Step.Login);
         form.reset();
-        toast.success("Password reset successfully");
-      }, 2000);
-    } else if (step === Step.Register) {
-      register();
-    } else {
-      login();
-    }
-  }
-
-  const login = () => {
-    setIsLoading(true);
-    setTimeout(() => {
+      } else {
+        toast.error(res.msg);
+      }
+    } catch (error) {
+      console.log(error);
       setIsLoading(false);
-      setOpen(false);
-      dispatch(updateIsLoggedIn(true));
-    }, 2000);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const loginApi = async () => {
+    try {
+      setIsLoading(true);
+      const res: any = await login({
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+      });
+      setIsLoading(false);
+      if (res && res.code === 200) {
+        dispatch(updateUserInfo(res.data));
+        dispatch(updateIsLoggedIn(true));
+        localStorage.setItem("token", res.data.token);
+        closeDrawer();
+      } else {
+        toast.error(res.msg);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const encryptedEmail = () => {
@@ -224,8 +294,71 @@ export default function Login() {
     return email.replace(/(.{2})(.*)(.{1})(?=@)/, "$1****$3");
   };
 
-  const register = () => {
-    setStep(Step.VerifyCode);
+  const registerSendEmailCode = async () => {
+    try {
+      setIsLoading(true);
+      // 发送验证码
+      const res: any = await sendEmailCode({
+        email: form.getValues("email"),
+      });
+      setIsLoading(false);
+      if (res && res.code === 200) {
+        setStep(Step.VerifyCode);
+        setCountdown(60);
+      } else {
+        toast.error(res.msg);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendCode = async () => {
+    try {
+      const res: any = await sendEmailCode({
+        email: form.getValues("email"),
+      });
+      if (res && res.code === 200) {
+        setCountdown(60);
+        setStep(Step.VerifyCode);
+      } else {
+        toast.error(res.msg);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const registerApi = async () => {
+    try {
+      setIsLoading(true);
+      const res: any = await register({
+        email: form.getValues("email"),
+        password: form.getValues("password"),
+        identity: "kol",
+        invitation_code: form.getValues("inviteCode"),
+        code: value,
+      });
+      if (res && res.code === 200) {
+        setIsRegister(false);
+        setStep(Step.Login);
+        localStorage.setItem("email", form.getValues("email"));
+        localStorage.setItem("token", res.data.token);
+        toast.success("Register successfully, please login");
+      } else {
+        toast.error(res.msg);
+      }
+    } catch (error) {
+      setIsLoading(false);
+      setStep(Step.Register);
+      console.log(error);
+    } finally {
+      setStep(Step.Register);
+      setIsLoading(false);
+    }
   };
 
   const handleVerify = () => {
@@ -233,20 +366,20 @@ export default function Login() {
       toast.error("Please enter a valid code");
       return;
     }
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      if (step === Step.VerifyCode && !isRegister) {
-        setStep(Step.ResetPassword);
-      } else {
-        setIsRegister(false);
-        setStep(Step.Login);
-      }
-    }, 2000);
+
+    // if (step === Step.VerifyCode && !isRegister) {
+    //   setStep(Step.ResetPassword);
+    // } else {
+    if (isRegister) {
+      return registerApi();
+    } else {
+      return resetPasswordApi();
+    }
+    // }
   };
 
   return (
-    <Drawer open={open} onOpenChange={setOpen} direction="right">
+    <Drawer open={isOpen} onOpenChange={toggleDrawer} direction="right">
       <DrawerTrigger asChild>
         <Button
           variant="primary"
@@ -345,6 +478,27 @@ export default function Login() {
                           </FormItem>
                         )}
                       />
+                      {isRegister && (
+                        <FormField
+                          control={form.control}
+                          name="inviteCode"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                              <FormControl>
+                                <div className="w-full flex flex-col gap-2">
+                                  <p className="text-sm">邀请码</p>
+                                  <Input
+                                    {...field}
+                                    placeholder="Invite Code"
+                                    className="w-full"
+                                  />
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                       <div className="w-full flex flex-col gap-2 mt-10">
                         {!isRegister ? (
                           <Button
@@ -455,6 +609,87 @@ export default function Login() {
                     </form>
                   </Form>
                 </motion.div>
+              ) : step === Step.ResetPassword ? (
+                <motion.div
+                  key="reset-password"
+                  className="w-full h-full flex flex-col items-start justify-center gap-4"
+                >
+                  <div className="w-full flex items-center justify-start gap-2">
+                    <CircleIcon className="h-8 w-8 text-secondary" />
+                    <h1 className="text-xl font-bold capitalize">
+                      Reset Password
+                    </h1>
+                  </div>
+                  <Form {...form}>
+                    <form
+                      onSubmit={form.handleSubmit(onSubmit)}
+                      className="w-full mt-6 flex flex-col gap-4"
+                    >
+                      <FormField
+                        control={form.control}
+                        name="newPassword"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormControl>
+                              <div className="w-full flex flex-col gap-2">
+                                <p className="text-sm">New Password</p>
+                                <Input
+                                  {...field}
+                                  type="password"
+                                  placeholder="New Password"
+                                  className="w-full"
+                                  disabled={isLoading}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormControl>
+                              <div className="w-full flex flex-col gap-2">
+                                <p className="text-sm">Confirm Password</p>
+                                <Input
+                                  {...field}
+                                  type="password"
+                                  placeholder="Confirm Password"
+                                  className="w-full"
+                                  disabled={isLoading}
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="submit"
+                        variant="primary"
+                        className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10 mt-10"
+                        disabled={isLoading}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Next"
+                        )}
+                      </Button>
+                      <Button
+                        variant="link"
+                        type="button"
+                        className="justify-start text-sm text-muted-foreground p-0"
+                        onClick={() => setStep(Step.Login)}
+                      >
+                        Back to Login
+                      </Button>
+                    </form>
+                  </Form>
+                </motion.div>
               ) : step === Step.VerifyCode ? (
                 <motion.div
                   key="verification"
@@ -481,7 +716,7 @@ export default function Login() {
                         className="p-0 text-primary"
                         disabled={countdown > 0}
                         onClick={() => {
-                          setCountdown(60);
+                          sendCode();
                         }}
                       >
                         {countdown > 0
@@ -524,78 +759,73 @@ export default function Login() {
                   </Button>
                 </motion.div>
               ) : (
-                step === Step.ResetPassword && (
+                step === Step.VerifyCode && (
                   <motion.div
-                    key="reset-password"
+                    key="verification"
                     className="w-full h-full flex flex-col items-start justify-center gap-4"
                   >
                     <div className="w-full flex items-center justify-start gap-2">
                       <CircleIcon className="h-8 w-8 text-secondary" />
                       <h1 className="text-xl font-bold capitalize">
-                        Reset Password
+                        Security Verification
                       </h1>
                     </div>
-                    <Form {...form}>
-                      <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="w-full mt-6 flex flex-col gap-4"
-                      >
-                        <FormField
-                          control={form.control}
-                          name="newPassword"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <FormControl>
-                                <div className="w-full flex flex-col gap-2">
-                                  <p className="text-sm">New Password</p>
-                                  <Input
-                                    {...field}
-                                    type="password"
-                                    placeholder="New Password"
-                                    className="w-full"
-                                    disabled={isLoading}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="confirmPassword"
-                          render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                              <FormControl>
-                                <div className="w-full flex flex-col gap-2">
-                                  <p className="text-sm">Confirm Password</p>
-                                  <Input
-                                    {...field}
-                                    type="password"
-                                    placeholder="Confirm Password"
-                                    className="w-full"
-                                    disabled={isLoading}
-                                  />
-                                </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
+                    <div className="text-sm text-muted-foreground">
+                      <p>
+                        Please check email{" "}
+                        <span className="font-bold text-secondary">
+                          {encryptedEmail()}
+                        </span>{" "}
+                        for the verification code.
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Didn't receive the code?{" "}
                         <Button
-                          type="submit"
-                          variant="primary"
-                          className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10 mt-10"
-                          disabled={isLoading}
+                          variant="link"
+                          className="p-0 text-primary"
+                          disabled={countdown > 0}
+                          onClick={() => {
+                            sendCode();
+                          }}
                         >
-                          {isLoading ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            "Reset Password"
-                          )}
+                          {countdown > 0
+                            ? `Resend Code (${countdown}s)`
+                            : "Resend Code"}
                         </Button>
-                      </form>
-                    </Form>
+                      </p>
+                    </div>
+                    <div className="w-full flex items-center justify-center py-4">
+                      <InputOTP
+                        maxLength={6}
+                        value={value}
+                        onChange={(value) => setValue(value)}
+                        onComplete={handleVerify}
+                        disabled={isLoading}
+                        autoFocus
+                      >
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </div>
+                    <Button
+                      variant="primary"
+                      type="button"
+                      className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10"
+                      disabled={isLoading}
+                      onClick={handleVerify}
+                    >
+                      {isLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Confirm"
+                      )}
+                    </Button>
                   </motion.div>
                 )
               )}

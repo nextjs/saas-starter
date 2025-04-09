@@ -25,7 +25,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
-
   const navItems: any[] = [
     // { href: "/home", icon: House, label: "Home" },
     // { href: "/home/general", icon: Grip, label: "Kol List" },

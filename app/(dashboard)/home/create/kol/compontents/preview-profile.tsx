@@ -3,6 +3,7 @@ import { Link, CalendarDays } from "lucide-react";
 
 import banner from "@/app/assets/image/banner.png";
 import avatar from "@/app/assets/image/avatar.png";
+import { formatJoinedDate } from "@/app/utils/date-utils";
 
 export default function PreviewProfile() {
   return (
@@ -27,7 +28,7 @@ export default function PreviewProfile() {
           </li>
           <li className="flex items-center space-x-1">
             <CalendarDays className="w-4 h-4 text-muted-foreground" />
-            <span className="text-muted-foreground">Joined January 2025</span>
+            <span className="text-muted-foreground">{formatJoinedDate(new Date())}</span>
           </li>
         </ul>
         <ul className="flex space-x-4 items-center">

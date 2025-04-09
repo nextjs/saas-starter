@@ -8,10 +8,13 @@ import StepFive from "./compontents/step5";
 import StepSix from "./compontents/step6";
 import Stepper, { Step } from "@/app/components/comm/Stepper";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
+import { getConstants } from "@/app/request/api";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { updateConfig } from "@/app/store/reducers/userSlice";
+import { useRouter } from "next/navigation";
 const CreateSuccess = () => {
   return (
     <>
@@ -39,6 +42,45 @@ const CreateSuccess = () => {
 };
 
 export default function Page() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push("/home");
+    } else {
+      getConst();
+    }
+  }, [isLoggedIn]);
+
+  const getConst = async () => {
+    try {
+      getConstants({
+        c_type: "region",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "region", value: res.data }));
+      });
+      getConstants({
+        c_type: "language",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "language", value: res.data }));
+      });
+      getConstants({
+        c_type: "character",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "character", value: res.data }));
+      });
+      getConstants({
+        c_type: "topics",
+      }).then((res) => {
+        dispatch(updateConfig({ key: "topics", value: res.data }));
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">
