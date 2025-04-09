@@ -12,5 +12,5 @@ export type Config = {
   region: any[];
   language: any[];
   character: any[];
-  topic: any[];
+  topics: any[];
 }

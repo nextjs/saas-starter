@@ -18,7 +18,7 @@ const persistConfig = {
   storage: localForage.createInstance({
     name: "redux",
   }),
-  version: 0.2,
+  version: 0.3,
   throttle: 1000, // ms
   serialize: false,
   deserialize: false,
@@ -45,7 +45,7 @@ const persistConfig = {
           region: [],
           language: [],
           character: [],
-          topic: [],
+          topics: [],
         },
       } as UserState,
     };

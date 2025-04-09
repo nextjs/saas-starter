@@ -25,7 +25,7 @@ const initialState: UserState = {
     region: [],
     language: [],
     character: [],
-    topic: [],
+    topics: [],
   },
 };
 

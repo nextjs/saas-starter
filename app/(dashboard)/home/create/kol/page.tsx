@@ -49,6 +49,8 @@ export default function Page() {
   useEffect(() => {
     if (!isLoggedIn) {
       router.push("/home");
+    } else {
+      getConst();
     }
   }, [isLoggedIn]);
 
@@ -70,18 +72,14 @@ export default function Page() {
         dispatch(updateConfig({ key: "character", value: res.data }));
       });
       getConstants({
-        c_type: "topic",
+        c_type: "topics",
       }).then((res) => {
-        dispatch(updateConfig({ key: "topic", value: res.data }));
+        dispatch(updateConfig({ key: "topics", value: res.data }));
       });
     } catch (error) {
       console.log(error);
     }
   };
-
-  useEffect(() => {
-    getConst();
-  }, []);
 
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
