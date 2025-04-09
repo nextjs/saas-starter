@@ -99,9 +99,9 @@ export async function getUserInfo() {
 }
 
 // 获取常量
-export async function getConstants() {
+export async function getConstants(params: any) {
   try {
-    const res = await request.get('/kol/api/v1/constants')
+    const res = await request.get('/kol/api/v1/constants', {...params})
     return res
   } catch (error: any) {
     console.log(error)

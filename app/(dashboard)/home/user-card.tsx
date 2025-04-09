@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useAppDispatch } from "@/app/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { updateIsLoggedIn } from "@/app/store/reducers/userSlice";
 import { getUserInfo } from "@/app/request/api";
 import { toast } from "sonner";
@@ -43,6 +43,7 @@ export default function UserCard() {
   const dispatch = useAppDispatch();
   const [userInfo, setUserInfo] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
+  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
   const getInfo = async () => {
     try {
       setIsLoading(true);
@@ -65,8 +66,10 @@ export default function UserCard() {
     }
   };
   useEffect(() => {
-    getInfo();
-  }, []);
+    if (isLoggedIn) {
+      getInfo();
+    }
+  }, [isLoggedIn]);
   return (
     <div className="w-full flex flex-col gap-2">
       <Link href="/home/pricing">
