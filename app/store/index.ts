@@ -18,7 +18,7 @@ const persistConfig = {
   storage: localForage.createInstance({
     name: "redux",
   }),
-  version: 0.1,
+  version: 0.2,
   throttle: 1000, // ms
   serialize: false,
   deserialize: false,
@@ -32,6 +32,15 @@ const persistConfig = {
       userReducer: {
         theme: "dark",
         isLoggedIn: false,
+        userInfo: {
+          id: 0,
+          username: "",
+          email: "",
+          identity: "",
+          member_id: 0,
+          member_name: "",
+          token: "",
+        },
       },
     };
 

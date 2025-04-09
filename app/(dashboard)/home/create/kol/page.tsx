@@ -8,9 +8,10 @@ import StepFive from "./compontents/step5";
 import StepSix from "./compontents/step6";
 import Stepper, { Step } from "@/app/components/comm/Stepper";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getConstants } from "@/app/request/api";
 
 const CreateSuccess = () => {
   return (
@@ -39,6 +40,20 @@ const CreateSuccess = () => {
 };
 
 export default function Page() {
+
+  const getConst = async () => {
+    try {
+      const res = await getConstants()
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    getConst()
+  }, [])
+
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">

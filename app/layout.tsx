@@ -5,6 +5,7 @@ import "@/app/assets/font/font.scss";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toaster } from "@/components/ui/sonner";
 import ReduxProvider from "./context/ReduxProvider";
+import { LoginProvider } from "./hooks/useLoginDrawer";
 
 export const metadata: Metadata = {
   title: "KOL AGENT",
@@ -32,8 +33,10 @@ export default function RootLayout({
       <body className="min-h-[100dvh] bg-gray-50">
         {/* <UserProvider userPromise={userPromise}>{children}</UserProvider> */}
         <ReduxProvider>
-          <ScrollArea className="h-full w-full">{children}</ScrollArea>
-          <Toaster />
+          <LoginProvider>
+            <ScrollArea className="h-full w-full">{children}</ScrollArea>
+            <Toaster />
+          </LoginProvider>
         </ReduxProvider>
       </body>
     </html>
