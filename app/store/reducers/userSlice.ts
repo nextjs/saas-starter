@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { UserInfo, Config } from "./typs";
+import { UserInfo, Config, From } from "./typs";
 
 // 定义用户状态接口
 export interface UserState {
@@ -7,6 +7,7 @@ export interface UserState {
   isLoggedIn: boolean;
   userInfo: UserInfo;
   config: Config;
+  from: From;
 }
 
 const initialState: UserState = {
@@ -26,6 +27,15 @@ const initialState: UserState = {
     language: [],
     character: [],
     topics: [],
+    currentStep: 1,
+  },
+  from: {
+    step1: {},
+    step2: {},
+    step3: {},
+    step4: {},
+    step5: {},
+    step6: {},
   },
 };
 
@@ -58,15 +68,34 @@ const userSlice = createSlice({
     },
     updateConfig: (
       state,
-      action: PayloadAction<{ key: keyof Config; value: any[] }>
+      action: PayloadAction<{
+        key: keyof Config;
+        value: any[] | number | string;
+      }>
     ) => {
       const { key, value } = action.payload;
-      state.config[key] = value;
+      if (key === "currentStep") {
+        state.config[key] = value as number;
+      } else {
+        state.config[key] = value as any[];
+      }
+    },
+    updateFrom: (
+      state,
+      action: PayloadAction<{ key: keyof From; value: {} }>
+    ) => {
+      const { key, value } = action.payload;
+      state.from[key] = value;
     },
   },
 });
 
-export const { updateTheme, updateIsLoggedIn, updateUserInfo, updateConfig } =
-  userSlice.actions;
+export const {
+  updateTheme,
+  updateIsLoggedIn,
+  updateUserInfo,
+  updateConfig,
+  updateFrom,
+} = userSlice.actions;
 
 export default userSlice.reducer;

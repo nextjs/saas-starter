@@ -13,4 +13,14 @@ export type Config = {
   language: any[];
   character: any[];
   topics: any[];
+  currentStep: number;
+}
+
+export type From = {
+  step1: any;
+  step2: any;
+  step3: any;
+  step4: any;
+  step5: any;
+  step6: any; 
 }

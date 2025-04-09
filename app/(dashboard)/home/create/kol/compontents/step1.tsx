@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/command";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 function RequiredLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -46,56 +48,74 @@ function RequiredLabel({ children }: { children: React.ReactNode }) {
 
 const formSchema = z.object({
   name: z.string().min(2).max(32),
-  gender: z.enum(["1", "2"], {
+  gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a gender" }),
   }),
   character: z.string().min(1).max(200),
-  region: z.enum(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], {
-    errorMap: () => ({ message: "Please select a region" }),
+  region: z.number().min(1, {
+    message: "Please select a region",
   }),
-  language: z.enum(["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"], {
-    errorMap: () => ({ message: "Please select a language" }),
+  language: z.number().min(1, {
+    message: "Please select a language",
   }),
 });
-
-const frameworks = [
-  {
-    value: "1",
-    label: "Next.js",
-  },
-  {
-    value: "2",
-    label: "SvelteKit",
-  },
-  {
-    value: "3",
-    label: "Nuxt.js",
-  },
-  {
-    value: "4",
-    label: "Remix",
-  },
-  {
-    value: "5",
-    label: "Astro",
-  },
-];
 
 export default function StepOne() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
   const [open, setOpen] = useState(false);
   const [openLanguage, setOpenLanguage] = useState(false);
+  const dispatch = useAppDispatch();
+  const character = useAppSelector(
+    (state: any) => state.userReducer.config.character
+  );
+  const region = useAppSelector(
+    (state: any) => state.userReducer.config.region
+  );
+  const language = useAppSelector(
+    (state: any) => state.userReducer.config.language
+  );
+
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      gender: "1",
+      gender: "male",
       character: "",
-      region: "1",
-      language: "1",
+      region: 0,
+      language: 0,
     },
   });
+
+  // 监听表单中的字段变化
+  const watchedFields = form.watch(); // 监听所有字段
+  // 或者只监听特定字段：
+  // const watchedName = form.watch("name");
+  // const watchedRegion = form.watch("region");
+
+  // 使用 useEffect 来响应字段变化
+  useEffect(() => {
+    console.log("表单所有字段的当前值:", watchedFields);
+    // 你可以在这里根据字段的变化执行一些操作
+  }, [watchedFields]); // 当任何字段变化时重新执行
+
+  // 如果只想监听特定字段的变化：
+  useEffect(() => {
+    const subscription = form.watch((value, { name, type }) => {
+      if (name === "region") {
+        console.log("区域已更改为:", value.region);
+        // 这里可以根据区域的变化执行一些操作
+      }
+      
+      if (name === "language") {
+        console.log("语言已更改为:", value.language);
+        // 这里可以根据语言的变化执行一些操作
+      }
+    });
+    
+    // 在组件卸载时清理订阅
+    return () => subscription.unsubscribe();
+  }, [form.watch]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {
@@ -149,11 +169,11 @@ export default function StepOne() {
                       defaultValue={field.value}
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="1" id="r1" />
+                        <RadioGroupItem value="male" id="r1" />
                         <Label htmlFor="r1">Man</Label>
                       </div>
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="2" id="r2" />
+                        <RadioGroupItem value="female" id="r2" />
                         <Label htmlFor="r2">Woman</Label>
                       </div>
                     </RadioGroup>
@@ -184,20 +204,29 @@ export default function StepOne() {
                       </div>
                     </div>
                     <div className="w-full border-t my-2 px-4"></div>
-                    <div className="w-full">
-                      <p className="text-sm text-slate-500 mb-2">
-                        Suggested keywords
-                      </p>
-                      <div className="grid grid-cols-2 gap-4 pb-2">
-                        <Badge
-                          onClick={() => {
-                            field.onChange(field.value + "Badge,");
-                          }}
-                        >
-                          Badge
-                        </Badge>
-                      </div>
-                    </div>
+                    {character.length > 0 && (
+                      <>
+                        <div className="w-full">
+                          <p className="text-sm text-slate-500 mb-2">
+                            Suggested keywords
+                          </p>
+                          <ScrollArea className="h-[100px] pb-2">
+                            <div className="flex flex-wrap gap-1 pb-2">
+                              {character.map((item: any) => (
+                                <Badge
+                                  key={item.id}
+                                  onClick={() => {
+                                    field.onChange(field.value + item.name + ",");
+                                  }}
+                                >
+                                  {item.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </ScrollArea>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -221,9 +250,9 @@ export default function StepOne() {
                           className="w-[200px] justify-between hover:bg-gray-100 hover:text-primary px-2"
                         >
                           {field.value
-                            ? frameworks.find(
-                                (framework) => framework.value === field.value
-                              )?.label
+                            ? region.find(
+                                (item: any) => item.id === field.value
+                              )?.name
                             : "Select region..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -237,24 +266,25 @@ export default function StepOne() {
                           <CommandList>
                             <CommandEmpty>No region found.</CommandEmpty>
                             <CommandGroup>
-                              {frameworks.map((framework) => (
+                              {region.map((item: any) => (
                                 <CommandItem
-                                  key={framework.value}
-                                  value={framework.value}
+                                  key={item.id}
+                                  value={item.id}
                                   onSelect={(currentValue) => {
+                                    const value = region.find(
+                                      (item: any) => item.name === currentValue
+                                    );
                                     field.onChange(
-                                      currentValue === field.value
-                                        ? ""
-                                        : currentValue
+                                      value.id === field.value ? "" : value.id
                                     );
                                     setOpen(false);
                                   }}
                                 >
-                                  {framework.label}
+                                  {item.name}
                                   <Check
                                     className={cn(
                                       "ml-auto text-primary",
-                                      field.value === framework.value
+                                      field.value === item.id
                                         ? "opacity-100"
                                         : "opacity-0"
                                     )}
@@ -290,9 +320,9 @@ export default function StepOne() {
                           className="w-[200px] justify-between hover:bg-gray-100 hover:text-primary px-2"
                         >
                           {field.value
-                            ? frameworks.find(
-                                (framework) => framework.value === field.value
-                              )?.label
+                            ? language.find(
+                                (item: any) => item.id === field.value
+                              )?.name
                             : "Select language..."}
                           <ChevronsUpDown className="opacity-50" />
                         </Button>
@@ -306,24 +336,25 @@ export default function StepOne() {
                           <CommandList>
                             <CommandEmpty>No language found.</CommandEmpty>
                             <CommandGroup>
-                              {frameworks.map((framework) => (
+                              {language.map((item: any) => (
                                 <CommandItem
-                                  key={framework.value}
-                                  value={framework.value}
+                                  key={item.id}
+                                  value={item.id}
                                   onSelect={(currentValue) => {
+                                    const value = language.find(
+                                      (item: any) => item.name === currentValue
+                                    );
                                     field.onChange(
-                                      currentValue === field.value
-                                        ? ""
-                                        : currentValue
+                                      value.id === field.value ? "" : value.id
                                     );
                                     setOpenLanguage(false);
                                   }}
                                 >
-                                  {framework.label}
+                                  {item.name}
                                   <Check
                                     className={cn(
                                       "ml-auto text-primary",
-                                      field.value === framework.value
+                                      field.value === item.id
                                         ? "opacity-100"
                                         : "opacity-0"
                                     )}

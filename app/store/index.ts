@@ -46,6 +46,15 @@ const persistConfig = {
           language: [],
           character: [],
           topics: [],
+          currentStep: 1,
+        },
+        from: {
+          step1: {},
+          step2: {},
+          step3: {},
+          step4: {},
+          step5: {},
+          step6: {},
         },
       } as UserState,
     };
