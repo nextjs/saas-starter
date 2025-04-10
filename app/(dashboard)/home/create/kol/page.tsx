@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getConstants } from "@/app/request/api";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { updateConfig } from "@/app/store/reducers/userSlice";
+import { updateConfig, clearFrom } from "@/app/store/reducers/userSlice";
 import { useRouter } from "next/navigation";
 const CreateSuccess = () => {
   return (
@@ -81,6 +81,12 @@ export default function Page() {
     }
   };
 
+  useEffect(() => {
+    dispatch(clearFrom());
+    return () => {
+      dispatch(clearFrom());
+    };
+  }, []);
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">

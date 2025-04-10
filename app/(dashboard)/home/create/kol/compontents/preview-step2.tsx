@@ -13,7 +13,7 @@ const texts = [
 export default function PreviewStepTwo() {
   return (
     <div className="px-4 space-y-4 text-md">
-      <PreviewLoader text="思考中" time={22} />
+      <PreviewLoader text="Thinking..." time={22} />
       <PreviewThinking texts={texts} />
       <div className="space-y-4">
         <p className="bg-background rounded-md px-4 py-2">

@@ -26,6 +26,9 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
+import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
+import { updateFrom } from "@/app/store/reducers/userSlice";
+import { useRef, useEffect } from "react";
 
 const formSchema = z.object({
   post: z
@@ -93,17 +96,51 @@ const formSchema = z.object({
 export default function StepFive() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
 
+  const step5Init = useAppSelector((state: any) => state.userReducer.from.step5);
+  const dispatch = useAppDispatch();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      post: "10",
-      repost: "10",
-      quote: "10",
-      like: "200",
-      reply: "10",
-      comment: "10",
+      post: step5Init?.post || "",
+      repost: step5Init?.repost || "",
+      quote: step5Init?.quote || "",
+      like: step5Init?.like || "",
+      reply: step5Init?.reply || "",
+      comment: step5Init?.comment || "",
     },
   });
+
+  const prevValuesRef = useRef(form.getValues());
+  
+  const initialRenderRef = useRef(true);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const currentValues = form.getValues();
+      
+      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+        dispatch(updateFrom({ key: "step5", value: currentValues }));
+        prevValuesRef.current = { ...currentValues };
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, dispatch]);
+
+  useEffect(() => {
+    if (initialRenderRef.current && step5Init) {
+      form.reset({
+        post: step5Init.post || "",
+        repost: step5Init.repost || "",
+        quote: step5Init.quote || "",
+        like: step5Init.like || "",
+        reply: step5Init.reply || "",
+        comment: step5Init.comment || "",
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step5Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.

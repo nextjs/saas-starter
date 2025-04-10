@@ -1,3 +1,4 @@
 import * as dateUtils from './date-utils'
+import * as apiUtils from './api'
 
-export { dateUtils }
+export { dateUtils, apiUtils }

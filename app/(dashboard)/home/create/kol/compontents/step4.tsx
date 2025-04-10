@@ -19,6 +19,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import { useStepperContext } from "@/app/context/stepper-context";
+import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
+import { updateFrom } from "@/app/store/reducers/userSlice";
+import { useRef, useEffect } from "react";
 
 const formSchema = z.object({
   topics: z.string().min(1).max(200),
@@ -27,12 +30,41 @@ const formSchema = z.object({
 export default function StepFour() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
 
+  const step4Init = useAppSelector((state: any) => state.userReducer.from.step4);
+  const dispatch = useAppDispatch();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      topics: "",
+      topics: step4Init?.topics || "",
     },
   });
+
+  const prevValuesRef = useRef(form.getValues());
+  
+  const initialRenderRef = useRef(true);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const currentValues = form.getValues();
+      
+      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+        dispatch(updateFrom({ key: "step4", value: currentValues }));
+        prevValuesRef.current = { ...currentValues };
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, dispatch]);
+
+  useEffect(() => {
+    if (initialRenderRef.current && step4Init) {
+      form.reset({
+        topics: step4Init.topics || "",
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step4Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.

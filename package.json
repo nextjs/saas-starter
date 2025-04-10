@@ -42,6 +42,7 @@
     "input-otp": "^1.4.2",
     "jose": "^6.0.8",
     "localforage": "^1.10.0",
+    "lodash": "^4.17.21",
     "lucide-react": "^0.479.0",
     "motion": "^12.6.2",
     "next": "15.2.2-canary.3",

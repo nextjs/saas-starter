@@ -18,6 +18,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { useStepperContext } from "@/app/context/stepper-context";
+import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
+import { updateFrom } from "@/app/store/reducers/userSlice";
+import { useRef, useEffect } from "react";
 
 const formSchema = z.object({
   day: z
@@ -39,14 +42,45 @@ export default function StepSix() {
   const { handleNext, handleBack, currentStep, handleComplete } =
     useStepperContext();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      day: "100",
-      month: "200",
-      address: "",
-    },
-  });
+    const step6Init = useAppSelector((state: any) => state.userReducer.from.step6);
+    const dispatch = useAppDispatch();
+    
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+        day: step6Init?.day || "",
+        month: step6Init?.month || "",
+        address: step6Init?.address || "",
+      },
+    });
+  
+    const prevValuesRef = useRef(form.getValues());
+    
+    const initialRenderRef = useRef(true);
+  
+    useEffect(() => {
+      const subscription = form.watch((values) => {
+        const currentValues = form.getValues();
+        
+        if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+          dispatch(updateFrom({ key: "step6", value: currentValues }));
+          prevValuesRef.current = { ...currentValues };
+        }
+      });
+      
+      return () => subscription.unsubscribe();
+    }, [form, dispatch]);
+  
+    useEffect(() => {
+      if (initialRenderRef.current && step6Init) {
+        form.reset({
+          day: step6Init.day || "",
+          month: step6Init.month || "",
+          address: step6Init.address || "",
+        });
+        initialRenderRef.current = false;
+      }
+    }, [step6Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.

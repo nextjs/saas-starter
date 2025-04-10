@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,6 +37,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { updateConfig, updateFrom } from "@/app/store/reducers/userSlice";
 
 function RequiredLabel({ children }: { children: React.ReactNode }) {
   return (
@@ -65,6 +66,10 @@ export default function StepOne() {
   const [open, setOpen] = useState(false);
   const [openLanguage, setOpenLanguage] = useState(false);
   const dispatch = useAppDispatch();
+  
+  // 1. 从 Redux 获取已保存的表单数据
+  const step1Init = useAppSelector((state: any) => state.userReducer.from.step1);
+  
   const character = useAppSelector(
     (state: any) => state.userReducer.config.character
   );
@@ -75,55 +80,70 @@ export default function StepOne() {
     (state: any) => state.userReducer.config.language
   );
 
-  // 1. Define your form.
+  // 2. 初始化表单时使用已保存的数据
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      gender: "male",
-      character: "",
-      region: 0,
-      language: 0,
+      // 如果 Redux 中有数据，使用 Redux 中的数据，否则使用默认值
+      name: step1Init?.name || "",
+      gender: step1Init?.gender || "male",
+      character: step1Init?.character || "",
+      region: step1Init?.region || 0,
+      language: step1Init?.language || 0,
     },
   });
 
-  // 监听表单中的字段变化
-  const watchedFields = form.watch(); // 监听所有字段
-  // 或者只监听特定字段：
-  // const watchedName = form.watch("name");
-  // const watchedRegion = form.watch("region");
+  // 3. 处理表单更新，避免无限循环
+  // 使用 useRef 存储上一次的值，这样可以在 useEffect 中做比较
+  const prevValuesRef = useRef(form.getValues());
+  
+  // 只在组件首次渲染后执行一次 dispatch
+  const initialRenderRef = useRef(true);
 
-  // 使用 useEffect 来响应字段变化
+  // 4. 使用 useEffect 监听表单变化并更新 Redux
   useEffect(() => {
-    console.log("表单所有字段的当前值:", watchedFields);
-    // 你可以在这里根据字段的变化执行一些操作
-  }, [watchedFields]); // 当任何字段变化时重新执行
-
-  // 如果只想监听特定字段的变化：
-  useEffect(() => {
-    const subscription = form.watch((value, { name, type }) => {
-      if (name === "region") {
-        console.log("区域已更改为:", value.region);
-        // 这里可以根据区域的变化执行一些操作
-      }
+    // 只设置一次监听器
+    const subscription = form.watch((values) => {
+      // 获取当前表单的完整值
+      const currentValues = form.getValues();
       
-      if (name === "language") {
-        console.log("语言已更改为:", value.language);
-        // 这里可以根据语言的变化执行一些操作
+      // 使用 JSON.stringify 进行深度比较，避免引用比较的问题
+      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+        // 更新 Redux 状态
+        dispatch(updateFrom({ key: "step1", value: currentValues }));
+        // 更新保存的上一次值
+        prevValuesRef.current = { ...currentValues };
       }
     });
     
-    // 在组件卸载时清理订阅
+    // 清理函数
     return () => subscription.unsubscribe();
-  }, [form.watch]);
+  }, [form, dispatch]);
 
-  // 2. Define a submit handler.
+  // 5. 如果表单默认值与 Redux 中的数据不同，使用 Redux 中的数据重置表单
+  useEffect(() => {
+    if (initialRenderRef.current && step1Init) {
+      // 重置表单值为 Redux 中的值
+      form.reset({
+        name: step1Init.name || "",
+        gender: step1Init.gender || "male",
+        character: step1Init.character || "",
+        region: step1Init.region || 0,
+        language: step1Init.language || 0,
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step1Init, form]);
+
+  // 定义提交处理函数
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
     handleNext();
   }
+
+  useEffect(() => {
+    dispatch(updateConfig({ key: "currentStep", value: 1 }));
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 px-2">
@@ -204,7 +224,7 @@ export default function StepOne() {
                       </div>
                     </div>
                     <div className="w-full border-t my-2 px-4"></div>
-                    {character.length > 0 && (
+                    {character && character.length > 0 && (
                       <>
                         <div className="w-full">
                           <p className="text-sm text-slate-500 mb-2">
@@ -216,7 +236,9 @@ export default function StepOne() {
                                 <Badge
                                   key={item.id}
                                   onClick={() => {
-                                    field.onChange(field.value + item.name + ",");
+                                    field.onChange(
+                                      field.value + item.name + ","
+                                    );
                                   }}
                                 >
                                   {item.name}

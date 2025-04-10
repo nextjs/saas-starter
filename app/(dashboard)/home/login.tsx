@@ -483,7 +483,7 @@ export default function Login() {
                             <FormItem className="flex flex-col">
                               <FormControl>
                                 <div className="w-full flex flex-col gap-2">
-                                  <p className="text-sm">邀请码</p>
+                                  <p className="text-sm">Invite Code</p>
                                   <Input
                                     {...field}
                                     placeholder="Invite Code"

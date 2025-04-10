@@ -4,19 +4,19 @@ import request from "./request";
 export async function chat(params: any) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 30000); // 30秒超时
+    // const timeout = setTimeout(() => controller.abort(), 120000); // 120秒超时
 
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/kol/api/v1/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        "Wallet-Address": localStorage.getItem("walletAddress") || ""
+        // "Wallet-Address": localStorage.getItem("walletAddress") || ""
       },
       body: JSON.stringify(params),
       signal: controller.signal
     });
     
-    clearTimeout(timeout); // 清除超时计时器
+    // clearTimeout(timeout); // 清除超时计时器
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

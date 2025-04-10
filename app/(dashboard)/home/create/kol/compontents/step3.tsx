@@ -29,6 +29,9 @@ import {
 import QueryMask from "@/app/components/comm/QueryMask";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
+import { updateFrom } from "@/app/store/reducers/userSlice";
+import { useRef, useEffect } from "react";
 
 const formSchema = z.object({
   interactive: z.string().min(1).max(200),
@@ -38,12 +41,41 @@ export default function StepThree() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
   const [search, setSearch] = useState("");
 
+  const step3Init = useAppSelector((state: any) => state.userReducer.from.step3);
+  const dispatch = useAppDispatch();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      interactive: "",
+      interactive: step3Init?.interactive || "",
     },
   });
+
+  const prevValuesRef = useRef(form.getValues());
+  
+  const initialRenderRef = useRef(true);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const currentValues = form.getValues();
+      
+      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+        dispatch(updateFrom({ key: "step3", value: currentValues }));
+        prevValuesRef.current = { ...currentValues };
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, dispatch]);
+
+  useEffect(() => {
+    if (initialRenderRef.current && step3Init) {
+      form.reset({
+        interactive: step3Init.interactive || "",
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step3Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.

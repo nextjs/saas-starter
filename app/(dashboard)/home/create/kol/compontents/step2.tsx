@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import React, { useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +30,8 @@ import AnimatedList from "@/app/components/comm/AnimatedList";
 import { CheckIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
+import { updateFrom } from "@/app/store/reducers/userSlice";
 function RequiredLabel({ children }: { children: React.ReactNode }) {
   return (
     <FormLabel className="flex items-center">
@@ -44,13 +46,41 @@ const formSchema = z.object({
 
 export default function StepOne() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
-  // 1. Define your form.
+  const step2Init = useAppSelector((state: any) => state.userReducer.from.step2);
+  const dispatch = useAppDispatch();
+  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ability: "",
+      ability: step2Init?.ability || "",
     },
   });
+
+  const prevValuesRef = useRef(form.getValues());
+  
+  const initialRenderRef = useRef(true);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const currentValues = form.getValues();
+      
+      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+        dispatch(updateFrom({ key: "step2", value: currentValues }));
+        prevValuesRef.current = { ...currentValues };
+      }
+    });
+    
+    return () => subscription.unsubscribe();
+  }, [form, dispatch]);
+
+  useEffect(() => {
+    if (initialRenderRef.current && step2Init) {
+      form.reset({
+        ability: step2Init.ability || "",
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step2Init, form]);
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof formSchema>) {

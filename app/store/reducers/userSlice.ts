@@ -87,6 +87,16 @@ const userSlice = createSlice({
       const { key, value } = action.payload;
       state.from[key] = value;
     },
+    clearFrom: (state) => {
+      state.from = {
+        step1: {},
+        step2: {},
+        step3: {},
+        step4: {},
+        step5: {},
+        step6: {},
+      };
+    },
   },
 });
 
@@ -96,6 +106,7 @@ export const {
   updateUserInfo,
   updateConfig,
   updateFrom,
+  clearFrom,
 } = userSlice.actions;
 
 export default userSlice.reducer;
