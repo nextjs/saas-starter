@@ -35,8 +35,8 @@ export default function DashboardLayout({
       {/* Mobile header */}
       <div className="md:hidden flex items-center justify-between bg-white shadow-sm p-2 text-primary sticky top-0 left-0 z-50 w-full">
         <div className="flex items-center px-2">
-          <Link href="/home">
-            <Image src={logo} alt="logo" className="w-auto h-8" />
+          <Link className="text-2xl font-bold" href="/home">
+            Linkol
           </Link>
         </div>
         <Button
@@ -63,9 +63,9 @@ export default function DashboardLayout({
           }`}
         >
           <div className="w-full h-full flex flex-col">
-            <div className="items-center justify-center p-6 pb-4 hidden md:flex">
-              <Link href="/home">
-                <Image src={logo} alt="logo" className="w-auto h-10" />
+            <div className="items-center justify-center p-6 pb-2 hidden md:flex">
+              <Link className="text-2xl font-bold" href="/home">
+                Linkol
               </Link>
             </div>
             <SidebarNav />
