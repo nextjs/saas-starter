@@ -90,10 +90,11 @@ export default function PreviewProfile() {
 
   const generateDescription = async () => {
     try {
+      if (!Step1.character) return;
       // 检查是否所有字段都已填写
-      if (!isStep1Complete()) {
-        return;
-      }
+      // if (!isStep1Complete()) {
+      //   return;
+      // }
       setLoading(true);
       setPartialOutput(""); // 清空之前的部分输出
       setPartialReasoning(""); // 清空之前的推理过程输出

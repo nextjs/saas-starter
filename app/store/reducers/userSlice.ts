@@ -27,6 +27,18 @@ const initialState: UserState = {
     language: [],
     character: [],
     topics: [],
+    ability: [],
+    price: [],
+    kols: [],
+    limit: {
+      post: 0,
+      repost: 0,
+      likes: 0,
+      quote: 0,
+      reply: 0,
+      comment: 0,
+      agent: 0,
+    },
     currentStep: 1,
   },
   from: {
@@ -70,12 +82,14 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{
         key: keyof Config;
-        value: any[] | number | string;
+        value: any[] | number | string | { post: number; repost: number; likes: number; quote: number; reply: number; comment: number; agent: number; };
       }>
     ) => {
       const { key, value } = action.payload;
       if (key === "currentStep") {
         state.config[key] = value as number;
+      } else if (key === "limit") {
+        state.config[key] = value as { post: number; repost: number; likes: number; quote: number; reply: number; comment: number; agent: number; };
       } else {
         state.config[key] = value as any[];
       }

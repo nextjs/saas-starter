@@ -18,7 +18,7 @@ const persistConfig = {
   storage: localForage.createInstance({
     name: "redux",
   }),
-  version: 0.3,
+  version: 0.2,
   throttle: 1000, // ms
   serialize: false,
   deserialize: false,
@@ -46,6 +46,18 @@ const persistConfig = {
           language: [],
           character: [],
           topics: [],
+          ability: [],
+          price: [],
+          kols: [],
+          limit: {
+            post: 0,
+            repost: 0,
+            likes: 0,
+            quote: 0,
+            reply: 0,
+            comment: 0,
+            agent: 0,
+          },
           currentStep: 1,
         },
         from: {

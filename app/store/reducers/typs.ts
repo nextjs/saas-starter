@@ -13,6 +13,18 @@ export type Config = {
   language: any[];
   character: any[];
   topics: any[];
+  ability: any[];
+  price: any[];
+  kols: any[];
+  limit: {
+    post: number;
+    repost: number;
+    likes: number;
+    quote: number;
+    reply: number;
+    comment: number;
+    agent: number;
+  };
   currentStep: number;
 }
 

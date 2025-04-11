@@ -48,7 +48,7 @@ export default function StepOne() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
   const step2Init = useAppSelector((state: any) => state.userReducer.from.step2);
   const dispatch = useAppDispatch();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -90,74 +90,7 @@ export default function StepOne() {
     handleNext();
   }
 
-  const templates = [
-    {
-      id: 1,
-      name: "幽默大师",
-      description: "生成各种类型的笑话和段子，从冷幽默到谐音梗，适应不同笑点。",
-    },
-    {
-      id: 2,
-      name: "币圈分析师",
-      description:
-        "提供加密货币价格趋势分析、项目基本面解读和简单技术指标提醒。",
-    },
-    {
-      id: 3,
-      name: "故事编织者",
-      description: "根据关键词生成短篇故事，支持悬疑、爱情或科幻等不同题材。",
-    },
-    {
-      id: 4,
-      name: "项目测评官",
-      description: "对Web3/科技项目进行中立分析，总结优缺点和潜在风险。",
-    },
-    {
-      id: 5,
-      name: "语言风格转换",
-      description: "将输入内容转化为指定风格（贴吧体/知乎体/微博体等）。",
-    },
-    {
-      id: 6,
-      name: "社交夸夸党",
-      description: "用夸张语气赞美他人推文，适合互动涨粉场景。",
-    },
-    {
-      id: 7,
-      name: "辩论喷子模式",
-      description: "以激进语气反驳观点（自动过滤敏感词避免封号）。",
-    },
-    {
-      id: 8,
-      name: "土味情话生成",
-      description: "创作接地气的撩人金句，适合娱乐互动。",
-    },
-    {
-      id: 9,
-      name: "热点追踪器",
-      description: "自动关联时事热点生成评论角度，保持内容时效性。",
-    },
-    {
-      id: 10,
-      name: "诗词创作",
-      description: "生成现代诗或仿古诗词，支持指定主题和情感倾向。",
-    },
-    {
-      id: 11,
-      name: "阴阳大师",
-      description: "用含蓄反讽方式表达观点（自动控制攻击性程度）。",
-    },
-    {
-      id: 12,
-      name: "舔狗日记",
-      description: "自动生成卑微恋爱脑内容，适合情感类账号。",
-    },
-    {
-      id: 13,
-      name: "玄学占卜",
-      description: "生成星座运程/塔罗牌解读等神秘学内容。",
-    },
-  ];
+  const ability = useAppSelector((state: any) => state.userReducer.config.ability);
 
   const [abilityStr, setAbilityStr] = useState<string[]>([]);
   const add = (val: string, id: number) => {
@@ -219,7 +152,7 @@ export default function StepOne() {
                           </DialogHeader>
                           <div className="w-full max-h-[400px]">
                             <AnimatedList
-                              items={templates.map((template) => (
+                              items={ability.map((template: any) => (
                                 <div
                                   className="w-full flex items-center justify-between bg-gray-100 rounded-md p-2"
                                   key={template.id}

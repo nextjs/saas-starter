@@ -11,7 +11,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getConstants } from "@/app/request/api";
+import {
+  getAbilityList,
+  getAgentLimit,
+  getAgentPriceList,
+  getConstants,
+  getKOLInterface,
+} from "@/app/request/api";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { updateConfig, clearFrom } from "@/app/store/reducers/userSlice";
 import { useRouter } from "next/navigation";
@@ -44,7 +50,9 @@ const CreateSuccess = () => {
 export default function Page() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useAppSelector(
+    (state: any) => state.userReducer.isLoggedIn
+  );
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -76,16 +84,28 @@ export default function Page() {
       }).then((res) => {
         dispatch(updateConfig({ key: "topics", value: res.data }));
       });
+      getAbilityList().then((res) => {
+        dispatch(updateConfig({ key: "ability", value: res.data }));
+      });
+      getAgentPriceList().then((res) => {
+        dispatch(updateConfig({ key: "price", value: res.data }));
+      });
+      getKOLInterface().then((res) => {
+        dispatch(updateConfig({ key: "kols", value: res.data }));
+      });
+      getAgentLimit().then((res) => {
+        dispatch(updateConfig({ key: "limit", value: res.data }));
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    dispatch(clearFrom());
-    return () => {
-      dispatch(clearFrom());
-    };
+    // dispatch(clearFrom());
+    // return () => {
+    //   dispatch(clearFrom());
+    // };
   }, []);
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
