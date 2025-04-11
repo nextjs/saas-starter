@@ -176,12 +176,12 @@ export default function TwitterAuth() {
       </DialogTrigger>
       <DialogContent className="w-xs min-w-[200px] text-primary">
         <DialogHeader>
-          <DialogTitle>
-            <h1 className="text-xl font-bold text-center">
-              Twitter Authorization
-            </h1>
+          <DialogTitle className="text-center text-primary font-bold text-xl">
+            Twitter Authorization
           </DialogTitle>
-          <DialogDescription></DialogDescription>
+          <DialogDescription className="text-center text-gray-500 text-sm">
+            Please authorize your Twitter account to continue.
+          </DialogDescription>
         </DialogHeader>
         <div className="w-full flex flex-col items-center justify-center gap-4">
           {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
