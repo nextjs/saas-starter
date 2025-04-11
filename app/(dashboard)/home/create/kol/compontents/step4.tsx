@@ -22,6 +22,7 @@ import { useStepperContext } from "@/app/context/stepper-context";
 import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
 import { updateFrom } from "@/app/store/reducers/userSlice";
 import { useRef, useEffect } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   topics: z.string().min(1).max(200),
@@ -29,10 +30,13 @@ const formSchema = z.object({
 
 export default function StepFour() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
+  const topics = useAppSelector((state: any) => state.userReducer.config.topics);
 
-  const step4Init = useAppSelector((state: any) => state.userReducer.from.step4);
+  const step4Init = useAppSelector(
+    (state: any) => state.userReducer.from.step4
+  );
   const dispatch = useAppDispatch();
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -41,19 +45,21 @@ export default function StepFour() {
   });
 
   const prevValuesRef = useRef(form.getValues());
-  
+
   const initialRenderRef = useRef(true);
 
   useEffect(() => {
     const subscription = form.watch((values) => {
       const currentValues = form.getValues();
-      
-      if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
+
+      if (
+        JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)
+      ) {
         dispatch(updateFrom({ key: "step4", value: currentValues }));
         prevValuesRef.current = { ...currentValues };
       }
     });
-    
+
     return () => subscription.unsubscribe();
   }, [form, dispatch]);
 
@@ -109,15 +115,20 @@ export default function StepFour() {
                         <p className="text-sm text-slate-500 mb-2">
                           Suggested keywords
                         </p>
-                        <div className="grid grid-cols-2 gap-4 pb-2">
-                          <Badge
-                            onClick={() => {
-                              field.onChange(field.value + "Badge,");
-                            }}
-                          >
-                            Badge
-                          </Badge>
-                        </div>
+                        <ScrollArea className="h-[100px] pb-2">
+                          <div className="flex flex-wrap gap-1 pb-2">
+                            {topics.map((item: any) => (
+                              <Badge
+                                key={item.id}
+                                onClick={() => {
+                                  field.onChange(field.value + item.name + ",");
+                                }}
+                              >
+                                {item.name}
+                              </Badge>
+                            ))}
+                          </div>
+                        </ScrollArea>
                       </div>
                     </div>
                   </FormControl>

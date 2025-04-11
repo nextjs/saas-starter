@@ -11,7 +11,7 @@ export default function PreviewThinking(props: PreviewThinkingProps) {
   const { texts, isLoading = false, currentText = "" } = props;
 
   return (
-    <div className="space-y-4 border-l-2 border-secondary pl-4 text-md">
+    <div className="space-y-4 border-l-2 border-secondary pl-2 text-md">
       {/* 显示已完成的思考内容 */}
       {Array.isArray(texts)
         ? texts.map((text, index) => <Markdown key={index}>{text}</Markdown>)

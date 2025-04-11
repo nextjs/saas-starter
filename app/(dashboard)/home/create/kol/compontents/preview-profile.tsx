@@ -151,12 +151,21 @@ export default function PreviewProfile() {
     };
   }, [Step1.character, Step1]);
 
+  const userInfo = useAppSelector((state: any) => state.userReducer.userInfo);
   return (
     <div className="text-md">
       <div className="h-30 relative bg-primary/10">
         <Image src={banner} alt="banner" fill className="object-cover" />
         <div className="absolute bottom-0 left-4 w-28 h-28 rounded-full bg-muted-foreground border-4 translate-y-1/2 border-background overflow-hidden">
-          <Image src={avatar} alt="avatar" fill />
+          {userInfo.profile_image_url ? (
+            <img
+              src={userInfo.profile_image_url}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Image src={avatar} alt="avatar" fill />
+          )}
         </div>
       </div>
       <div className="p-4 space-y-2">
@@ -164,14 +173,14 @@ export default function PreviewProfile() {
         <dl className="flex flex-col gap-1">
           <dt className="h-7">
             {Step1.name ? (
-              <h1 className="text-xl font-bold">{Step1.name}</h1>
+              <h1 className="text-xl font-bold">{userInfo.username}</h1>
             ) : (
               <Skeleton className="w-20 h-7" />
             )}
           </dt>
-          <dd className="text-muted-foreground capitalize h-4">
+          <dd className="text-muted-foreground h-4">
             {Step1.name ? (
-              <span className="text-md">@{Step1.name}</span>
+              <span className="text-md">@{userInfo.screen_name}</span>
             ) : (
               <Skeleton className="w-24 h-4" />
             )}
@@ -188,14 +197,22 @@ export default function PreviewProfile() {
                 </p>
               </div>
             ) : (
-              <Skeleton className="w-full h-4" />
+              <div className="space-y-1">
+                <Skeleton className="w-full h-3" />
+                <Skeleton className="w-[80%] h-3" />
+                <Skeleton className="w-[60%] h-3" />
+              </div>
             )
           ) : description ? (
             <p className="text-sm line-clamp-3 overflow-hidden text-ellipsis">
               {description}
             </p>
           ) : (
-            <Skeleton className="w-full h-4" />
+            <div className="space-y-1">
+              <Skeleton className="w-full h-3" />
+              <Skeleton className="w-[80%] h-3" />
+              <Skeleton className="w-[60%] h-3" />
+            </div>
           )}
         </div>
         <ul className="flex space-x-4 items-center">

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,73 +21,71 @@ import { useStepperContext } from "@/app/context/stepper-context";
 import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
 import { updateFrom } from "@/app/store/reducers/userSlice";
 import { useRef, useEffect } from "react";
-
+import CreateTwitterAuth from "./create-twitter-auth";
 const formSchema = z.object({
-  day: z
+  price: z.string(),
+  address: z
     .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
+    .min(1, "钱包地址不能为空")
+    .regex(
+      /^0x[a-fA-F0-9]{40}$/,
+      "Must be a valid EVM wallet address, starting with 0x and followed by 40 hexadecimal characters"
     ),
-  month: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    ),
-  address: z.string().min(1).max(32),
 });
 
 export default function StepSix() {
   const { handleNext, handleBack, currentStep, handleComplete } =
     useStepperContext();
+  const price = useAppSelector((state: any) => state.userReducer.config.price);
+  const [isTwitterAuth, setIsTwitterAuth] = useState(false);
 
-    const step6Init = useAppSelector((state: any) => state.userReducer.from.step6);
-    const dispatch = useAppDispatch();
-    
-    const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        day: step6Init?.day || "",
-        month: step6Init?.month || "",
-        address: step6Init?.address || "",
-      },
-    });
-  
-    const prevValuesRef = useRef(form.getValues());
-    
-    const initialRenderRef = useRef(true);
-  
-    useEffect(() => {
-      const subscription = form.watch((values) => {
-        const currentValues = form.getValues();
-        
-        if (JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)) {
-          dispatch(updateFrom({ key: "step6", value: currentValues }));
-          prevValuesRef.current = { ...currentValues };
-        }
-      });
-      
-      return () => subscription.unsubscribe();
-    }, [form, dispatch]);
-  
-    useEffect(() => {
-      if (initialRenderRef.current && step6Init) {
-        form.reset({
-          day: step6Init.day || "",
-          month: step6Init.month || "",
-          address: step6Init.address || "",
-        });
-        initialRenderRef.current = false;
+  const step6Init = useAppSelector(
+    (state: any) => state.userReducer.from.step6
+  );
+  const dispatch = useAppDispatch();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      price: "",
+      address: step6Init?.address || "",
+    },
+  });
+
+  const prevValuesRef = useRef(form.getValues());
+
+  const initialRenderRef = useRef(true);
+
+  useEffect(() => {
+    const subscription = form.watch((values) => {
+      const currentValues = form.getValues();
+
+      if (
+        JSON.stringify(currentValues) !== JSON.stringify(prevValuesRef.current)
+      ) {
+        dispatch(updateFrom({ key: "step6", value: currentValues }));
+        prevValuesRef.current = { ...currentValues };
       }
-    }, [step6Init, form]);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [form, dispatch]);
+
+  useEffect(() => {
+    if (initialRenderRef.current && step6Init) {
+      form.reset({
+        price: price.price || "",
+        address: step6Init.address || "",
+      });
+      initialRenderRef.current = false;
+    }
+  }, [step6Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     console.log(values);
-    // handleNext(); 
-    handleComplete();
+    // handleComplete();
   }
 
   return (
@@ -103,37 +101,39 @@ export default function StepSix() {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
-              name="day"
+              name="price"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormControl>
                     <div className="space-y-2 w-full">
-                      <dl>
-                        <dt className="text-md font-bold">
-                          Post 2 tweets for 24 Hours.
-                        </dt>
-                        <dd className="text-sm text-muted-foreground">
-                          It is recommended 100 USDT per 24 Hours.
-                        </dd>
-                      </dl>
-                      <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
-                        <Input
-                          {...field}
-                          placeholder="Enter amount"
-                          className="text-md w-full border-none shadow-none p-2"
-                        />
-                        <p className="whitespace-nowrap text-md text-muted-foreground">
-                          USDT / <strong className="text-primary">24</strong>{" "}
-                          Hours
-                        </p>
-                      </div>
+                      {price.map((item: any) => (
+                        <div className="space-y-2 w-full">
+                          <dl>
+                            <dt className="text-md font-bold">{item.desc}</dt>
+                            <dd className="text-sm text-muted-foreground">
+                              It is recommended {item.price} {item.name}.
+                            </dd>
+                          </dl>
+                          <div className="border rounded-md px-2 shadow-sm group flex items-center justify-between space-x-2 py-2">
+                            <Input
+                              value={item.price || ""}
+                              readOnly
+                              placeholder="Enter amount"
+                              className="text-md w-full border-none shadow-none p-2 pointer-events-none"
+                            />
+                            <p className="whitespace-nowrap text-md text-muted-foreground">
+                              {item.name}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
+            {/* <FormField
               control={form.control}
               name="month"
               render={({ field }) => (
@@ -164,7 +164,7 @@ export default function StepSix() {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
             <FormField
               control={form.control}
               name="address"
@@ -203,14 +203,7 @@ export default function StepSix() {
                 </dd>
               </dl>
               <div className="border rounded-md shadow-sm flex justify-center items-center p-4">
-                <Button
-                  className="duration-350 flex items-center justify-center font-bold"
-                  onClick={(evt) => {
-                    evt.preventDefault();
-                  }}
-                >
-                  Connect
-                </Button>
+                <CreateTwitterAuth />
               </div>
             </div>
             <div className="flex justify-between">

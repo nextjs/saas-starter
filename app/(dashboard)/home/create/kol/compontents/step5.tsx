@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -28,86 +28,89 @@ import {
 import { CircleHelp } from "lucide-react";
 import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
 import { updateFrom } from "@/app/store/reducers/userSlice";
-import { useRef, useEffect } from "react";
-
-const formSchema = z.object({
-  post: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)),
-      "Must be an integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 10,
-      "Must be between 1 and 10"
-    ),
-  repost: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 10,
-      "Must be between 1 and 10"
-    ),
-  quote: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 10,
-      "Must be between 1 and 10"
-    ),
-  like: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 200,
-      "Must be between 1 and 200"
-    ),
-  reply: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 10,
-      "Must be between 1 and 10"
-    ),
-  comment: z
-    .string()
-    .refine(
-      (val) => Number.isInteger(Number(val)) && Number(val) > 0,
-      "Must be a positive integer"
-    )
-    .refine(
-      (val) => Number(val) >= 1 && Number(val) <= 10,
-      "Must be between 1 and 10"
-    ),
-});
 
 export default function StepFive() {
   const { handleNext, handleBack, currentStep } = useStepperContext();
+  const limit = useAppSelector((state: any) => state.userReducer.config.limit);
 
   const step5Init = useAppSelector((state: any) => state.userReducer.from.step5);
   const dispatch = useAppDispatch();
-  
+
+  // 动态创建formSchema
+  const createFormSchema = (limit: any) => z.object({
+    post: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)),
+        "Must be an integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.post,
+        `Must be between 1 and ${limit.post}`
+      ),
+    repost: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)) && Number(val) > 0,
+        "Must be a positive integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.repost,
+        `Must be between 1 and ${limit.repost}`
+      ),
+    quote: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)) && Number(val) > 0,
+        "Must be a positive integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.quote,
+        `Must be between 1 and ${limit.quote}`
+      ),
+    likes: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)) && Number(val) > 0,
+        "Must be a positive integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.likes,
+        `Must be between 1 and ${limit.likes}`
+      ),
+    reply: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)) && Number(val) > 0,
+        "Must be a positive integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.reply,
+        `Must be between 1 and ${limit.reply}`
+      ),
+    comment: z
+      .string()
+      .refine(
+        (val) => Number.isInteger(Number(val)) && Number(val) > 0,
+        "Must be a positive integer"
+      )
+      .refine(
+        (val) => Number(val) >= 1 && Number(val) <= limit.comment,
+        `Must be between 1 and ${limit.comment}`
+      ),
+  });
+
+  const formSchema = createFormSchema(limit);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      post: step5Init?.post || "",
-      repost: step5Init?.repost || "",
-      quote: step5Init?.quote || "",
-      like: step5Init?.like || "",
-      reply: step5Init?.reply || "",
-      comment: step5Init?.comment || "",
+      post: limit.post || step5Init?.post || "",
+      repost: limit.repost || step5Init?.repost || "",
+      quote: limit.quote || step5Init?.quote || "",
+      likes: limit.likes || step5Init?.likes || "",
+      reply: limit.reply || step5Init?.reply || "",
+      comment: limit.comment || step5Init?.comment || "",
     },
   });
 
@@ -134,7 +137,7 @@ export default function StepFive() {
         post: step5Init.post || "",
         repost: step5Init.repost || "",
         quote: step5Init.quote || "",
-        like: step5Init.like || "",
+        likes: step5Init.likes || "",
         reply: step5Init.reply || "",
         comment: step5Init.comment || "",
       });
@@ -143,8 +146,6 @@ export default function StepFive() {
   }, [step5Init, form]);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
     console.log(values);
     handleNext();
   }
@@ -309,7 +310,7 @@ export default function StepFive() {
             />
             <FormField
               control={form.control}
-              name="like"
+              name="likes"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormControl>

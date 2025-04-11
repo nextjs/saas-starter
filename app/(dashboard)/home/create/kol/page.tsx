@@ -101,17 +101,12 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    // dispatch(clearFrom());
-    // return () => {
-    //   dispatch(clearFrom());
-    // };
-  }, []);
+  const currentStep = useAppSelector((state: any) => state.userReducer.config.currentStep);
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">
         <Stepper
-          initialStep={1}
+          initialStep={currentStep || 1}
           stepText={[
             "1. Info",
             "2. Ability",

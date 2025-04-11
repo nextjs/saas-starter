@@ -5,6 +5,10 @@ export interface UserInfo {
   identity: string;
   member_id: number;
   member_name: string;
+  is_x_authorizationed: boolean;
+  screen_name: string;
+  profile_image_url: string;
+  description: string | null;
   token: string;
 }
 

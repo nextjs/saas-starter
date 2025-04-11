@@ -8,6 +8,7 @@ export interface UserState {
   userInfo: UserInfo;
   config: Config;
   from: From;
+  twitter_full_profile: any;
 }
 
 const initialState: UserState = {
@@ -20,6 +21,10 @@ const initialState: UserState = {
     identity: "",
     member_id: 0,
     member_name: "",
+    is_x_authorizationed: false,
+    screen_name: "",
+    profile_image_url: "",
+    description: "",
     token: "",
   },
   config: {
@@ -49,6 +54,7 @@ const initialState: UserState = {
     step5: {},
     step6: {},
   },
+  twitter_full_profile: {},
 };
 
 const userSlice = createSlice({
@@ -71,6 +77,10 @@ const userSlice = createSlice({
           identity: "",
           member_id: 0,
           member_name: "",
+          is_x_authorizationed: false,
+          screen_name: "",
+          profile_image_url: "",
+          description: "",
           token: "",
         };
       }
@@ -111,6 +121,9 @@ const userSlice = createSlice({
         step6: {},
       };
     },
+    updateTwitterFullProfile: (state, action: PayloadAction<any>) => {
+      state.twitter_full_profile = action.payload;
+    },
   },
 });
 
@@ -121,6 +134,7 @@ export const {
   updateConfig,
   updateFrom,
   clearFrom,
+  updateTwitterFullProfile,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,9 +1,6 @@
-import Threads from "@/components/Backgrounds/Threads/Threads";
-import TwitterView from "@/app/components/home/TwitterView";
 import { Button } from "@/components/ui/button";
 import Carousel from "@/components/Components/Carousel/Carousel";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Twitter } from "@/app/assets/svg";
 
 export default async function HomePage() {
   return (

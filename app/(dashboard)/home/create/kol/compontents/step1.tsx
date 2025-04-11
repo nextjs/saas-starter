@@ -141,9 +141,9 @@ export default function StepOne() {
     handleNext();
   }
 
-  useEffect(() => {
-    dispatch(updateConfig({ key: "currentStep", value: 1 }));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(updateConfig({ key: "currentStep", value: 1 }));
+  // }, []);
 
   return (
     <div className="w-full h-full flex flex-col gap-4 px-2">

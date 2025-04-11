@@ -1,12 +1,13 @@
 import Image from "next/image";
+import Markdown from "react-markdown";
 
 import post from "@/app/assets/image/post.png";
 
-export default function PostContent() {
+export default function PostContent({ content }: { content?: string }) {
   return (
     <div className="space-y-2">
       <div className="space-y-2 text-base">
-        <p>Learn how to use KolAgent.ai</p>
+        <Markdown>{content}</Markdown>
       </div>
       <div className="w-full aspect-video overflow-hidden rounded-md">
         <Image

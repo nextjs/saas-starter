@@ -16,7 +16,11 @@ import { useAppSelector } from "@/app/store/hooks";
 import logo from "@/app/assets/image/logo.png";
 import SidebarNav from "@/app/components/slidebar/sidebar-nav";
 import avatar from "@/app/assets/image/avatar.png";
-
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useXauthDialog } from "@/app/hooks/useXauthDialog";
+import TwitterAuth from "./twitter-auth";
+import { getAgentList } from "@/app/request/api";
 export default function DashboardLayout({
   children,
 }: {
@@ -29,6 +33,28 @@ export default function DashboardLayout({
     // { href: "/home", icon: House, label: "Home" },
     // { href: "/home/general", icon: Grip, label: "Kol List" },
   ];
+
+  const { openXauthDialog } = useXauthDialog();
+  const params = useSearchParams();
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    if (oauth_token) {
+      // 打开twitter授权弹窗
+      openXauthDialog();
+    }
+  }, []);
+
+  const [agents, setAgents] = useState<any[]>([]);
+  const getAgents = async () => {
+    const res = await getAgentList();
+    if (res && res.code === 200) {
+      setAgents(res.data);
+    }
+  };
+
+  useEffect(() => {
+    getAgents();
+  }, []);
 
   return (
     <div className="flex flex-col h-[100dvh] max-w-full mx-auto w-full text-primary">
@@ -85,38 +111,33 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn ? (
+                {isLoggedIn && agents.length > 0 ? (
                   <ul className="space-y-2">
-                    <li className="flex items-center space-x-2 overflow-hidden rounded-md p-2 cursor-pointer bg-background group hover:text-foreground hover:bg-gradient-to-r hover:from-[#0bbdb6]/90 hover:to-[#00d179]/90">
-                      <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
-                        <Image
-                          src={avatar}
-                          alt="avatar"
-                          className="w-10 h-10"
-                        />
-                      </div>
-                      <dl className="flex-1 w-full overflow-hidden">
-                        <dt className="text-md truncate">AI</dt>
-                        <dd className="text-sm truncate text-md text-muted-foreground group-hover:text-foreground">
-                          Open rednote Open rednoteOpen rednote
-                        </dd>
-                      </dl>
-                    </li>
-                    <li className="flex items-center space-x-2 overflow-hidden rounded-md p-2 cursor-pointer bg-background group hover:text-foreground hover:bg-gradient-to-r hover:from-[#0bbdb6]/90 hover:to-[#00d179]/90">
-                      <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
-                        <Image
-                          src={avatar}
-                          alt="avatar"
-                          className="w-10 h-10"
-                        />
-                      </div>
-                      <dl className="flex-1 w-full overflow-hidden">
-                        <dt className="text-md truncate">Reddit</dt>
-                        <dd className="truncate text-sm text-muted-foreground group-hover:text-foreground">
-                          Open rednote Open rednoteOpen rednote
-                        </dd>
-                      </dl>
-                    </li>
+                    {agents.map((agent) => (
+                      <li className="flex items-center space-x-2 overflow-hidden rounded-md p-2 cursor-pointer bg-background group hover:text-foreground hover:bg-gradient-to-r hover:from-[#0bbdb6]/90 hover:to-[#00d179]/90">
+                        <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
+                          {agent.icon ? (
+                            <img
+                              src={agent.icon}
+                              alt="avatar"
+                              className="w-10 h-10 object-cover"
+                            />
+                          ) : (
+                            <Image
+                              src={avatar}
+                              alt="avatar"
+                              className="w-10 h-10 object-cover"
+                            />
+                          )}
+                        </div>
+                        <dl className="flex-1 w-full overflow-hidden">
+                          <dt className="text-md font-bold truncate">{agent.name}</dt>
+                          <dd className="text-sm truncate text-md text-muted-foreground group-hover:text-foreground">
+                            {agent.x_username}
+                          </dd>
+                        </dl>
+                      </li>
+                    ))}
                   </ul>
                 ) : (
                   <NullCreate />
@@ -142,6 +163,7 @@ export default function DashboardLayout({
           </ClickSpark>
         </ScrollArea>
       </div>
+      <TwitterAuth />
     </div>
   );
 }

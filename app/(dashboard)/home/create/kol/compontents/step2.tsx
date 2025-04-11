@@ -126,6 +126,7 @@ export default function StepOne() {
                   <div className="w-full overflow-hidden relative">
                     <Textarea
                       {...field}
+                      readOnly
                       placeholder="Enter your ability"
                       className="pb-10 min-h-30 max-h-60"
                     />
@@ -162,13 +163,13 @@ export default function StepOne() {
                                       {template.name}
                                     </span>
                                     <span className="text-sm text-gray-500">
-                                      {template.description}
+                                      {template.desc}
                                     </span>
                                   </div>
                                   <Button
                                     className="w-fit flex items-center gap-1"
                                     onClick={() =>
-                                      add(template.description, template.id)
+                                      add(template.desc, template.id)
                                     }
                                   >
                                     <span>Input</span>

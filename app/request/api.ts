@@ -112,7 +112,7 @@ export async function getConstants(params: any) {
 // 创建Agent
 export async function createAgent(data: any) {
   try {
-    const res = await request.post('/kol/api/v1/agents', {...data})
+    const res = await request.post('/kol/api/v1/agents/', {...data})
     return res
   } catch (error: any) {
     console.log(error)
@@ -123,7 +123,7 @@ export async function createAgent(data: any) {
 // agent 列表
 export async function getAgentList() {
   try {
-    const res = await request.get('/kol/api/v1/agents/')
+    const res = await request.get('/kol/api/v1/agents/self/')
     return res
   } catch (error: any) {
     console.log(error)
@@ -134,7 +134,7 @@ export async function getAgentList() {
 // 获取能力列表
 export async function getAbilityList() {
   try {
-    const res = await request.get('/kol/api/v1/abilities')
+    const res = await request.get('/kol/api/v1/abilities/')
     return res
   } catch (error: any) {
     console.log(error)
@@ -175,5 +175,93 @@ export async function getAgentLimit() {
   }
 }
 
+// login 1. 获取twitter授权链接
+export async function getTwitterAuthLink(params: any) {
+  try {
+    const res = await request.get('/kol/api/v1/x/koluser/authorization/', {...params})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
+// login 2. 授权回调调用
+export async function getTwitterAuthCallback(data: any) {
+  try {
+    const res = await request.post('/kol/api/v1/x/get_access_token/', {...data})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
+// login 3. 获取用户信息
+export async function getUserInfoByTwitter(data: any) {
+  try {
+    const res = await request.get('/kol/api/v1/x/profile/', {...data})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
+// login 4. 授权完成后的回调
+export async function getTwitterAuthCompleteCallback(data: any) {
+  try {
+    const res = await request.post('/kol/api/v1/x/koluser/callback/', {...data})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
+
+// create 1. 获取twitter授权链接
+export async function getCreateTwitterAuthLink(params: any) {
+  try {
+    const res = await request.get('/kol/api/v1/x/authorization/', {...params})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error  
+  }
+}
+
+// create 2. 授权回调调用
+export async function getCreateTwitterAuthCallback(data: any) {
+  try {
+    const res = await request.post('/kol/api/v1/x/get_access_token/', {...data})
+    return res
+  } catch (error: any) {  
+    console.log(error)
+    return error
+  }
+}
+
+// create 3. 获取用户信息
+export async function getCreateUserInfoByTwitter(data: any) {
+  try {
+    const res = await request.get('/kol/api/v1/x/profile/', {...data})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
+// create 4. 授权完成后的回调
+export async function getCreateTwitterAuthCompleteCallback(data: any) {
+  try {
+    const res = await request.post('/kol/api/v1/x/callback/', {...data})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
 
 

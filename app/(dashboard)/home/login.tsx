@@ -42,7 +42,8 @@ import {
   sendEmailCode,
 } from "@/app/request/api";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-
+import { useXauthDialog } from "@/app/hooks/useXauthDialog";
+import TwitterAuth from "./twitter-auth";
 const formSchema = z
   .object({
     email: z.string().email(),
@@ -223,7 +224,6 @@ export default function Login() {
       setValue("");
       // }, 1000);
     } else if (step === Step.ResetPassword) {
-      console.log("xxxxx");
       try {
         setIsLoading(true);
         await sendCode();
@@ -265,6 +265,7 @@ export default function Login() {
     }
   };
 
+  const { openXauthDialog } = useXauthDialog();
   const loginApi = async () => {
     try {
       setIsLoading(true);
@@ -274,10 +275,14 @@ export default function Login() {
       });
       setIsLoading(false);
       if (res && res.code === 200) {
-        dispatch(updateUserInfo(res.data));
-        dispatch(updateIsLoggedIn(true));
         localStorage.setItem("token", res.data.token);
-        closeDrawer();
+        if (res.data.is_x_authorizationed) {
+          dispatch(updateUserInfo(res.data));
+          dispatch(updateIsLoggedIn(true));
+          closeDrawer();
+        } else {
+          openXauthDialog();
+        }
       } else {
         toast.error(res.msg);
       }
@@ -832,6 +837,7 @@ export default function Login() {
             </AnimatePresence>
           </div>
         </div>
+        <TwitterAuth />
       </DrawerContent>
     </Drawer>
   );

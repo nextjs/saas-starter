@@ -122,7 +122,7 @@ export default function Preview() {
           {currentStep === 2 && <PreviewStepTwo />}
           {currentStep === 3 && <PreviewStepThree />}
           {currentStep === 4 && <PreviewStepFour />}
-          {currentStep === 5 && <PreviewStepFive />}
+          {currentStep === 5 && <PreviewStepFour />}
           {currentStep === 6 && <PreviewStepSix />}
         </ScrollArea>
       </div>

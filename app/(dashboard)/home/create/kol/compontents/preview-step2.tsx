@@ -23,6 +23,7 @@ export default function PreviewStepTwo() {
   const [partialOutput, setPartialOutput] = useState<string>("");
   const [partialReasoning, setPartialReasoning] = useState<string>("");
   const dispatch = useAppDispatch();
+  const language = useAppSelector((state: any) => state.userReducer.config.language);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const prevDataRef = useRef<any>(null);
@@ -71,11 +72,7 @@ export default function PreviewStepTwo() {
       basicInfo.push(`with ${Step1.character} character`);
     }
 
-    const languageName = Step1?.language
-      ? typeof Step1.language === "object"
-        ? Step1.language.name
-        : Step1.language
-      : "";
+    const languageName = language.find((item: any) => item.id === Step1.language)?.name;
     if (languageName) {
       basicInfo.push(`speaking ${languageName}`);
     }
