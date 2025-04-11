@@ -13,9 +13,8 @@ import ClickSpark from "@/components/Animations/ClickSpark/ClickSpark";
 import NullCreate from "@/app/components/slidebar/null-create";
 import Login from "./login";
 import { useAppSelector } from "@/app/store/hooks";
-import logo from "@/app/assets/image/logo.png";
 import SidebarNav from "@/app/components/slidebar/sidebar-nav";
-import avatar from "@/app/assets/image/avatar.png";
+import AgentList from "@/app/components/slidebar/agent-list";
 
 export default function DashboardLayout({
   children,
@@ -85,42 +84,7 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn ? (
-                  <ul className="space-y-2">
-                    <li className="flex items-center space-x-2 overflow-hidden rounded-md p-2 cursor-pointer bg-background group hover:text-foreground hover:bg-gradient-to-r hover:from-[#0bbdb6]/90 hover:to-[#00d179]/90">
-                      <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
-                        <Image
-                          src={avatar}
-                          alt="avatar"
-                          className="w-10 h-10"
-                        />
-                      </div>
-                      <dl className="flex-1 w-full overflow-hidden">
-                        <dt className="text-md truncate">AI</dt>
-                        <dd className="text-sm truncate text-md text-muted-foreground group-hover:text-foreground">
-                          Open rednote Open rednoteOpen rednote
-                        </dd>
-                      </dl>
-                    </li>
-                    <li className="flex items-center space-x-2 overflow-hidden rounded-md p-2 cursor-pointer bg-background group hover:text-foreground hover:bg-gradient-to-r hover:from-[#0bbdb6]/90 hover:to-[#00d179]/90">
-                      <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
-                        <Image
-                          src={avatar}
-                          alt="avatar"
-                          className="w-10 h-10"
-                        />
-                      </div>
-                      <dl className="flex-1 w-full overflow-hidden">
-                        <dt className="text-md truncate">Reddit</dt>
-                        <dd className="truncate text-sm text-muted-foreground group-hover:text-foreground">
-                          Open rednote Open rednoteOpen rednote
-                        </dd>
-                      </dl>
-                    </li>
-                  </ul>
-                ) : (
-                  <NullCreate />
-                )}
+                {isLoggedIn ? <AgentList /> : <NullCreate />}
               </div>
             </nav>
             <div className="flex items-center justify-center p-4 mt-auto">

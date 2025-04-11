@@ -43,7 +43,9 @@ export default function UserCard() {
   const dispatch = useAppDispatch();
   const [userInfo, setUserInfo] = useState<any>({});
   const [isLoading, setIsLoading] = useState(false);
-  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useAppSelector(
+    (state: any) => state.userReducer.isLoggedIn
+  );
   const getInfo = async () => {
     try {
       setIsLoading(true);
@@ -73,7 +75,10 @@ export default function UserCard() {
   return (
     <div className="w-full flex flex-col gap-2">
       <Link href="/home/pricing">
-        <Button className="w-fit flex items-center justify-center gap-2 relative my-2">
+        <Button
+          variant="primary"
+          className="w-full flex items-center justify-center gap-2 relative my-2"
+        >
           <Sparkles className="h-4 w-4" />
           <span className="text-sm font-bold">Upgrade Now</span>
           <div className="absolute z-[-1] -inset-0.5 bg-gradient-to-r from-sky-400 to-fuchsia-400 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
@@ -120,7 +125,9 @@ export default function UserCard() {
                 </div> */}
                 <div className="flex flex-col gap-0">
                   <span className="text-sm">{userInfo?.user_name}</span>
-                  <span className="text-xs text-gray-500">{userInfo?.current_member?.name}</span>
+                  <span className="text-xs text-gray-500">
+                    {userInfo?.current_member?.name}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
