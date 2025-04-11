@@ -1,8 +1,16 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    ppr: true
+    ppr: true,
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+    },
   },
   // 重定向
   async redirects() {
@@ -13,10 +21,10 @@ const nextConfig: NextConfig = {
         permanent: true, // true = 301 永久重定向, false = 302 临时重定向
       },
       {
-        source: "/home/create", 
-        destination: "/home/create/kol", 
-        permanent: true, 
-      }
+        source: "/home/create",
+        destination: "/home/create/kol",
+        permanent: true,
+      },
     ];
   },
 };
