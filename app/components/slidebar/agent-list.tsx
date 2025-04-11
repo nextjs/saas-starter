@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image, { StaticImageData } from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { nanoid } from "nanoid";
 import clsx from "clsx";
 
 import avatar from "@/app/assets/image/avatar.png";
