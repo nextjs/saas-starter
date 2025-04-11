@@ -1,12 +1,14 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { Bot } from "lucide-react";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
+import { getAgentList, getUserInfo } from "@/app/request/api";
+import { toast } from "sonner";
 
 const Routes = {
   CREATE: "/home/create/kol",
@@ -65,11 +67,45 @@ export default function SidebarNav() {
   const router = useRouter();
   const pathname = usePathname();
   const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
+  const userInfo = useAppSelector((state) => state.userReducer.userInfo);
   const { openDrawer } = useLoginDrawer();
+  const [userData, setUserData] = useState<any>({});
+  const [agents, setAgents] = useState<any[]>([]);
+
+  const getInfo = async () => {
+    try {
+      const res: any = await getUserInfo();
+      if (res && res.code === 200) {
+        setUserData(res.data);
+      } 
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+    }
+  };
+  const getAgents = async () => {
+    const res = await getAgentList();
+    if (res && res.code === 200) {
+      setAgents(res.data.filter((item: any) => !!item.x_username));
+    }
+  };
+
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      getInfo();
+      getAgents();
+    }
+  }, [isLoggedIn]);
 
   const onLink = (path: string) => {
+    console.log(path)
     if (isLoggedIn) {
-      router.push(path);
+      if (path === '/home/create/kol' && userData.agent.total < agents.length) {
+        router.push(path);
+      } else {
+        toast.warning("Create agent has reached the limit");
+      }
     } else {
       openDrawer();
     }

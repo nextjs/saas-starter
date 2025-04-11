@@ -25,17 +25,28 @@ import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { Loader2 } from "lucide-react";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
 import { CreateAgentRequest } from "@/app/types/types";
+import { useCreateXauthDialog } from "@/app/hooks/useCreateXauthDialog";
 const clearUrlParams = () => {
   const url = new URL(window.location.href);
   url.search = ""; // 清空查询参数
   window.history.replaceState({}, document.title, url.toString());
 };
 
-export default function CreateTwitterAuth() {
+export default function CreateTwitterAuth({
+  setTwitterAuth,
+  showName = "Connect",
+}: {
+  setTwitterAuth: (isTwitterAuth: boolean) => void;
+  showName?: string;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const { isOpen, openXauthDialog, closeXauthDialog, toggleXauthDialog } =
-    useXauthDialog();
+  const {
+    isOpen,
+    openCreateXauthDialog,
+    closeCreateXauthDialog,
+    toggleCreateXauthDialog,
+  } = useCreateXauthDialog();
   const params = useSearchParams();
   const [authParams, setAuthParams] = useState<any>({});
   const from = useAppSelector((state: any) => state.userReducer.from);
@@ -81,13 +92,13 @@ export default function CreateTwitterAuth() {
         return res.data.id;
       } else {
         toast.error("Please try again");
-        closeXauthDialog();
+        closeCreateXauthDialog();
         return "";
       }
     } catch (error) {
       console.log(error);
       toast.error("Please try again");
-      closeXauthDialog();
+      closeCreateXauthDialog();
       return "";
     }
   };
@@ -150,14 +161,14 @@ export default function CreateTwitterAuth() {
       } else {
         toast.error("Please try again");
         clearUrlParams();
-        closeXauthDialog();
+        closeCreateXauthDialog();
       }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
       toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
+      closeCreateXauthDialog();
     }
   };
 
@@ -178,11 +189,10 @@ export default function CreateTwitterAuth() {
       console.log(error);
       toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
+      closeCreateXauthDialog();
     }
   };
 
-  const { openDrawer } = useLoginDrawer();
   const handleTwitterAuthCompleteCallback = async (
     full_profile: any,
     data: any
@@ -191,7 +201,7 @@ export default function CreateTwitterAuth() {
       setIsLoading(true);
       const res = await getCreateTwitterAuthCompleteCallback({
         app_id: params.get("app_id"),
-        kol_user_id: params.get("kol_user_id"),
+        agent_id: params.get("agent_id"),
         oauth_token: data.oauth_token,
         user_id: full_profile.id,
         screen_name: full_profile.screen_name,
@@ -202,20 +212,17 @@ export default function CreateTwitterAuth() {
       if (res && res.code === 200) {
         toast.success("Twitter authorization successful");
         await dispatch(updateTwitterFullProfile(full_profile));
-        clearUrlParams();
-        openDrawer();
-        closeXauthDialog();
       } else {
         toast.error("Please try again");
         clearUrlParams();
-        closeXauthDialog();
+        closeCreateXauthDialog();
       }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
       toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
+      closeCreateXauthDialog();
     }
   };
 
@@ -232,10 +239,10 @@ export default function CreateTwitterAuth() {
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={toggleXauthDialog}>
+    <Dialog open={isOpen} onOpenChange={toggleCreateXauthDialog}>
       <DialogTrigger asChild>
         <Button className="duration-350 flex items-center justify-center font-bold">
-          Connect
+          {showName}
         </Button>
       </DialogTrigger>
       <DialogContent className="w-xs min-w-[200px] text-primary">
@@ -265,6 +272,17 @@ export default function CreateTwitterAuth() {
                   {twitterFullProfile.screen_name}
                 </span>
               </div>
+              <Button
+                className="w-20 h-8"
+                onClick={() => {
+                  clearUrlParams();
+                  setTwitterAuth(true);
+                  closeCreateXauthDialog();
+                }}
+                disabled={isLoading}
+              >
+                Confirm
+              </Button>
             </div>
           ) : (
             <div className="w-full flex flex-col items-center justify-center gap-4">

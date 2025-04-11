@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import ReduxProvider from "./context/ReduxProvider";
 import { LoginProvider } from "./hooks/useLoginDrawer";
 import { XauthProvider } from "./hooks/useXauthDialog";
+import { CreateXauthProvider } from "./hooks/useCreateXauthDialog";
 export const metadata: Metadata = {
   title: "KOL AGENT",
   description: "KOL AGENT",
@@ -35,8 +36,10 @@ export default function RootLayout({
         <ReduxProvider>
           <LoginProvider>
             <XauthProvider>
-              <ScrollArea className="h-full w-full">{children}</ScrollArea>
-              <Toaster />
+              <CreateXauthProvider>
+                <ScrollArea className="h-full w-full">{children}</ScrollArea>
+                <Toaster />
+              </CreateXauthProvider>
             </XauthProvider>
           </LoginProvider>
         </ReduxProvider>

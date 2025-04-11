@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 
 import { useStepperContext } from "@/app/context/stepper-context";
 import { useAppSelector, useAppDispatch } from "@/app/store/hooks";
-import { updateFrom } from "@/app/store/reducers/userSlice";
+import { updateFrom, clearFrom, updateTwitterFullProfile } from "@/app/store/reducers/userSlice";
 import { useRef, useEffect } from "react";
 import CreateTwitterAuth from "./create-twitter-auth";
 const formSchema = z.object({
@@ -88,6 +88,14 @@ export default function StepSix() {
     // handleComplete();
   }
 
+  const create = () => {
+    console.log("create");
+    setIsTwitterAuth(true);
+    dispatch(clearFrom());
+    dispatch(updateTwitterFullProfile({}));
+    handleComplete();
+  };
+
   return (
     <div className="w-full h-full flex flex-col space-y-6 px-2">
       <div className="space-y-1">
@@ -107,7 +115,7 @@ export default function StepSix() {
                   <FormControl>
                     <div className="space-y-2 w-full">
                       {price.map((item: any) => (
-                        <div className="space-y-2 w-full">
+                        <div className="space-y-2 w-full" key={item.id}>
                           <dl>
                             <dt className="text-md font-bold">{item.desc}</dt>
                             <dd className="text-sm text-muted-foreground">
@@ -203,7 +211,7 @@ export default function StepSix() {
                 </dd>
               </dl>
               <div className="border rounded-md shadow-sm flex justify-center items-center p-4">
-                <CreateTwitterAuth />
+                <CreateTwitterAuth setTwitterAuth={create} />
               </div>
             </div>
             <div className="flex justify-between">

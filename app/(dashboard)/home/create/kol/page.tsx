@@ -21,6 +21,8 @@ import {
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { updateConfig, clearFrom } from "@/app/store/reducers/userSlice";
 import { useRouter } from "next/navigation";
+import { useCreateXauthDialog } from "@/app/hooks/useCreateXauthDialog";
+import { useSearchParams } from "next/navigation";
 const CreateSuccess = () => {
   return (
     <>
@@ -102,6 +104,17 @@ export default function Page() {
   };
 
   const currentStep = useAppSelector((state: any) => state.userReducer.config.currentStep);
+
+  const { openCreateXauthDialog } = useCreateXauthDialog();
+  const params = useSearchParams();
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    if (oauth_token) {
+      // 打开twitter授权弹窗
+      openCreateXauthDialog();
+    }
+  }, []);
+
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">

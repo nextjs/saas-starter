@@ -54,7 +54,7 @@ export default function TwitterAuth() {
         }
       }
     } catch (error) {
-      setIsLoading(false)
+      setIsLoading(false);
       console.log(error);
       toast.error("Please try again");
     }
@@ -123,7 +123,10 @@ export default function TwitterAuth() {
   };
 
   const { openDrawer } = useLoginDrawer();
-  const handleTwitterAuthCompleteCallback = async (full_profile: any, data: any) => {
+  const handleTwitterAuthCompleteCallback = async (
+    full_profile: any,
+    data: any
+  ) => {
     try {
       setIsLoading(true);
       const res = await getTwitterAuthCompleteCallback({
@@ -140,8 +143,6 @@ export default function TwitterAuth() {
         toast.success("Twitter authorization successful");
         await dispatch(updateTwitterFullProfile(full_profile));
         clearUrlParams();
-        openDrawer();
-        closeXauthDialog();
       } else {
         toast.error("Please try again");
         clearUrlParams();
@@ -197,6 +198,16 @@ export default function TwitterAuth() {
                   {twitterFullProfile.screen_name}
                 </span>
               </div>
+              <Button
+                className="w-20 h-8"
+                onClick={() => {
+                  openDrawer();
+                  closeXauthDialog();
+                }}
+                disabled={isLoading}
+              >
+                Go Login
+              </Button>
             </div>
           ) : (
             <div className="w-full flex flex-col items-center justify-center gap-4">
@@ -207,7 +218,11 @@ export default function TwitterAuth() {
                 disabled={isLoading}
               >
                 <span className="text-sm font-bold">
-                  {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Authorize"}
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Authorize"
+                  )}
                 </span>
               </Button>
             </div>
