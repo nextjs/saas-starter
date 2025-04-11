@@ -10,7 +10,7 @@ import avatar from "@/app/assets/image/avatar.png";
 const AgentItem = (props: {
   agentId: string;
   name: string;
-  avatar: StaticImageData;
+  avatar: StaticImageData | string;
   description: string;
 }) => {
   const { agentId, name, avatar, description } = props;
@@ -42,7 +42,11 @@ const AgentItem = (props: {
       onClick={handleClick}
     >
       <div className="w-10 min-w-10 h-10 rounded-full overflow-hidden">
-        <Image src={avatar} alt="avatar" className="w-10 h-10" />
+        {avatar && typeof avatar === "string" ? (
+          <img src={avatar} alt="avatar" className="w-10 h-10 object-cover" />
+        ) : (
+          <Image src={avatar} alt="avatar" className="w-10 h-10 object-cover" />
+        )}
       </div>
       <dl className="flex-1 w-full overflow-hidden">
         <dt className="text-md truncate">{name}</dt>
@@ -59,21 +63,18 @@ const AgentItem = (props: {
   );
 };
 
-export default function AgentList() {
+export default function AgentList({ agents }: { agents: any[] }) {
   return (
     <ul className="space-y-2">
-      <AgentItem
-        agentId="12345"
-        name="AI"
-        avatar={avatar}
-        description="Open rednote Open rednoteOpen rednote"
-      />
-      <AgentItem
-        agentId="67890"
-        name="Reddit"
-        avatar={avatar}
-        description="Open reddit Open reddit Open reddit"
-      />
+      {agents.map((agent) => (
+        <AgentItem
+          key={agent.id}
+          agentId={agent.id}
+          name={agent.name}
+          avatar={agent.icon}
+          description={agent.x_username}
+        />
+      ))}
     </ul>
   );
 }

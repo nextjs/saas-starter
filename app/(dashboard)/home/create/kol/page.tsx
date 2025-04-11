@@ -11,10 +11,18 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getConstants } from "@/app/request/api";
+import {
+  getAbilityList,
+  getAgentLimit,
+  getAgentPriceList,
+  getConstants,
+  getKOLInterface,
+} from "@/app/request/api";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { updateConfig } from "@/app/store/reducers/userSlice";
+import { updateConfig, clearFrom } from "@/app/store/reducers/userSlice";
 import { useRouter } from "next/navigation";
+import { useCreateXauthDialog } from "@/app/hooks/useCreateXauthDialog";
+import { useSearchParams } from "next/navigation";
 const CreateSuccess = () => {
   return (
     <>
@@ -44,7 +52,9 @@ const CreateSuccess = () => {
 export default function Page() {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const isLoggedIn = useAppSelector((state: any) => state.userReducer.isLoggedIn);
+  const isLoggedIn = useAppSelector(
+    (state: any) => state.userReducer.isLoggedIn
+  );
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -76,16 +86,40 @@ export default function Page() {
       }).then((res) => {
         dispatch(updateConfig({ key: "topics", value: res.data }));
       });
+      getAbilityList().then((res) => {
+        dispatch(updateConfig({ key: "ability", value: res.data }));
+      });
+      getAgentPriceList().then((res) => {
+        dispatch(updateConfig({ key: "price", value: res.data }));
+      });
+      getKOLInterface().then((res) => {
+        dispatch(updateConfig({ key: "kols", value: res.data }));
+      });
+      getAgentLimit().then((res) => {
+        dispatch(updateConfig({ key: "limit", value: res.data }));
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
+  const currentStep = useAppSelector((state: any) => state.userReducer.config.currentStep);
+
+  const { openCreateXauthDialog } = useCreateXauthDialog();
+  const params = useSearchParams();
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    if (oauth_token) {
+      // 打开twitter授权弹窗
+      openCreateXauthDialog();
+    }
+  }, []);
+
   return (
     <div className="w-full h-full flex max-w-2xl mx-auto">
       <div className="w-full h-full">
         <Stepper
-          initialStep={1}
+          initialStep={currentStep || 1}
           stepText={[
             "1. Info",
             "2. Ability",

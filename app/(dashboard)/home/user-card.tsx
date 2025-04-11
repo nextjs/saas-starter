@@ -42,6 +42,9 @@ export default function UserCard() {
   const [progress, setProgress] = useState(50);
   const dispatch = useAppDispatch();
   const [userInfo, setUserInfo] = useState<any>({});
+  const storeUserInfo = useAppSelector(
+    (state: any) => state.userReducer.userInfo
+  );
   const [isLoading, setIsLoading] = useState(false);
   const isLoggedIn = useAppSelector(
     (state: any) => state.userReducer.isLoggedIn
@@ -116,17 +119,19 @@ export default function UserCard() {
           <div className="w-full h-full rounded-lg bg-slate-50 p-2">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                {/* <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
-                  <Image
-                    src=""
-                    alt="avatar"
-                    className="w-full h-full object-cover"
-                  />
-                </div> */}
+                {storeUserInfo.profile_image_url && (
+                  <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                    <img
+                      src={storeUserInfo.profile_image_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
                 <div className="flex flex-col gap-0">
-                  <span className="text-sm">{userInfo?.user_name}</span>
+                  <span className="text-sm">{storeUserInfo?.username}</span>
                   <span className="text-xs text-gray-500">
-                    {userInfo?.current_member?.name}
+                    {storeUserInfo?.description || storeUserInfo?.screen_name}
                   </span>
                 </div>
               </div>

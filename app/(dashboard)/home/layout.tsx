@@ -14,8 +14,13 @@ import NullCreate from "@/app/components/slidebar/null-create";
 import Login from "./login";
 import { useAppSelector } from "@/app/store/hooks";
 import SidebarNav from "@/app/components/slidebar/sidebar-nav";
+import avatar from "@/app/assets/image/avatar.png";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { useXauthDialog } from "@/app/hooks/useXauthDialog";
+import TwitterAuth from "./twitter-auth";
+import { getAgentList } from "@/app/request/api";
 import AgentList from "@/app/components/slidebar/agent-list";
-
 export default function DashboardLayout({
   children,
 }: {
@@ -28,6 +33,18 @@ export default function DashboardLayout({
     // { href: "/home", icon: House, label: "Home" },
     // { href: "/home/general", icon: Grip, label: "Kol List" },
   ];
+
+  const [agents, setAgents] = useState<any[]>([]);
+  const getAgents = async () => {
+    const res = await getAgentList();
+    if (res && res.code === 200) {
+      setAgents(res.data.filter((item: any) => !!item.x_username));
+    }
+  };
+
+  useEffect(() => {
+    getAgents();
+  }, []);
 
   return (
     <div className="flex flex-col h-[100dvh] max-w-full mx-auto w-full text-primary">
@@ -84,7 +101,11 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn ? <AgentList /> : <NullCreate />}
+                {isLoggedIn && agents.length > 0 ? (
+                  <AgentList agents={agents} />
+                ) : (
+                  <NullCreate />
+                )}
               </div>
             </nav>
             <div className="flex items-center justify-center p-4 mt-auto">

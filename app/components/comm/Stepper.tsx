@@ -11,7 +11,8 @@ import React, {
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { StepperContext } from "@/app/context/stepper-context";
-
+import { useAppDispatch } from "@/app/store/hooks";
+import { updateConfig } from "@/app/store/reducers/userSlice";
 interface StepperProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
   initialStep?: number;
@@ -55,6 +56,7 @@ export default function Stepper({
   ...rest
 }: StepperProps) {
   const [currentStep, setCurrentStep] = useState<number>(initialStep);
+  const dispatch = useAppDispatch();
   const [direction, setDirection] = useState<number>(0);
   const stepsArray = Children.toArray(children);
   const totalSteps = stepsArray.length;
@@ -63,6 +65,7 @@ export default function Stepper({
 
   const updateStep = (newStep: number) => {
     setCurrentStep(newStep);
+    dispatch(updateConfig({ key: "currentStep", value: newStep }));
     if (newStep > totalSteps) {
       onFinalStepCompleted();
     } else {
@@ -106,6 +109,7 @@ export default function Stepper({
         currentStep,
         isLastStep,
         isCompleted,
+        setCurrentStep,
       }}
     >
       <div className="w-full h-full items-center justify-center" {...rest}>

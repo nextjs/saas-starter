@@ -401,6 +401,9 @@
       display: none;
     }
   }
+  strong {
+    font-family: "Arial-Bold";
+  }
   div[data-radix-scroll-area-viewport] {
     > div {
       display: block !important;
