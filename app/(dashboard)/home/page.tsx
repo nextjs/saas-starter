@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { Bot } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-
-
+import { useXauthDialog } from "@/app/hooks/useXauthDialog";
+import { useEffect } from "react";
+import TwitterAuth from "./twitter-auth";
 export default function HomePage() {
   const router = useRouter();
   const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
@@ -19,6 +20,16 @@ export default function HomePage() {
       openDrawer();
     }
   };
+
+  const { openXauthDialog } = useXauthDialog();
+  const params = useSearchParams();
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    if (oauth_token) {
+      // 打开twitter授权弹窗
+      openXauthDialog();
+    }
+  }, [params]);
 
   return (
     <div className="text-primary w-full h-full">
@@ -42,6 +53,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      <TwitterAuth />
     </div>
   );
 }
