@@ -1,20 +1,22 @@
-import './globals.css';
-import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
-import '@/app/assets/font/font.scss';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Toaster } from '@/components/ui/sonner';
+import "./globals.css";
+import type { Metadata, Viewport } from "next";
+import { Manrope } from "next/font/google";
+import "@/app/assets/font/font.scss";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Toaster } from "@/components/ui/sonner";
+import ReduxProvider from "./context/ReduxProvider";
+import { LoginProvider } from "./hooks/useLoginDrawer";
 
 export const metadata: Metadata = {
-  title: 'KOL AGENT',
-  description: 'KOL AGENT',
+  title: "KOL AGENT",
+  description: "KOL AGENT",
 };
 
 export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const manrope = Manrope({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -30,10 +32,12 @@ export default function RootLayout({
     >
       <body className="min-h-[100dvh] bg-gray-50">
         {/* <UserProvider userPromise={userPromise}>{children}</UserProvider> */}
-        <ScrollArea className="h-full w-full">
-          {children}
-        </ScrollArea>
-        <Toaster />
+        <ReduxProvider>
+          <LoginProvider>
+            <ScrollArea className="h-full w-full">{children}</ScrollArea>
+            <Toaster />
+          </LoginProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

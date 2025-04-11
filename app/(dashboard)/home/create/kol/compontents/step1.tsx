@@ -167,10 +167,10 @@ export default function StepOne() {
             control={form.control}
             name="character"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <RequiredLabel>Character</RequiredLabel>
                 <FormControl>
-                  <div className="border rounded-md px-2 shadow-sm group transition-colors focus-within:border-primary">
+                  <div className="w-full border rounded-md px-2 shadow-sm group transition-colors focus-within:border-primary">
                     <div className="w-full relative">
                       <Textarea
                         {...field}
@@ -344,6 +344,7 @@ export default function StepOne() {
           <div className="flex justify-end">
             <Button
               type="submit"
+              variant="primary"
               className="duration-350 h-10 flex items-center justify-center font-bold px-10 mt-10"
             >
               Next

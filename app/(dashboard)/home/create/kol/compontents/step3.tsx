@@ -173,6 +173,7 @@ export default function StepThree() {
               </Button>
               <Button
                 type="submit"
+                variant="primary"
                 className="duration-350 h-10 flex items-center justify-center font-bold px-10"
               >
                 Next

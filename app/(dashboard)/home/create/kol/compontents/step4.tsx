@@ -57,9 +57,9 @@ export default function StepFour() {
               control={form.control}
               name="topics"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="flex flex-col">
                   <FormControl>
-                    <div className="border rounded-md px-2 shadow-sm group transition-colors focus-within:border-primary">
+                    <div className="w-full border rounded-md px-2 shadow-sm group transition-colors focus-within:border-primary">
                       <div className="w-full relative">
                         <Textarea
                           {...field}
@@ -108,6 +108,7 @@ export default function StepFour() {
               </Button>
               <Button
                 type="submit"
+                variant="primary"
                 className="duration-350 h-10 flex items-center justify-center font-bold px-10"
               >
                 Next
