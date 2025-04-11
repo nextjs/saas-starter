@@ -8,6 +8,7 @@ interface StepperContextType {
   currentStep: number;
   isLastStep: boolean;
   isCompleted: boolean;
+  setCurrentStep: (step: number) => void;
 }
 
 export const StepperContext = createContext<StepperContextType | null>(null);
