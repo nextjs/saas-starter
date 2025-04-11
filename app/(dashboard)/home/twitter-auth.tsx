@@ -172,7 +172,7 @@ export default function TwitterAuth() {
   return (
     <Dialog open={isOpen} onOpenChange={toggleXauthDialog}>
       <DialogTrigger asChild>
-        <Button>Twitter Authorization</Button>
+        <Button className="hidden">Twitter Authorization</Button>
       </DialogTrigger>
       <DialogContent className="w-xs min-w-[200px] text-primary">
         <DialogHeader>

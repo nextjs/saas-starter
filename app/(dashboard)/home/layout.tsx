@@ -46,6 +46,16 @@ export default function DashboardLayout({
     getAgents();
   }, []);
 
+  const { openXauthDialog } = useXauthDialog();
+  const params = useSearchParams();
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    if (oauth_token && pathname === "/home") {
+      // 打开twitter授权弹窗
+      openXauthDialog();
+    }
+  }, [pathname]);
+
   return (
     <div className="flex flex-col h-[100dvh] max-w-full mx-auto w-full text-primary">
       {/* Mobile header */}
@@ -127,6 +137,7 @@ export default function DashboardLayout({
           </ClickSpark>
         </ScrollArea>
       </div>
+      <TwitterAuth />
     </div>
   );
 }

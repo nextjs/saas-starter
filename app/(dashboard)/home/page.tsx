@@ -1,20 +1,11 @@
 "use client";
 
-import Threads from "@/components/Backgrounds/Threads/Threads";
-import TwitterView from "@/app/components/home/TwitterView";
 import { Button } from "@/components/ui/button";
-import Carousel from "@/components/Components/Carousel/Carousel";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Twitter } from "@/app/assets/svg";
-
 import { Bot } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
-import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
-import TwitterAuth from "./twitter-auth";
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -28,16 +19,6 @@ export default function HomePage() {
       openDrawer();
     }
   };
-
-  const { openXauthDialog } = useXauthDialog();
-  const params = useSearchParams();
-  useEffect(() => {
-    const oauth_token = params.get("oauth_token");
-    if (oauth_token) {
-      // 打开twitter授权弹窗
-      openXauthDialog();
-    }
-  }, []);
 
   return (
     <div className="text-primary w-full h-full">
@@ -61,7 +42,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <TwitterAuth />
     </div>
   );
 }
