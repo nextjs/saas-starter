@@ -1,14 +1,5 @@
 "use client";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
 import React, { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Twitter } from "@/app/assets/svg";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,22 +12,24 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { updateTwitterFullProfile } from "@/app/store/reducers/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { Loader2 } from "lucide-react";
-import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
+import { CircleIcon, Loader2 } from "lucide-react";
+import { Step, useLoginDrawer } from "@/app/hooks/useLoginDrawer";
 const clearUrlParams = () => {
   const url = new URL(window.location.href);
   url.search = ""; // 清空查询参数
   window.history.replaceState({}, document.title, url.toString());
 };
 
-export default function TwitterAuth() {
+export default function TwitterAuthContent({
+  onComplete,
+}: {
+  onComplete: () => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const { isOpen, openXauthDialog, closeXauthDialog, toggleXauthDialog } =
-    useXauthDialog();
   const params = useSearchParams();
   const [authParams, setAuthParams] = useState<any>({});
-
+  const { setStep } = useLoginDrawer();
   const handleTwitterAuth = async () => {
     try {
       // 获取当前的url
@@ -49,32 +42,35 @@ export default function TwitterAuth() {
       if (res && res.code === 200) {
         setAuthParams(res.data);
         localStorage.setItem("oauth_token_secret", res.data.oauth_token_secret);
-        if (params.get("oauth_verifier")) {
-          handleTwitterAuthCallback();
-        }
+        return res.data.authorization_url;
+        // if (params.get("oauth_verifier")) {
+        //   handleTwitterAuthCallback();
+        // }
       }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      toast.error("Please try again");
     }
   };
 
-  const goAuth = () => {
-    window.location.href = authParams.authorization_url;
+  const goAuth = async () => {
+    const authorization_url = await handleTwitterAuth();
+    setIsLoading(true);
+    if (authorization_url) {
+      window.location.href = authorization_url;
+    }
   };
 
-  useEffect(() => {
-    const oauth_token = params.get("oauth_token");
-    if (!oauth_token && isOpen) {
-      handleTwitterAuth();
-    }
-  }, [isOpen]);
+  // useEffect(() => {
+  //   const oauth_token = params.get("oauth_token");
+  //   if (!oauth_token) {
+  //     handleTwitterAuth();
+  //   }
+  // }, []);
 
   const handleTwitterAuthCallback = async () => {
     try {
       if (!localStorage.getItem("oauth_token_secret")) {
-        toast.error("Please try again");
         return;
       }
       setIsLoading(true);
@@ -87,17 +83,11 @@ export default function TwitterAuth() {
       setIsLoading(false);
       if (res && res.code === 200) {
         handleGetUserInfoByTwitter(res.data);
-      } else {
-        toast.error("Please try again");
-        clearUrlParams();
-        closeXauthDialog();
       }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
     }
   };
 
@@ -116,13 +106,10 @@ export default function TwitterAuth() {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
     }
   };
 
-  const { openDrawer } = useLoginDrawer();
   const handleTwitterAuthCompleteCallback = async (
     full_profile: any,
     data: any
@@ -143,17 +130,15 @@ export default function TwitterAuth() {
         toast.success("Twitter authorization successful");
         await dispatch(updateTwitterFullProfile(full_profile));
         clearUrlParams();
+        onComplete(); // 完成授权后回调
       } else {
-        toast.error("Please try again");
+        toast.error(res.msg);
         clearUrlParams();
-        closeXauthDialog();
       }
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-      toast.error("Please try again");
       clearUrlParams();
-      closeXauthDialog();
     }
   };
 
@@ -170,68 +155,70 @@ export default function TwitterAuth() {
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={toggleXauthDialog}>
-      <DialogTrigger asChild>
-        <Button className="hidden">Twitter Authorization</Button>
-      </DialogTrigger>
-      <DialogContent className="w-xs min-w-[200px] text-primary">
-        <DialogHeader>
-          <DialogTitle className="text-center text-primary font-bold text-xl">
-            Twitter Authorization
-          </DialogTitle>
-          <DialogDescription className="text-center text-gray-500 text-sm">
-            Please authorize your Twitter account to continue.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="w-full flex flex-col items-center justify-center gap-4">
-          {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
-            <div className="w-full flex flex-col items-center justify-center gap-4">
-              <div className="w-10 h-10 overflow-hidden rounded-full">
-                <img
-                  src={twitterFullProfile.profile_image_url_https}
-                  alt="twitter"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex flex-col items-center justify-center gap-2">
-                <span className="text-md font-bold">
-                  {twitterFullProfile.name}
-                </span>
-                <span className="text-sm text-gray-500">
-                  {twitterFullProfile.screen_name}
-                </span>
-              </div>
-              <Button
-                className="w-20 h-8"
-                onClick={() => {
-                  openDrawer();
-                  closeXauthDialog();
-                }}
-                disabled={isLoading}
-              >
-                Go Login
-              </Button>
+    <div className="w-full flex flex-col items-left justify-center gap-4">
+      <div className="w-full flex items-center justify-start gap-2">
+        <CircleIcon className="h-8 w-8 text-secondary" />
+        <h1 className="text-xl font-bold capitalize">Twitter Authorization</h1>
+      </div>
+      <p className="text-sm text-muted-foreground">
+        Please authorize your Twitter account to continue using.
+      </p>
+
+      <div className="w-full flex flex-col items-center justify-center gap-4 mt-4">
+        {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
+          <div className="w-full flex flex-col items-center justify-center gap-4">
+            <div className="w-10 h-10 overflow-hidden rounded-full">
+              <img
+                src={twitterFullProfile.profile_image_url_https}
+                alt="twitter"
+                className="w-full h-full object-cover"
+              />
             </div>
-          ) : (
-            <div className="w-full flex flex-col items-center justify-center gap-4">
-              <Twitter className="w-10 h-10 text-primary" />
-              <Button
-                className="w-20 h-8"
-                onClick={goAuth}
-                disabled={isLoading}
-              >
-                <span className="text-sm font-bold">
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    "Authorize"
-                  )}
-                </span>
-              </Button>
+            <div className="flex flex-col items-center justify-center gap-2">
+              <span className="text-md font-bold">
+                {twitterFullProfile.name}
+              </span>
+              <span className="text-sm text-gray-500">
+                {twitterFullProfile.screen_name}
+              </span>
             </div>
-          )}
-        </div>
-      </DialogContent>
-    </Dialog>
+            <Button
+              className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10"
+              onClick={onComplete}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Go Login"
+              )}
+            </Button>
+          </div>
+        ) : (
+          <div className="w-full flex flex-col items-center justify-center gap-2">
+            <Twitter className="w-10 h-10 text-primary mb-4" />
+            <Button
+              className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10"
+              onClick={goAuth}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                "Authorize Twitter"
+              )}
+            </Button>
+            <Button
+              variant="link"
+              type="button"
+              className="w-full text-left justify-start text-sm text-muted-foreground p-0"
+              onClick={() => setStep(Step.Login)}
+            >
+              Back to Login
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

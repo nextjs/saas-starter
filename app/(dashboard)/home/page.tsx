@@ -5,9 +5,7 @@ import { Bot } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
 import { useEffect } from "react";
-import TwitterAuth from "./twitter-auth";
 export default function HomePage() {
   const router = useRouter();
   const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
@@ -21,13 +19,12 @@ export default function HomePage() {
     }
   };
 
-  const { openXauthDialog } = useXauthDialog();
   const params = useSearchParams();
   useEffect(() => {
     const oauth_token = params.get("oauth_token");
     if (oauth_token) {
-      // 打开twitter授权弹窗
-      openXauthDialog();
+      // 打开登录 twitter授权弹窗
+      openDrawer();
     }
   }, [params]);
 
@@ -53,7 +50,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-      <TwitterAuth />
     </div>
   );
 }
