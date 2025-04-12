@@ -32,13 +32,15 @@ export default function DashboardLayout({
   const getAgents = async () => {
     const res = await getAgentList();
     if (res && res.code === 200) {
-      setAgents(res.data.filter((item: any) => !!item.x_username));
+      setAgents(res.data.filter((item: any) => item.x_username !== null));
     }
   };
 
   useEffect(() => {
-    getAgents();
-  }, []);
+    if (isLoggedIn) {
+      getAgents();
+    }
+  }, [isLoggedIn]);
 
   return (
     <div className="flex flex-col h-[100dvh] max-w-full mx-auto w-full text-primary">
@@ -95,7 +97,7 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn && agents.length === 0 ? (
+                {isLoggedIn && agents.length > 0 ? (
                   <AgentList agents={agents} />
                 ) : (
                   <NullCreate />

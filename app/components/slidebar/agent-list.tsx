@@ -51,7 +51,7 @@ const AgentItem = (props: {
         )}
       </div>
       <dl className="flex-1 w-full overflow-hidden">
-        <dt className="text-md truncate">{name}</dt>
+        <dt className="text-md truncate font-bold">{name}</dt>
         <dd
           className={clsx(
             "text-sm truncate text-md group-hover:text-foreground",
@@ -81,22 +81,10 @@ export default function AgentList({ agents }: { agents: any[] }) {
           agentId={agent.id}
           name={agent.name}
           avatar={agent.icon}
-          description={agent.x_username}
+          description={`@${agent.x_username}`}
+          isRunning={true}
         />
       ))}
-      <AgentItem
-        agentId="12345"
-        name="AI"
-        avatar={avatar}
-        description="Open rednote Open rednoteOpen rednote"
-        isRunning={true}
-      />
-      <AgentItem
-        agentId="67890"
-        name="Reddit"
-        avatar={avatar}
-        description="Open reddit Open reddit Open reddit"
-      />
     </ul>
   );
 }
