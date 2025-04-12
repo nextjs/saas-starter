@@ -1,4 +1,4 @@
-import { Star } from "@/app/assets/svg";
+import Star from "@/app/assets/svg/star.svg";
 
 import Tab from "./compontents/tab";
 import Subscribe from "./compontents/subscribe";
