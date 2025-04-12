@@ -1,14 +1,14 @@
 // import Star from "@/app/assets/svg/star.svg";
 
-// import Tab from "./compontents/tab";
-// import Subscribe from "./compontents/subscribe";
-// import Features from "./compontents/features";
-// import Limits from "./compontents/limits";
+import Tab from "./compontents/tab";
+import Subscribe from "./compontents/subscribe";
+import Features from "./compontents/features";
+import Limits from "./compontents/limits";
 
 export default function page() {
   return (
     <div className="w-full h-auto p-12">
-      {/* <div className="flex flex-col items-center max-w-6xl mx-auto space-y-12">
+      <div className="flex flex-col items-center max-w-6xl mx-auto space-y-12">
         <div className="flex flex-col justify-center items-center space-y-4 text-center">
           <h3 className="text-4xl font-semibold">
             Sider: 提供一站式人工智能服务
@@ -21,11 +21,11 @@ export default function page() {
           <dl>
             <dt className="text-xl font-bold">4.9</dt>
             <dd className="flex items-center space-x-0.5">
+              {/* <Star />
               <Star />
               <Star />
               <Star />
-              <Star />
-              <Star />
+              <Star /> */}
             </dd>
           </dl>
           <dl>
@@ -76,7 +76,7 @@ export default function page() {
             <Limits />
           </div>
         </div>
-      </div> */}
+      </div>
     </div>
   );
 }
