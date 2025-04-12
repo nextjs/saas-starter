@@ -1,39 +1,41 @@
 import { Check } from "lucide-react";
 
-export default function Features() {
+export default function Features(props: { data: number[] }) {
+  const { data } = props;
+
   return (
-    <ul className="text-md space-y-2">
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>数据分析</span>
+    <ul className="text-md space-y-2 text-muted-foreground">
+      <li className="flex items-center justify-between space-x-2">
+        <span>创建Agent个数</span>
+        <span className="font-bold">{data[0]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>YouTube总结</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>发推</span>
+        <span className="font-bold">{data[1]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>图片生成</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>转推</span>
+        <span className="font-bold">{data[2]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>文件/链接聊天</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>引用</span>
+        <span className="font-bold">{data[3]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>Deep Research</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>评论</span>
+        <span className="font-bold">{data[4]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>AI朗读</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>回复</span>
+        <span className="font-bold">{data[5]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>智简视频</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>点赞</span>
+        <span className="font-bold">{data[6]}</span>
       </li>
-      <li className="flex items-center space-x-2">
-        <Check className="size-4 text-secondary" />
-        <span>音频转文本</span>
+      <li className="flex items-center justify-between space-x-2">
+        <span>每日处理广告商发推数量</span>
+        <span className="font-bold">{data[7]}</span>
       </li>
     </ul>
   );
