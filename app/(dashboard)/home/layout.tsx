@@ -101,7 +101,7 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn && agents.length > 0 ? (
+                {isLoggedIn && agents.length === 0 ? (
                   <AgentList agents={agents} />
                 ) : (
                   <NullCreate />
