@@ -6,14 +6,16 @@ import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
 
 import avatar from "@/app/assets/image/avatar.png";
+import { Settings } from "lucide-react";
 
 const AgentItem = (props: {
   agentId: string;
   name: string;
   avatar: StaticImageData | string;
   description: string;
+  isRunning?: boolean;
 }) => {
-  const { agentId, name, avatar, description } = props;
+  const { agentId, name, avatar, description, isRunning = false } = props;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -59,6 +61,13 @@ const AgentItem = (props: {
           {description}
         </dd>
       </dl>
+      <Settings
+        className={clsx(
+          "size-4 min-w-4",
+          isActive && "text-foreground",
+          isRunning && "animate-spin duration-1200"
+        )}
+      />
     </li>
   );
 };
@@ -75,6 +84,19 @@ export default function AgentList({ agents }: { agents: any[] }) {
           description={agent.x_username}
         />
       ))}
+      <AgentItem
+        agentId="12345"
+        name="AI"
+        avatar={avatar}
+        description="Open rednote Open rednoteOpen rednote"
+        isRunning={true}
+      />
+      <AgentItem
+        agentId="67890"
+        name="Reddit"
+        avatar={avatar}
+        description="Open reddit Open reddit Open reddit"
+      />
     </ul>
   );
 }
