@@ -7,27 +7,15 @@ import Limits from "./compontents/limits";
 
 export default function page() {
   return (
-    <div className="w-full h-auto py-12">
+    <div className="w-full h-auto p-12">
       <div className="flex flex-col items-center max-w-6xl mx-auto space-y-12">
-        <div className="flex flex-col justify-center items-center space-y-2">
+        <div className="flex flex-col justify-center items-center space-y-4 text-center">
           <h3 className="text-4xl font-semibold">
             Sider: 提供一站式人工智能服务
           </h3>
-          <dl className="flex items-center text-xl space-x-2 text-muted-foreground">
-            <dt>支持</dt>
-            <dd>
-              <span>o3-mini & o1</span>
-            </dd>
-            <dd>
-              <span>DeepSeek</span>
-            </dd>
-            <dd>
-              <span>GPT-4o</span>
-            </dd>
-            <dd>
-              <span>Claude 3.5 Sonnet</span>
-            </dd>
-          </dl>
+          <p className="text-xl text-muted-foreground break-all">
+            支持 o3-mini & o1, DeepSeek, GPT-4o, Claude 3.5 Sonnet
+          </p>
         </div>
         <div className="flex justify-center items-center gap-x-16 gap-y-4 text-center text-base">
           <dl>
@@ -50,7 +38,7 @@ export default function page() {
           </dl>
         </div>
         <Tab />
-        <div className="grid grid-cols-3 gap-8 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
           <div className="shadow-md rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
             <Subscribe
               title="基础版"

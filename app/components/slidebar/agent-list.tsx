@@ -85,6 +85,19 @@ export default function AgentList({ agents }: { agents: any[] }) {
           isRunning={true}
         />
       ))}
+      <AgentItem
+        agentId="12345"
+        name="AI"
+        avatar={avatar}
+        description="Open rednote Open rednoteOpen rednote"
+        isRunning={true}
+      />
+      <AgentItem
+        agentId="67890"
+        name="Reddit"
+        avatar={avatar}
+        description="Open reddit Open reddit Open reddit"
+      />
     </ul>
   );
 }
