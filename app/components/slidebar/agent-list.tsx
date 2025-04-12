@@ -65,7 +65,7 @@ const AgentItem = (props: {
         className={clsx(
           "size-4 min-w-4",
           isActive && "text-foreground",
-          isRunning && "animate-spin duration-1200"
+          isRunning && "animate-spin animate-duration-1200"
         )}
       />
     </li>
