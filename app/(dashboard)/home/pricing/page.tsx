@@ -4,7 +4,6 @@ import star from "@/app/assets/image/star.png";
 import Tab from "./compontents/tab";
 import Subscribe from "./compontents/subscribe";
 import Features from "./compontents/features";
-import Limits from "./compontents/limits";
 
 export default function page() {
   return (
@@ -40,41 +39,36 @@ export default function page() {
         </div>
         <Tab />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
-          <div className="shadow-md rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
             <Subscribe
-              title="基础版"
-              price="¥49.9"
-              yearPrice="¥599"
+              title="Basic"
+              price="$9.3"
+              yearPrice="$100"
               discount="29%"
             />
             <div className="h-px w-full bg-border"></div>
-            <Features />
-            <div className="h-px w-full bg-border"></div>
-            <Limits />
+            <Features data={[1, 4, 2, 2, 3, 3, 20, 2]} />
           </div>
-          <div className="shadow-md rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-secondary hover:border-secondary transition-colors">
             <Subscribe
-              title="至尊版"
-              price="¥116.6"
-              yearPrice="¥1,399"
+              title="Enterprise"
+              price="$25"
+              yearPrice="$300"
               discount="44%"
+              isHighlight={true}
             />
             <div className="h-px w-full bg-border"></div>
-            <Features />
-            <div className="h-px w-full bg-border"></div>
-            <Limits />
+            <Features data={[3, 15, 8, 9, 18, 10, 60, 10]} />
           </div>
-          <div className="shadow-md rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
             <Subscribe
-              title="高级版"
-              price="¥83.3"
-              yearPrice="¥999"
+              title="Premium"
+              price="$16.6"
+              yearPrice="$199"
               discount="41%"
             />
             <div className="h-px w-full bg-border"></div>
-            <Features />
-            <div className="h-px w-full bg-border"></div>
-            <Limits />
+            <Features data={[2, 8, 3, 3, 6, 4, 40, 8]} />
           </div>
         </div>
       </div>
