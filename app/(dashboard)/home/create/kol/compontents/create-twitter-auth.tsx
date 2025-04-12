@@ -1,5 +1,4 @@
 "use client";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
 import React, { useEffect, useState } from "react";
 import {
   Dialog,

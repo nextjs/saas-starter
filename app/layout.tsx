@@ -6,7 +6,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Toaster } from "@/components/ui/sonner";
 import ReduxProvider from "./context/ReduxProvider";
 import { LoginProvider } from "./hooks/useLoginDrawer";
-import { XauthProvider } from "./hooks/useXauthDialog";
 import { CreateXauthProvider } from "./hooks/useCreateXauthDialog";
 export const metadata: Metadata = {
   title: "KOL AGENT",
@@ -35,12 +34,10 @@ export default function RootLayout({
         {/* <UserProvider userPromise={userPromise}>{children}</UserProvider> */}
         <ReduxProvider>
           <LoginProvider>
-            <XauthProvider>
-              <CreateXauthProvider>
-                <ScrollArea className="h-full w-full">{children}</ScrollArea>
-                <Toaster />
-              </CreateXauthProvider>
-            </XauthProvider>
+            <CreateXauthProvider>
+              <ScrollArea className="h-full w-full">{children}</ScrollArea>
+              <Toaster />
+            </CreateXauthProvider>
           </LoginProvider>
         </ReduxProvider>
       </body>

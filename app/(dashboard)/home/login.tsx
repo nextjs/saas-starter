@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
 import { CircleIcon, Loader2 } from "lucide-react";
+import { Twitter } from "@/app/assets/svg";
 import {
   Form,
   FormField,
@@ -41,9 +42,10 @@ import {
   resetPassword,
   sendEmailCode,
 } from "@/app/request/api";
-import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
-import TwitterAuth from "./twitter-auth";
+import { useLoginDrawer, Step } from "@/app/hooks/useLoginDrawer";
+import { useSearchParams } from "next/navigation";
+import TwitterAuthContent from "./twitter-auth";
+
 const formSchema = z
   .object({
     email: z.string().email(),
@@ -120,20 +122,12 @@ const formSchema = z
     }
   });
 
-enum Step {
-  Login = 0,
-  Register = 1,
-  ResetPassword = 2,
-  VerifyCode = 3,
-  ForgotPassword = 4,
-}
-
 export default function Login() {
-  const { isOpen, openDrawer, closeDrawer, toggleDrawer } = useLoginDrawer();
+  const { isOpen, openDrawer, closeDrawer, toggleDrawer, step, setStep } =
+    useLoginDrawer();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const dispatch = useAppDispatch();
-  const [step, setStep] = useState(Step.Login);
   const [value, setValue] = useState("");
   const [countdown, setCountdown] = useState(0);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -151,6 +145,16 @@ export default function Login() {
       setStep(Step.Login);
     }
   }, [isRegister]);
+
+  const params = useSearchParams();
+
+  useEffect(() => {
+    const oauth_token = params.get("oauth_token");
+    const oauth_verifier = params.get("oauth_verifier");
+    if (oauth_token && oauth_verifier) {
+      setStep(Step.TwitterAuth);
+    }
+  }, [params]);
 
   useEffect(() => {
     setValue("");
@@ -265,7 +269,6 @@ export default function Login() {
     }
   };
 
-  const { openXauthDialog } = useXauthDialog();
   const loginApi = async () => {
     try {
       setIsLoading(true);
@@ -281,7 +284,7 @@ export default function Login() {
           dispatch(updateIsLoggedIn(true));
           closeDrawer();
         } else {
-          openXauthDialog();
+          setStep(Step.TwitterAuth);
         }
       } else {
         toast.error(res.msg);
@@ -289,8 +292,6 @@ export default function Login() {
     } catch (error) {
       setIsLoading(false);
       console.log(error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -381,6 +382,13 @@ export default function Login() {
       return resetPasswordApi();
     }
     // }
+  };
+
+  // 添加 Twitter 授权完成的处理函数
+  const handleTwitterAuthComplete = () => {
+    setStep(Step.Login);
+    // dispatch(updateIsLoggedIn(true));
+    // closeDrawer();
   };
 
   return (
@@ -763,6 +771,13 @@ export default function Login() {
                     )}
                   </Button>
                 </motion.div>
+              ) : step === Step.TwitterAuth ? (
+                <motion.div
+                  key="twitter-auth"
+                  className="w-full h-full flex flex-col items-start justify-center gap-4"
+                >
+                  <TwitterAuthContent onComplete={handleTwitterAuthComplete} />
+                </motion.div>
               ) : (
                 step === Step.VerifyCode && (
                   <motion.div
@@ -837,7 +852,6 @@ export default function Login() {
             </AnimatePresence>
           </div>
         </div>
-        <TwitterAuth />
       </DrawerContent>
     </Drawer>
   );

@@ -1,24 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, CircleIcon, Plus } from "lucide-react";
+import { Menu } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Twitter } from "@/app/assets/svg";
 import UserCard from "./user-card";
 import ClickSpark from "@/components/Animations/ClickSpark/ClickSpark";
 import NullCreate from "@/app/components/slidebar/null-create";
 import Login from "./login";
 import { useAppSelector } from "@/app/store/hooks";
 import SidebarNav from "@/app/components/slidebar/sidebar-nav";
-import avatar from "@/app/assets/image/avatar.png";
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useXauthDialog } from "@/app/hooks/useXauthDialog";
-import TwitterAuth from "./twitter-auth";
 import { getAgentList } from "@/app/request/api";
 import AgentList from "@/app/components/slidebar/agent-list";
 export default function DashboardLayout({
