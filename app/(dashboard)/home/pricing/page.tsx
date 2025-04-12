@@ -1,4 +1,5 @@
-import { Star } from "@/app/assets/svg";
+import Image from "next/image";
+import star from "@/app/assets/image/star.png";
 
 import Tab from "./compontents/tab";
 import Subscribe from "./compontents/subscribe";
@@ -21,11 +22,11 @@ export default function page() {
           <dl>
             <dt className="text-xl font-bold">4.9</dt>
             <dd className="flex items-center space-x-0.5">
-              <Star />
-              <Star />
-              <Star />
-              <Star />
-              <Star />
+              <Image src={star} alt="star" width={20} height={20} />
+              <Image src={star} alt="star" width={20} height={20} />
+              <Image src={star} alt="star" width={20} height={20} />
+              <Image src={star} alt="star" width={20} height={20} />
+              <Image src={star} alt="star" width={20} height={20} />
             </dd>
           </dl>
           <dl>
