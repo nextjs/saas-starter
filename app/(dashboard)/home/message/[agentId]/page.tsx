@@ -1,11 +1,13 @@
+import Image from "next/image";
+
 import { ScrollArea } from "@/components/ui/scroll-area";
-import Image, { StaticImageData } from "next/image";
-import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 
 import avatar from "@/app/assets/image/avatar.png";
 import Post from "../compontents/post";
 import Repost from "../compontents/repost";
 import Reply from "../compontents/reply";
+
 export default function page() {
   return (
     <div className="w-full h-full">
@@ -63,6 +65,14 @@ export default function page() {
               </dl>
               <div className="text-md text-muted-foreground bg-foreground shadow-sm rounded-md p-4">
                 来自于XXX的广告上合作需求，已付款100USDT，付款时间2025年3月28日，平台获取20%佣金，20USDT，您可以获取80USDT，项目名称“xxx”,项目介绍“xxxx”
+              </div>
+              <div className="space-x-2 pt-2">
+                <Button variant="primary">
+                  <span>Accept</span>
+                </Button>
+                <Button variant="destructive">
+                  <span>Reject</span>
+                </Button>
               </div>
             </div>
           </div>

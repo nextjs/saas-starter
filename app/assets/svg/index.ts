@@ -1,3 +1,4 @@
 import Twitter from "./twitter.svg";
+import Star from "./star.svg";
 
-export { Twitter };
+export { Twitter, Star };
