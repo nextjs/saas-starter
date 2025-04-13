@@ -1,18 +1,13 @@
 "use client";
-import { Navigation } from "lucide-react";
+import { MessageCircleMore } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 export default function NullCreate() {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center text-center">
-      <Navigation className="w-5 h-5 text-primary mb-2" />
-      <h1 className="text-base font-bold text-primary">
-        The story starts here
-      </h1>
-      <p className="text-slate-500 text-md">
-        Simply click the button above to create your first agent.
-      </p>
+      <MessageCircleMore className="size-6 text-muted-foreground mb-2" />
+      <p className="text-muted-foreground text-md">No agent yet!</p>
       {/* <Link href="/home/pricing">
         <Button className="w-fit flex items-center justify-center gap-2 relative my-2 rounded-full">
           <span className="text-sm font-bold">Create Agent</span>
