@@ -39,17 +39,16 @@ export default function page() {
         </div>
         <Tab />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full">
-          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md bg-foreground overflow-hidden border border-border hover:border-secondary transition-colors">
             <Subscribe
               title="Basic"
               price="$9.3"
               yearPrice="$100"
               discount="29%"
             />
-            <div className="h-px w-full bg-border"></div>
             <Features data={[1, 4, 2, 2, 3, 3, 20, 2]} />
           </div>
-          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-secondary hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md bg-foreground overflow-hidden border border-secondary hover:border-secondary transition-colors">
             <Subscribe
               title="Enterprise"
               price="$25"
@@ -57,17 +56,15 @@ export default function page() {
               discount="44%"
               isHighlight={true}
             />
-            <div className="h-px w-full bg-border"></div>
             <Features data={[3, 15, 8, 9, 18, 10, 60, 10]} />
           </div>
-          <div className="shadow-sm rounded-md p-4 bg-foreground space-y-4 overflow-hidden border border-border hover:border-secondary transition-colors">
+          <div className="shadow-sm rounded-md bg-foreground overflow-hidden border border-border hover:border-secondary transition-colors">
             <Subscribe
               title="Premium"
               price="$16.6"
               yearPrice="$199"
               discount="41%"
             />
-            <div className="h-px w-full bg-border"></div>
             <Features data={[2, 8, 3, 3, 6, 4, 40, 8]} />
           </div>
         </div>
