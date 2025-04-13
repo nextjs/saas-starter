@@ -11,7 +11,7 @@ export default function page() {
       <div className="flex flex-col items-center max-w-6xl mx-auto space-y-12">
         <div className="flex flex-col justify-center items-center space-y-4 text-center">
           <h3 className="text-4xl font-semibold">
-            Sider: 提供一站式人工智能服务
+            Linkol: 24/7 Social Media Lead Generation
           </h3>
           <p className="text-xl text-muted-foreground break-all">
             支持 o3-mini & o1, DeepSeek, GPT-4o, Claude 3.5 Sonnet
