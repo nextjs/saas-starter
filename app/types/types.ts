@@ -59,5 +59,68 @@ export interface CreateAgentRequest {
    * 话题，多个话题用|链接
    */
   topics: string;
-  [property: string]: any;
+}
+
+export interface UserInfoData {
+  /**
+   * agent的情况
+   */
+  agent: AgentNums;
+  /**
+   * 当前会员
+   */
+  current_member: CurrentMember;
+  /**
+   * 邮箱
+   */
+  email: string;
+  /**
+   * 用户名
+   */
+  user_name: string;
+}
+
+/**
+ * agent的情况
+ */
+export interface AgentNums {
+  /**
+   * 已经创建的agent数量
+   */
+  created: number;
+  /**
+   * 可以创建的总数量
+   */
+  total: number;
+}
+
+/**
+ * 当前会员
+ */
+export interface CurrentMember {
+  /**
+   * 会员ID
+   */
+  id: number;
+  /**
+   * 会员名
+   */
+  name: string;
+}
+
+export interface SelfResponse {
+  code: number;
+  data: SelfData[];
+  msg: string;
+}
+
+export interface SelfData {
+  follows?: string;
+  id?: string;
+  keywords?: string;
+  name?: string;
+  post_count?: string;
+  replies?: string;
+  revenue?: string;
+  topic?: string;
 }

@@ -32,7 +32,7 @@ export default function DashboardLayout({
   const getAgents = async () => {
     const res = await getAgentList();
     if (res && res.code === 200) {
-      setAgents(res.data.filter((item: any) => item.x_username !== null));
+      setAgents(res.data);
     }
   };
 
@@ -97,7 +97,7 @@ export default function DashboardLayout({
                 </Link>
               ))}
               <div className="w-full h-full">
-                {isLoggedIn && agents.length === 0 ? (
+                {isLoggedIn && agents.length !== 0 ? (
                   <AgentList agents={agents} />
                 ) : (
                   <NullCreate />

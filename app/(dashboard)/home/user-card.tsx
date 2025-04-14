@@ -13,10 +13,11 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
-import { updateIsLoggedIn } from "@/app/store/reducers/userSlice";
+import { updateIsLoggedIn, updateDetails } from "@/app/store/reducers/userSlice";
 import { getUserInfo } from "@/app/request/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { UserInfoData } from "@/app/types/types";
 
 const UserInfoSkeleton = () => {
   return (
@@ -55,10 +56,12 @@ export default function UserCard() {
       const res: any = await getUserInfo();
       setIsLoading(false);
       if (res && res.code === 200) {
+        const data: UserInfoData = res.data;
         setUserInfo(res.data);
-        const data = res.data;
+        dispatch(updateDetails(res.data));
         const progress =
-          parseInt(data.agent.created / data.agent.total + "") * 100;
+          (data.agent.created / data.agent.total) * 100;
+        console.log(data.agent.created, data.agent.total, progress);
         setProgress(progress);
       } else {
         toast.error(res.msg);
@@ -131,7 +134,7 @@ export default function UserCard() {
                 <div className="flex flex-col gap-0">
                   <span className="text-sm">{storeUserInfo?.username}</span>
                   <span className="text-xs text-gray-500">
-                    {storeUserInfo?.description || storeUserInfo?.screen_name}
+                    {storeUserInfo?.description || `@${storeUserInfo?.screen_name}`}
                   </span>
                 </div>
               </div>
