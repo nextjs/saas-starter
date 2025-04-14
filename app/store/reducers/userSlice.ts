@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserInfo, Config, From } from "./typs";
+import { UserInfoData } from "@/app/types/types";
 
 // 定义用户状态接口
 export interface UserState {
@@ -26,6 +27,18 @@ const initialState: UserState = {
     profile_image_url: "",
     description: "",
     token: "",
+    details: {
+      agent: {
+        created: 0,
+        total: 0,
+      },
+      current_member: {
+        id: 0,
+        name: "",
+      },
+      email: "",
+      user_name: "",
+    },
   },
   config: {
     region: [],
@@ -82,8 +95,23 @@ const userSlice = createSlice({
           profile_image_url: "",
           description: "",
           token: "",
+          details: {
+            agent: {
+              created: 0,
+              total: 0,
+            },
+            current_member: {
+              id: 0,
+              name: "",
+            },
+            email: "",
+            user_name: "",
+          },
         };
       }
+    },
+    updateDetails: (state, action: PayloadAction<UserInfoData>) => {
+      state.userInfo.details = action.payload;
     },
     updateUserInfo: (state, action: PayloadAction<UserInfo>) => {
       state.userInfo = action.payload;
@@ -135,6 +163,7 @@ export const {
   updateFrom,
   clearFrom,
   updateTwitterFullProfile,
+  updateDetails,
 } = userSlice.actions;
 
 export default userSlice.reducer;

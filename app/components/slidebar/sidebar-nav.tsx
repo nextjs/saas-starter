@@ -86,7 +86,8 @@ export default function SidebarNav() {
   const getAgents = async () => {
     const res = await getAgentList();
     if (res && res.code === 200) {
-      setAgents(res.data.filter((item: any) => !!item.x_username));
+      console.log(res.data);
+      setAgents(res.data);
     }
   };
 
@@ -99,9 +100,8 @@ export default function SidebarNav() {
   }, [isLoggedIn]);
 
   const onLink = (path: string) => {
-    console.log(path)
     if (isLoggedIn) {
-      if (path === '/home/create/kol' && userData.agent.total < agents.length) {
+      if (path === '/home/create/kol' && userData.agent.created < userData.agent.total) {
         router.push(path);
       } else {
         toast.warning("Create agent has reached the limit");

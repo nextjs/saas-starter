@@ -1,3 +1,5 @@
+import { UserInfoData } from "@/app/types/types";
+
 export interface UserInfo {
   id: number;
   username: string;
@@ -10,6 +12,7 @@ export interface UserInfo {
   profile_image_url: string;
   description: string | null;
   token: string;
+  details: UserInfoData;
 }
 
 export type Config = {

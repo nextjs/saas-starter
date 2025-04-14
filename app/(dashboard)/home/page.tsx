@@ -6,14 +6,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
 import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
 import { useEffect } from "react";
+import { toast } from "sonner";
 export default function HomePage() {
   const router = useRouter();
   const isLoggedIn = useAppSelector((state) => state.userReducer.isLoggedIn);
   const { openDrawer } = useLoginDrawer();
+  const userInfoDetails = useAppSelector((state) => state.userReducer.userInfo.details);
 
   const handleCreateKol = () => {
-    if (isLoggedIn) {
+    if (isLoggedIn && userInfoDetails.agent.created < userInfoDetails.agent.total) {
       router.push("/home/create/kol");
+    } else if (isLoggedIn && userInfoDetails.agent.created >= userInfoDetails.agent.total) {
+      toast.warning("Create agent has reached the limit");
     } else {
       openDrawer();
     }
