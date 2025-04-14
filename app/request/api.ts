@@ -264,4 +264,15 @@ export async function getCreateTwitterAuthCompleteCallback(data: any) {
   }
 }
 
+// 获取 kol message
+export async function getKolMessage(params: any) {
+  try {
+    const res = await request.get('/kol/api/v1/kol/msglist', {...params})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}
+
 

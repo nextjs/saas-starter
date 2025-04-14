@@ -1,5 +1,6 @@
+"use client";
 import Image from "next/image";
-
+import { useState, useEffect } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 
@@ -7,8 +8,28 @@ import avatar from "@/app/assets/image/avatar.png";
 import Post from "../compontents/post";
 import Repost from "../compontents/repost";
 import Reply from "../compontents/reply";
+import { useParams } from "next/navigation";
+import { getKolMessage } from "@/app/request/api";
 
 export default function page() {
+  const { agentId } = useParams();
+  const [messageList, setMessageList] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // 获取kol message
+  const getKolMessageList = async () => {
+    try {
+      const res = await getKolMessage({ agent_id: agentId });
+      console.log(res);
+      setMessageList(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getKolMessageList();
+  }, [agentId]);
   return (
     <div className="w-full h-full">
       <ScrollArea className="w-full h-full">
