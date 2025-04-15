@@ -158,7 +158,7 @@ export default function TwitterAuthContent({
       </p>
 
       <div className="w-full flex flex-col items-center justify-center gap-4 mt-4">
-        {/* {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
+        {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
           <div className="w-full flex flex-col items-center justify-center gap-4">
             <div className="w-10 h-10 overflow-hidden rounded-full">
               <img
@@ -187,7 +187,7 @@ export default function TwitterAuthContent({
               )}
             </Button>
           </div>
-        ) : ( */}
+        ) : (
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <Twitter className="w-10 h-10 text-primary mb-4" />
             <Button
@@ -210,7 +210,7 @@ export default function TwitterAuthContent({
               Back to Login
             </Button>
           </div>
-        {/* )} */}
+        )}
       </div>
     </div>
   );
