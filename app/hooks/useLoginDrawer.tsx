@@ -8,9 +8,10 @@ export enum Step {
   ResetPassword = 2,
   VerifyCode = 3,
   ForgotPassword = 4,
-  TwitterAuth = 5,
+  TwitterAuth = 5
 }
-interface DrawerContextType {
+
+interface LoginDrawerContextType {
   isOpen: boolean;
   openDrawer: () => void;
   closeDrawer: () => void;
@@ -19,7 +20,7 @@ interface DrawerContextType {
   setStep: (step: Step) => void;
 }
 
-const LoginDrawerContext = createContext<DrawerContextType | null>(null);
+const LoginDrawerContext = createContext<LoginDrawerContextType | null>(null);
 
 export const LoginProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);

@@ -14,22 +14,22 @@ import { updateTwitterFullProfile } from "@/app/store/reducers/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { CircleIcon, Loader2 } from "lucide-react";
 import { Step, useLoginDrawer } from "@/app/hooks/useLoginDrawer";
-const clearUrlParams = () => {
-  const url = new URL(window.location.href);
-  url.search = ""; // 清空查询参数
-  window.history.replaceState({}, document.title, url.toString());
-};
 
 export default function TwitterAuthContent({
-  onComplete,
+  completeFunction,
 }: {
-  onComplete: () => void;
+  completeFunction: () => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const params = useSearchParams();
-  const [authParams, setAuthParams] = useState<any>({});
+  // const [authParams, setAuthParams] = useState<any>({});
   const { setStep } = useLoginDrawer();
+  const clearUrlParams = () => {
+    const url = new URL(window.location.href);
+    url.search = ""; // 清空查询参数
+    window.history.replaceState({}, document.title, url.toString());
+  };
   const handleTwitterAuth = async () => {
     try {
       // 获取当前的url
@@ -40,7 +40,7 @@ export default function TwitterAuthContent({
       });
       setIsLoading(false);
       if (res && res.code === 200) {
-        setAuthParams(res.data);
+        // setAuthParams(res.data);
         localStorage.setItem("oauth_token_secret", res.data.oauth_token_secret);
         return res.data.authorization_url;
         // if (params.get("oauth_verifier")) {
@@ -60,13 +60,6 @@ export default function TwitterAuthContent({
       window.location.href = authorization_url;
     }
   };
-
-  // useEffect(() => {
-  //   const oauth_token = params.get("oauth_token");
-  //   if (!oauth_token) {
-  //     handleTwitterAuth();
-  //   }
-  // }, []);
 
   const handleTwitterAuthCallback = async () => {
     try {
@@ -130,7 +123,7 @@ export default function TwitterAuthContent({
         toast.success("Twitter authorization successful");
         await dispatch(updateTwitterFullProfile(full_profile));
         clearUrlParams();
-        onComplete(); // 完成授权后回调
+        completeFunction(); // 完成授权后回调
       } else {
         toast.error(res.msg);
         clearUrlParams();
@@ -165,7 +158,7 @@ export default function TwitterAuthContent({
       </p>
 
       <div className="w-full flex flex-col items-center justify-center gap-4 mt-4">
-        {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
+        {/* {twitterFullProfile && Object.keys(twitterFullProfile).length > 0 ? (
           <div className="w-full flex flex-col items-center justify-center gap-4">
             <div className="w-10 h-10 overflow-hidden rounded-full">
               <img
@@ -184,7 +177,7 @@ export default function TwitterAuthContent({
             </div>
             <Button
               className="w-full duration-350 h-10 flex items-center justify-center font-bold px-10"
-              onClick={onComplete}
+              onClick={completeFunction}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -194,7 +187,7 @@ export default function TwitterAuthContent({
               )}
             </Button>
           </div>
-        ) : (
+        ) : ( */}
           <div className="w-full flex flex-col items-center justify-center gap-2">
             <Twitter className="w-10 h-10 text-primary mb-4" />
             <Button
@@ -217,7 +210,7 @@ export default function TwitterAuthContent({
               Back to Login
             </Button>
           </div>
-        )}
+        {/* )} */}
       </div>
     </div>
   );

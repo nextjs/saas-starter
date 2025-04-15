@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import React, { useState, useEffect } from "react";
 import { CircleIcon, Loader2 } from "lucide-react";
-import { Twitter } from "@/app/assets/svg";
 import {
   Form,
   FormField,
@@ -776,7 +775,7 @@ export default function Login() {
                   key="twitter-auth"
                   className="w-full h-full flex flex-col items-start justify-center gap-4"
                 >
-                  <TwitterAuthContent onComplete={handleTwitterAuthComplete} />
+                  <TwitterAuthContent completeFunction={handleTwitterAuthComplete} />
                 </motion.div>
               ) : (
                 step === Step.VerifyCode && (

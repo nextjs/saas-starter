@@ -22,14 +22,8 @@ import { toast } from "sonner";
 import { updateTwitterFullProfile } from "@/app/store/reducers/userSlice";
 import { useAppDispatch, useAppSelector } from "@/app/store/hooks";
 import { Loader2 } from "lucide-react";
-import { useLoginDrawer } from "@/app/hooks/useLoginDrawer";
 import { CreateAgentRequest } from "@/app/types/types";
 import { useCreateXauthDialog } from "@/app/hooks/useCreateXauthDialog";
-const clearUrlParams = () => {
-  const url = new URL(window.location.href);
-  url.search = ""; // 清空查询参数
-  window.history.replaceState({}, document.title, url.toString());
-};
 
 export default function CreateTwitterAuth({
   setTwitterAuth,
@@ -53,6 +47,11 @@ export default function CreateTwitterAuth({
   const ability = useAppSelector(
     (state: any) => state.userReducer.config.ability
   );
+  const clearUrlParams = () => {
+    const url = new URL(window.location.href);
+    url.search = ""; // 清空查询参数
+    window.history.replaceState({}, document.title, url.toString());
+  };
 
   const createAgentGetId = async () => {
     try {
