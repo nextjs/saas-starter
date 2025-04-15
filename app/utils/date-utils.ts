@@ -23,3 +23,8 @@ export function formatJoinedDate(date: Date | string | number): string {
     return ""; // Return empty string on error
   }
 }
+
+export function formatDate(date: Date | string | number): string {
+  const dateObj = new Date(date);
+  return dateObj.toLocaleString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}

@@ -276,3 +276,13 @@ export async function getKolMessage(params: any) {
 }
 
 
+// 获取订单列表
+export async function getOrderList(params: any) {
+  try {
+    const res = await request.get('/kol/api/v1/kol/order/list', {...params})
+    return res
+  } catch (error: any) {
+    console.log(error)
+    return error
+  }
+}

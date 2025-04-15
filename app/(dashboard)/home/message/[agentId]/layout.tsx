@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import { ChevronLeft, Power } from "lucide-react";
@@ -5,8 +6,20 @@ import { ChevronLeft, Power } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import TurnOffConfirmation from "../compontents/turn-off-confirmation";
+import { useAppSelector } from "@/app/store/hooks";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const isLoggedIn = useAppSelector(
+    (state: any) => state.userReducer.isLoggedIn
+  );
+  const router = useRouter();
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push("/home");
+    }
+  }, [isLoggedIn]);
   return (
     <div className="w-full h-full overflow-hidden flex">
       <div className="w-full h-full overflow-hidden flex flex-col flex-1 box-border p-2 md:p-4 lg:p-6">

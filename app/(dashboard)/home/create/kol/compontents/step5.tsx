@@ -45,7 +45,7 @@ export default function StepFive() {
         "Must be an integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.post,
+        (val) => Number(val) >= 0 && Number(val) <= limit.post,
         `Must be between 1 and ${limit.post}`
       ),
     repost: z
@@ -55,7 +55,7 @@ export default function StepFive() {
         "Must be a positive integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.repost,
+        (val) => Number(val) >= 0 && Number(val) <= limit.repost,
         `Must be between 1 and ${limit.repost}`
       ),
     quote: z
@@ -65,7 +65,7 @@ export default function StepFive() {
         "Must be a positive integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.quote,
+        (val) => Number(val) >= 0 && Number(val) <= limit.quote,
         `Must be between 1 and ${limit.quote}`
       ),
     likes: z
@@ -75,7 +75,7 @@ export default function StepFive() {
         "Must be a positive integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.likes,
+        (val) => Number(val) >= 0 && Number(val) <= limit.likes,
         `Must be between 1 and ${limit.likes}`
       ),
     reply: z
@@ -85,7 +85,7 @@ export default function StepFive() {
         "Must be a positive integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.reply,
+        (val) => Number(val) >= 0 && Number(val) <= limit.reply,
         `Must be between 1 and ${limit.reply}`
       ),
     comment: z
@@ -95,7 +95,7 @@ export default function StepFive() {
         "Must be a positive integer"
       )
       .refine(
-        (val) => Number(val) >= 1 && Number(val) <= limit.comment,
+        (val) => Number(val) >= 0 && Number(val) <= limit.comment,
         `Must be between 1 and ${limit.comment}`
       ),
   });

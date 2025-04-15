@@ -2,7 +2,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
-import { Bot } from "lucide-react";
+import { Bot, ReceiptText, ScrollText } from "lucide-react";
 import clsx from "clsx";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppSelector } from "@/app/store/hooks";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const Routes = {
   CREATE: "/home/create/kol",
+  ORDER_LIST: "/home/order",
 };
 
 const SidebarNavItem = (props: {
@@ -101,10 +102,10 @@ export default function SidebarNav() {
 
   const onLink = (path: string) => {
     if (isLoggedIn) {
-      if (path === '/home/create/kol' && userData.agent.created < userData.agent.total) {
-        router.push(path);
-      } else {
+      if (path === '/home/create/kol' && userData.agent.created >= userData.agent.total) {
         toast.warning("Create agent has reached the limit");
+      } else {
+        router.push(path);
       }
     } else {
       openDrawer();
@@ -113,12 +114,19 @@ export default function SidebarNav() {
 
   return (
     <div className="space-y-4 pt-4">
-      <ul className="px-4">
+      <ul className="px-4 flex flex-col gap-1">
         <SidebarNavItem
           icon={<Bot className="size-5 min-w-5" />}
           title="create KOL agent"
           href={Routes.CREATE}
           isActive={pathname.includes(Routes.CREATE)}
+          onLink={onLink}
+        />
+        <SidebarNavItem
+          icon={<ScrollText className="size-5 min-w-5" />}
+          title="Order List"
+          href={Routes.ORDER_LIST}
+          isActive={pathname.includes(Routes.ORDER_LIST)}
           onLink={onLink}
         />
       </ul>
