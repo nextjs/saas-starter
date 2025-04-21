@@ -34,16 +34,19 @@ pnpm install
 
 ## Running Locally
 
-First, [install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
 
 ```bash
 stripe login
+```
+
+Use the included setup script to create your `.env` file:
 
 ```bash
 pnpm db:setup
 ```
 
-Then, run the database migrations and seed the database with a default user and team:
+Run the database migrations and seed the database with a default user and team:
 
 ```bash
 pnpm db:migrate
@@ -55,7 +58,7 @@ This will create the following user and team:
 - User: `test@test.com`
 - Password: `admin123`
 
-You can, of course, create new users as well through `/sign-up`.
+You can also create new users through the `/sign-up` route.
 
 Finally, run the Next.js development server:
 
@@ -65,7 +68,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
 
-Optionally, you can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -112,3 +115,4 @@ While this template is intentionally minimal and to be used as a learning resour
 - https://achromatic.dev
 - https://shipfa.st
 - https://makerkit.dev
+- https://www.zerotoshipped.com
