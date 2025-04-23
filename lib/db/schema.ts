@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -68,6 +69,25 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const oneTimeTokens = pgTable(
+  'one_time_tokens',
+  {
+    id: serial('id').primaryKey(),
+    userId: integer('user_id')
+      .notNull()
+      .references(() => users.id),
+    token: varchar('token', { length: 255 }).notNull().unique(),
+    type: varchar('type', { length: 50 }).notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    expiresAt: timestamp('expires_at').notNull(),
+  },
+  (table) => {
+    return {
+      tokenIdx: uniqueIndex('token_idx').on(table.token),
+    };
+  }
+);
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
@@ -112,6 +132,13 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const oneTimeTokensRelations = relations(oneTimeTokens, ({ one }) => ({
+  user: one(users, {
+    fields: [oneTimeTokens.userId],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -127,6 +154,8 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+export type OneTimeToken = typeof oneTimeTokens.$inferSelect;
+export type NewOneTimeToken = typeof oneTimeTokens.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',
@@ -139,4 +168,11 @@ export enum ActivityType {
   REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+  RESET_PASSWORD = 'RESET_PASSWORD',
+}
+
+export enum OneTimeTokenType {
+  SIGN_IN = 'SIGN_IN',
+  RESET_PASSWORD = 'RESET_PASSWORD',
 }

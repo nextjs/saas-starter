@@ -57,3 +57,8 @@ export async function setSession(user: NewUser) {
     sameSite: 'lax',
   });
 }
+
+export async function generateRandomToken() {
+  const array = new Uint32Array(1);
+  return crypto.getRandomValues(array)[0].toString(36);
+}
