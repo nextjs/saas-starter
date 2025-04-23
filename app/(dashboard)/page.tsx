@@ -23,7 +23,11 @@ export default function HomePage() {
                   href="https://vercel.com/templates/next.js/next-js-saas-starter"
                   target="_blank"
                 >
-                  <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-lg px-8 py-4 inline-flex items-center justify-center">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="text-lg rounded-full"
+                  >
                     Deploy your own
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
@@ -107,11 +111,12 @@ export default function HomePage() {
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a
-                href="https://github.com/leerob/next-saas-starter"
-                target="_blank"
-              >
-                <Button className="bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full text-xl px-12 py-6 inline-flex items-center justify-center">
+              <a href="https://github.com/nextjs/saas-starter" target="_blank">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="text-lg rounded-full"
+                >
                   View the code
                   <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>

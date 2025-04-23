@@ -4,21 +4,6 @@ This is a starter template for building a SaaS application using **Next.js** wit
 
 **Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
 
-<details>
-  <summary>Why did I make this?</summary>
-  
-  In 2020, I made a course called "React 2025" which showed how to build a SaaS application with Next.js, Stripe, and other tools.
-
-Well, it's almost 2025 and React 19 has brought so many amazing new features I didn't predict! This repo is a demonstration of the latest React and Next.js patterns. These patterns can drastically simplify some common tasks in building your SaaS, like building forms, talking to your database, and more.
-
-For example, React now has built in hooks like `useActionState` to handle inline form errors and pending states. React Server Actions can replace a lot of boilerplate code needed to call an API Route from the client-side. And finally, the React `use` hook combined with Next.js makes it incredibly easy to build a powerful `useUser()` hook.
-
-We're able to fetch the user from our Postgres database in the root layout, but _not_ await the `Promise`. Instead, we forward the `Promise` to a React context provider, where we can "unwrap" it and awaited the streamed in data. This means we can have the best of both worlds: easy code to fetch data from our database (e.g. `getUser()`) and a React hook we can use in Client Components (e.g. `useUser()`).
-
-Fun fact: the majority of the UI for this application was built with [v0](https://v0.dev) 🤯 [More details here](https://x.com/leeerob/status/1835777934361084316) if you want to learn about this repo.
-
-</details>
-
 ## Features
 
 - Marketing landing page (`/`) with animated Terminal element
@@ -42,12 +27,18 @@ Fun fact: the majority of the UI for this application was built with [v0](https:
 ## Getting Started
 
 ```bash
-git clone https://github.com/leerob/next-saas-starter
-cd next-saas-starter
+git clone https://github.com/nextjs/saas-starter
+cd saas-starter
 pnpm install
 ```
 
 ## Running Locally
+
+[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+
+```bash
+stripe login
+```
 
 Use the included setup script to create your `.env` file:
 
@@ -55,7 +46,7 @@ Use the included setup script to create your `.env` file:
 pnpm db:setup
 ```
 
-Then, run the database migrations and seed the database with a default user and team:
+Run the database migrations and seed the database with a default user and team:
 
 ```bash
 pnpm db:migrate
@@ -67,7 +58,7 @@ This will create the following user and team:
 - User: `test@test.com`
 - Password: `admin123`
 
-You can, of course, create new users as well through `/sign-up`.
+You can also create new users through the `/sign-up` route.
 
 Finally, run the Next.js development server:
 
@@ -77,7 +68,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
 
-Optionally, you can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -104,7 +95,7 @@ When you're ready to deploy your SaaS application to production, follow these st
 ### Deploy to Vercel
 
 1. Push your code to a GitHub repository.
-2. Connect your repository to Vercel and deploy it.
+2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
 3. Follow the Vercel deployment process, which will guide you through setting up your project.
 
 ### Add environment variables
@@ -124,3 +115,4 @@ While this template is intentionally minimal and to be used as a learning resour
 - https://achromatic.dev
 - https://shipfa.st
 - https://makerkit.dev
+- https://zerotoshipped.com

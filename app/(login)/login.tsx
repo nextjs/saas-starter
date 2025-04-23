@@ -106,7 +106,6 @@ export function Login({
               </div>
             </div>
           )}
-
           {(mode === 'signin' ||
             mode === 'signup' ||
             mode === 'resetPassword') && (

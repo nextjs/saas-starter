@@ -11,7 +11,8 @@ export function SubmitButton() {
     <Button
       type="submit"
       disabled={pending}
-      className="w-full bg-white hover:bg-gray-100 text-black border border-gray-200 rounded-full flex items-center justify-center"
+      variant="outline"
+      className="w-full rounded-full"
     >
       {pending ? (
         <>

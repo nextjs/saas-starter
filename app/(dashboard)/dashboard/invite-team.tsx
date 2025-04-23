@@ -7,12 +7,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter,
+  CardFooter
 } from '@/components/ui/card';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { useActionState } from 'react';
+import { use, useActionState } from 'react';
 import { inviteTeamMember } from '@/app/(login)/actions';
 import { useUser } from '@/lib/auth';
 
@@ -22,7 +22,8 @@ type ActionState = {
 };
 
 export function InviteTeamMember() {
-  const { user } = useUser();
+  const { userPromise } = useUser();
+  const user = use(userPromise);
   const isOwner = user?.role === 'owner';
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
@@ -37,7 +38,9 @@ export function InviteTeamMember() {
       <CardContent>
         <form action={inviteAction} className='space-y-4'>
           <div>
-            <Label htmlFor='firstName'>First Name</Label>
+            <Label htmlFor="email" className="mb-2">
+              Email
+            </Label>
             <Input
               id='firstName'
               name='firstName'
@@ -66,13 +69,13 @@ export function InviteTeamMember() {
               className='flex space-x-4'
               disabled={!isOwner}
             >
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='member' id='member' />
-                <Label htmlFor='member'>Member</Label>
+              <div className="flex items-center space-x-2 mt-2">
+                <RadioGroupItem value="member" id="member" />
+                <Label htmlFor="member">Member</Label>
               </div>
-              <div className='flex items-center space-x-2'>
-                <RadioGroupItem value='owner' id='owner' />
-                <Label htmlFor='owner'>Owner</Label>
+              <div className="flex items-center space-x-2 mt-2">
+                <RadioGroupItem value="owner" id="owner" />
+                <Label htmlFor="owner">Owner</Label>
               </div>
             </RadioGroup>
           </div>

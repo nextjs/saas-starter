@@ -31,7 +31,7 @@ export default function SecurityPage() {
     // If you call the Server Action directly, it will automatically
     // reset the form. We don't want that here, because we want to keep the
     // client-side values in the inputs. So instead, we use an event handler
-    // which calls the action. You must wrap direct calls with startTranstion.
+    // which calls the action. You must wrap direct calls with startTransition.
     // When you use the `action` prop it automatically handles that for you.
     // Another option here is to persist the values to local storage. I might
     // explore alternative options.
@@ -61,7 +61,9 @@ export default function SecurityPage() {
         <CardContent>
           <form className="space-y-4" onSubmit={handlePasswordSubmit}>
             <div>
-              <Label htmlFor="current-password">Current Password</Label>
+              <Label htmlFor="current-password" className="mb-2">
+                Current Password
+              </Label>
               <Input
                 id="current-password"
                 name="currentPassword"
@@ -73,7 +75,9 @@ export default function SecurityPage() {
               />
             </div>
             <div>
-              <Label htmlFor="new-password">New Password</Label>
+              <Label htmlFor="new-password" className="mb-2">
+                New Password
+              </Label>
               <Input
                 id="new-password"
                 name="newPassword"
@@ -85,7 +89,9 @@ export default function SecurityPage() {
               />
             </div>
             <div>
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Label htmlFor="confirm-password" className="mb-2">
+                Confirm New Password
+              </Label>
               <Input
                 id="confirm-password"
                 name="confirmPassword"
@@ -132,7 +138,9 @@ export default function SecurityPage() {
           </p>
           <form onSubmit={handleDeleteSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="delete-password">Confirm Password</Label>
+              <Label htmlFor="delete-password" className="mb-2">
+                Confirm Password
+              </Label>
               <Input
                 id="delete-password"
                 name="password"
