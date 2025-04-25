@@ -59,7 +59,7 @@ export async function updateTeamSubscription(
     .update(teams)
     .set({
       ...subscriptionData,
-      updatedAt: new Date(),
+      updatedAt: new Date()
     })
     .where(eq(teams.id, teamId));
 }
@@ -68,7 +68,7 @@ export async function getUserWithTeam(userId: number) {
   const result = await db
     .select({
       user: users,
-      teamId: teamMembers.teamId,
+      teamId: teamMembers.teamId
     })
     .from(users)
     .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
@@ -90,7 +90,7 @@ export async function getActivityLogs() {
       action: activityLogs.action,
       timestamp: activityLogs.timestamp,
       ipAddress: activityLogs.ipAddress,
-      userName: users.name,
+      userName: users.name
     })
     .from(activityLogs)
     .leftJoin(users, eq(activityLogs.userId, users.id))
@@ -99,31 +99,32 @@ export async function getActivityLogs() {
     .limit(10);
 }
 
-export async function getTeamForUser(userId: number) {
-  const result = await db.query.users.findFirst({
-    where: eq(users.id, userId),
+export async function getTeamForUser() {
+  const user = await getUser();
+  if (!user) {
+    return null;
+  }
+
+  const result = await db.query.teamMembers.findFirst({
+    where: eq(teamMembers.userId, user.id),
     with: {
-      teamMembers: {
+      team: {
         with: {
-          team: {
+          teamMembers: {
             with: {
-              teamMembers: {
-                with: {
-                  user: {
-                    columns: {
-                      id: true,
-                      name: true,
-                      email: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+              user: {
+                columns: {
+                  id: true,
+                  name: true,
+                  email: true
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   });
 
-  return result?.teamMembers[0]?.team || null;
+  return result?.team || null;
 }

@@ -5,49 +5,33 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Lock, Trash2, Loader2 } from 'lucide-react';
-import { startTransition, useActionState } from 'react';
+import { useActionState } from 'react';
 import { updatePassword, deleteAccount } from '@/app/(login)/actions';
 
-type ActionState = {
+type PasswordState = {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  error?: string;
+  success?: string;
+};
+
+type DeleteState = {
+  password?: string;
   error?: string;
   success?: string;
 };
 
 export default function SecurityPage() {
   const [passwordState, passwordAction, isPasswordPending] = useActionState<
-    ActionState,
+    PasswordState,
     FormData
-  >(updatePassword, { error: '', success: '' });
+  >(updatePassword, {});
 
   const [deleteState, deleteAction, isDeletePending] = useActionState<
-    ActionState,
+    DeleteState,
     FormData
-  >(deleteAccount, { error: '', success: '' });
-
-  const handlePasswordSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    // If you call the Server Action directly, it will automatically
-    // reset the form. We don't want that here, because we want to keep the
-    // client-side values in the inputs. So instead, we use an event handler
-    // which calls the action. You must wrap direct calls with startTransition.
-    // When you use the `action` prop it automatically handles that for you.
-    // Another option here is to persist the values to local storage. I might
-    // explore alternative options.
-    startTransition(() => {
-      passwordAction(new FormData(event.currentTarget));
-    });
-  };
-
-  const handleDeleteSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-    event.preventDefault();
-    startTransition(() => {
-      deleteAction(new FormData(event.currentTarget));
-    });
-  };
+  >(deleteAccount, {});
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -59,7 +43,7 @@ export default function SecurityPage() {
           <CardTitle>Password</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" onSubmit={handlePasswordSubmit}>
+          <form className="space-y-4" action={passwordAction}>
             <div>
               <Label htmlFor="current-password" className="mb-2">
                 Current Password
@@ -72,6 +56,7 @@ export default function SecurityPage() {
                 required
                 minLength={8}
                 maxLength={100}
+                defaultValue={passwordState.currentPassword}
               />
             </div>
             <div>
@@ -86,6 +71,7 @@ export default function SecurityPage() {
                 required
                 minLength={8}
                 maxLength={100}
+                defaultValue={passwordState.newPassword}
               />
             </div>
             <div>
@@ -99,6 +85,7 @@ export default function SecurityPage() {
                 required
                 minLength={8}
                 maxLength={100}
+                defaultValue={passwordState.confirmPassword}
               />
             </div>
             {passwordState.error && (
@@ -136,7 +123,7 @@ export default function SecurityPage() {
           <p className="text-sm text-gray-500 mb-4">
             Account deletion is non-reversable. Please proceed with caution.
           </p>
-          <form onSubmit={handleDeleteSubmit} className="space-y-4">
+          <form action={deleteAction} className="space-y-4">
             <div>
               <Label htmlFor="delete-password" className="mb-2">
                 Confirm Password
@@ -148,6 +135,7 @@ export default function SecurityPage() {
                 required
                 minLength={8}
                 maxLength={100}
+                defaultValue={deleteState.password}
               />
             </div>
             {deleteState.error && (

@@ -11,14 +11,16 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { useUser } from '@/lib/auth';
 import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
+import { User } from '@/lib/db/schema';
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userPromise } = useUser();
-  const user = use(userPromise);
+  const { data: user } = useSWR<User>('/api/user', fetcher);
   const router = useRouter();
 
   async function handleSignOut() {

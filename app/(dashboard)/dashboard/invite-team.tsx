@@ -12,9 +12,12 @@ import {
 import { Loader2, PlusCircle } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { use, useActionState } from 'react';
+import { useActionState } from 'react';
 import { inviteTeamMember } from '@/app/(login)/actions';
-import { useUser } from '@/lib/auth';
+import { User } from '@/lib/db/schema';
+import useSWR from 'swr';
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 type ActionState = {
   error?: string;
@@ -22,13 +25,12 @@ type ActionState = {
 };
 
 export function InviteTeamMember() {
-  const { userPromise } = useUser();
-  const user = use(userPromise);
+  const { data: user } = useSWR<User>('/api/user', fetcher);
   const isOwner = user?.role === 'owner';
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
     FormData
-  >(inviteTeamMember, { error: '', success: '' });
+  >(inviteTeamMember, {});
 
   return (
     <Card>
