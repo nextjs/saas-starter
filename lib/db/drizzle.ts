@@ -9,5 +9,11 @@ if (!process.env.POSTGRES_URL) {
   throw new Error('POSTGRES_URL environment variable is not set');
 }
 
-export const client = postgres(process.env.POSTGRES_URL);
+// 确保URL以postgresql://开头(Supabase要求)
+const connectionString = process.env.POSTGRES_URL.replace(
+  /^postgres:\/\//,
+  'postgresql://'
+);
+
+export const client = postgres(connectionString);
 export const db = drizzle(client, { schema });

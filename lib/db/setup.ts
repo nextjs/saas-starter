@@ -80,7 +80,7 @@ async function checkStripeCLI() {
 async function getPostgresURL(): Promise<string> {
   console.log('Step 2: Setting up Postgres');
   const dbChoice = await question(
-    'Do you want to use a local Postgres instance with Docker (L) or a remote Postgres instance (R)? (L/R): '
+    'Do you want to use a local Postgres instance with Docker (L), a remote Postgres instance (R), or Supabase (S)? (L/R/S): '
   );
 
   if (dbChoice.toLowerCase() === 'l') {
