@@ -50,7 +50,7 @@ export function TeamSwitcher({
             >
               <Avatar className="size-8 border">
                 <AvatarImage src={activeTeam.avatar} alt={activeTeam.name} />
-                <AvatarFallback>
+                <AvatarFallback className="rounded-lg">
                   {activeTeam.name.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
