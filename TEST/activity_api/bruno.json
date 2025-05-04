@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "activity_api",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

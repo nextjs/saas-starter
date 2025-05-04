@@ -1,71 +1,100 @@
 'use client';
 
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter
-} from '@/components/ui/card';
-import { customerPortalAction } from '@/lib/payments/actions';
-import { useActionState } from 'react';
 import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { removeTeamMember, inviteTeamMember } from '@/app/(auth)/actions';
 import useSWR from 'swr';
 import { Suspense } from 'react';
-import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Loader2, PlusCircle } from 'lucide-react';
-
-type ActionState = {
-  error?: string;
-  success?: string;
-};
+import { Activity, Users, Shield, DollarSign, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function SubscriptionSkeleton() {
+function StatCard({ title, value, description, icon: Icon }: {
+  title: string;
+  value: string | number;
+  description: string;
+  icon: React.ElementType;
+}) {
   return (
-    <Card className="mb-8 h-[140px]">
-      <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        <p className="text-xs text-muted-foreground">{description}</p>
+      </CardContent>
     </Card>
   );
 }
 
-function ManageSubscription() {
-  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-
+function StatsSkeleton() {
   return (
-    <Card className="mb-8">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      {[1, 2, 3, 4].map((i) => (
+        <Card key={i}>
+          <CardHeader className="pb-2">
+            <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+          </CardHeader>
+          <CardContent>
+            <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mb-2" />
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function Stats() {
+  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+      <StatCard 
+        title="Team Members" 
+        value={teamData?.teamMembers?.length || 0} 
+        description="Total active team members" 
+        icon={Users} 
+      />
+      <StatCard 
+        title="Current Plan" 
+        value={teamData?.planName || 'Free'} 
+        description={teamData?.subscriptionStatus === 'active' ? 'Billed monthly' : 'No active subscription'} 
+        icon={DollarSign} 
+      />
+      <StatCard 
+        title="API Calls" 
+        value="0" 
+        description="Total API calls this month" 
+        icon={Activity} 
+      />
+      <StatCard 
+        title="Security Status" 
+        value="Good" 
+        description="All systems operational" 
+        icon={Shield} 
+      />
+    </div>
+  );
+}
+
+function SubscriptionSkeleton() {
+  return (
+    <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+        <CardTitle>团队订阅</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <div className="mb-4 sm:mb-0">
-              <p className="font-medium">
-                Current Plan: {teamData?.planName || 'Free'}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {teamData?.subscriptionStatus === 'active'
-                  ? 'Billed monthly'
-                  : teamData?.subscriptionStatus === 'trialing'
-                  ? 'Trial period'
-                  : 'No active subscription'}
-              </p>
-            </div>
-            <form action={customerPortalAction}>
-              <Button type="submit" variant="outline">
-                Manage Subscription
-              </Button>
-            </form>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
+          <div className="mb-4 sm:mb-0">
+            <div className="h-5 w-40 bg-gray-200 rounded animate-pulse mb-2" />
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
           </div>
+          <div className="h-9 w-36 bg-gray-200 rounded animate-pulse" />
         </div>
       </CardContent>
     </Card>
@@ -74,19 +103,21 @@ function ManageSubscription() {
 
 function TeamMembersSkeleton() {
   return (
-    <Card className="mb-8 h-[140px]">
+    <Card className="mb-6">
       <CardHeader>
-        <CardTitle>Team Members</CardTitle>
+        <CardTitle>团队成员</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="animate-pulse space-y-4 mt-1">
-          <div className="flex items-center space-x-4">
-            <div className="size-8 rounded-full bg-gray-200"></div>
-            <div className="space-y-2">
-              <div className="h-4 w-32 bg-gray-200 rounded"></div>
-              <div className="h-3 w-14 bg-gray-200 rounded"></div>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-center space-x-4">
+              <div className="h-10 w-10 rounded-full bg-gray-200 animate-pulse" />
+              <div className="space-y-2">
+                <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+              </div>
             </div>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -95,10 +126,6 @@ function TeamMembersSkeleton() {
 
 function TeamMembers() {
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-  const [removeState, removeAction, isRemovePending] = useActionState<
-    ActionState,
-    FormData
-  >(removeTeamMember, {});
 
   const getUserDisplayName = (user: Pick<User, 'id' | 'name' | 'email'>) => {
     return user.name || user.email || 'Unknown User';
@@ -106,9 +133,12 @@ function TeamMembers() {
 
   if (!teamData?.teamMembers?.length) {
     return (
-      <Card className="mb-8">
-        <CardHeader>
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Team Members</CardTitle>
+          <Link href="/dashboard/team">
+            <Button variant="outline" size="sm">View All</Button>
+          </Link>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">No team members yet.</p>
@@ -118,170 +148,197 @@ function TeamMembers() {
   }
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
+    <Card className="mb-6">
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Team Members</CardTitle>
+        <Link href="/dashboard/team">
+          <Button variant="outline" size="sm">View All</Button>
+        </Link>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {teamData.teamMembers.map((member, index) => (
-            <li key={member.id} className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar>
-                  {/* 
-                    This app doesn't save profile images, but here
-                    is how you'd show them:
-
-                    <AvatarImage
-                      src={member.user.image || ''}
-                      alt={getUserDisplayName(member.user)}
-                    />
-                  */}
-                  <AvatarFallback>
-                    {getUserDisplayName(member.user)
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">
-                    {getUserDisplayName(member.user)}
-                  </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {member.role}
-                  </p>
-                </div>
+          {teamData.teamMembers.slice(0, 3).map((member) => (
+            <li key={member.id} className="flex items-center space-x-4">
+              <Avatar>
+                <AvatarFallback>
+                  {getUserDisplayName(member.user)
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-medium">{getUserDisplayName(member.user)}</p>
+                <p className="text-sm text-muted-foreground capitalize">{member.role}</p>
               </div>
-              {index > 1 ? (
-                <form action={removeAction}>
-                  <input type="hidden" name="memberId" value={member.id} />
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    size="sm"
-                    disabled={isRemovePending}
-                  >
-                    {isRemovePending ? 'Removing...' : 'Remove'}
-                  </Button>
-                </form>
-              ) : null}
             </li>
           ))}
         </ul>
-        {removeState?.error && (
-          <p className="text-red-500 mt-4">{removeState.error}</p>
+        {teamData.teamMembers.length > 3 && (
+          <div className="mt-4 text-center">
+            <Link href="/dashboard/team">
+              <Button variant="link" size="sm">View all {teamData.teamMembers.length} members</Button>
+            </Link>
+          </div>
         )}
       </CardContent>
     </Card>
   );
 }
 
-function InviteTeamMemberSkeleton() {
-  return (
-    <Card className="h-[260px]">
-      <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
-      </CardHeader>
-    </Card>
-  );
-}
-
-function InviteTeamMember() {
-  const { data: user } = useSWR<User>('/api/user', fetcher);
-  const isOwner = user?.role === 'owner';
-  const [inviteState, inviteAction, isInvitePending] = useActionState<
-    ActionState,
-    FormData
-  >(inviteTeamMember, {});
-
+function ActivityLogSkeleton() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+        <CardTitle>最近活动</CardTitle>
       </CardHeader>
       <CardContent>
-        <form action={inviteAction} className="space-y-4">
-          <div>
-            <Label htmlFor="email" className="mb-2">
-              Email
-            </Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="Enter email"
-              required
-              disabled={!isOwner}
-            />
-          </div>
-          <div>
-            <Label>Role</Label>
-            <RadioGroup
-              defaultValue="member"
-              name="role"
-              className="flex space-x-4"
-              disabled={!isOwner}
-            >
-              <div className="flex items-center space-x-2 mt-2">
-                <RadioGroupItem value="member" id="member" />
-                <Label htmlFor="member">Member</Label>
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex items-start space-x-4">
+              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="space-y-2 flex-1">
+                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
+                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
               </div>
-              <div className="flex items-center space-x-2 mt-2">
-                <RadioGroupItem value="owner" id="owner" />
-                <Label htmlFor="owner">Owner</Label>
-              </div>
-            </RadioGroup>
-          </div>
-          {inviteState?.error && (
-            <p className="text-red-500">{inviteState.error}</p>
-          )}
-          {inviteState?.success && (
-            <p className="text-green-500">{inviteState.success}</p>
-          )}
-          <Button
-            type="submit"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
-            disabled={isInvitePending || !isOwner}
-          >
-            {isInvitePending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Inviting...
-              </>
-            ) : (
-              <>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Invite Member
-              </>
-            )}
-          </Button>
-        </form>
+            </div>
+          ))}
+        </div>
       </CardContent>
-      {!isOwner && (
-        <CardFooter>
-          <p className="text-sm text-muted-foreground">
-            You must be a team owner to invite new members.
-          </p>
-        </CardFooter>
-      )}
     </Card>
   );
 }
 
-export default function SettingsPage() {
+function ActivityLog() {
+  interface ActivityLogItem {
+    id: number;
+    action: string;
+    timestamp: string;
+    ipAddress?: string;
+    userName?: string;
+  }
+  
+  // Modified fetcher function to handle API response format
+  const activityFetcher = async (url: string) => {
+    const res = await fetch(url);
+    const data = await res.json();
+    // Check if API returns data wrapped in a data field
+    return data.data || data;
+  };
+  
+  const { data: logs, isLoading, error } = useSWR<ActivityLogItem[]>('/api/activity?limit=3', activityFetcher, {
+    revalidateOnFocus: false,        // Disable revalidation on focus
+    revalidateOnReconnect: false,    // Disable revalidation on reconnect
+    refreshInterval: 0,              // Disable auto refresh
+    dedupingInterval: 60000 * 60,    // No duplicate requests within 1 hour
+    fallbackData: [],                // Provide default empty array to avoid undefined checks
+    shouldRetryOnError: false        // Don't retry on error
+  });
+
+  // Format activity type using ActivityType enum
+  const formatAction = (action: string): string => {
+    const actionMap: Record<string, string> = {
+      'SIGN_UP': 'User Registration',
+      'SIGN_IN': 'User Login',
+      'SIGN_OUT': 'User Logout',
+      'UPDATE_PASSWORD': 'Password Update',
+      'DELETE_ACCOUNT': 'Account Deletion',
+      'UPDATE_ACCOUNT': 'Account Update',
+      'CREATE_TEAM': 'Team Creation',
+      'REMOVE_TEAM_MEMBER': 'Team Member Removal',
+      'INVITE_TEAM_MEMBER': 'Team Member Invitation',
+      'ACCEPT_INVITATION': 'Invitation Accepted',
+      'CREATE_API_KEY': 'API Key Creation',
+      'REVOKE_API_KEY': 'API Key Revocation',
+      'API_KEY_USED': 'API Key Used'
+    };
+    
+    return actionMap[action] || 'Unknown Action';
+  };
+
+  // Add debug log
+  console.log('Activity log data:', logs);
+
+  if (isLoading) {
+    return <ActivityLogSkeleton />;
+  }
+
+  if (error) {
+    console.error('Activity log loading error:', error);
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Recent Activity</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground">Error loading activity records</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Recent Activity</CardTitle>
+        <Link href="/dashboard/user-log">
+          <Button variant="outline" size="sm">View All</Button>
+        </Link>
+      </CardHeader>
+      <CardContent>
+        {logs && logs.length > 0 ? (
+          <div className="space-y-4">
+            {logs.map((log) => (
+              <div key={log.id} className="flex items-start space-x-4">
+                <div className="bg-orange-100 rounded-full p-2">
+                  <Activity className="w-4 h-4 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium">{formatAction(log.action)}</p>
+                  <p className="text-xs text-muted-foreground">{new Date(log.timestamp).toLocaleString()}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground">No activity records yet.</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function OverviewPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
+      <h1 className="text-lg lg:text-2xl font-medium mb-6">Overview</h1>
+      
+      <Suspense fallback={<StatsSkeleton />}>
+        <Stats />
+      </Suspense>
+      
       <Suspense fallback={<SubscriptionSkeleton />}>
-        <ManageSubscription />
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>API Usage</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[200px] flex items-center justify-center">
+              <p className="text-muted-foreground">No API usage data available</p>
+            </div>
+          </CardContent>
+        </Card>
       </Suspense>
-      <Suspense fallback={<TeamMembersSkeleton />}>
-        <TeamMembers />
-      </Suspense>
-      <Suspense fallback={<InviteTeamMemberSkeleton />}>
-        <InviteTeamMember />
-      </Suspense>
+      
+      <div className="grid gap-6 md:grid-cols-2">
+        <Suspense fallback={<TeamMembersSkeleton />}>
+          <TeamMembers />
+        </Suspense>
+        
+        <Suspense fallback={<ActivityLogSkeleton />}>
+          <ActivityLog />
+        </Suspense>
+      </div>
     </section>
   );
 }

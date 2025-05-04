@@ -1,16 +1,27 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { desc, and, eq, isNull, between, like, sql, SQL } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, plans } from './schema';
+import { activityLogs, teamMembers, teams, users, plans, ActivityType } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
+/**
+ * 获取当前登录用户信息
+ * 
+ * 通过验证会话Cookie获取当前登录用户
+ * 
+ * @returns 返回用户对象，如果未登录则返回null
+ */
 export async function getUser() {
+  // 从请求中获取会话Cookie
   const sessionCookie = (await cookies()).get('session');
+  // 如果Cookie不存在或值为空，返回null
   if (!sessionCookie || !sessionCookie.value) {
     return null;
   }
 
+  // 验证会话令牌
   const sessionData = await verifyToken(sessionCookie.value);
+  // 如果会话数据无效或不包含用户ID，返回null
   if (
     !sessionData ||
     !sessionData.user ||
@@ -19,33 +30,54 @@ export async function getUser() {
     return null;
   }
 
+  // 检查会话是否过期
   if (new Date(sessionData.expires) < new Date()) {
     return null;
   }
 
+  // 从数据库查询用户信息
   const user = await db
     .select()
     .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
+    .where(and(
+      eq(users.id, sessionData.user.id), // 匹配用户ID
+      isNull(users.deletedAt) // 确保用户未被删除
+    ))
     .limit(1);
 
+  // 如果未找到用户，返回null
   if (user.length === 0) {
     return null;
   }
 
+  // 返回找到的用户
   return user[0];
 }
 
+/**
+ * 通过Stripe客户ID查找团队
+ * 
+ * @param customerId Stripe客户ID
+ * @returns 返回团队对象，如果未找到则返回null
+ */
 export async function getTeamByStripeCustomerId(customerId: string) {
+  // 查询匹配Stripe客户ID的团队
   const result = await db
     .select()
     .from(teams)
     .where(eq(teams.stripeCustomerId, customerId))
     .limit(1);
 
+  // 如果找到团队则返回，否则返回null
   return result.length > 0 ? result[0] : null;
 }
 
+/**
+ * 更新团队的订阅信息
+ * 
+ * @param teamId 团队ID
+ * @param subscriptionData 订阅数据对象，包含Stripe订阅ID、产品ID、计划名称和订阅状态
+ */
 export async function updateTeamSubscription(
   teamId: number,
   subscriptionData: {
@@ -55,65 +87,213 @@ export async function updateTeamSubscription(
     subscriptionStatus: string;
   }
 ) {
+  // 更新团队的订阅信息
   await db
     .update(teams)
     .set({
-      ...subscriptionData,
-      updatedAt: new Date()
+      ...subscriptionData, // 展开订阅数据
+      updatedAt: new Date() // 更新修改时间
     })
-    .where(eq(teams.id, teamId));
+    .where(eq(teams.id, teamId)); // 匹配团队ID
 }
 
+/**
+ * 获取用户及其所属团队信息
+ * 
+ * @param userId 用户ID
+ * @returns 返回包含用户和团队ID的对象
+ */
 export async function getUserWithTeam(userId: number) {
+  // 查询用户及其所属团队
   const result = await db
     .select({
-      user: users,
-      teamId: teamMembers.teamId
+      user: users, // 选择整个用户对象
+      teamId: teamMembers.teamId // 选择团队ID
     })
     .from(users)
-    .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
-    .where(eq(users.id, userId))
+    .leftJoin(teamMembers, eq(users.id, teamMembers.userId)) // 关联团队成员表
+    .where(eq(users.id, userId)) // 匹配用户ID
     .limit(1);
 
+  // 返回查询结果
   return result[0];
 }
 
-export async function getActivityLogs() {
+/**
+ * 获取用户活动日志
+ * 支持分页、按活动类型筛选、日期范围筛选和关键词搜索
+ * 
+ * @param options 查询选项
+ * @param options.page 页码，默认为1
+ * @param options.limit 每页记录数，默认为10
+ * @param options.action 活动类型筛选
+ * @param options.startDate 开始日期
+ * @param options.endDate 结束日期
+ * @param options.search 搜索关键词
+ * @returns 活动日志列表
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getActivityLogs(options?: {
+  page?: number;
+  limit?: number;
+  action?: ActivityType;
+  startDate?: Date;
+  endDate?: Date;
+  search?: string;
+}) {
+  // 获取当前登录用户
   const user = await getUser();
+  // 如果用户未登录，抛出错误
   if (!user) {
     throw new Error('User not authenticated');
   }
 
+  // 解构查询选项，设置默认值
+  const {
+    page = 1, // 默认第1页
+    limit = 10, // 默认每页10条
+    action, // 活动类型
+    startDate, // 开始日期
+    endDate, // 结束日期
+    search // 搜索关键词
+  } = options || {};
+
+  // 计算分页偏移量
+  const offset = (page - 1) * limit;
+
+  // 获取查询条件
+  const whereCondition = buildActivityLogsCondition(user.id, action, startDate, endDate, search);
+
+  // 执行查询并返回结果
   return await db
     .select({
-      id: activityLogs.id,
-      action: activityLogs.action,
-      timestamp: activityLogs.timestamp,
-      ipAddress: activityLogs.ipAddress,
-      userName: users.name
+      id: activityLogs.id, // 活动ID
+      action: activityLogs.action, // 活动类型
+      timestamp: activityLogs.timestamp, // 活动时间
+      ipAddress: activityLogs.ipAddress, // IP地址
+      userName: users.name // 用户名
     })
     .from(activityLogs)
-    .leftJoin(users, eq(activityLogs.userId, users.id))
-    .where(eq(activityLogs.userId, user.id))
-    .orderBy(desc(activityLogs.timestamp))
-    .limit(10);
+    .leftJoin(users, eq(activityLogs.userId, users.id)) // 关联用户表获取用户名
+    .where(whereCondition) // 应用筛选条件
+    .orderBy(desc(activityLogs.timestamp)) // 按时间降序排列
+    .limit(limit) // 限制返回记录数
+    .offset(offset); // 设置偏移量实现分页
 }
 
-export async function getTeamForUser() {
+/**
+ * 获取符合条件的活动日志总数
+ * 
+ * @param options 查询选项
+ * @param options.action 活动类型筛选
+ * @param options.startDate 开始日期
+ * @param options.endDate 结束日期
+ * @param options.search 搜索关键词
+ * @returns 符合条件的记录总数
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getActivityLogsCount(options?: {
+  action?: ActivityType;
+  startDate?: Date;
+  endDate?: Date;
+  search?: string;
+}) {
+  // 获取当前登录用户
   const user = await getUser();
+  // 如果用户未登录，抛出错误
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  // 解构查询选项
+  const {
+    action, // 活动类型
+    startDate, // 开始日期
+    endDate, // 结束日期
+    search // 搜索关键词
+  } = options || {};
+
+  // 获取查询条件
+  const whereCondition = buildActivityLogsCondition(user.id, action, startDate, endDate, search);
+
+  // 执行计数查询
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(activityLogs)
+    .where(whereCondition);
+
+  // 返回记录总数
+  return countResult[0]?.count || 0;
+}
+
+/**
+ * 构建活动日志查询条件
+ * 
+ * @param userId 用户ID
+ * @param action 活动类型
+ * @param startDate 开始日期
+ * @param endDate 结束日期
+ * @param search 搜索关键词
+ * @returns SQL条件表达式
+ */
+function buildActivityLogsCondition(
+  userId: number,
+  action?: ActivityType | undefined,
+  startDate?: Date | undefined,
+  endDate?: Date | undefined,
+  search?: string | undefined
+) {
+  // 创建查询条件数组，初始条件为用户ID匹配
+  let conditions: SQL[] = [eq(activityLogs.userId, userId)];
+
+  // 如果指定了活动类型，添加活动类型筛选条件
+  if (action) {
+    conditions.push(eq(activityLogs.action, action));
+  }
+
+  // 如果指定了日期范围，添加日期范围筛选条件
+  if (startDate && endDate) {
+    conditions.push(
+      between(activityLogs.timestamp, startDate, endDate)
+    );
+  }
+
+  // 如果指定了搜索关键词，添加模糊搜索条件
+  if (search) {
+    conditions.push(
+      like(sql`LOWER(${activityLogs.action})`, `%${search.toLowerCase()}%`)
+    );
+  }
+
+  // 组合所有条件：如果有多个条件使用AND连接，否则直接使用单个条件
+  return conditions.length > 1 
+    ? and(...conditions) 
+    : conditions[0];
+}
+
+/**
+ * 获取当前用户所属的团队及其成员信息
+ * 
+ * @returns 返回团队对象（包含成员信息），如果未找到则返回null
+ */
+export async function getTeamForUser() {
+  // 获取当前登录用户
+  const user = await getUser();
+  // 如果用户未登录，返回null
   if (!user) {
     return null;
   }
 
+  // 使用Drizzle的关系查询API查询团队及其成员
   const result = await db.query.teamMembers.findFirst({
-    where: eq(teamMembers.userId, user.id),
+    where: eq(teamMembers.userId, user.id), // 匹配用户ID
     with: {
-      team: {
+      team: { // 关联团队
         with: {
-          teamMembers: {
+          teamMembers: { // 关联团队的所有成员
             with: {
-              user: {
-                columns: {
+              user: { // 关联成员的用户信息
+                columns: { // 只选择需要的用户字段
                   id: true,
                   name: true,
                   email: true
@@ -126,9 +306,20 @@ export async function getTeamForUser() {
     }
   });
 
+  // 返回团队对象，如果未找到则返回null
   return result?.team || null;
 }
 
+/**
+ * 获取所有活跃的计划
+ * 
+ * @returns 返回按价格排序的活跃计划列表
+ */
 export async function getPlans() {
-  return await db.select().from(plans).where(eq(plans.isActive, true)).orderBy(plans.price);
+  // 查询所有活跃的计划，按价格升序排列
+  return await db
+    .select()
+    .from(plans)
+    .where(eq(plans.isActive, true)) // 只选择活跃的计划
+    .orderBy(plans.price); // 按价格排序
 }
