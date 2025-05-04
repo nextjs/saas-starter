@@ -5,6 +5,9 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
+  decimal,
+  json,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -68,10 +71,30 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
-export const teamsRelations = relations(teams, ({ many }) => ({
+export const plans = pgTable('plans', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 100 }).notNull(),
+  description: text('description'),
+  price: decimal('price', { precision: 10, scale: 2 }).notNull(),
+  interval: varchar('interval', { length: 20 }).notNull().default('month'),
+  active: boolean('active').notNull().default(true),
+  creditsPerCycle: integer('credits_per_cycle').notNull(),
+  features: json('features').$type<string[]>(),
+  stripeProductId: text('stripe_product_id').unique(),
+  stripePriceId: text('stripe_price_id').unique(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  deletedAt: timestamp('deleted_at'),
+});
+
+export const teamsRelations = relations(teams, ({ many, one }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
   invitations: many(invitations),
+  plan: one(plans, {
+    fields: [teams.stripeProductId],
+    references: [plans.stripeProductId],
+  }),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -127,6 +150,9 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+
+export type Plan = typeof plans.$inferSelect;
+export type NewPlan = typeof plans.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',

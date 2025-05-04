@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, plans } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -127,4 +127,8 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+export async function getPlans() {
+  return await db.select().from(plans).where(eq(plans.active, true)).orderBy(plans.price);
 }

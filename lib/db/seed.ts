@@ -40,8 +40,8 @@ async function createStripeProducts() {
 }
 
 async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
+  const email = 'we@love2.dev';
+  const password = 'love2dev';
   const passwordHash = await hashPassword(password);
 
   const [user] = await db
@@ -60,7 +60,7 @@ async function seed() {
   const [team] = await db
     .insert(teams)
     .values({
-      name: 'Test Team',
+      name: 'Love2.dev',
     })
     .returning();
 

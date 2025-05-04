@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { CircleIcon, Home, LogOut, Menu, X } from 'lucide-react';
+import { Sunrise, Home, LogOut, Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -93,7 +93,7 @@ export function Header() {
         <div className="flex justify-between items-center">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <CircleIcon className="h-6 w-6 text-orange-500" />
+              <Sunrise className="h-6 w-6 text-orange-500" />
               <span className="ml-2 text-xl font-semibold text-foreground">MCP.Day</span>
             </Link>
 

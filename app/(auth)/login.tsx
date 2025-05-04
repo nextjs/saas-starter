@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CircleIcon, Loader2 } from 'lucide-react';
+import { Sunrise, Loader2 } from 'lucide-react';
 import { signIn, signUp } from './actions';
 import { ActionState } from '@/lib/auth/middleware';
 
@@ -23,7 +23,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   return (
     <div className="sm:mx-auto sm:w-full sm:max-w-md">
       <div className="flex justify-center">
-        <CircleIcon className="h-8  w-8 text-orange-500" /> {/* Logo */}
+        <Sunrise className="h-8  w-8 text-orange-500" /> {/* Logo */}
         <h1 className="ml-2 text-3xl font-bold text-foreground">MCP.Day</h1>
       </div>
       <h2 className="mt-6 text-center text-3xl font-extrabold text-foreground">
