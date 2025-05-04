@@ -39,11 +39,25 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ApiKey } from '@/lib/db/schema';
-import { Loader2, PlusCircle, Key, Trash2, Copy, CheckCircle, AlertCircle } from 'lucide-react';
+import { 
+  PlusCircle, 
+  Loader2, 
+  Copy, 
+  CheckCircle, 
+  Trash2, 
+  AlertCircle,
+  CalendarIcon
+} from 'lucide-react';
 import useSWR, { mutate } from 'swr';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { toast } from "sonner";
+import { 
+  Popover,
+  PopoverContent,
+  PopoverTrigger 
+} from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -212,12 +226,33 @@ export default function ApiKeysPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="expiry">Expiry Date (Optional)</Label>
-                    <Input
-                      id="expiry"
-                      type="date"
-                      value={newKeyExpiry}
-                      onChange={(e) => setNewKeyExpiry(e.target.value)}
-                    />
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left font-normal"
+                        >
+                          {newKeyExpiry ? (
+                            format(new Date(newKeyExpiry), 'yyyy-MM-dd')
+                          ) : (
+                            <span className="text-muted-foreground">Select Expiry Date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={newKeyExpiry ? new Date(newKeyExpiry) : undefined}
+                          onSelect={(date) => setNewKeyExpiry(date ? format(date, 'yyyy-MM-dd') : '')}
+                          initialFocus
+                          disabled={(date) => date < new Date()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <p className="text-xs text-muted-foreground">
+                      If not set, the key will never expire
+                    </p>
                   </div>
                 </div>
                 <DialogFooter>
