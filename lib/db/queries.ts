@@ -130,5 +130,5 @@ export async function getTeamForUser() {
 }
 
 export async function getPlans() {
-  return await db.select().from(plans).where(eq(plans.active, true)).orderBy(plans.price);
+  return await db.select().from(plans).where(eq(plans.isActive, true)).orderBy(plans.price);
 }
