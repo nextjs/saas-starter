@@ -20,6 +20,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 // This is sample data.
 const data = {
@@ -27,7 +28,7 @@ const data = {
     {
       name: "Some team",
       avatar: "",
-    }
+    },
   ],
 };
 
@@ -45,7 +46,7 @@ export const navItems = {
         {
           title: "Manage API Keys",
           url: "#",
-        }
+        },
       ],
     },
     {
@@ -56,10 +57,10 @@ export const navItems = {
         {
           title: "History",
           url: "#",
-        }
+        },
       ],
     },
-  ]
+  ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -72,7 +73,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={navItems.navMain} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser/>
+        <NavUser />
+        <ThemeToggle />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -35,7 +35,7 @@ export default function DashboardLayout({
         <div className="flex-1 flex">
           {/* Main content */}
           <SidebarProvider>
-            <AppSidebar /> 
+            <AppSidebar />
             <SidebarInset>
               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                 <div className="flex items-center gap-2 px-4">
@@ -56,16 +56,16 @@ export default function DashboardLayout({
                   </Breadcrumb>
                 </div>
               </header>
-              <main className="flex-1 overflow-y-auto bg-white p-6">
+              <main className="flex-1 overflow-y-auto bg-background p-6">
                 {children}
               </main>
             </SidebarInset>
           </SidebarProvider>
 
-          
+
         </div>
       </div>
     </div>
-    
+
   );
 }

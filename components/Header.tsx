@@ -10,11 +10,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { signOut } from '@/app/(auth)/actions';
 import { User } from '@/lib/db/schema';
 import useSWR from 'swr';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -59,6 +61,8 @@ export function UserMenu() {
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
@@ -75,14 +79,14 @@ export function UserMenu() {
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  
+
   const navItems = [
     { href: '/blog', label: 'Blog' },
     { href: '/about', label: 'About' },
     { href: '/docs', label: 'Docs' },
-    { href: '/pricing', label: 'Pricing' }
+    { href: '/pricing', label: 'Pricing' },
   ];
-  
+
   return (
     <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -90,9 +94,9 @@ export function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <CircleIcon className="h-6 w-6 text-orange-500" />
-              <span className="ml-2 text-xl font-semibold text-gray-900">MCP.Day</span>
+              <span className="ml-2 text-xl font-semibold text-foreground">MCP.Day</span>
             </Link>
-            
+
             {/* 桌面导航 */}
             <nav className="hidden md:ml-10 md:flex md:space-x-8">
               {navItems.map((item) => (
@@ -102,7 +106,7 @@ export function Header() {
                   className={`text-sm font-medium ${
                     pathname === item.href
                       ? 'text-orange-500'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {item.label}
@@ -110,12 +114,12 @@ export function Header() {
               ))}
             </nav>
           </div>
-          
+
           {/* 移动端菜单按钮 */}
           <div className="flex md:hidden">
             <button
               type="button"
-              className="text-gray-500 hover:text-gray-700"
+              className="text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               <span className="sr-only">打开菜单</span>
@@ -126,13 +130,15 @@ export function Header() {
               )}
             </button>
           </div>
-          
+
           {/* 用户菜单 */}
           <div className="hidden md:flex items-center space-x-4">
             <UserMenu />
+            <ThemeToggle />
           </div>
+         
         </div>
-        
+
         {/* 移动端导航菜单 */}
         {mobileMenuOpen && (
           <div className="md:hidden pt-2 pb-4">
@@ -144,7 +150,7 @@ export function Header() {
                   className={`block py-2 text-base font-medium ${
                     pathname === item.href
                       ? 'text-orange-500'
-                      : 'text-gray-700 hover:text-gray-900'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -152,8 +158,9 @@ export function Header() {
                 </Link>
               ))}
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-200">
+            <div className="mt-4 pt-4 border-t border-border">
               <UserMenu />
+              <ThemeToggle />
             </div>
           </div>
         )}

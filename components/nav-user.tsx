@@ -13,6 +13,7 @@ import useSWR from "swr"
 import { signOut } from "@/app/(auth)/actions"
 import { useRouter } from "next/navigation"
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 import {
   Avatar,
