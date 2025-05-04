@@ -18,6 +18,8 @@ import { User } from '@/lib/db/schema';
 import useSWR from 'swr';
 import { ThemeToggle } from '@/components/theme-toggle';
 
+import { SITE } from '@/lib/constants';
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export function UserMenu() {
@@ -94,7 +96,7 @@ export function Header() {
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
               <Sunrise className="h-6 w-6 text-orange-500" />
-              <span className="ml-2 text-xl font-semibold text-foreground">MCP.Day</span>
+              <span className="ml-2 text-xl font-semibold text-foreground">{SITE.NAME}</span>
             </Link>
 
             {/* 桌面导航 */}
@@ -122,7 +124,7 @@ export function Header() {
               className="text-muted-foreground hover:text-foreground"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <span className="sr-only">打开菜单</span>
+              <span className="sr-only">Open Menu</span>
               {mobileMenuOpen ? (
                 <X className="h-6 w-6" />
               ) : (

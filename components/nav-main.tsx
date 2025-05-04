@@ -18,6 +18,8 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 
+import Link from "next/link";
+
 export function NavMain({
   items,
 }: {

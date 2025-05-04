@@ -21,6 +21,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { NAVIGATION } from "@/lib/constants";
 
 // This is sample data.
 const data = {
@@ -32,36 +33,6 @@ const data = {
   ],
 };
 
-export const navItems = {
-  navMain: [
-    {
-      title: "API Keys",
-      url: "#",
-      icon: Key,
-      items: [
-        {
-          title: "Overview",
-          url: "#",
-        },
-        {
-          title: "Manage API Keys",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Usage",
-      url: "#",
-      icon: ChartLine,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
@@ -70,7 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={navItems.navMain} />
+        <NavMain items={NAVIGATION.navMain} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

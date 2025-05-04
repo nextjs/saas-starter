@@ -1,4 +1,4 @@
-'use server';
+'use server'; // 声明这是服务器端代码
 
 import { z } from 'zod';
 import { and, eq, sql } from 'drizzle-orm';
@@ -26,6 +26,13 @@ import {
   validatedActionWithUser
 } from '@/lib/auth/middleware';
 
+/**
+ * 记录用户活动
+ * @param teamId 团队ID
+ * @param userId 用户ID
+ * @param type 活动类型
+ * @param ipAddress IP地址
+ */
 async function logActivity(
   teamId: number | null | undefined,
   userId: number,
@@ -44,14 +51,20 @@ async function logActivity(
   await db.insert(activityLogs).values(newActivity);
 }
 
+// 登录表单验证模式
 const signInSchema = z.object({
   email: z.string().email().min(3).max(255),
   password: z.string().min(8).max(100)
 });
 
+/**
+ * 用户登录操作
+ * 验证用户凭据并创建会话
+ */
 export const signIn = validatedAction(signInSchema, async (data, formData) => {
   const { email, password } = data;
 
+  // 查询用户及其关联的团队
   const userWithTeam = await db
     .select({
       user: users,
@@ -63,6 +76,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     .where(eq(users.email, email))
     .limit(1);
 
+  // 用户不存在
   if (userWithTeam.length === 0) {
     return {
       error: 'Invalid email or password. Please try again.',
@@ -73,11 +87,13 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 
   const { user: foundUser, team: foundTeam } = userWithTeam[0];
 
+  // 验证密码
   const isPasswordValid = await comparePasswords(
     password,
     foundUser.passwordHash
   );
 
+  // 密码不正确
   if (!isPasswordValid) {
     return {
       error: 'Invalid email or password. Please try again.',
@@ -86,11 +102,13 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     };
   }
 
+  // 创建会话并记录登录活动
   await Promise.all([
     setSession(foundUser),
     logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN)
   ]);
 
+  // 处理重定向，支持结账流程
   const redirectTo = formData.get('redirect') as string | null;
   if (redirectTo === 'checkout') {
     const priceId = formData.get('priceId') as string;
@@ -100,15 +118,21 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
   redirect('/dashboard');
 });
 
+// 注册表单验证模式
 const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
   inviteId: z.string().optional()
 });
 
+/**
+ * 用户注册操作
+ * 创建新用户、团队，并处理邀请流程
+ */
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const { email, password, inviteId } = data;
 
+  // 检查邮箱是否已被使用
   const existingUser = await db
     .select()
     .from(users)
@@ -123,12 +147,14 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     };
   }
 
+  // 密码加密
   const passwordHash = await hashPassword(password);
 
+  // 创建新用户
   const newUser: NewUser = {
     email,
     passwordHash,
-    role: 'owner' // Default role, will be overridden if there's an invitation
+    role: 'owner' // 默认角色，如果有邀请会被覆盖
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
@@ -146,7 +172,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   let createdTeam: typeof teams.$inferSelect | null = null;
 
   if (inviteId) {
-    // Check if there's a valid invitation
+    // 处理邀请流程
     const [invitation] = await db
       .select()
       .from(invitations)
@@ -163,6 +189,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       teamId = invitation.teamId;
       userRole = invitation.role;
 
+      // 更新邀请状态为已接受
       await db
         .update(invitations)
         .set({ status: 'accepted' })
@@ -170,6 +197,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
       await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
 
+      // 获取团队信息
       [createdTeam] = await db
         .select()
         .from(teams)
@@ -179,7 +207,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
       return { error: 'Invalid or expired invitation.', email, password };
     }
   } else {
-    // Create a new team if there's no invitation
+    // 没有邀请时创建新团队
     const newTeam: NewTeam = {
       name: `${email}'s Team`
     };
@@ -200,18 +228,21 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
   }
 
+  // 创建团队成员关系
   const newTeamMember: NewTeamMember = {
     userId: createdUser.id,
     teamId: teamId,
     role: userRole
   };
 
+  // 并行处理多个操作
   await Promise.all([
     db.insert(teamMembers).values(newTeamMember),
     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
     setSession(createdUser)
   ]);
 
+  // 处理重定向，支持结账流程
   const redirectTo = formData.get('redirect') as string | null;
   if (redirectTo === 'checkout') {
     const priceId = formData.get('priceId') as string;
@@ -221,6 +252,10 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   redirect('/dashboard');
 });
 
+/**
+ * 用户登出操作
+ * 记录登出活动并删除会话cookie
+ */
 export async function signOut() {
   const user = (await getUser()) as User;
   const userWithTeam = await getUserWithTeam(user.id);
@@ -228,17 +263,23 @@ export async function signOut() {
   (await cookies()).delete('session');
 }
 
+// 更新密码表单验证模式
 const updatePasswordSchema = z.object({
   currentPassword: z.string().min(8).max(100),
   newPassword: z.string().min(8).max(100),
   confirmPassword: z.string().min(8).max(100)
 });
 
+/**
+ * 更新用户密码操作
+ * 验证当前密码并设置新密码
+ */
 export const updatePassword = validatedActionWithUser(
   updatePasswordSchema,
   async (data, _, user) => {
     const { currentPassword, newPassword, confirmPassword } = data;
 
+    // 验证当前密码
     const isPasswordValid = await comparePasswords(
       currentPassword,
       user.passwordHash
@@ -253,6 +294,7 @@ export const updatePassword = validatedActionWithUser(
       };
     }
 
+    // 确保新密码与当前密码不同
     if (currentPassword === newPassword) {
       return {
         currentPassword,
@@ -262,6 +304,7 @@ export const updatePassword = validatedActionWithUser(
       };
     }
 
+    // 确保新密码与确认密码一致
     if (confirmPassword !== newPassword) {
       return {
         currentPassword,
@@ -271,6 +314,7 @@ export const updatePassword = validatedActionWithUser(
       };
     }
 
+    // 更新密码并记录活动
     const newPasswordHash = await hashPassword(newPassword);
     const userWithTeam = await getUserWithTeam(user.id);
 
@@ -288,15 +332,21 @@ export const updatePassword = validatedActionWithUser(
   }
 );
 
+// 删除账户表单验证模式
 const deleteAccountSchema = z.object({
   password: z.string().min(8).max(100)
 });
 
+/**
+ * 删除用户账户操作
+ * 验证密码并执行软删除
+ */
 export const deleteAccount = validatedActionWithUser(
   deleteAccountSchema,
   async (data, _, user) => {
     const { password } = data;
 
+    // 验证密码
     const isPasswordValid = await comparePasswords(password, user.passwordHash);
     if (!isPasswordValid) {
       return {
@@ -313,15 +363,16 @@ export const deleteAccount = validatedActionWithUser(
       ActivityType.DELETE_ACCOUNT
     );
 
-    // Soft delete
+    // 软删除用户账户
     await db
       .update(users)
       .set({
         deletedAt: sql`CURRENT_TIMESTAMP`,
-        email: sql`CONCAT(email, '-', id, '-deleted')` // Ensure email uniqueness
+        email: sql`CONCAT(email, '-', id, '-deleted')` // 确保邮箱唯一性
       })
       .where(eq(users.id, user.id));
 
+    // 移除团队成员关系
     if (userWithTeam?.teamId) {
       await db
         .delete(teamMembers)
@@ -333,22 +384,28 @@ export const deleteAccount = validatedActionWithUser(
         );
     }
 
+    // 删除会话cookie并重定向到登录页
     (await cookies()).delete('session');
     redirect('/sign-in');
   }
 );
 
+// 更新账户信息表单验证模式
 const updateAccountSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
   email: z.string().email('Invalid email address')
 });
 
+/**
+ * 更新用户账户信息操作
+ */
 export const updateAccount = validatedActionWithUser(
   updateAccountSchema,
   async (data, _, user) => {
     const { name, email } = data;
     const userWithTeam = await getUserWithTeam(user.id);
 
+    // 更新用户信息并记录活动
     await Promise.all([
       db.update(users).set({ name, email }).where(eq(users.id, user.id)),
       logActivity(userWithTeam?.teamId, user.id, ActivityType.UPDATE_ACCOUNT)
@@ -358,10 +415,14 @@ export const updateAccount = validatedActionWithUser(
   }
 );
 
+// 移除团队成员表单验证模式
 const removeTeamMemberSchema = z.object({
   memberId: z.number()
 });
 
+/**
+ * 移除团队成员操作
+ */
 export const removeTeamMember = validatedActionWithUser(
   removeTeamMemberSchema,
   async (data, _, user) => {
@@ -372,6 +433,7 @@ export const removeTeamMember = validatedActionWithUser(
       return { error: 'User is not part of a team' };
     }
 
+    // 删除团队成员关系
     await db
       .delete(teamMembers)
       .where(
@@ -381,6 +443,7 @@ export const removeTeamMember = validatedActionWithUser(
         )
       );
 
+    // 记录移除团队成员活动
     await logActivity(
       userWithTeam.teamId,
       user.id,
@@ -391,11 +454,15 @@ export const removeTeamMember = validatedActionWithUser(
   }
 );
 
+// 邀请团队成员表单验证模式
 const inviteTeamMemberSchema = z.object({
   email: z.string().email('Invalid email address'),
   role: z.enum(['member', 'owner'])
 });
 
+/**
+ * 邀请团队成员操作
+ */
 export const inviteTeamMember = validatedActionWithUser(
   inviteTeamMemberSchema,
   async (data, _, user) => {
@@ -406,6 +473,7 @@ export const inviteTeamMember = validatedActionWithUser(
       return { error: 'User is not part of a team' };
     }
 
+    // 检查用户是否已经是团队成员
     const existingMember = await db
       .select()
       .from(users)
@@ -419,7 +487,7 @@ export const inviteTeamMember = validatedActionWithUser(
       return { error: 'User is already a member of this team' };
     }
 
-    // Check if there's an existing invitation
+    // 检查是否已经发送过邀请
     const existingInvitation = await db
       .select()
       .from(invitations)
@@ -436,7 +504,7 @@ export const inviteTeamMember = validatedActionWithUser(
       return { error: 'An invitation has already been sent to this email' };
     }
 
-    // Create a new invitation
+    // 创建新邀请
     await db.insert(invitations).values({
       teamId: userWithTeam.teamId,
       email,
@@ -445,13 +513,14 @@ export const inviteTeamMember = validatedActionWithUser(
       status: 'pending'
     });
 
+    // 记录邀请团队成员活动
     await logActivity(
       userWithTeam.teamId,
       user.id,
       ActivityType.INVITE_TEAM_MEMBER
     );
 
-    // TODO: Send invitation email and include ?inviteId={id} to sign-up URL
+    // TODO: 发送邀请邮件，并在注册URL中包含?inviteId={id}
     // await sendInvitationEmail(email, userWithTeam.team.name, role)
 
     return { success: 'Invitation sent successfully' };

@@ -15,6 +15,13 @@
       "when": 1746362546210,
       "tag": "0001_unknown_tiger_shark",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1746373273440,
+      "tag": "0002_cooing_junta",
+      "breakpoints": true
     }
   ]
 }

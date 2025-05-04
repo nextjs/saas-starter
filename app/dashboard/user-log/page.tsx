@@ -9,7 +9,9 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
-  Logs,
+  Key,
+  Delete,
+  DollarSign,
   type LucideIcon,
 } from "lucide-react";
 import { ActivityType } from "@/lib/db/schema";
@@ -26,6 +28,9 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
   [ActivityType.INVITE_TEAM_MEMBER]: Mail,
   [ActivityType.ACCEPT_INVITATION]: CheckCircle,
+  [ActivityType.CREATE_API_KEY]: Key,
+  [ActivityType.REVOKE_API_KEY]: Delete,
+  [ActivityType.API_KEY_USED]: DollarSign,
 };
 
 function getRelativeTime(date: Date) {
@@ -64,6 +69,12 @@ function formatAction(action: ActivityType): string {
       return "You invited a team member";
     case ActivityType.ACCEPT_INVITATION:
       return "You accepted an invitation";
+    case ActivityType.CREATE_API_KEY:
+      return "You created an API key";
+    case ActivityType.REVOKE_API_KEY:
+      return "You revoked an API key";
+    case ActivityType.API_KEY_USED:
+      return "An API key was used";
     default:
       return "Unknown action occurred";
   }

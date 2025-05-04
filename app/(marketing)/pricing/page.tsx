@@ -3,7 +3,7 @@ import { Check } from 'lucide-react';
 import { SubmitButton } from './submit-button';
 import { getPlans } from '@/lib/db/queries';
 
-// 价格每天刷新一次， Next.js ISR function
+// 价格每天刷新一次， Next.js ISR function， 1 day = 86400 seconds
 export const revalidate = 86400;
 
 export default async function PricingPage() {
@@ -71,7 +71,7 @@ function PricingCard({
       
       <div className="mb-6">
         <p className="text-3xl font-bold text-foreground">
-          ¥{price}
+          ${price}
         </p>
         <p className="text-sm text-muted-foreground">
           per user / {interval}
