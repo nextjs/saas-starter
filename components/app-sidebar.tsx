@@ -23,11 +23,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "Someone",
-    email: "someone@example.com",
-    avatar: "",
-  },
   teams: [
     {
       name: "Some team",
@@ -61,21 +56,6 @@ export const navItems = {
         {
           title: "History",
           url: "#",
-        }
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/dashboard/general",
-        },
-        {
-          title: "User Log",
-          url: "/dashboard/user-log",
         }
       ],
     },

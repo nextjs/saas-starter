@@ -136,7 +136,7 @@ app/
 │   ├── page.tsx - 团队管理页面
 │   ├── general/ - 通用设置页面
 │   ├── activity/ - 活动日志页面
-│   ├── security/ - 安全设置页面
+│   ├── account/ - 账户设置页面（包含账户信息和安全设置）
 │   └── layout.tsx - 仪表板专用布局（无 Header 和 Footer）
 │
 ├── api/ - API 路由

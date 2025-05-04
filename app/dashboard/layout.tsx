@@ -26,37 +26,13 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const navItems = [
-    { href: '/dashboard', icon: Users, label: 'Team' },
-    { href: '/dashboard/general', icon: Settings, label: 'General' },
-    { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
-    { href: '/dashboard/security', icon: Shield, label: 'Security' }
-  ];
+  const pathname = usePathname();
 
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-1 flex flex-col">
-        {/* Mobile header */}
-        <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
-          <div className="flex items-center">
-            <span className="font-medium">Settings</span>
-          </div>
-          <Button
-            className="-mr-3"
-            variant="ghost"
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          >
-            <Menu className="h-6 w-6" />
-            <span className="sr-only">Toggle sidebar</span>
-          </Button>
-        </div>
-
-        <div className="flex flex-1 overflow-hidden">
-
-
+        <div className="flex-1 flex">
           {/* Main content */}
           <SidebarProvider>
             <AppSidebar /> 

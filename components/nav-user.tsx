@@ -2,16 +2,17 @@
 
 import { useState, useEffect } from "react"
 import {
-  BadgeCheck,
-  Bell,
+  User,
+  Users,
   ChevronsUpDown,
-  CreditCard,
+  Logs,
   LogOut,
   Sparkles,
 } from "lucide-react"
 import useSWR from "swr"
 import { signOut } from "@/app/(auth)/actions"
 import { useRouter } from "next/navigation"
+import Link from "next/link";
 
 import {
   Avatar,
@@ -146,16 +147,25 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+                <User />
+                <Link
+                  href="/dashboard/account"
+                  className="flex w-full items-center"
+                >
+                  Account
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
-                Billing
+                <Users />
+                <Link href="/dashboard/team" className="flex w-full items-center">
+                  Team
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
+                <Logs />
+                <Link href="/dashboard/user-log" className="flex w-full items-center">
+                  User Logs
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
