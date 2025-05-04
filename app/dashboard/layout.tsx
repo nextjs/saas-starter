@@ -5,6 +5,21 @@ import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { AppSidebar } from '@/components/app-sidebar';
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger
+} from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbList
+} from '@/components/ui/breadcrumb';
 
 export default function DashboardLayout({
   children
@@ -40,38 +55,41 @@ export default function DashboardLayout({
         </div>
 
         <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <aside
-            className={`w-64 bg-white lg:bg-gray-50 border-r border-gray-200 lg:block ${
-              isSidebarOpen ? 'block' : 'hidden'
-            } lg:relative absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-              isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-            }`}
-          >
-            <nav className="h-full overflow-y-auto p-4">
-              {navItems.map((item) => (
-                <Link key={item.href} href={item.href} passHref>
-                  <Button
-                    variant={pathname === item.href ? 'secondary' : 'ghost'}
-                    className={`shadow-none my-1 w-full justify-start ${
-                      pathname === item.href ? 'bg-gray-100' : ''
-                    }`}
-                    onClick={() => setIsSidebarOpen(false)}
-                  >
-                    <item.icon className="h-4 w-4 mr-2" />
-                    {item.label}
-                  </Button>
-                </Link>
-              ))}
-            </nav>
-          </aside>
+
 
           {/* Main content */}
-          <main className="flex-1 overflow-y-auto bg-white p-6">
-            {children}
-          </main>
+          <SidebarProvider>
+            <AppSidebar /> 
+            <SidebarInset>
+              <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                <div className="flex items-center gap-2 px-4">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink href="/">
+                          Home
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage>{pathname.split('/').pop()}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+              </header>
+              <main className="flex-1 overflow-y-auto bg-white p-6">
+                {children}
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+
+          
         </div>
       </div>
     </div>
+    
   );
 }

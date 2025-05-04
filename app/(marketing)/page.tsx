@@ -10,17 +10,17 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+                Build Your MCP SaaS
+                <span className="block text-orange-500">in ONE DAY</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
+                Ship your MCP SaaS product in record time with our powerful,
                 ready-to-use template. Packed with modern technologies and
                 essential integrations.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
-                  href="https://vercel.com/templates/next.js/next-js-saas-starter"
+                  href="https://github.com/anson2dev/mcp-saas-kit"
                   target="_blank"
                 >
                   <Button
@@ -70,7 +70,7 @@ export default function HomePage() {
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
+                  Supabase Postgres and Drizzle ORM
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
                   Robust database solution with an intuitive ORM for efficient
@@ -102,16 +102,16 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
+                Ready to launch your MCP SaaS?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
+                Our template provides everything you need to get your MCP SaaS up
                 and running quickly. Don't waste time on boilerplate - focus on
                 what makes your product unique.
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a href="https://github.com/nextjs/saas-starter" target="_blank">
+              <a href="https://github.com/anson2dev/mcp-saas-kit" target="_blank">
                 <Button
                   size="lg"
                   variant="outline"

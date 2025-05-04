@@ -5,8 +5,8 @@ import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'MCP.Day - Ship your MCP SaaS in ond day',
-  description: 'Build your SaaS app with Next.js, Postgres and Stripe in one day'
+  title: 'MCP.Day - Ship your MCP SaaS in one day',
+  description: 'Build your MCP SaaS app with Next.js, Postgres and Stripe in one day'
 };
 
 export const viewport: Viewport = {
