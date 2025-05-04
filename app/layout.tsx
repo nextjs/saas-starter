@@ -5,8 +5,8 @@ import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'MCP.Day - Ship your MCP SaaS in ond day',
+  description: 'Build your SaaS app with Next.js, Postgres and Stripe in one day'
 };
 
 export const viewport: Viewport = {
@@ -29,14 +29,14 @@ export default function RootLayout({
         <SWRConfig
           value={{
             fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
               '/api/user': getUser(),
               '/api/team': getTeamForUser()
             }
           }}
         >
-          {children}
+          <main className="flex-1">
+            {children}
+          </main>
         </SWRConfig>
       </body>
     </html>

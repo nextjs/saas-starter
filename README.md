@@ -116,3 +116,32 @@ While this template is intentionally minimal and to be used as a learning resour
 - https://shipfa.st
 - https://makerkit.dev
 - https://zerotoshipped.com
+
+## 目录结构
+
+app/
+├── (marketing)/ - 营销相关页面
+│   ├── page.tsx - 首页
+│   ├── pricing/ - 定价页面
+│   ├── blog/ - 博客页面
+│   ├── docs/ - 文档页面
+│   └── layout.tsx - 营销页面共享布局（包含 Header 和 Footer）
+│
+├── (auth)/ - 认证相关页面
+│   ├── sign-in/ - 登录页面
+│   ├── sign-up/ - 注册页面
+│   └── layout.tsx - 认证页面共享布局
+│
+├── dashboard/ - 仪表板（需登录访问）
+│   ├── page.tsx - 团队管理页面
+│   ├── general/ - 通用设置页面
+│   ├── activity/ - 活动日志页面
+│   ├── security/ - 安全设置页面
+│   └── layout.tsx - 仪表板专用布局（无 Header 和 Footer）
+│
+├── api/ - API 路由
+│   ├── user/ - 用户相关 API
+│   ├── team/ - 团队相关 API
+│   └── stripe/ - 支付相关 API
+│
+└── layout.tsx - 全局根布局（基础结构，不包含 Header 和 Footer）
