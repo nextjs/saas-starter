@@ -46,7 +46,18 @@ export const NAVIGATION = {
     { name: 'Contact', href: '/contact' },
   ],
     navMain: [
-    {
+      {
+        title: "MCP playground",
+        url: "#",
+        icon: Key,
+        items: [
+          {
+            title: "Try our MCP",
+            url: "/dashboard/playground",
+          }
+        ],
+      },
+      {
       title: "API Keys",
       url: "#",
       icon: Key,

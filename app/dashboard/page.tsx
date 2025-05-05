@@ -86,7 +86,7 @@ function SubscriptionSkeleton() {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>团队订阅</CardTitle>
+        <CardTitle>Team Subscription</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
@@ -105,7 +105,7 @@ function TeamMembersSkeleton() {
   return (
     <Card className="mb-6">
       <CardHeader>
-        <CardTitle>团队成员</CardTitle>
+        <CardTitle>Team Members</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -190,7 +190,7 @@ function ActivityLogSkeleton() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>最近活动</CardTitle>
+        <CardTitle>Recent Activity</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">

@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { CircleIcon } from 'lucide-react';
+import { Sunrise } from 'lucide-react';
 
 export default function NotFound() {
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-background">
       <div className="max-w-md space-y-8 p-4 text-center">
         <div className="flex justify-center">
-          <CircleIcon className="size-12 text-orange-500" />
+          <Sunrise className="size-12 text-orange-500" />
         </div>
         <h1 className="text-4xl font-bold text-foreground tracking-tight">
           Page Not Found

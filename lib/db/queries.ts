@@ -311,15 +311,15 @@ export async function getTeamForUser() {
 }
 
 /**
- * 获取所有活跃的计划
+ * 获取所有活跃的订阅计划
  * 
- * @returns 返回按价格排序的活跃计划列表
+ * @returns 返回按价格排序的活跃订阅计划列表
  */
 export async function getPlans() {
-  // 查询所有活跃的计划，按价格升序排列
+  // 查询所有活跃的订阅计划，按价格升序排列
   return await db
     .select()
     .from(plans)
-    .where(eq(plans.isActive, true)) // 只选择活跃的计划
+    .where(eq(plans.isActive, true)) // 只选择活跃的订阅计划
     .orderBy(plans.price); // 按价格排序
 }

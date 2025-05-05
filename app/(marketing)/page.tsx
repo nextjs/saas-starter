@@ -1,23 +1,37 @@
+/**
+ * 首页组件
+ * 网站的主页，展示产品特点和主要功能
+ * 包含英雄区域、特性展示和号召性用语部分
+ */
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CreditCard, Database } from 'lucide-react';
 import { Terminal } from '@/components/Terminal';
 
+/**
+ * 首页组件
+ * 展示网站的主要内容和营销信息
+ */
 export default function HomePage() {
   return (
     <main>
+      {/* 英雄区域 - 展示主标题、简短描述和行动按钮 */}
       <section className="py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+            {/* 左侧：文本内容 */}
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
+              {/* 主标题 */}
               <h1 className="text-4xl font-bold text-foreground tracking-tight sm:text-5xl md:text-6xl">
                 Build Your MCP SaaS
                 <span className="block text-orange-500">in ONE DAY</span>
               </h1>
+              {/* 简短描述 */}
               <p className="mt-3 text-base text-muted-foreground sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
                 Ship your MCP SaaS product in record time with our powerful,
                 ready-to-use template. Packed with modern technologies and
                 essential integrations.
               </p>
+              {/* 行动按钮 */}
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
                   href="https://github.com/anson2dev/mcp-saas-kit"
@@ -34,6 +48,7 @@ export default function HomePage() {
                 </a>
               </div>
             </div>
+            {/* 右侧：终端演示 */}
             <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
               <Terminal />
             </div>
