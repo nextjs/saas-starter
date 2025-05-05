@@ -112,3 +112,18 @@ export const PLANS = [
  * API_PREFIX 不能超过3个字符
  */
 export const API_PREFIX = 'mdy';
+
+/**
+ * MCP配置示例
+ */
+export const MCP_CONFIG_EXAMPLE = `{
+  "mcpServers": {
+    "mcp-hello-world": {
+      "command": "npx",
+      "args": [
+        "mcp-hello-world",
+        "--api-key=your-hello-world-api-key"
+      ]
+    }
+  }
+}`;
