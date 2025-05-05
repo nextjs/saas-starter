@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull, between, like, sql, SQL } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, plans, ActivityType } from './schema';
+import { activityLogs, teamMembers, teams, users, plans, ActivityType, apiUsage, apiKeys } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -322,4 +322,89 @@ export async function getPlans() {
     .from(plans)
     .where(eq(plans.isActive, true)) // 只选择活跃的订阅计划
     .orderBy(plans.price); // 按价格排序
+}
+
+/**
+ * 获取用户API使用记录
+ * 
+ * @param options 查询选项
+ * @param options.page 页码，默认为1
+ * @param options.limit 每页记录数，默认为10
+ * @returns API使用记录列表
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getUserApiUsage(options?: {
+  page?: number;
+  limit?: number;
+}) {
+  // 获取当前登录用户
+  const user = await getUser();
+  // 如果用户未登录，抛出错误
+  if (!user) {
+    throw new Error('用户未认证');
+  }
+
+  // 获取用户所属团队
+  const userWithTeam = await getUserWithTeam(user.id);
+  if (!userWithTeam?.teamId) {
+    throw new Error('用户未关联团队');
+  }
+
+  // 解构查询选项，设置默认值
+  const {
+    page = 1, // 默认第1页
+    limit = 10, // 默认每页10条
+  } = options || {};
+
+  // 计算分页偏移量
+  const offset = (page - 1) * limit;
+
+  // 执行查询并返回结果
+  return await db
+    .select({
+      id: apiUsage.id,
+      endpoint: apiUsage.endpoint,
+      creditsConsumed: apiUsage.creditsConsumed,
+      executionTimeMs: apiUsage.executionTimeMs,
+      responseStatus: apiUsage.responseStatus,
+      ipAddress: apiUsage.ipAddress,
+      timestamp: apiUsage.timestamp,
+      apiKeyName: apiKeys.name
+    })
+    .from(apiUsage)
+    .leftJoin(apiKeys, eq(apiUsage.apiKeyId, apiKeys.id))
+    .where(eq(apiUsage.teamId, userWithTeam.teamId))
+    .orderBy(desc(apiUsage.timestamp))
+    .limit(limit)
+    .offset(offset);
+}
+
+/**
+ * 获取用户API使用记录总数
+ * 
+ * @returns API使用记录总数
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getUserApiUsageCount() {
+  // 获取当前登录用户
+  const user = await getUser();
+  // 如果用户未登录，抛出错误
+  if (!user) {
+    throw new Error('用户未认证');
+  }
+
+  // 获取用户所属团队
+  const userWithTeam = await getUserWithTeam(user.id);
+  if (!userWithTeam?.teamId) {
+    throw new Error('用户未关联团队');
+  }
+
+  // 执行计数查询
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(apiUsage)
+    .where(eq(apiUsage.teamId, userWithTeam.teamId));
+
+  // 返回记录总数
+  return countResult[0]?.count || 0;
 }

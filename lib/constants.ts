@@ -1,4 +1,4 @@
-import { Key, ChartLine } from "lucide-react";
+import { Key, ChartLine, BookOpen } from 'lucide-react';
 
 /**
  * 网站基本信息
@@ -60,21 +60,25 @@ export const NAVIGATION = {
       {
       title: "API Keys",
       url: "#",
-      icon: Key,
+      icon: ChartLine,
       items: [
         {
           title: "Manage Keys",
           url: "/dashboard/apikeys",
-        }
+        },
+        {
+          title: "Usage",
+          url: "/dashboard/usage",
+        },
       ],
     },
     {
-      title: "Usage",
+      title: "Documentation",
       url: "#",
-      icon: ChartLine,
+      icon: BookOpen,
       items: [
         {
-          title: "History",
+          title: "Coming soon",
           url: "#",
         },
       ],

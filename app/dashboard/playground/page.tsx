@@ -108,6 +108,42 @@ export default function PlaygroundPage() {
     }
   };
 
+  // 检查MCP Server状态
+  const checkMCPServerStatus = async () => {
+    if (!apiKey) {
+      toast.error("请输入API Key");
+      return;
+    }
+
+    if (isKeyValid !== true) {
+      toast.error("请先验证API Key");
+      return;
+    }
+
+    setIsValidating(true);
+    try {
+      const res = await fetch("/api/mcp/status", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.status === "online") {
+        toast.success("MCP Server 状态正常");
+      } else {
+        toast.error(data.error || "MCP Server 连接失败");
+      }
+    } catch (error) {
+      console.error("检查MCP Server状态失败:", error);
+      toast.error("MCP Server 连接失败");
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!input.trim() || isLoading) return;
@@ -341,17 +377,17 @@ export default function PlaygroundPage() {
                   </p>
                 </div>
 
-                {/* API Key检查按钮 */}
+                {/* MCP Server状态检查按钮 */}
                 <div className="pt-4">
                   <Button
                     type="button"
                     variant="secondary"
                     className="w-full"
-                    onClick={validateApiKey}
-                    disabled={isValidating || !apiKey}
+                    onClick={checkMCPServerStatus}
+                    disabled={isValidating || !apiKey || isKeyValid !== true}
                   >
                     <Shield className="mr-2 h-4 w-4" />
-                    {isValidating ? "正在检查API Key..." : "检查API Key状态"}
+                    {isValidating ? "正在检查MCP Server..." : "检查MCP Server状态"}
                   </Button>
                 </div>
               </TabsContent>

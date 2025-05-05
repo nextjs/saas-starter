@@ -49,6 +49,12 @@ export default function DashboardLayout({
                         </BreadcrumbLink>
                       </BreadcrumbItem>
                       <BreadcrumbSeparator className="hidden md:block" />
+                      <BreadcrumbItem className="hidden md:block">
+                        <BreadcrumbLink href="/dashboard">
+                          Dashboard
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator className="hidden md:block" />
                       <BreadcrumbItem>
                         <BreadcrumbPage>{pathname.split('/').pop()}</BreadcrumbPage>
                       </BreadcrumbItem>

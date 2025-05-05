@@ -1,14 +1,6 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  Key,
-  Command,
-  GalleryVerticalEnd,
-  Settings2,
-  ChartLine,
-} from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -32,7 +24,6 @@ const data = {
     },
   ],
 };
-
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
