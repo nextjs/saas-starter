@@ -25,6 +25,7 @@ import {
   validatedAction,
   validatedActionWithUser
 } from '@/lib/auth/middleware';
+import { addFreeCredits } from '@/lib/db/credits';
 
 /**
  * 记录用户活动
@@ -239,7 +240,9 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   await Promise.all([
     db.insert(teamMembers).values(newTeamMember),
     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
-    setSession(createdUser)
+    setSession(createdUser),
+    // 如果是新创建的团队（非邀请注册），添加免费积分
+    ...(inviteId ? [] : [addFreeCredits(teamId)])
   ]);
 
   // 处理重定向，支持结账流程
@@ -524,5 +527,56 @@ export const inviteTeamMember = validatedActionWithUser(
     // await sendInvitationEmail(email, userWithTeam.team.name, role)
 
     return { success: 'Invitation sent successfully' };
+  }
+);
+
+// 更新团队名称表单验证模式
+const updateTeamNameSchema = z.object({
+  teamName: z.string().min(1, '团队名称不能为空').max(100, '团队名称不能超过100个字符')
+});
+
+/**
+ * 更新团队名称操作
+ */
+export const updateTeamName = validatedActionWithUser(
+  updateTeamNameSchema,
+  async (data, _, user) => {
+    const { teamName } = data;
+    const userWithTeam = await getUserWithTeam(user.id);
+
+    if (!userWithTeam?.teamId) {
+      return { error: '用户不属于任何团队' };
+    }
+
+    // 检查用户是否为团队所有者
+    const [teamMember] = await db
+      .select()
+      .from(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.userId, user.id),
+          eq(teamMembers.teamId, userWithTeam.teamId)
+        )
+      )
+      .limit(1);
+
+    if (!teamMember || teamMember.role !== 'owner') {
+      return { error: '只有团队所有者可以修改团队名称' };
+    }
+
+    // 更新团队名称
+    await db
+      .update(teams)
+      .set({ name: teamName })
+      .where(eq(teams.id, userWithTeam.teamId));
+
+    // 记录活动
+    await logActivity(
+      userWithTeam.teamId,
+      user.id,
+      ActivityType.UPDATE_TEAM_NAME
+    );
+
+    return { success: '团队名称已更新' };
   }
 );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -53,6 +53,13 @@ type UsageStats = {
   percentUsed: number;
 };
 
+// 定义积分信息响应类型
+type CreditsResponse = {
+  teamId: number;
+  availableCredits: number;
+  creditBatches: any[];
+};
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ApiUsagePage() {
@@ -65,12 +72,37 @@ export default function ApiUsagePage() {
     fetcher
   );
 
-  // 临时模拟用户用量数据 (后续将从API获取)
-  const usageStats: UsageStats = {
-    usedCredits: 3050, // 已使用的积分
-    totalCredits: 5000, // 总积分额度
-    percentUsed: (3050 / 5000) * 100 // 使用百分比
-  };
+  // 使用SWR获取积分数据
+  const { data: creditsData, error: creditsError } = useSWR<CreditsResponse>(
+    '/api/credits',
+    fetcher
+  );
+
+  // 使用SWR获取API使用统计
+  const { data: usageStatsData } = useSWR('/api/usage/stats', fetcher);
+
+  // 计算用户用量统计
+  const usageStats: UsageStats = useMemo(() => {
+    // 如果有积分数据，使用真实数据
+    if (creditsData && usageStatsData) {
+      const usedCredits = usageStatsData.creditsUsed || 0;
+      const totalCredits = creditsData.availableCredits || 0;
+      const percentUsed = totalCredits > 0 ? (usedCredits / totalCredits) * 100 : 0;
+      
+      return {
+        usedCredits,
+        totalCredits,
+        percentUsed
+      };
+    }
+    
+    // 否则返回默认值
+    return {
+      usedCredits: 0,
+      totalCredits: 0,
+      percentUsed: 0
+    };
+  }, [creditsData, usageStatsData]);
 
   // 获取状态徽章颜色
   const getStatusBadgeColor = (status: number) => {
@@ -161,31 +193,48 @@ export default function ApiUsagePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">
-                已使用 {usageStats.usedCredits} / {usageStats.totalCredits} 积分
-              </span>
-              <span className="text-sm font-medium">
-                {usageStats.percentUsed.toFixed(1)}%
-              </span>
+          {creditsError ? (
+            <div className="text-center py-4 text-red-500">
+              <p>加载积分信息时出错</p>
+              <Button 
+                variant="outline" 
+                className="mt-2"
+                onClick={() => window.location.reload()}
+              >
+                重试
+              </Button>
             </div>
-            
-            <Progress 
-              value={usageStats.percentUsed} 
-              className={`h-2 ${getUsageProgressColor(usageStats.percentUsed)}`}
-            />
-            
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>剩余 {usageStats.totalCredits - usageStats.usedCredits} 积分</span>
-              {usageStats.percentUsed > 80 && (
-                <span className="flex items-center text-red-500">
-                  <AlertCircle className="h-3 w-3 mr-1" />
-                  积分使用量较高
+          ) : !creditsData ? (
+            <div className="flex justify-center items-center py-4">
+              <Loader2 className="h-6 w-6 animate-spin text-orange-500" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-sm font-medium">
+                  已使用 {usageStats.usedCredits} / {usageStats.totalCredits} 积分
                 </span>
-              )}
+                <span className="text-sm font-medium">
+                  {usageStats.percentUsed.toFixed(1)}%
+                </span>
+              </div>
+              
+              <Progress 
+                value={usageStats.percentUsed} 
+                className={`h-2 ${getUsageProgressColor(usageStats.percentUsed)}`}
+              />
+              
+              <div className="flex justify-between text-xs text-muted-foreground">
+                <span>剩余 {usageStats.totalCredits - usageStats.usedCredits} 积分</span>
+                {usageStats.percentUsed > 80 && (
+                  <span className="flex items-center text-red-500">
+                    <AlertCircle className="h-3 w-3 mr-1" />
+                    积分使用量较高
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
       

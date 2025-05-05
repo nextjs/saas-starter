@@ -5,6 +5,8 @@ import { setSession } from '@/lib/auth/session';
 import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/payments/stripe';
 import Stripe from 'stripe';
+import { getPlanByStripeProductId } from '@/lib/db/queries';
+import { addSubscriptionCredits } from '@/lib/db/credits';
 
 /**
  * 处理Stripe结账成功后的回调
@@ -110,6 +112,25 @@ export async function GET(request: NextRequest) {
         updatedAt: new Date(),
       })
       .where(eq(teams.id, userTeam[0].teamId));
+
+    // 查询数据库中的计划信息，获取积分数量
+    const dbPlan = await getPlanByStripeProductId(productId);
+
+    // 如果找到计划信息，添加订阅积分批次
+    if (dbPlan) {
+      const interval = plan.recurring?.interval || 'month';
+      await addSubscriptionCredits(
+        userTeam[0].teamId,
+        subscriptionId,
+        productId,
+        (plan.product as Stripe.Product).name,
+        dbPlan.creditsPerCycle,
+        interval as 'month' | 'year'
+      );
+      console.log(`Added ${dbPlan.creditsPerCycle} credits for team ${userTeam[0].teamId} (${(plan.product as Stripe.Product).name} plan)`);
+    } else {
+      console.error(`Plan not found in database for Stripe product: ${productId}`);
+    }
 
     // 设置用户会话
     await setSession(user[0]);

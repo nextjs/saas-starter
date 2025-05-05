@@ -8,8 +8,10 @@ import { Team } from '@/lib/db/schema';
 import {
   getTeamByStripeCustomerId,
   getUser,
-  updateTeamSubscription
+  updateTeamSubscription,
+  getPlanByStripeProductId
 } from '@/lib/db/queries';
+import { addSubscriptionCredits } from '@/lib/db/credits';
 
 /**
  * Stripe实例
@@ -180,14 +182,36 @@ export async function handleSubscriptionChange(
   // 处理活跃或试用状态
   if (status === 'active' || status === 'trialing') {
     // 获取计划信息
-    const plan = subscription.items.data[0]?.plan;
+    const stripePlan = subscription.items.data[0]?.plan;
+    const stripeProductId = stripePlan?.product as string;
+    const planName = (stripePlan?.product as Stripe.Product).name;
+    const interval = stripePlan?.interval || 'month';
+
     // 更新团队订阅信息
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,                // 更新订阅ID
-      stripeProductId: plan?.product as string,            // 更新产品ID
-      planName: (plan?.product as Stripe.Product).name,    // 更新计划名称
+      stripeProductId: stripeProductId,                    // 更新产品ID
+      planName: planName,                                  // 更新计划名称
       subscriptionStatus: status                           // 更新订阅状态
     });
+
+    // 查询数据库中的计划信息，获取积分数量
+    const dbPlan = await getPlanByStripeProductId(stripeProductId);
+
+    if (dbPlan) {
+      // 添加订阅积分批次
+      await addSubscriptionCredits(
+        team.id,
+        subscriptionId,
+        stripeProductId,
+        planName,
+        dbPlan.creditsPerCycle,
+        interval as 'month' | 'year'
+      );
+      console.log(`Added ${dbPlan.creditsPerCycle} credits for team ${team.id} (${planName} plan)`);
+    } else {
+      console.error(`Plan not found in database for Stripe product: ${stripeProductId}`);
+    }
   }
   // 处理取消或未付款状态
   else if (status === 'canceled' || status === 'unpaid') {

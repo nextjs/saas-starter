@@ -1,14 +1,14 @@
-import { desc, and, eq, isNull, between, like, sql, SQL } from 'drizzle-orm';
+import { desc, and, eq, isNull, between, like, sql, SQL, gt, gte, lte } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users, plans, ActivityType, apiUsage, apiKeys } from './schema';
+import { activityLogs, teamMembers, teams, users, plans, ActivityType, apiUsage, apiKeys, creditBatches } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
 /**
  * 获取当前登录用户信息
- * 
+ *
  * 通过验证会话Cookie获取当前登录用户
- * 
+ *
  * @returns 返回用户对象，如果未登录则返回null
  */
 export async function getUser() {
@@ -56,7 +56,7 @@ export async function getUser() {
 
 /**
  * 通过Stripe客户ID查找团队
- * 
+ *
  * @param customerId Stripe客户ID
  * @returns 返回团队对象，如果未找到则返回null
  */
@@ -74,7 +74,7 @@ export async function getTeamByStripeCustomerId(customerId: string) {
 
 /**
  * 更新团队的订阅信息
- * 
+ *
  * @param teamId 团队ID
  * @param subscriptionData 订阅数据对象，包含Stripe订阅ID、产品ID、计划名称和订阅状态
  */
@@ -99,7 +99,7 @@ export async function updateTeamSubscription(
 
 /**
  * 获取用户及其所属团队信息
- * 
+ *
  * @param userId 用户ID
  * @returns 返回包含用户和团队ID的对象
  */
@@ -122,7 +122,7 @@ export async function getUserWithTeam(userId: number) {
 /**
  * 获取用户活动日志
  * 支持分页、按活动类型筛选、日期范围筛选和关键词搜索
- * 
+ *
  * @param options 查询选项
  * @param options.page 页码，默认为1
  * @param options.limit 每页记录数，默认为10
@@ -183,7 +183,7 @@ export async function getActivityLogs(options?: {
 
 /**
  * 获取符合条件的活动日志总数
- * 
+ *
  * @param options 查询选项
  * @param options.action 活动类型筛选
  * @param options.startDate 开始日期
@@ -228,7 +228,7 @@ export async function getActivityLogsCount(options?: {
 
 /**
  * 构建活动日志查询条件
- * 
+ *
  * @param userId 用户ID
  * @param action 活动类型
  * @param startDate 开始日期
@@ -266,14 +266,14 @@ function buildActivityLogsCondition(
   }
 
   // 组合所有条件：如果有多个条件使用AND连接，否则直接使用单个条件
-  return conditions.length > 1 
-    ? and(...conditions) 
+  return conditions.length > 1
+    ? and(...conditions)
     : conditions[0];
 }
 
 /**
  * 获取当前用户所属的团队及其成员信息
- * 
+ *
  * @returns 返回团队对象（包含成员信息），如果未找到则返回null
  */
 export async function getTeamForUser() {
@@ -312,7 +312,7 @@ export async function getTeamForUser() {
 
 /**
  * 获取所有活跃的订阅计划
- * 
+ *
  * @returns 返回按价格排序的活跃订阅计划列表
  */
 export async function getPlans() {
@@ -325,8 +325,26 @@ export async function getPlans() {
 }
 
 /**
+ * 根据Stripe产品ID获取计划信息
+ *
+ * @param stripeProductId Stripe产品ID
+ * @returns 返回计划信息，如果未找到则返回null
+ */
+export async function getPlanByStripeProductId(stripeProductId: string) {
+  // 查询匹配Stripe产品ID的计划
+  const result = await db
+    .select()
+    .from(plans)
+    .where(eq(plans.stripeProductId, stripeProductId))
+    .limit(1);
+
+  // 返回计划信息，如果未找到则返回null
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
  * 获取用户API使用记录
- * 
+ *
  * @param options 查询选项
  * @param options.page 页码，默认为1
  * @param options.limit 每页记录数，默认为10
@@ -381,7 +399,7 @@ export async function getUserApiUsage(options?: {
 
 /**
  * 获取用户API使用记录总数
- * 
+ *
  * @returns API使用记录总数
  * @throws 如果用户未认证，抛出错误
  */
@@ -407,4 +425,146 @@ export async function getUserApiUsageCount() {
 
   // 返回记录总数
   return countResult[0]?.count || 0;
+}
+
+/**
+ * 获取团队可用积分总数
+ *
+ * @param teamId 团队ID
+ * @returns 返回团队可用积分总数
+ */
+export async function getTeamAvailableCredits(teamId: number) {
+  // 查询未过期的积分批次
+  const result = await db
+    .select({
+      total: sql<number>`SUM(${creditBatches.remainingAmount})`
+    })
+    .from(creditBatches)
+    .where(and(
+      eq(creditBatches.teamId, teamId),
+      gt(creditBatches.expiresAt, new Date())
+    ));
+
+  // 返回总积分数，如果没有则返回0
+  return result[0]?.total || 0;
+}
+
+/**
+ * 获取团队积分批次列表
+ *
+ * @param options 查询选项
+ * @param options.teamId 团队ID
+ * @param options.page 页码，默认为1
+ * @param options.limit 每页记录数，默认为10
+ * @returns 积分批次列表
+ */
+export async function getTeamCreditBatches(options: {
+  teamId: number;
+  page?: number;
+  limit?: number;
+}) {
+  // 解构查询选项，设置默认值
+  const {
+    teamId,
+    page = 1,
+    limit = 10
+  } = options;
+
+  // 计算分页偏移量
+  const offset = (page - 1) * limit;
+
+  // 执行查询并返回结果
+  return await db
+    .select()
+    .from(creditBatches)
+    .where(eq(creditBatches.teamId, teamId))
+    .orderBy(desc(creditBatches.createdAt))
+    .limit(limit)
+    .offset(offset);
+}
+
+/**
+ * 获取当前用户团队的积分信息
+ *
+ * @returns 返回团队积分信息，如果未找到则返回null
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getCurrentTeamCredits() {
+  // 获取当前登录用户
+  const user = await getUser();
+  // 如果用户未登录，抛出错误
+  if (!user) {
+    throw new Error('用户未认证');
+  }
+
+  // 获取用户所属团队
+  const userWithTeam = await getUserWithTeam(user.id);
+  if (!userWithTeam?.teamId) {
+    throw new Error('用户未关联团队');
+  }
+
+  // 获取团队可用积分
+  const availableCredits = await getTeamAvailableCredits(userWithTeam.teamId);
+
+  // 获取积分批次
+  const creditBatchesList = await getTeamCreditBatches({
+    teamId: userWithTeam.teamId,
+    limit: 100 // 获取最近100条记录
+  });
+
+  // 返回团队积分信息
+  return {
+    teamId: userWithTeam.teamId,
+    availableCredits,
+    creditBatches: creditBatchesList
+  };
+}
+
+/**
+ * 获取用户API使用统计
+ *
+ * @returns 返回API使用统计信息
+ * @throws 如果用户未认证，抛出错误
+ */
+export async function getUserApiUsageStats() {
+  // 获取当前登录用户
+  const user = await getUser();
+  // 如果用户未登录，抛出错误
+  if (!user) {
+    throw new Error('用户未认证');
+  }
+
+  // 获取用户所属团队
+  const userWithTeam = await getUserWithTeam(user.id);
+  if (!userWithTeam?.teamId) {
+    throw new Error('用户未关联团队');
+  }
+
+  // 获取当前月份的开始和结束日期
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+  // 查询本月API调用总数
+  const result = await db
+    .select({
+      total: sql<number>`count(*)`,
+      creditsUsed: sql<number>`SUM(${apiUsage.creditsConsumed})`
+    })
+    .from(apiUsage)
+    .where(and(
+      eq(apiUsage.teamId, userWithTeam.teamId),
+      gte(apiUsage.timestamp, startOfMonth),
+      lte(apiUsage.timestamp, endOfMonth)
+    ));
+
+  // 返回统计信息
+  return {
+    total: result[0]?.total || 0,
+    creditsUsed: result[0]?.creditsUsed || 0,
+    period: {
+      start: startOfMonth.toISOString(),
+      end: endOfMonth.toISOString()
+    }
+  };
 }
