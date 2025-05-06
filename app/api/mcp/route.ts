@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWeatherInfo } from '@/lib/mcp/weather';
+import { getWeatherInfo } from '@/app/mcp/weather';
 import { db } from '@/lib/db/drizzle';
 import { apiKeys, apiUsage } from '@/lib/db/schema';
 import { and, eq, isNull, gt, or } from 'drizzle-orm';

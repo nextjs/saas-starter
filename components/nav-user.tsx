@@ -164,8 +164,8 @@ export function NavUser() {
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <Logs />
-                <Link href="/dashboard/user-log" className="flex w-full items-center">
-                  User Logs
+                <Link href="/dashboard/activitylogs" className="flex w-full items-center">
+                  Activity Logs
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>

@@ -2,7 +2,7 @@
 
 这是一个用于构建SaaS应用程序的启动模板，使用**Next.js**框架，支持用户认证、Stripe支付集成以及登录用户的仪表板功能。专为快速开发和部署而设计。
 
-**演示: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+**演示: [https://mcp.day/](https://mcp.day/)**
 
 ## 功能特点
 

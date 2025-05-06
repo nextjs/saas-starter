@@ -59,26 +59,41 @@ import {
 } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 
+/**
+ * 数据获取函数
+ * 用于从API获取数据
+ */
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+/**
+ * API密钥管理页面组件
+ * 提供API密钥的创建、查看和撤销功能
+ */
 export default function ApiKeysPage() {
   const router = useRouter();
+  // 使用SWR获取API密钥列表
   const { data: apiKeys, error, isLoading } = useSWR<ApiKey[]>('/api/api-keys', fetcher);
-  const [isCreating, setIsCreating] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [newKeyName, setNewKeyName] = useState('');
-  const [newKeyPermission, setNewKeyPermission] = useState('read');
-  const [newKeyExpiry, setNewKeyExpiry] = useState('');
-  const [newKeyData, setNewKeyData] = useState<ApiKey | null>(null);
-  const [keyToCopy, setKeyToCopy] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  // 创建密钥相关状态
+  const [isCreating, setIsCreating] = useState(false); // 创建中状态
+  const [isDeleting, setIsDeleting] = useState(false); // 删除中状态
+  const [newKeyName, setNewKeyName] = useState(''); // 新密钥名称
+  const [newKeyPermission, setNewKeyPermission] = useState('read'); // 新密钥权限
+  const [newKeyExpiry, setNewKeyExpiry] = useState(''); // 新密钥过期时间
+  const [newKeyData, setNewKeyData] = useState<ApiKey | null>(null); // 新创建的密钥数据
+  const [keyToCopy, setKeyToCopy] = useState(''); // 要复制的密钥
+  const [copied, setCopied] = useState(false); // 复制状态
+  const [dialogOpen, setDialogOpen] = useState(false); // 对话框开关状态
   
   // 删除确认相关状态
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [keyToDelete, setKeyToDelete] = useState<ApiKey | null>(null);
-  const [confirmName, setConfirmName] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除对话框开关
+  const [keyToDelete, setKeyToDelete] = useState<ApiKey | null>(null); // 要删除的密钥
+  const [confirmName, setConfirmName] = useState(''); // 确认名称输入
 
+  /**
+   * 处理创建API密钥
+   * 向服务器发送请求创建新的API密钥
+   */
   const handleCreateKey = async () => {
     if (!newKeyName) {
       toast.error('Please enter an API key name');
@@ -113,12 +128,20 @@ export default function ApiKeysPage() {
     }
   };
 
+  /**
+   * 打开删除确认对话框
+   * @param key 要删除的API密钥
+   */
   const openDeleteDialog = (key: ApiKey) => {
     setKeyToDelete(key);
     setConfirmName('');
     setDeleteDialogOpen(true);
   };
 
+  /**
+   * 处理撤销API密钥
+   * 向服务器发送请求删除指定的API密钥
+   */
   const handleRevokeKey = async () => {
     if (!keyToDelete) return;
     
@@ -149,6 +172,10 @@ export default function ApiKeysPage() {
     }
   };
 
+  /**
+   * 复制文本到剪贴板
+   * @param text 要复制的文本
+   */
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
     setKeyToCopy(text);
@@ -156,6 +183,10 @@ export default function ApiKeysPage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /**
+   * 重置新密钥表单
+   * 清空所有表单字段和新密钥数据
+   */
   const resetNewKeyForm = () => {
     setNewKeyName('');
     setNewKeyPermission('read');
@@ -163,6 +194,10 @@ export default function ApiKeysPage() {
     setNewKeyData(null);
   };
 
+  /**
+   * 处理对话框开关状态变化
+   * @param open 对话框是否打开
+   */
   const handleDialogOpenChange = (open: boolean) => {
     setDialogOpen(open);
     if (!open) {
@@ -170,6 +205,10 @@ export default function ApiKeysPage() {
     }
   };
 
+  /**
+   * 处理删除对话框开关状态变化
+   * @param open 对话框是否打开
+   */
   const handleDeleteDialogOpenChange = (open: boolean) => {
     setDeleteDialogOpen(open);
     if (!open) {

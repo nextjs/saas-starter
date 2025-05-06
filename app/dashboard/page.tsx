@@ -51,32 +51,32 @@ function StatsSkeleton() {
 
 function Stats() {
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-  
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-      <StatCard 
-        title="Team Members" 
-        value={teamData?.teamMembers?.length || 0} 
-        description="Total active team members" 
-        icon={Users} 
+      <StatCard
+        title="Team Members"
+        value={teamData?.teamMembers?.length || 0}
+        description="Total active team members"
+        icon={Users}
       />
-      <StatCard 
-        title="Current Plan" 
-        value={teamData?.planName || 'Free'} 
-        description={teamData?.subscriptionStatus === 'active' ? 'Billed monthly' : 'No active subscription'} 
-        icon={DollarSign} 
+      <StatCard
+        title="Current Plan"
+        value={teamData?.planName || 'Free'}
+        description={teamData?.subscriptionStatus === 'active' ? 'Billed monthly' : 'No active subscription'}
+        icon={DollarSign}
       />
-      <StatCard 
-        title="API Calls" 
-        value="0" 
-        description="Total API calls this month" 
-        icon={Activity} 
+      <StatCard
+        title="API Calls"
+        value="0"
+        description="Total API calls this month"
+        icon={Activity}
       />
-      <StatCard 
-        title="Security Status" 
-        value="Good" 
-        description="All systems operational" 
-        icon={Shield} 
+      <StatCard
+        title="Security Status"
+        value="Good"
+        description="All systems operational"
+        icon={Shield}
       />
     </div>
   );
@@ -189,18 +189,22 @@ function TeamMembers() {
 function ActivityLogSkeleton() {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Activity</CardTitle>
+        <div className="h-8 w-20 bg-gray-200 rounded animate-pulse" />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex items-start space-x-4">
-              <div className="h-8 w-8 rounded-full bg-gray-200 animate-pulse" />
-              <div className="space-y-2 flex-1">
-                <div className="h-4 w-full bg-gray-200 rounded animate-pulse" />
-                <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="flex items-center justify-between space-x-2">
+              <div className="flex items-center space-x-4 flex-1 min-w-0">
+                <div className="h-4 w-20 bg-gray-200 rounded animate-pulse" />
+                <div className="flex items-center flex-1 min-w-0">
+                  <div className="h-7 w-7 rounded-full bg-gray-200 animate-pulse mr-2" />
+                  <div className="h-4 w-32 bg-gray-200 rounded animate-pulse" />
+                </div>
               </div>
+              <div className="h-3 w-24 bg-gray-200 rounded animate-pulse" />
             </div>
           ))}
         </div>
@@ -217,16 +221,16 @@ function ActivityLog() {
     ipAddress?: string;
     userName?: string;
   }
-  
+
   // Modified fetcher function to handle API response format
   const activityFetcher = async (url: string) => {
     const res = await fetch(url);
     const data = await res.json();
-    // Check if API returns data wrapped in a data field
-    return data.data || data;
+    // Return the data array from the response
+    return data.data || [];
   };
-  
-  const { data: logs, isLoading, error } = useSWR<ActivityLogItem[]>('/api/activity?limit=3', activityFetcher, {
+
+  const { data: logs, isLoading, error } = useSWR<ActivityLogItem[]>('/api/activity?limit=5', activityFetcher, {
     revalidateOnFocus: false,        // Disable revalidation on focus
     revalidateOnReconnect: false,    // Disable revalidation on reconnect
     refreshInterval: 0,              // Disable auto refresh
@@ -252,7 +256,7 @@ function ActivityLog() {
       'REVOKE_API_KEY': 'API Key Revocation',
       'API_KEY_USED': 'API Key Used'
     };
-    
+
     return actionMap[action] || 'Unknown Action';
   };
 
@@ -281,7 +285,7 @@ function ActivityLog() {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Recent Activity</CardTitle>
-        <Link href="/dashboard/user-log">
+        <Link href="/dashboard/activitylogs">
           <Button variant="outline" size="sm">View All</Button>
         </Link>
       </CardHeader>
@@ -289,19 +293,33 @@ function ActivityLog() {
         {logs && logs.length > 0 ? (
           <div className="space-y-4">
             {logs.map((log) => (
-              <div key={log.id} className="flex items-start space-x-4">
-                <div className="bg-orange-100 rounded-full p-2">
-                  <Activity className="w-4 h-4 text-orange-600" />
+              <div key={log.id} className="flex items-center justify-between space-x-2">
+                <div className="flex items-center space-x-4 flex-1 min-w-0">
+                  <div className="flex-shrink-0 w-10 truncate">
+                    <p className="text-sm font-medium truncate">{log.userName || 'Unknown'}</p>
+                  </div>
+                  <div className="flex items-center flex-1 min-w-0">
+                    <div className="bg-orange-100 rounded-full p-1.5 mr-2 flex-shrink-0">
+                      <Activity className="w-3.5 h-3.5 text-orange-600" />
+                    </div>
+                    <p className="text-sm font-medium truncate">{formatAction(log.action)}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium">{formatAction(log.action)}</p>
-                  <p className="text-xs text-muted-foreground">{new Date(log.timestamp).toLocaleString()}</p>
+                <div className="flex-shrink-0 text-right">
+                  <p className="text-xs text-muted-foreground">{new Date(log.timestamp).toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}</p>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-muted-foreground">No activity records yet.</p>
+          <div className="text-center py-4">
+            <p className="text-muted-foreground">No activity records yet</p>
+          </div>
         )}
       </CardContent>
     </Card>
@@ -312,11 +330,11 @@ export default function OverviewPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium mb-6">Overview</h1>
-      
+
       <Suspense fallback={<StatsSkeleton />}>
         <Stats />
       </Suspense>
-      
+
       <Suspense fallback={<SubscriptionSkeleton />}>
         <Card className="mb-6">
           <CardHeader>
@@ -329,12 +347,12 @@ export default function OverviewPage() {
           </CardContent>
         </Card>
       </Suspense>
-      
+
       <div className="grid gap-6 md:grid-cols-2">
         <Suspense fallback={<TeamMembersSkeleton />}>
           <TeamMembers />
         </Suspense>
-        
+
         <Suspense fallback={<ActivityLogSkeleton />}>
           <ActivityLog />
         </Suspense>

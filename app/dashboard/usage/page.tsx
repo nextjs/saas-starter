@@ -60,9 +60,15 @@ type CreditsResponse = {
   creditBatches: any[];
 };
 
+// 数据获取函数
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+/**
+ * API使用记录页面组件
+ * 显示用户API使用情况和历史记录
+ */
 export default function ApiUsagePage() {
+  // 当前页码状态
   const [page, setPage] = useState(1);
   const limit = 10; // 每页显示10条记录
 
@@ -182,26 +188,26 @@ export default function ApiUsagePage() {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">API 使用记录</h1>
+      <h1 className="text-lg lg:text-2xl font-medium mb-6">API Usage Records</h1>
       
       {/* 用户用量统计卡片 */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>本月API积分使用情况</CardTitle>
+          <CardTitle>API Credits Usage This Month</CardTitle>
           <CardDescription>
-            查看您当前的API积分使用情况和剩余额度
+            View your current API credit usage and remaining balance
           </CardDescription>
         </CardHeader>
         <CardContent>
           {creditsError ? (
             <div className="text-center py-4 text-red-500">
-              <p>加载积分信息时出错</p>
+              <p>Error loading credit information</p>
               <Button 
                 variant="outline" 
                 className="mt-2"
                 onClick={() => window.location.reload()}
               >
-                重试
+                Retry
               </Button>
             </div>
           ) : !creditsData ? (
@@ -212,7 +218,7 @@ export default function ApiUsagePage() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium">
-                  已使用 {usageStats.usedCredits} / {usageStats.totalCredits} 积分
+                  Used {usageStats.usedCredits} / {usageStats.totalCredits} credits
                 </span>
                 <span className="text-sm font-medium">
                   {usageStats.percentUsed.toFixed(1)}%
@@ -225,11 +231,11 @@ export default function ApiUsagePage() {
               />
               
               <div className="flex justify-between text-xs text-muted-foreground">
-                <span>剩余 {usageStats.totalCredits - usageStats.usedCredits} 积分</span>
+                <span>{usageStats.totalCredits - usageStats.usedCredits} credits remaining</span>
                 {usageStats.percentUsed > 80 && (
                   <span className="flex items-center text-red-500">
                     <AlertCircle className="h-3 w-3 mr-1" />
-                    积分使用量较高
+                    High credit usage
                   </span>
                 )}
               </div>
@@ -241,9 +247,9 @@ export default function ApiUsagePage() {
       {/* API调用历史卡片 */}
       <Card>
         <CardHeader>
-          <CardTitle>API 调用历史</CardTitle>
+          <CardTitle>API Call History</CardTitle>
           <CardDescription>
-            查看您的API调用记录和使用情况统计
+            View your API call records and usage statistics
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -253,13 +259,13 @@ export default function ApiUsagePage() {
             </div>
           ) : error ? (
             <div className="text-center py-8 text-red-500">
-              <p>加载API使用记录时出错</p>
+              <p>Error loading API usage records</p>
               <Button 
                 variant="outline" 
                 className="mt-4"
                 onClick={() => window.location.reload()}
               >
-                重试
+                Retry
               </Button>
             </div>
           ) : data && data.data.length > 0 ? (
@@ -267,13 +273,13 @@ export default function ApiUsagePage() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>端点</TableHead>
-                    <TableHead>API密钥</TableHead>
-                    <TableHead>状态</TableHead>
-                    <TableHead>消耗积分</TableHead>
-                    <TableHead>执行时间</TableHead>
-                    <TableHead>IP地址</TableHead>
-                    <TableHead>时间</TableHead>
+                    <TableHead>Endpoint</TableHead>
+                    <TableHead>API Key</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Credits Used</TableHead>
+                    <TableHead>Execution Time</TableHead>
+                    <TableHead>IP Address</TableHead>
+                    <TableHead>Timestamp</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -283,7 +289,7 @@ export default function ApiUsagePage() {
                       <TableCell>
                         <div className="flex items-center">
                           <Key className="h-3 w-3 mr-1 text-gray-500" />
-                          {record.apiKeyName || '未知密钥'}
+                          {record.apiKeyName || 'Unknown Key'}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -313,7 +319,7 @@ export default function ApiUsagePage() {
             </>
           ) : (
             <div className="text-center py-8 text-gray-500">
-              <p>暂无API使用记录</p>
+              <p>No API usage records found</p>
             </div>
           )}
         </CardContent>

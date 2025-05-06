@@ -54,7 +54,7 @@ function TeamInfoSkeleton() {
   return (
     <Card className="mb-8 h-[200px]">
       <CardHeader>
-        <CardTitle>团队信息</CardTitle>
+        <CardTitle>Team Information</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="animate-pulse space-y-4">
@@ -98,35 +98,35 @@ function TeamInfo() {
   }
 
   const createdDate = teamData.createdAt 
-    ? new Date(teamData.createdAt).toLocaleDateString('zh-CN', {
+    ? new Date(teamData.createdAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })
-    : '未知';
+    : 'Unknown';
     
   // 格式化订阅续费日期
   const renewalDate = teamData.subscriptionRenewsAt
-    ? new Date(teamData.subscriptionRenewsAt).toLocaleDateString('zh-CN', {
+    ? new Date(teamData.subscriptionRenewsAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })
-    : '未知';
+    : 'Unknown';
     
-  // 获取订阅状态的中文描述和样式
+  // 获取订阅状态的描述和样式
   const getSubscriptionStatusInfo = (status: string | null | undefined) => {
-    if (!status) return { text: '未激活', className: 'text-gray-500' };
+    if (!status) return { text: 'Inactive', className: 'text-gray-500' };
     
     switch (status) {
       case 'active':
-        return { text: '已激活', className: 'text-green-600' };
+        return { text: 'Active', className: 'text-green-600' };
       case 'trialing':
-        return { text: '试用中', className: 'text-blue-600' };
+        return { text: 'Trial', className: 'text-blue-600' };
       case 'canceled':
-        return { text: '已取消', className: 'text-red-600' };
+        return { text: 'Canceled', className: 'text-red-600' };
       case 'unpaid':
-        return { text: '未付款', className: 'text-amber-600' };
+        return { text: 'Unpaid', className: 'text-amber-600' };
       default:
         return { text: status, className: 'text-gray-500' };
     }
@@ -138,33 +138,33 @@ function TeamInfo() {
     <Card className="mb-8">
       <CardHeader className="flex flex-row items-start justify-between">
         <div>
-          <CardTitle className="text-2xl">{teamData.name || '我的团队'}</CardTitle>
-          <CardDescription>团队基本信息和设置</CardDescription>
+          <CardTitle className="text-2xl">{teamData.name || 'My Team'}</CardTitle>
+          <CardDescription>Team information and settings</CardDescription>
         </div>
         {isOwner && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Edit className="h-4 w-4" />
-                <span>编辑</span>
+                <span>Edit</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>编辑团队信息</DialogTitle>
+                <DialogTitle>Edit Team Information</DialogTitle>
                 <DialogDescription>
-                  修改您的团队名称。点击保存按钮确认更改。
+                  Modify your team name. Click save to confirm changes.
                 </DialogDescription>
               </DialogHeader>
               <form action={updateAction} className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="teamName">团队名称</Label>
+                  <Label htmlFor="teamName">Team Name</Label>
                   <Input
                     id="teamName"
                     name="teamName"
                     value={newTeamName}
                     onChange={(e) => setNewTeamName(e.target.value)}
-                    placeholder="请输入团队名称"
+                    placeholder="Enter team name"
                   />
                 </div>
                 {updateState.error && (
@@ -173,7 +173,7 @@ function TeamInfo() {
                 <DialogFooter className="mt-4">
                   <DialogClose asChild>
                     <Button variant="outline" type="button">
-                      取消
+                      Cancel
                     </Button>
                   </DialogClose>
                   <Button
@@ -184,12 +184,12 @@ function TeamInfo() {
                     {isUpdatePending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        保存中...
+                        Saving...
                       </>
                     ) : (
                       <>
                         <Save className="mr-2 h-4 w-4" />
-                        保存更改
+                        Save Changes
                       </>
                     )}
                   </Button>
@@ -203,49 +203,49 @@ function TeamInfo() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">团队 ID</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Team ID</h3>
               <p className="font-medium">{teamData.id}</p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">创建时间</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Created On</h3>
               <p className="font-medium flex items-center">
                 <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                 {createdDate}
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">成员数量</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Members</h3>
               <p className="font-medium flex items-center">
                 <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                {teamData.teamMembers?.length || 0} 人
+                {teamData.teamMembers?.length || 0}
               </p>
             </div>
           </div>
           <div className="space-y-4">
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">当前套餐</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Current Plan</h3>
               <div className="flex items-center">
                 <CreditCard className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span className="font-medium mr-2">{teamData.planName || '免费版'}</span>
+                <span className="font-medium mr-2">{teamData.planName || 'Free'}</span>
                 <span className={`text-sm ${statusInfo.className}`}>
                   ({statusInfo.text})
                 </span>
               </div>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">套餐有效期</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Plan Expires</h3>
               <p className="font-medium flex items-center">
                 <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
                 {teamData.subscriptionStatus === 'active' || teamData.subscriptionStatus === 'trialing' 
-                  ? `${renewalDate} 到期` 
-                  : '无有效订阅'}
+                  ? `Expires on ${renewalDate}` 
+                  : 'No active subscription'}
               </p>
             </div>
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">安全状态</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Security Status</h3>
               <p className="font-medium flex items-center">
                 <Shield className="h-4 w-4 mr-2 text-muted-foreground" />
-                正常
+                Normal
               </p>
             </div>
           </div>
@@ -479,19 +479,19 @@ function ManageSubscription() {
     return <SubscriptionSkeleton />;
   }
   
-  // 获取订阅状态的中文描述和样式
+  // 获取订阅状态的描述和样式
   const getSubscriptionStatusInfo = (status: string | null | undefined) => {
-    if (!status) return { text: '未激活', className: 'text-gray-500' };
+    if (!status) return { text: 'Inactive', className: 'text-gray-500' };
     
     switch (status) {
       case 'active':
-        return { text: '已激活', className: 'text-green-600' };
+        return { text: 'Active', className: 'text-green-600' };
       case 'trialing':
-        return { text: '试用中', className: 'text-blue-600' };
+        return { text: 'Trial', className: 'text-blue-600' };
       case 'canceled':
-        return { text: '已取消', className: 'text-red-600' };
+        return { text: 'Canceled', className: 'text-red-600' };
       case 'unpaid':
-        return { text: '未付款', className: 'text-amber-600' };
+        return { text: 'Unpaid', className: 'text-amber-600' };
       default:
         return { text: status, className: 'text-gray-500' };
     }
@@ -501,27 +501,27 @@ function ManageSubscription() {
   
   // 格式化订阅续费日期
   const renewalDate = teamData.subscriptionRenewsAt
-    ? new Date(teamData.subscriptionRenewsAt).toLocaleDateString('zh-CN', {
+    ? new Date(teamData.subscriptionRenewsAt).toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       })
-    : '未知';
+    : 'Unknown';
   
   return (
     <Card>
       <CardHeader>
-        <CardTitle>订阅管理</CardTitle>
+        <CardTitle>Subscription Management</CardTitle>
         <CardDescription>
-          管理您的团队订阅计划和付款信息
+          Manage your team subscription plan and payment information
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">当前套餐</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-1">Current Plan</h3>
             <p className="text-xl font-semibold flex items-center">
-              {teamData.planName || '免费版'}
+              {teamData.planName || 'Free'}
               <span className={`text-sm ml-2 ${statusInfo.className}`}>
                 ({statusInfo.text})
               </span>
@@ -530,32 +530,32 @@ function ManageSubscription() {
           
           {(teamData.subscriptionStatus === 'active' || teamData.subscriptionStatus === 'trialing') && (
             <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">下次续费日期</h3>
+              <h3 className="text-sm font-medium text-muted-foreground mb-1">Next Renewal</h3>
               <p className="font-medium">{renewalDate}</p>
             </div>
           )}
           
           <div>
-            <h3 className="text-sm font-medium text-muted-foreground mb-1">套餐功能</h3>
+            <h3 className="text-sm font-medium text-muted-foreground mb-1">Plan Features</h3>
             <ul className="list-disc list-inside space-y-1 text-sm">
               {teamData.planName === 'Pro' ? (
                 <>
-                  <li>每月 10,000 API 调用</li>
-                  <li>最多 100 个 API 密钥</li>
-                  <li>最多 100 个团队成员</li>
-                  <li>优先技术支持</li>
+                  <li>10,000 API calls per month</li>
+                  <li>Up to 100 API keys</li>
+                  <li>Up to 100 team members</li>
+                  <li>Priority support</li>
                 </>
               ) : teamData.planName === 'Plus' ? (
                 <>
-                  <li>每月 5,000 API 调用</li>
-                  <li>最多 50 个 API 密钥</li>
-                  <li>最多 50 个团队成员</li>
+                  <li>5,000 API calls per month</li>
+                  <li>Up to 50 API keys</li>
+                  <li>Up to 50 team members</li>
                 </>
               ) : (
                 <>
-                  <li>每月 1,000 API 调用</li>
-                  <li>最多 10 个 API 密钥</li>
-                  <li>最多 10 个团队成员</li>
+                  <li>1,000 API calls per month</li>
+                  <li>Up to 10 API keys</li>
+                  <li>Up to 10 team members</li>
                 </>
               )}
             </ul>
@@ -570,11 +570,11 @@ function ManageSubscription() {
                 className="bg-orange-500 hover:bg-orange-600 text-white"
               >
                 <CreditCard className="mr-2 h-4 w-4" />
-                管理订阅
+                Manage Subscription
               </Button>
             </form>
             <p className="text-xs text-muted-foreground mt-2">
-              您将被重定向到安全的支付页面管理您的订阅
+              You will be redirected to a secure payment page to manage your subscription
             </p>
           </div>
         )}
@@ -586,7 +586,7 @@ function ManageSubscription() {
 export default function TeamPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">团队管理</h1>
+      <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Management</h1>
       
       <Suspense fallback={<TeamInfoSkeleton />}>
         <TeamInfo />
@@ -596,11 +596,11 @@ export default function TeamPage() {
         <TabsList className="mb-4">
           <TabsTrigger value="members" className="flex items-center gap-1">
             <Users className="h-4 w-4" />
-            团队成员
+            Team Members
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-1">
             <Settings className="h-4 w-4" />
-            订阅管理
+            Subscription
           </TabsTrigger>
         </TabsList>
         

@@ -1,201 +1,204 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import type { MCPContent } from "@/lib/mcp/mcp";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import {
   Card,
   CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+} from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
-  SendIcon,
-  User,
-  Bot,
-  Key,
-  Sliders,
-  Copy,
-  CheckCircle,
-  Shield,
-  AlertCircle,
-  Loader2,
-} from "lucide-react";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Slider } from '@/components/ui/slider';
+import { Bot, Copy, User, Send, Loader2, CheckCircle, Info } from 'lucide-react';
 import { API_PREFIX, MCP_CONFIG_EXAMPLE } from "@/lib/constants";
 import { toast } from "sonner";
 
+/**
+ * MCP内容类型
+ * 定义MCP协议中的消息内容结构
+ */
+type MCPContent = {
+  role: 'user' | 'assistant';
+  type: 'text' | 'json' | 'binary';
+  content: string;
+};
+
+/**
+ * MCP Playground页面组件
+ * 提供与MCP协议AI交互的界面
+ */
 export default function PlaygroundPage() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<MCPContent[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  // 聊天相关状态
+  const [input, setInput] = useState(""); // 用户输入内容
+  const [messages, setMessages] = useState<MCPContent[]>([]); // 对话消息列表
+  const [isLoading, setIsLoading] = useState(false); // 加载状态
 
   // 配置相关状态
-  const [apiKey, setApiKey] = useState("");
-  const [temperature, setTemperature] = useState("0.7");
-  const [maxTokens, setMaxTokens] = useState("2048");
-  const [model, setModel] = useState("gpt-3.5-turbo");
-  const [streamMode, setStreamMode] = useState(true);
-  const [copied, setCopied] = useState(false);
+  const [apiKey, setApiKey] = useState(""); // API密钥
+  const [temperature, setTemperature] = useState("0.7"); // 温度参数
+  const [maxTokens, setMaxTokens] = useState("2048"); // 最大令牌数
+  const [model, setModel] = useState("gpt-3.5-turbo"); // 模型选择
+  const [streamMode, setStreamMode] = useState(true); // 流式响应模式
+  const [copied, setCopied] = useState(false); // 复制状态
 
-  // API Key验证状态
-  const [isKeyValid, setIsKeyValid] = useState<boolean | null>(null);
-  const [isValidating, setIsValidating] = useState(false);
-  const [keyPermissions, setKeyPermissions] = useState<string | null>(null);
+  // 引用
+  const messagesEndRef = useRef<HTMLDivElement>(null); // 消息列表末尾引用，用于自动滚动
+  const inputRef = useRef<HTMLTextAreaElement>(null); // 输入框引用
 
-  // 当API Key变化时，重置验证状态
-  useEffect(() => {
-    if (apiKey) {
-      setIsKeyValid(null);
-    }
-  }, [apiKey]);
-
-  // 验证API Key
-  const validateApiKey = async () => {
-    if (!apiKey) {
-      toast.error("请输入API Key");
-      return;
-    }
-
-    // 检查API Key格式
-    if (!apiKey.startsWith(`${API_PREFIX}_`)) {
-      setIsKeyValid(false);
-      toast.error(`API Key格式错误，应以 ${API_PREFIX}_ 开头`);
-      return;
-    }
-
-    setIsValidating(true);
-    try {
-      const res = await fetch("/api/api-keys/validate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.valid) {
-        setIsKeyValid(true);
-        // 如果API返回了权限信息，可以保存起来
-        if (data.permissions) {
-          setKeyPermissions(data.permissions);
-        }
-        toast.success("API Key验证成功");
-      } else {
-        setIsKeyValid(false);
-        toast.error(data.error || "API Key无效或已过期");
-      }
-    } catch (error) {
-      console.error("验证失败:", error);
-      setIsKeyValid(false);
-      toast.error("API Key验证失败");
-    } finally {
-      setIsValidating(false);
-    }
-  };
-
-  // 检查MCP Server状态
-  const checkMCPServerStatus = async () => {
-    if (!apiKey) {
-      toast.error("请输入API Key");
-      return;
-    }
-
-    if (isKeyValid !== true) {
-      toast.error("请先验证API Key");
-      return;
-    }
-
-    setIsValidating(true);
-    try {
-      const res = await fetch("/api/mcp/status", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.status === "online") {
-        toast.success("MCP Server 状态正常");
-      } else {
-        toast.error(data.error || "MCP Server 连接失败");
-      }
-    } catch (error) {
-      console.error("检查MCP Server状态失败:", error);
-      toast.error("MCP Server 连接失败");
-    } finally {
-      setIsValidating(false);
-    }
-  };
-
-  const handleSubmit = async (e?: React.FormEvent) => {
-    e?.preventDefault();
+  /**
+   * 处理发送消息
+   * 将用户输入发送到服务器并处理响应
+   */
+  const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
-    // 如果设置了API Key但未验证或验证失败，则先验证
-    if (apiKey && isKeyValid !== true) {
-      toast.error("请先验证API Key");
-      return;
-    }
-
-    // 添加用户消息到对话
+    // 创建用户消息
     const userMessage: MCPContent = {
-      role: "user",
-      type: "text",
+      role: 'user',
+      type: 'text',
       content: input,
     };
 
+    // 更新消息列表
     setMessages((prev) => [...prev, userMessage]);
+    setInput('');
     setIsLoading(true);
-    setInput("");
 
     try {
-      const res = await fetch("/api/mcp", {
-        method: "POST",
+      // 准备请求参数
+      const requestBody = {
+        messages: [...messages, userMessage],
+        model,
+        temperature: parseFloat(temperature),
+        max_tokens: parseInt(maxTokens, 10),
+        stream: streamMode,
+        api_key: apiKey,
+      };
+
+      // 发送请求
+      const response = await fetch('/api/mcp', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          prompt: input,
-          temperature: parseFloat(temperature),
-          max_tokens: parseInt(maxTokens),
-          model: model,
-          stream: streamMode,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      const data = await res.json();
-      setMessages((prev) => [...prev, data]);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      // 处理流式响应
+      if (streamMode) {
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('Response body is null');
+
+        let assistantMessage = '';
+        
+        // 创建初始的助手消息
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', type: 'text', content: '' },
+        ]);
+
+        // 读取流式响应
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          // 解码并处理响应片段
+          const chunk = new TextDecoder().decode(value);
+          assistantMessage += chunk;
+
+          // 更新最后一条消息
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {
+              role: 'assistant',
+              type: 'text',
+              content: assistantMessage,
+            };
+            return newMessages;
+          });
+        }
+      } else {
+        // 处理非流式响应
+        const data = await response.json();
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', type: 'text', content: data.content },
+        ]);
+      }
     } catch (error) {
-      console.error("请求失败:", error);
-      toast.error("请求失败，请稍后重试");
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message. Please check your API key and try again.');
+      
+      // 移除用户消息，恢复输入
+      setMessages((prev) => prev.slice(0, -1));
+      setInput(userMessage.content);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+  /**
+   * 复制MCP配置示例到剪贴板
+   */
+  const copyConfigExample = () => {
+    navigator.clipboard.writeText(MCP_CONFIG_EXAMPLE);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  /**
+   * 处理键盘事件
+   * 支持Ctrl+Enter发送消息
+   */
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.ctrlKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  /**
+   * 自动滚动到消息列表底部
+   */
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  /**
+   * 聚焦输入框
+   */
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -204,13 +207,13 @@ export default function PlaygroundPage() {
         <Card className="lg:col-span-2 flex flex-col h-full">
           <CardHeader>
             <CardTitle>MCP Playground</CardTitle>
-            <CardDescription>体验基于MCP协议的AI对话</CardDescription>
+            <CardDescription>Experience AI conversation with MCP protocol</CardDescription>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col">
             <div className="flex-1 overflow-y-auto mb-4 space-y-4">
               {messages.length === 0 ? (
                 <div className="h-full flex items-center justify-center text-muted-foreground">
-                  <p>开始一个新对话吧！输入内容并点击发送按钮。</p>
+                  <p>Start a new conversation! Enter your message and click send.</p>
                 </div>
               ) : (
                 messages.map((msg, index) => (
@@ -250,234 +253,171 @@ export default function PlaygroundPage() {
                 <div className="flex justify-start">
                   <div className="bg-gray-100 p-3 rounded-lg flex items-center space-x-2">
                     <Bot size={18} />
-                    <div className="text-sm">正在思考...</div>
+                    <div className="text-sm">Thinking...</div>
                   </div>
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
-
-            <form onSubmit={handleSubmit} className="flex space-x-2">
-              <Input
+            <div className="flex items-end">
+              <Textarea
+                ref={inputRef}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="输入您的问题..."
-                className="flex-1"
-                disabled={isLoading}
+                onKeyDown={handleKeyDown}
+                placeholder="Type your message here..."
+                className="flex-1 resize-none"
+                rows={3}
               />
               <Button
-                type="submit"
-                disabled={isLoading || !input.trim()} // TODO：添加API Key验证
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                onClick={handleSendMessage}
+                disabled={isLoading || !input.trim()}
+                className="ml-2 bg-orange-500 hover:bg-orange-600 text-white h-[76px]"
               >
-                <SendIcon className="h-4 w-4" />
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
               </Button>
-            </form>
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Press Ctrl + Enter to send
+            </p>
           </CardContent>
         </Card>
 
         {/* 配置区域 */}
-        <Card className="h-full flex flex-col">
+        <Card className="h-full overflow-y-auto">
           <CardHeader>
-            <CardTitle>配置选项</CardTitle>
-            <CardDescription>调整API参数和设置</CardDescription>
+            <CardTitle>Configuration</CardTitle>
+            <CardDescription>Adjust settings for the MCP protocol</CardDescription>
           </CardHeader>
-          <CardContent className="flex-1">
-            <Tabs defaultValue="api" className="h-full flex flex-col">
-              <TabsList className="grid grid-cols-2 mb-4">
-                <TabsTrigger value="api" className="flex items-center">
-                  <Key className="mr-2 h-4 w-4" />
-                  API设置
-                </TabsTrigger>
-                <TabsTrigger value="params" className="flex items-center">
-                  <Sliders className="mr-2 h-4 w-4" />
-                  参数调整
-                </TabsTrigger>
+          <CardContent className="space-y-6">
+            <Tabs defaultValue="settings">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="settings">Settings</TabsTrigger>
+                <TabsTrigger value="info">Info</TabsTrigger>
               </TabsList>
-
-              <TabsContent value="api" className="flex-1 space-y-4">
+              
+              {/* 设置选项卡 */}
+              <TabsContent value="settings" className="space-y-4 mt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="apiKey">API Key</Label>
-                  <div className="flex space-x-2">
-                    <div className="relative flex-1">
-                      <Input
-                        id="apiKey"
-                        type="password"
-                        value={apiKey}
-                        onChange={(e) => setApiKey(e.target.value)}
-                        placeholder={`${API_PREFIX}_...`}
-                        className={`pr-10 ${
-                          isKeyValid === true
-                            ? "border-green-500"
-                            : isKeyValid === false
-                            ? "border-red-500"
-                            : ""
-                        }`}
-                      />
-                      {isKeyValid !== null && (
-                        <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                          {isKeyValid ? (
-                            <Shield className="h-4 w-4 text-green-500" />
-                          ) : (
-                            <AlertCircle className="h-4 w-4 text-red-500" />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={validateApiKey}
-                      disabled={isValidating || !apiKey}
-                    >
-                      {isValidating ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "验证"
-                      )}
-                    </Button>
-                  </div>
+                  <Label htmlFor="api-key">API Key</Label>
+                  <Input
+                    id="api-key"
+                    type="password"
+                    value={apiKey}
+                    onChange={(e) => setApiKey(e.target.value)}
+                    placeholder={`${API_PREFIX}_...`}
+                  />
                   <p className="text-xs text-muted-foreground">
-                    输入您的API密钥以使用自定义模型
-                  </p>
-                  {isKeyValid === false && (
-                    <p className="text-xs text-red-500">
-                      API Key无效或已过期，请检查后重试
-                    </p>
-                  )}
-                </div>
-
-                <Separator className="my-4" />
-
-                {/* MCP脚本配置 */}
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <Label htmlFor="mcpScript">MCP Config</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 px-2"
-                      onClick={() => copyToClipboard(MCP_CONFIG_EXAMPLE)}
-                    >
-                      {copied ? (
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                      <span className="ml-1">{copied ? "已复制" : "复制"}</span>
-                    </Button>
-                  </div>
-                  <div className="relative">
-                    <pre className="bg-muted p-3 rounded-md text-xs overflow-auto font-mono h-40">
-                      {MCP_CONFIG_EXAMPLE}
-                    </pre>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    MCP配置用于自定义AI助手的行为和能力
+                    Enter your API key to use the MCP protocol
                   </p>
                 </div>
 
-                {/* MCP Server状态检查按钮 */}
-                <div className="pt-4">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    className="w-full"
-                    onClick={checkMCPServerStatus}
-                    disabled={isValidating || !apiKey || isKeyValid !== true}
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    {isValidating ? "正在检查MCP Server..." : "检查MCP Server状态"}
-                  </Button>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="params" className="flex-1 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="model">模型选择</Label>
+                  <Label htmlFor="model">Model</Label>
                   <Select value={model} onValueChange={setModel}>
                     <SelectTrigger id="model">
-                      <SelectValue placeholder="选择模型" />
+                      <SelectValue placeholder="Select model" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="gpt-3.5-turbo">
-                        GPT-3.5 Turbo
-                      </SelectItem>
+                      <SelectItem value="gpt-3.5-turbo">GPT-3.5 Turbo</SelectItem>
                       <SelectItem value="gpt-4">GPT-4</SelectItem>
                       <SelectItem value="gpt-4-turbo">GPT-4 Turbo</SelectItem>
-                      <SelectItem value="claude-3-opus">
-                        Claude 3 Opus
-                      </SelectItem>
-                      <SelectItem value="claude-3-sonnet">
-                        Claude 3 Sonnet
-                      </SelectItem>
+                      <SelectItem value="claude-3-opus">Claude 3 Opus</SelectItem>
+                      <SelectItem value="claude-3-sonnet">Claude 3 Sonnet</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div className="flex items-center space-x-2 pt-2">
-                  <Switch
-                    id="streamMode"
-                    checked={streamMode}
-                    onCheckedChange={setStreamMode}
-                  />
-                  <Label htmlFor="streamMode">流式响应</Label>
-                </div>
-                <Separator className="my-4" />
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <Label htmlFor="temperature">温度: {temperature}</Label>
-                    <span className="text-xs text-muted-foreground">
-                      {temperature}
-                    </span>
+                    <Label htmlFor="temperature">Temperature: {temperature}</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="h-4 w-4 text-muted-foreground" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-[200px] text-xs">
+                            Controls randomness: Lower values are more deterministic, higher values are more creative.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
-                  <Input
+                  <Slider
                     id="temperature"
-                    type="range"
-                    min="0"
-                    max="2"
-                    step="0.1"
-                    value={temperature}
-                    onChange={(e) => setTemperature(e.target.value)}
+                    min={0}
+                    max={2}
+                    step={0.1}
+                    value={[parseFloat(temperature)]}
+                    onValueChange={(value) => setTemperature(value[0].toString())}
                   />
-                  <p className="text-xs text-muted-foreground">
-                    较低的值使输出更确定，较高的值使输出更随机
-                  </p>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="maxTokens">最大令牌数</Label>
+                  <Label htmlFor="max-tokens">Max Tokens</Label>
                   <Input
-                    id="maxTokens"
+                    id="max-tokens"
                     type="number"
                     value={maxTokens}
                     onChange={(e) => setMaxTokens(e.target.value)}
                     min="1"
-                    max="8192"
+                    max="4096"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    限制响应的最大长度
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="stream-mode"
+                    checked={streamMode}
+                    onCheckedChange={setStreamMode}
+                  />
+                  <Label htmlFor="stream-mode">Stream Mode</Label>
+                </div>
+              </TabsContent>
+              
+              {/* 信息选项卡 */}
+              <TabsContent value="info" className="space-y-4 mt-4">
+                <div>
+                  <h3 className="text-sm font-medium mb-2">About MCP Protocol</h3>
+                  <p className="text-sm text-muted-foreground">
+                    MCP (Model Control Protocol) is a standardized protocol for interacting with AI models. It provides a consistent interface for sending prompts and receiving responses.
                   </p>
                 </div>
 
-                <Separator className="my-4" />
-
-                <div className="space-y-2">
-                  <Label>高级选项</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <Label htmlFor="topP" className="text-xs">
-                        Top P
-                      </Label>
-                      <Input id="topP" placeholder="1.0" />
-                    </div>
-                    <div>
-                      <Label htmlFor="freqPenalty" className="text-xs">
-                        频率惩罚
-                      </Label>
-                      <Input id="freqPenalty" placeholder="0.0" />
-                    </div>
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Configuration Example</h3>
+                  <div className="relative">
+                    <pre className="bg-gray-100 p-3 rounded-md text-xs overflow-x-auto">
+                      {MCP_CONFIG_EXAMPLE}
+                    </pre>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={copyConfigExample}
+                    >
+                      {copied ? (
+                        <CheckCircle className="h-4 w-4" />
+                      ) : (
+                        <Copy className="h-4 w-4" />
+                      )}
+                    </Button>
                   </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Usage</h3>
+                  <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
+                    <li>Enter your API key in the settings tab</li>
+                    <li>Configure model parameters as needed</li>
+                    <li>Type your message and click send</li>
+                    <li>View the model's response in the chat area</li>
+                  </ol>
                 </div>
               </TabsContent>
             </Tabs>

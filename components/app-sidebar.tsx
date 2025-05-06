@@ -1,42 +1,63 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 
-import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { NAVIGATION } from "@/lib/constants";
-
-// This is sample data.
-const data = {
-  teams: [
-    {
-      name: "Some team",
-      avatar: "",
-    },
-  ],
-};
+import { NAVIGATION, SITE } from "@/lib/constants";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <div className="font-semibold text-lg mx-auto">{SITE.NAME}</div>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={NAVIGATION.navMain} />
+        <SidebarGroup>
+          <SidebarMenu>
+            {NAVIGATION.DASHBOARD_Main.map((item) => (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton>
+                  {item.icon && <item.icon className="mr-2 h-4 w-4" />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+                {item.items && item.items.length > 0 && (
+                  <SidebarMenuSub>
+                    {item.items.map((subItem) => (
+                      <SidebarMenuSubItem key={subItem.title}>
+                        <SidebarMenuSubButton asChild>
+                          <Link href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                )}
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
         <ThemeToggle />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
