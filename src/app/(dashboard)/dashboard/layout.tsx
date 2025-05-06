@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { Button } from '@/src/components/ui/button';
+import { Activity, Menu, Settings, Shield, Users } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { useState } from 'react';
 
 export default function DashboardLayout({
   children
