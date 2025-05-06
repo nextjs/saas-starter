@@ -21,12 +21,18 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { NAVIGATION, SITE } from "@/lib/constants";
+import { Sunrise } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <div className="font-semibold text-lg mx-auto">{SITE.NAME}</div>
+        <Link href="/" className="flex items-center">
+          <Sunrise className="h-6 w-6 text-orange-500" />
+          <span className="ml-2 text-xl font-semibold text-foreground">
+            {SITE.NAME}
+          </span>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>

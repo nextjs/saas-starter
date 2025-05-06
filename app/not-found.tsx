@@ -1,12 +1,14 @@
 import Link from 'next/link';
 import { Sunrise } from 'lucide-react';
+import { SITE } from '@/lib/constants';
 
 export default function NotFound() {
   return (
     <div className="min-h-[100dvh] flex items-center justify-center bg-background">
       <div className="max-w-md space-y-8 p-4 text-center">
-        <div className="flex justify-center">
-          <Sunrise className="size-12 text-orange-500" />
+        <div className="flex items-center justify-center">
+          <Sunrise className="size-8 text-orange-500" /> {/* Logo */}
+          <span className="ml-2 text-xl font-semibold text-foreground">{SITE.NAME}</span> {/* Site Name */}
         </div>
         <h1 className="text-4xl font-bold text-foreground tracking-tight">
           Page Not Found
