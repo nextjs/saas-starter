@@ -15,7 +15,7 @@ export default async function PricingPage() {
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-foreground mb-4">Awesome, Simple Pricing</h1>
         <p className="text-l text-muted-foreground max-w-2xl mx-auto">
-          Choose the plan that's what your needs. All plans include a 7-day free trial.
+          Choose the plan that's what your needs.
         </p>
       </div>
       
@@ -65,9 +65,6 @@ function PricingCard({
       )}
       
       <h2 className="text-xl font-semibold text-foreground mb-2">{name}</h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Includes 7-day free trial
-      </p>
       
       <div className="mb-6">
         <p className="text-3xl font-bold text-foreground">
