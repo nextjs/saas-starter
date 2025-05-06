@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
+import { signToken, verifyToken } from '@/src/lib/auth/session';
 import type { NextRequest } from 'next/server';
-import { signToken, verifyToken } from '@/lib/auth/session';
+import { NextResponse } from 'next/server';
 
 const protectedRoutes = '/dashboard';
 
