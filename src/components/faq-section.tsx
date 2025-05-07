@@ -59,15 +59,14 @@ export function FAQSection() {
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-10 sm:py-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="Frequently Asked Questions"
           subtitle="Have questions? We've got answers. If you don't find what you're looking for, feel free to contact our support team."
           centered
         />
-        
-        <div className="mt-12">
+        <div className="mt-8 sm:mt-12">
           {faqs.map((faq, index) => (
             <FAQItem key={index} question={faq.question} answer={faq.answer} />
           ))}

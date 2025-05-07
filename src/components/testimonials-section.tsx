@@ -23,7 +23,7 @@ export function TestimonialsSection() {
   ];
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-10 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="What Our Customers Say"
@@ -31,7 +31,7 @@ export function TestimonialsSection() {
           centered
         />
         
-        <div className="mt-12 grid gap-8 md:grid-cols-3">
+        <div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial, index) => (
             <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex items-start mb-4">

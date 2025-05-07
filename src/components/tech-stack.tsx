@@ -3,7 +3,7 @@ import { SectionHeading } from "./ui/section-heading";
 
 const TechStack = () => {
   return (
-    <section className="py-16 bg-white w-full">
+    <section className="py-12 sm:py-16 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="Built with Modern Technology"
@@ -11,16 +11,16 @@ const TechStack = () => {
           centered
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8 justify-items-center">
           <div className="flex flex-col items-center">
             <Image
               src="/typescript.svg"
               alt="TypeScript"
               width={48}
               height={48}
-              className="h-12 w-12"
+              className="h-10 w-10 sm:h-12 sm:w-12"
             />
-            <span className="mt-3 font-medium">TypeScript</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">TypeScript</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -29,9 +29,9 @@ const TechStack = () => {
               alt="Next.js"
               width={48}
               height={48}
-              className="h-12 w-12 text-gray-900"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-gray-900"
             />
-            <span className="mt-3 font-medium">Next.js</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Next.js</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -40,9 +40,9 @@ const TechStack = () => {
               alt="TailwindCSS"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">TailwindCSS</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">TailwindCSS</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -51,22 +51,22 @@ const TechStack = () => {
               alt="Better Auth"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">Better Auth</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Better Auth</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 justify-items-center mt-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8 justify-items-center mt-6 sm:mt-8">
           <div className="flex flex-col items-center">
             <Image
               src="/drizzle.svg"
               alt="Drizzle ORM"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">Drizzle ORM</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Drizzle ORM</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -75,9 +75,9 @@ const TechStack = () => {
               alt="Supabase"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">Supabase</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Supabase</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -86,9 +86,9 @@ const TechStack = () => {
               alt="Stripe"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">Stripe</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Stripe</span>
           </div>
 
           <div className="flex flex-col items-center">
@@ -97,9 +97,9 @@ const TechStack = () => {
               alt="OpenAI"
               width={48}
               height={48}
-              className="h-12 w-12 text-blue-500"
+              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
             />
-            <span className="mt-3 font-medium">OpenAI</span>
+            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">OpenAI</span>
           </div>
         </div>
       </div>

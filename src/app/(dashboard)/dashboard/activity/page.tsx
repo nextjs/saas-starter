@@ -2,16 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { getActivityLogs } from '@/src/lib/db/queries';
 import { ActivityType } from '@/src/lib/db/schema';
 import {
-  AlertCircle,
-  CheckCircle,
-  Lock,
-  LogOut,
-  Mail,
-  Settings,
-  UserCog,
-  UserMinus,
-  UserPlus,
-  type LucideIcon,
+    AlertCircle,
+    CheckCircle,
+    Lock,
+    LogOut,
+    Mail,
+    Settings,
+    UserCog,
+    UserMinus,
+    UserPlus,
+    type LucideIcon,
 } from 'lucide-react';
 
 const iconMap: Record<ActivityType, LucideIcon> = {
@@ -91,8 +91,8 @@ export default async function ActivityPage() {
 
                 return (
                   <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-orange-600" />
+                    <div className="bg-blue-100 rounded-full p-2">
+                      <Icon className="w-5 h-5 text-blue-600" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">
@@ -109,7 +109,7 @@ export default async function ActivityPage() {
             </ul>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12">
-              <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
+              <AlertCircle className="h-12 w-12 text-blue-500 mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 No activity yet
               </h3>

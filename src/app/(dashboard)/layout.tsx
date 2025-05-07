@@ -1,6 +1,7 @@
 'use client';
 
 import { signOut } from '@/src/app/(login)/actions';
+import HomeHeader from '@/src/components/home-header';
 import Logo from '@/src/components/logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/src/components/ui/avatar';
 import { Button } from '@/src/components/ui/button';
@@ -99,7 +100,7 @@ function Header() {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="flex flex-col min-h-screen">
-      <Header />
+      <HomeHeader />
       {children}
     </section>
   );

@@ -36,14 +36,14 @@ export function Footer() {
   ];
 
   return (
-    <footer className="pt-16 pb-8">
+    <footer className="pt-10 sm:pt-16 pb-6 sm:pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-12">
-          <div className="col-span-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-8 sm:mb-12">
+          <div className="col-span-1 sm:col-span-2">
             <div className="flex items-start gap-2 mb-4">
               <Logo />
             </div>
-            <p className="text-gray-400 mb-4 max-w-xs">
+            <p className="text-gray-400 mb-4 max-w-xs text-sm sm:text-base">
               The fastest way to launch your SaaS product with authentication,
               payments, and team management built-in.
             </p>
@@ -85,7 +85,7 @@ export function Footer() {
                   <li key={linkIndex}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-400 hover:text-white transition-colors text-sm sm:text-base"
                     >
                       {link.label}
                     </Link>
@@ -96,7 +96,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="pt-8 border-t border-gray-300 text-center text-gray-400 text-sm">
+        <div className="pt-6 sm:pt-8 border-t border-gray-300 text-center text-gray-400 text-xs sm:text-sm">
           <p>© {currentYear} SaaS Starter. All rights reserved.</p>
         </div>
       </div>

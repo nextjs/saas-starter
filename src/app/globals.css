@@ -75,7 +75,20 @@
 
 @layer utilities {
   body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Rethink Sans', sans-serif;
+    font-weight: 400;
+  }
+
+  .font-cal {
+    font-family: 'Cal Sans', sans-serif;
+  }
+
+  .font-rethink {
+    font-family: 'Rethink Sans', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cal Sans', sans-serif;
   }
 }
 

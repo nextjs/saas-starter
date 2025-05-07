@@ -4,11 +4,11 @@ import { inviteTeamMember, removeTeamMember } from '@/src/app/(login)/actions';
 import { Avatar, AvatarFallback } from '@/src/components/ui/avatar';
 import { Button } from '@/src/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle
+    Card,
+    CardContent,
+    CardFooter,
+    CardHeader,
+    CardTitle
 } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
@@ -240,7 +240,7 @@ function InviteTeamMember() {
           )}
           <Button
             type="submit"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="bg-blue-500 hover:bg-blue-600 text-white"
             disabled={isInvitePending || !isOwner}
           >
             {isInvitePending ? (
