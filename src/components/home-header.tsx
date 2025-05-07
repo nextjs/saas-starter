@@ -43,7 +43,7 @@ function HomeHeader() {
           id="home-header-nav"
           className="hidden md:flex items-center space-x-6"
         >
-          <a href="#tech" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Tech</a>
+          <a href="#tech" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Stack</a>
           <a href="#features" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Features</a>
           <a href="#pricing" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Pricing</a>
           <a href="#testimonials" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Testimonials</a>

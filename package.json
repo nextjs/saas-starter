@@ -1,4 +1,9 @@
 {
+  "name": "saasify",
+  "version": "0.0.1",
+  "description": "A SaaS starter kit with Next.js, Tailwind CSS, and Drizzle ORM",
+  "author": "Matheus Seabra",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
