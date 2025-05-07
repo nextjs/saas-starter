@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Caladea } from "next/font/google";
+import { Rethink_Sans } from "next/font/google";
 import "./globals.css";
 
 import { SWRConfig } from "swr";
 import { getTeamForUser, getUser } from "../lib/db/queries";
 
 export const metadata: Metadata = {
-  title: "SaaS Starter",
+  title: "SaaS Starter | Build Your SaaS Faster Than Ever",
   description: "Get started quickly with Next.js, Postgres, and Stripe.",
 };
 
@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const manrope = Caladea({ subsets: ["latin"], weight: ["400", "700"] });
+const rethinksans = Rethink_Sans({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function RootLayout({
   children,
@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
+      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${rethinksans.className}`}
     >
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
