@@ -51,7 +51,7 @@ function HomeHeader() {
         </nav>
         <div className="hidden md:flex items-center space-x-2">
           <Link href="/sign-in" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Sign In</Link>
-          <Link href="/sign-up" className="ml-2 px-4 py-2 rounded-full bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors text-sm">Sign Up</Link>
+          <Link href="/sign-up" className="ml-2 px-4 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-400 hover:bg-blue-600 text-white font-semibold hover:bg-blue-600 transition-colors text-sm">Sign Up</Link>
         </div>
       </div>
       {/* Mobile menu */}

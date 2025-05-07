@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { SectionHeading } from './ui/section-heading';
@@ -14,13 +14,13 @@ export function CTASection() {
         />
         <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-8">
           <Link href="/sign-up">
-            <Button size="lg" className="rounded-full px-8 bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">
-              Start Your Free Trial
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" className="rounded-xl px-8 bg-blue-500 hover:bg-blue-600 w-full sm:w-auto">
+              Get Started
+              <ChevronRight className="h-5 w-5" />
             </Button>
           </Link>
           <Link href="https://github.com/nextjs/saas-starter" target="_blank">
-            <Button size="lg" variant="outline" className="rounded-full px-8 w-full sm:w-auto">
+            <Button size="lg" variant="outline" className="rounded-xl px-8 w-full sm:w-auto">
               View on GitHub
             </Button>
           </Link>
