@@ -9,7 +9,7 @@ const Hero = () => {
         <div className="flex flex-col items-center text-center">
           <div className="max-w-4xl">
             <div className="space-y-4">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-700 via-blue-400 to-blue-500 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
                 Build Your SaaS Faster Than Ever
               </h1>
               <p className="text-base sm:text-lg text-gray-600">

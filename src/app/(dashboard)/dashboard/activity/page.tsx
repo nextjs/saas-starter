@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { getActivityLogs } from '@/src/lib/db/queries';
 import { ActivityType } from '@/src/lib/db/schema';
 import {
+    Activity,
     AlertCircle,
     CheckCircle,
     Lock,
@@ -73,7 +74,8 @@ export default async function ActivityPage() {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
+      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
+        <Activity className="h-6 w-6 text-blue-500" />
         Activity Log
       </h1>
       <Card>

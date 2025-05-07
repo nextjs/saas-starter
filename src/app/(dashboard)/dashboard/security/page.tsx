@@ -5,7 +5,7 @@ import { Button } from '@/src/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
-import { Loader2, Lock, Trash2 } from 'lucide-react';
+import { Loader2, Lock, Shield, Trash2 } from 'lucide-react';
 import { useActionState } from 'react';
 
 type PasswordState = {
@@ -35,7 +35,8 @@ export default function SecurityPage() {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium bold text-gray-900 mb-6">
+      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
+        <Shield className="h-6 w-6 text-blue-500" />
         Security Settings
       </h1>
       <Card className="mb-8">

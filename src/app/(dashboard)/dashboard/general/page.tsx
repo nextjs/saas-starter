@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
 import { User } from '@/src/lib/db/schema';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Settings } from 'lucide-react';
 import { Suspense, useActionState } from 'react';
 import useSWR from 'swr';
 
@@ -79,7 +79,8 @@ export default function GeneralPage() {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
+      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
+        <Settings className="h-6 w-6 text-blue-500" />
         General Settings
       </h1>
 
