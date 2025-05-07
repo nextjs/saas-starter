@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
 
@@ -8,9 +8,10 @@ const Hero = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center text-center">
           <div className="max-w-4xl">
-            <div className="space-y-4">
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold">
-                Build Your SaaS Faster Than Ever
+            <div className="space-y-4 flex flex-col items-center">
+              <Zap className="h-16 w-16 text-blue-500 text-center" />
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-loose">
+                Build Your SaaS <span className="text-blue-500 italic">Faster</span>.
               </h1>
               <p className="text-base sm:text-lg text-gray-600">
                 Launch your SaaS product in record time with our powerful,

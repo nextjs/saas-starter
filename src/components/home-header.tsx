@@ -58,7 +58,7 @@ function HomeHeader() {
       {menuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 px-4 pb-4">
           <nav className="flex flex-col space-y-2 mt-2" id="home-header-nav-mobile">
-            <a href="#tech" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Tech</a>
+            <a href="#tech" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Tech Stack</a>
             <a href="#features" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Features</a>
             <a href="#pricing" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Pricing</a>
             <a href="#testimonials" className="text-sm font-medium text-gray-700 hover:text-blue-500 transition-colors">Testimonials</a>

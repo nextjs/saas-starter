@@ -6,7 +6,7 @@ const TechStack = () => {
     <section className="py-12 sm:py-16 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Built with Modern Technology"
+          title="Built with a Modern Tech Stack"
           subtitle="Powered by the latest web technologies for performance and reliability"
           centered
         />
