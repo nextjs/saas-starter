@@ -44,8 +44,7 @@ export function Footer() {
               <Logo />
             </div>
             <p className="text-gray-400 mb-4 max-w-xs text-sm sm:text-base">
-              The fastest way to launch your SaaS product with authentication,
-              payments, and team management built-in.
+              The fastest way to launch your SaaS product without reinventing auth, payments, and team management.
             </p>
             <div className="flex space-x-4">
               <a
@@ -97,7 +96,7 @@ export function Footer() {
         </div>
 
         <div className="pt-6 sm:pt-8 border-t border-gray-300 text-center text-gray-400 text-xs sm:text-sm">
-          <p>© {currentYear} SaaS Starter. All rights reserved.</p>
+          <p>© 2025 SaaSify. All rights reserved.</p>
         </div>
       </div>
     </footer>

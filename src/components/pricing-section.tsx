@@ -45,7 +45,7 @@ function PlanCard({
           </li>
         ))}
       </ul>
-      <Link href="/sign-up">
+      <Link href={name === 'Enterprise' ? '/contact' : '/sign-up'}>
         <Button 
           className={`w-full ${popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
           variant={popular ? 'default' : 'outline'}
@@ -62,8 +62,8 @@ export function PricingSection() {
     <section id="pricing" className="py-10 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Simple, Transparent Pricing"
-          subtitle="No hidden fees. No complicated pricing. Choose the plan that works best for your team."
+          title="Pricing That Makes Financial Sense"
+          subtitle="Pay for what helps you ship faster, not what holds you back."
           centered
         />
         <div className="mt-10 sm:mt-20 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
@@ -71,7 +71,7 @@ export function PricingSection() {
             name="Starter"
             price={9}
             interval="month"
-            description="Perfect for solo founders and small projects."
+            description="For solo developers proving their concept"
             features={[
               "Unlimited Projects",
               "Up to 3 Team Members",
@@ -84,7 +84,7 @@ export function PricingSection() {
             name="Pro"
             price={29}
             interval="month"
-            description="Ideal for growing startups and small teams."
+            description="For shipping your MVP and gaining traction"
             features={[
               "Everything in Starter, plus:",
               "Unlimited Team Members",
@@ -99,7 +99,7 @@ export function PricingSection() {
             name="Enterprise"
             price={99}
             interval="month"
-            description="For established businesses with advanced needs."
+            description="For scaling your successful product"
             features={[
               "Everything in Pro, plus:",
               "Dedicated Account Manager",
@@ -113,7 +113,7 @@ export function PricingSection() {
         </div>
         <div className="mt-8 sm:mt-12 text-center">
           <p className="text-gray-600">
-            Have questions about our pricing? <a href="#" className="text-blue-500 hover:underline">Contact us</a>
+            Bootstrap your SaaS without bootstrapping your bank account. <a href="#" className="text-blue-500 hover:underline">Contact us for custom pricing</a>
           </p>
         </div>
       </div>

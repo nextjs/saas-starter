@@ -3,21 +3,21 @@ import { SectionHeading } from './ui/section-heading';
 export function TestimonialsSection() {
   const testimonials = [
     {
-      quote: "This SaaS starter kit saved us months of development time. We were able to launch our product in just a few weeks.",
+      quote: "I wasted 3 months building auth and payment systems for my last startup. With SaaSify, I launched our MVP in 2 weeks and focused on what actually matters—our core product.",
       author: "Sarah Johnson",
       role: "CTO, TechFlow",
       avatar: "https://randomuser.me/api/portraits/women/32.jpg"
     },
     {
-      quote: "The integration with Stripe was seamless. Setting up our subscription model was incredibly easy.",
+      quote: "The Stripe integration alone saved me weeks of debugging and testing. I literally shipped a working subscription service in a single weekend.",
       author: "David Chen",
-      role: "Founder, DataPulse",
+      role: "Solo Developer, DataPulse",
       avatar: "https://randomuser.me/api/portraits/men/46.jpg"
     },
     {
-      quote: "I'm not a technical founder, but I was able to get our MVP up and running quickly. The documentation is excellent.",
+      quote: "After burning through $15K on a failed custom build, I switched to SaaSify. Should have started here. The codebase is clean, well-documented, and easily extensible.",
       author: "Michael Rodriguez",
-      role: "CEO, StartupBoost",
+      role: "Technical Founder, StartupBoost",
       avatar: "https://randomuser.me/api/portraits/men/22.jpg"
     }
   ];
@@ -26,8 +26,8 @@ export function TestimonialsSection() {
     <section className="py-10 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="What Our Customers Say"
-          subtitle="Don't just take our word for it. Here's what people who have used our starter kit have to say."
+          title="From Developers Who've Been There"
+          subtitle="Real experiences from technical founders who've used our starter kit."
           centered
         />
         

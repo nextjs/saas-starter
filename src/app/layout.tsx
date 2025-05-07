@@ -6,7 +6,7 @@ import { SWRConfig } from "swr";
 import { getTeamForUser, getUser } from "../lib/db/queries";
 
 export const metadata: Metadata = {
-  title: "SaaS Starter | Build Your SaaS Faster Than Ever",
+  title: "SaaSify | Build Your SaaS Faster Than Ever",
   description: "Get started quickly with Next.js, Postgres, and Stripe.",
 };
 
