@@ -57,64 +57,82 @@ function PlanCard({
   );
 }
 
+const plans = [
+  {
+    name: "Starter",
+    oldPrice: "$299",
+    price: "$199",
+    features: [
+      "Next.js boilerplate",
+      "SEO & Blog",
+      "Email integration (Mailgun)",
+      "Stripe / Lemon Squeezy payments",
+      "MongoDB / Supabase support",
+      "Google OAuth & Magic Links",
+      "Prebuilt components & animations",
+      "AI-generated legal docs",
+      "Community access",
+      "$1,200+ in partner discounts",
+      "Lifetime updates",
+      "One-time payment, unlimited projects"
+    ]
+  },
+  {
+    name: "Pro",
+    oldPrice: "$349",
+    price: "$249",
+    features: [
+      "Everything in Starter, plus:",
+      "Advanced analytics",
+      "Priority support",
+      "Extended integrations",
+      "Early access to new features"
+    ]
+  },
+  {
+    name: "BUNDLE",
+    oldPrice: "$648",
+    price: "$299",
+    features: [
+      "Everything in Pro, and...",
+      "SaaSify LaunchLab ($299 value)",
+      "Learn to build and launch a SaaS from scratch",
+      "12+ hours of actionable content",
+      "Entrepreneur mindset training",
+      "Community Q&A and support",
+      "One-time payment, unlimited access!"
+    ]
+  }
+];
+
 export function PricingSection() {
   return (
     <section id="pricing" className="py-10 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Pricing That Makes Financial Sense"
-          subtitle="Pay for what helps you ship faster, not what holds you back."
+          title="Save hours of development, launch faster, and grow your business!"
+          subtitle="$100 off for the first 5000 customers (9 left)"
           centered
         />
-        <div className="mt-10 sm:mt-20 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          <PlanCard
-            name="Starter"
-            price={9}
-            interval="month"
-            description="For solo developers proving their concept"
-            features={[
-              "Unlimited Projects",
-              "Up to 3 Team Members",
-              "Basic Analytics",
-              "Email Support",
-              "7-day Free Trial"
-            ]}
-          />
-          <PlanCard
-            name="Pro"
-            price={29}
-            interval="month"
-            description="For shipping your MVP and gaining traction"
-            features={[
-              "Everything in Starter, plus:",
-              "Unlimited Team Members",
-              "Advanced Analytics",
-              "Priority Support",
-              "API Access",
-              "Custom Integrations"
-            ]}
-            popular
-          />
-          <PlanCard
-            name="Enterprise"
-            price={99}
-            interval="month"
-            description="For scaling your successful product"
-            features={[
-              "Everything in Pro, plus:",
-              "Dedicated Account Manager",
-              "Custom Branding",
-              "24/7 Phone Support",
-              "SLA Agreement",
-              "Advanced Security Features"
-            ]}
-            buttonText="Contact Sales"
-          />
-        </div>
-        <div className="mt-8 sm:mt-12 text-center">
-          <p className="text-gray-600">
-            Bootstrap your SaaS without bootstrapping your bank account. <a href="#" className="text-blue-500 hover:underline">Contact us for custom pricing</a>
-          </p>
+        <div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {plans.map((plan, idx) => (
+            <div key={idx} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow flex flex-col">
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
+              <div className="flex items-baseline gap-2 mb-4">
+                <span className="text-gray-400 line-through text-lg">{plan.oldPrice}</span>
+                <span className="text-3xl font-extrabold text-blue-600">{plan.price}</span>
+                <span className="text-sm text-gray-500">USD</span>
+              </div>
+              <ul className="mb-6 space-y-2 text-gray-700 text-sm flex-1">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span className="text-blue-500 font-bold">•</span> {feature}
+                  </li>
+                ))}
+              </ul>
+              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-xl transition-colors">Get {plan.name}</button>
+            </div>
+          ))}
         </div>
       </div>
     </section>

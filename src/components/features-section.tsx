@@ -1,4 +1,4 @@
-import { CreditCard, Database, FlaskConical, Languages, LineChart, Palette, Server, Shield, UploadCloud } from 'lucide-react';
+import { BookOpen, CreditCard, Database, Languages, LineChart, MailIcon, Palette, Search, Shield } from 'lucide-react';
 import { SectionHeading } from './ui/section-heading';
 
 interface FeatureCardProps {
@@ -37,6 +37,16 @@ export function FeaturesSection() {
       description: "Optimized data fetching patterns using Next.js server components, caching, and error handling."
     },
     {
+      icon: <MailIcon className="h-6 w-6" />,
+      title: "Email",
+      description: "Integrated email functionality with Resend, ready for transactional emails and easy to extend."
+    },
+    {
+      icon: <Search className="h-6 w-6" />,
+      title: "SEO",
+      description: "Built-in SEO optimization with Next.js, including structured data, canonical URLs, and automatic sitemap generation."
+    },
+    {
       icon: <Shield className="h-6 w-6" />, 
       title: "Authentication",
       description: "Secure, flexible authentication with social logins, passwordless, and robust permission management."
@@ -52,20 +62,10 @@ export function FeaturesSection() {
       description: "Integrated payments and subscriptions with Stripe, ready for global commerce and easy to extend."
     },
     {
-      icon: <FlaskConical className="h-6 w-6" />,
-      title: "Testing",
-      description: "Comprehensive testing setup with unit, integration, and e2e support to ensure quality and confidence."
+      icon: <BookOpen className="h-6 w-6" />,
+      title: "Documentation",
+      description: "Comprehensive documentation with code examples, API references, and best practices to help you get started quickly."
     },
-    {
-      icon: <UploadCloud className="h-6 w-6" />,
-      title: "CI/CD",
-      description: "Automated testing and deployment pipelines for fast, reliable shipping and continuous improvement."
-    },
-    {
-      icon: <Server className="h-6 w-6" />,
-      title: "Deployment",
-      description: "Seamless deployment with Vercel, Docker, and production-ready configurations out of the box."
-    }
   ];
 
   return (
