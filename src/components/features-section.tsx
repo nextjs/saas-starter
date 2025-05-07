@@ -1,4 +1,4 @@
-import { Code, Globe, LineChart, Shield, UserPlus, Zap } from 'lucide-react';
+import { CreditCard, Database, FlaskConical, Languages, LineChart, Palette, Server, Shield, UploadCloud } from 'lucide-react';
 import { SectionHeading } from './ui/section-heading';
 
 interface FeatureCardProps {
@@ -22,34 +22,49 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 export function FeaturesSection() {
   const features = [
     {
-      icon: <Zap className="h-6 w-6" />,
-      title: "Lightning Fast",
-      description: "Built on Next.js for exceptional performance and SEO optimization out of the box."
+      icon: <Palette className="h-6 w-6" />,
+      title: "Styling & UI",
+      description: "Beautiful, customizable UI with Tailwind CSS and shadcn/ui, designed for accessibility and speed."
     },
     {
-      icon: <Shield className="h-6 w-6" />,
-      title: "Secure Authentication",
-      description: "Robust user authentication system with secure password handling and social login options."
-    },
-    {
-      icon: <UserPlus className="h-6 w-6" />,
-      title: "Team Management",
-      description: "Invite team members, assign roles, and manage permissions with a few clicks."
+      icon: <Languages className="h-6 w-6" />,
+      title: "Internationalization (i18n)",
+      description: "Built-in i18n support to reach users worldwide, with easy language switching and translation management."
     },
     {
       icon: <LineChart className="h-6 w-6" />,
-      title: "Analytics Dashboard",
-      description: "Track user activity, monitor usage, and gain insights with built-in analytics."
+      title: "Data Fetching",
+      description: "Optimized data fetching patterns using Next.js server components, caching, and error handling."
     },
     {
-      icon: <Code className="h-6 w-6" />,
-      title: "Developer Friendly",
-      description: "Clean code structure, comprehensive documentation, and easy customization."
+      icon: <Shield className="h-6 w-6" />, 
+      title: "Authentication",
+      description: "Secure, flexible authentication with social logins, passwordless, and robust permission management."
     },
     {
-      icon: <Globe className="h-6 w-6" />,
-      title: "API Integration",
-      description: "Pre-built API endpoints and integration with popular third-party services."
+      icon: <Database className="h-6 w-6" />,
+      title: "Database & ORM",
+      description: "Modern, scalable database setup with migrations, type safety, and easy querying for rapid development."
+    },
+    {
+      icon: <CreditCard className="h-6 w-6" />,
+      title: "Payments",
+      description: "Integrated payments and subscriptions with Stripe, ready for global commerce and easy to extend."
+    },
+    {
+      icon: <FlaskConical className="h-6 w-6" />,
+      title: "Testing",
+      description: "Comprehensive testing setup with unit, integration, and e2e support to ensure quality and confidence."
+    },
+    {
+      icon: <UploadCloud className="h-6 w-6" />,
+      title: "CI/CD",
+      description: "Automated testing and deployment pipelines for fast, reliable shipping and continuous improvement."
+    },
+    {
+      icon: <Server className="h-6 w-6" />,
+      title: "Deployment",
+      description: "Seamless deployment with Vercel, Docker, and production-ready configurations out of the box."
     }
   ];
 
@@ -57,8 +72,8 @@ export function FeaturesSection() {
     <section className="py-10 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Powerful Features"
-          subtitle="Everything you need to build, launch, and scale your SaaS product quickly and efficiently."
+          title="Everything You Need for Modern SaaS"
+          subtitle="A complete toolkit of essential features, thoughtfully integrated so you can focus on what makes your product unique."
           centered
         />
         <div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
