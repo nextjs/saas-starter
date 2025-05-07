@@ -4,18 +4,18 @@ import { inviteTeamMember, removeTeamMember } from '@/src/app/(login)/actions';
 import { Avatar, AvatarFallback } from '@/src/components/ui/avatar';
 import { Button } from '@/src/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle
 } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
 import { Label } from '@/src/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
 import { TeamDataWithMembers, User } from '@/src/lib/db/schema';
 import { customerPortalAction } from '@/src/lib/payments/actions';
-import { Loader2, PlusCircle } from 'lucide-react';
+import { Loader2, PlusCircle, Users } from 'lucide-react';
 import { Suspense, useActionState } from 'react';
 import useSWR from 'swr';
 
@@ -271,7 +271,10 @@ function InviteTeamMember() {
 export default function SettingsPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
+      <h1 className="text-lg lg:text-2xl font-medium mb-6 flex items-center gap-2">
+        <Users className="h-6 w-6 text-blue-500" />
+        Team Settings
+      </h1>
       <Suspense fallback={<SubscriptionSkeleton />}>
         <ManageSubscription />
       </Suspense>
