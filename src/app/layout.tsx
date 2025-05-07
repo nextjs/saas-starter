@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
 import { SWRConfig } from 'swr';
 import { getTeamForUser, getUser } from '../lib/db/queries';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
+  title: 'SaaS Starter',
   description: 'Get started quickly with Next.js, Postgres, and Stripe.'
 };
 
@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   maximumScale: 1
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const manrope = Inter({ subsets: ['latin'], weight: ['400', '500', '600', '700'] });
 
 export default function RootLayout({
   children

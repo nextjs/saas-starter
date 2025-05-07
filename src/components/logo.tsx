@@ -1,0 +1,14 @@
+import { Zap } from "lucide-react";
+
+const Logo = () => {
+  return (
+    <div className="flex items-center">
+      <Zap className="h-6 w-6 text-orange-500" />
+      <span className="ml-2 text-xl font-semibold text-gray-900">
+        SaaS Starter
+      </span>
+    </div>
+  );
+};
+
+export default Logo;
