@@ -1,8 +1,8 @@
-# Next.js SaaS Starter
+# SaaS Stack
 
 This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+**Demo: [https://saastack.vercel.app/](https://saastack.vercel.app/)**
 
 ## Features
 
@@ -19,16 +19,17 @@ This is a starter template for building a SaaS application using **Next.js** wit
 ## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
+- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Auth**: [NextAuth](https://next-auth.js.org/)
 - **Database**: [Supabase](https://supabase.com/docs/reference/javascript/introduction)
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
 
 ## Getting Started
 
 ```bash
 git clone https://github.com/nextjs/saas-starter
-cd saas-starter
+cd saas-stack
 pnpm install
 ```
 
@@ -107,12 +108,3 @@ In your Vercel project settings (or during deployment), add all the necessary en
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com

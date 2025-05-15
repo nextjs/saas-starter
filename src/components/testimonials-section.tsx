@@ -75,8 +75,8 @@ export function TestimonialsSection() {
     <section className="py-10 sm:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
-          title="Developer Success Stories"
-          subtitle="Real experiences from developers who built with our starter kit"
+          title="They Shipped. You Can Too."
+          subtitle="See how founders used SaaS Stack to launch real apps — faster than ever."
           centered
         />
         
