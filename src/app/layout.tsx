@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.className}`}>
+    <html lang="en" className={`${inter.className}`} suppressHydrationWarning>
       <body className="min-h-[100dvh] bg-background text-foreground">
         <SWRConfig
           value={{
