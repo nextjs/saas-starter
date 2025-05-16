@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/src/app/(dashboard)/layout";
 import Logo from "@/src/components/logo";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -133,7 +132,6 @@ export default function DashboardLayout({
 
         {/* Main content */}
         <main className="flex-1 overflow-y-auto p-0">
-          <Header />
           {children}
         </main>
       </div>
