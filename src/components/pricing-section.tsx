@@ -25,9 +25,9 @@ function PlanCard({
   buttonText = "Get started" 
 }: PlanCardProps) {
   return (
-    <div className={`rounded-lg ${popular ? 'border-2 border-blue-500 scale-105' : 'border border-gray-200'} p-8 relative`}>
+    <div className={`rounded-lg ${popular ? 'border-2 border-zinc-900 scale-105' : 'border border-gray-200'} p-8 relative`}>
       {popular && (
-        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+        <div className="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-zinc-900 text-white px-4 py-1 rounded-full text-sm font-medium">
           Most Popular
         </div>
       )}
@@ -40,14 +40,14 @@ function PlanCard({
       <ul className="space-y-3 mb-8">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
-            <Check className="h-5 w-5 text-blue-500 mr-2 mt-0.5 flex-shrink-0" />
+            <Check className="h-5 w-5 text-zinc-900 mr-2 mt-0.5 flex-shrink-0" />
             <span className="text-gray-700">{feature}</span>
           </li>
         ))}
       </ul>
       <Link href={name === 'Enterprise' ? '/contact' : '/sign-up'}>
         <Button 
-          className={`w-full ${popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
+          className={`w-full ${popular ? 'bg-zinc-900 hover:bg-zinc-800' : ''}`}
           variant={popular ? 'default' : 'outline'}
         >
           {buttonText}
@@ -120,17 +120,17 @@ export function PricingSection() {
               <h3 className="text-xl font-bold text-gray-900 mb-2">{plan.name}</h3>
               <div className="flex items-baseline gap-2 mb-4">
                 <span className="text-gray-400 line-through text-lg">{plan.oldPrice}</span>
-                <span className="text-3xl font-extrabold text-blue-600">{plan.price}</span>
+                <span className="text-3xl font-extrabold text-zinc-900">{plan.price}</span>
                 <span className="text-sm text-gray-500">USD</span>
               </div>
               <ul className="mb-6 space-y-2 text-gray-700 text-sm flex-1">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="text-blue-500 font-bold">•</span> {feature}
+                    <span className="text-zinc-900 font-bold">•</span> {feature}
                   </li>
                 ))}
               </ul>
-              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-xl transition-colors">Get {plan.name}</button>
+              <button className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-semibold py-2 rounded-xl transition-colors">Get {plan.name}</button>
             </div>
           ))}
         </div>

@@ -39,6 +39,7 @@
     "postgres": "^3.4.5",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "resend": "^4.5.1",
     "server-only": "^0.0.1",
     "stripe": "^18.0.0",
     "swr": "^2.3.3",

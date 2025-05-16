@@ -80,7 +80,7 @@ export default function GeneralPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
-        <Settings className="h-6 w-6 text-blue-500" />
+        <Settings className="h-6 w-6 text-zinc-500" />
         General Settings
       </h1>
 
@@ -101,7 +101,7 @@ export default function GeneralPage() {
             )}
             <Button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white"
+              className="bg-zinc-900 hover:bg-zinc-800 text-white"
               disabled={isPending}
             >
               {isPending ? (

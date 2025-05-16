@@ -240,7 +240,7 @@ function InviteTeamMember() {
           )}
           <Button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="bg-zinc-900 hover:bg-zinc-800 text-white"
             disabled={isInvitePending || !isOwner}
           >
             {isInvitePending ? (
@@ -272,7 +272,7 @@ export default function SettingsPage() {
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium mb-6 flex items-center gap-2">
-        <Users className="h-6 w-6 text-blue-500" />
+        <Users className="h-6 w-6 text-zinc-500" />
         Team Settings
       </h1>
       <Suspense fallback={<SubscriptionSkeleton />}>

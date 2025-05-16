@@ -1,6 +1,80 @@
 import Image from "next/image";
 import { SectionHeading } from "./ui/section-heading";
 
+interface TechItem {
+  src: string;
+  alt: string;
+  label: string;
+  className?: string;
+}
+
+const techRows: TechItem[][] = [
+  [
+    {
+      src: "/typescript.svg",
+      alt: "TypeScript",
+      label: "TypeScript",
+    },
+    {
+      src: "/nextjs.svg",
+      alt: "Next.js",
+      label: "Next.js",
+      className: "text-gray-900",
+    },
+    {
+      src: "/tailwindcss.svg",
+      alt: "TailwindCSS",
+      label: "TailwindCSS",
+      className: "text-zinc-500",
+    },
+    {
+      src: "/better-auth.svg",
+      alt: "Better Auth",
+      label: "Better Auth",
+      className: "text-zinc-500",
+    },
+  ],
+  [
+    {
+      src: "/drizzle.svg",
+      alt: "Drizzle ORM",
+      label: "Drizzle ORM",
+      className: "text-zinc-500",
+    },
+    {
+      src: "/supabase.svg",
+      alt: "Supabase",
+      label: "Supabase",
+      className: "text-zinc-500",
+    },
+    {
+      src: "/stripe.svg",
+      alt: "Stripe",
+      label: "Stripe",
+      className: "text-zinc-500",
+    },
+    {
+      src: "/resend.svg",
+      alt: "Resend",
+      label: "Resend",
+      className: "text-zinc-500",
+    },
+  ],
+];
+
+const TechStackItem = ({ src, alt, label, className }: TechItem) => (
+  <div className="flex flex-col items-center">
+    <Image
+      src={src}
+      alt={alt}
+      width={48}
+      height={48}
+      className={`h-10 w-10 sm:h-12 sm:w-12 ${className ?? ""}`}
+    />
+    <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">{label}</span>
+  </div>
+);
+
 const TechStack = () => {
   return (
     <section className="py-12 sm:py-16 w-full">
@@ -10,98 +84,16 @@ const TechStack = () => {
           subtitle="We've assembled the modern tech stack you already want to use, pre-configured and working together seamlessly."
           centered
         />
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8 justify-items-center">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/typescript.svg"
-              alt="TypeScript"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">TypeScript</span>
+        {techRows.map((row, i) => (
+          <div
+            key={i}
+            className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8 justify-items-center${i > 0 ? " mt-6 sm:mt-8" : ""}`}
+          >
+            {row.map((item) => (
+              <TechStackItem key={item.alt} {...item} />
+            ))}
           </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/nextjs.svg"
-              alt="Next.js"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-gray-900"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Next.js</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/tailwindcss.svg"
-              alt="TailwindCSS"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">TailwindCSS</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/better-auth.svg"
-              alt="Better Auth"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Better Auth</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 sm:gap-8 justify-items-center mt-6 sm:mt-8">
-          <div className="flex flex-col items-center">
-            <Image
-              src="/drizzle.svg"
-              alt="Drizzle ORM"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Drizzle ORM</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/supabase.svg"
-              alt="Supabase"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Supabase</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/stripe.svg"
-              alt="Stripe"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">Stripe</span>
-          </div>
-
-          <div className="flex flex-col items-center">
-            <Image
-              src="/openai.svg"
-              alt="OpenAI"
-              width={48}
-              height={48}
-              className="h-10 w-10 sm:h-12 sm:w-12 text-blue-500"
-            />
-            <span className="mt-2 sm:mt-3 font-medium text-sm sm:text-base">OpenAI</span>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   );
