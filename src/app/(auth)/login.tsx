@@ -22,19 +22,19 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
   );
 
   return (
-    <div className="min-h-[100dvh] flex flex-col justify-center items-center py-12 px-4 bg-gray-50">
+    <div className="min-h-[100dvh] flex flex-col justify-center items-center py-12 px-4 bg-background">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-4">
           <Logo />
         </div>
 
-        <div className="bg-white shadow-lg rounded-2xl px-6 py-8">
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+        <div className="bg-background shadow-lg rounded-2xl px-6 py-8 border border-border">
+          <h3 className="text-xl font-medium text-foreground mb-2">
             {mode === "signin"
               ? "Sign in to your account"
               : "Create your account"}
           </h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-muted-foreground mb-4">
             {mode === "signin"
               ? "Sign in to your account to continue."
               : "Create an account to get started."}
@@ -46,7 +46,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
             <div>
               <Label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-foreground"
               >
                 Email
               </Label>
@@ -59,7 +59,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                   defaultValue={state.email}
                   required
                   maxLength={50}
-                  className="appearance-none rounded-xl relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-xl relative block w-full px-3 py-2 border border-border placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 focus:z-10 sm:text-sm"
                   placeholder="Enter your email"
                 />
               </div>
@@ -68,7 +68,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
             <div>
               <Label
                 htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-foreground"
               >
                 Password
               </Label>
@@ -84,7 +84,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                   required
                   minLength={8}
                   maxLength={100}
-                  className="appearance-none rounded-xl relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-xl relative block w-full px-3 py-2 border border-border placeholder:text-muted-foreground text-foreground focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 focus:z-10 sm:text-sm"
                   placeholder="Enter your password"
                 />
               </div>
@@ -97,7 +97,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
             <div>
               <Button
                 type="submit"
-                className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-xl shadow-sm text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500"
+                className="w-full flex justify-center items-center py-2 px-4 border border-border rounded-xl shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500"
                 disabled={pending}
               >
                 {pending ? (
@@ -120,7 +120,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                 <div className="w-full border-t border-gray-200" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-400">
+                <span className="px-2 bg-background text-gray-400">
                   {mode === "signin"
                     ? "New to our platform?"
                     : "Already have an account?"}
@@ -133,7 +133,7 @@ export function Login({ mode = "signin" }: { mode?: "signin" | "signup" }) {
                 href={`${mode === "signin" ? "/sign-up" : "/sign-in"}${
                   redirect ? `?redirect=${redirect}` : ""
                 }${priceId ? `&priceId=${priceId}` : ""}`}
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500"
+                className="w-full flex justify-center py-2 px-4 border border-border rounded-xl shadow-sm text-sm font-medium text-foreground bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-500"
               >
                 {mode === "signin"
                   ? "Create an account"

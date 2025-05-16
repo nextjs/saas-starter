@@ -13,12 +13,12 @@ function FAQItem({ question, answer }: FAQItemProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="border-b border-gray-200 pb-4">
+    <div className="pb-4">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full py-4 text-left font-medium text-gray-900"
+        className="flex justify-between items-center w-full py-4 text-left font-medium"
       >
-        <span>{question}</span>
+        <span className="text-foreground">{question}</span>
         {isOpen ? (
           <ChevronUp className="h-5 w-5 text-gray-500" />
         ) : (
@@ -27,7 +27,7 @@ function FAQItem({ question, answer }: FAQItemProps) {
       </button>
       {isOpen && (
         <div className="pb-4 pr-8">
-          <p className="text-gray-600">{answer}</p>
+          <p className="text-muted-foreground">{answer}</p>
         </div>
       )}
     </div>

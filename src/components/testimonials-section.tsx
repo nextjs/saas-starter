@@ -72,7 +72,7 @@ export function TestimonialsSection() {
   );
 
   return (
-    <section className="py-10 sm:py-16 bg-gray-50">
+    <section className="py-10 sm:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           title="They Shipped. You Can Too."
@@ -82,7 +82,7 @@ export function TestimonialsSection() {
         
         <div className="mt-8 sm:mt-12 grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div key={index} className="p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-start mb-4">
                 <div className="flex-shrink-0 mr-4">
                   <img 
@@ -92,12 +92,12 @@ export function TestimonialsSection() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">{testimonial.author}</h3>
-                  <p className="text-sm text-gray-600">{testimonial.role}</p>
+                  <h3 className="text-lg font-medium">{testimonial.author}</h3>
+                  <p className="text-sm">{testimonial.role}</p>
                 </div>
               </div>
               <StarRating rating={testimonial.rating} />
-              <p className="text-gray-700">{testimonial.quote}</p>
+              <p>{testimonial.quote}</p>
             </div>
           ))}
         </div>

@@ -1,12 +1,17 @@
-'use client';
+"use client";
 
-import { deleteAccount, updatePassword } from '@/src/app/(login)/actions';
-import { Button } from '@/src/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
-import { Input } from '@/src/components/ui/input';
-import { Label } from '@/src/components/ui/label';
-import { Loader2, Lock, Shield, Trash2 } from 'lucide-react';
-import { useActionState } from 'react';
+import { deleteAccount, updatePassword } from "@/src/app/(auth)/actions";
+import { Button } from "@/src/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/src/components/ui/card";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import { Loader2, Lock, Shield, Trash2 } from "lucide-react";
+import { useActionState } from "react";
 
 type PasswordState = {
   currentPassword?: string;
@@ -34,14 +39,14 @@ export default function SecurityPage() {
   >(deleteAccount, {});
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
-        <Shield className="h-6 w-6 text-zinc-500" />
+    <section className="flex-1 p-4 lg:p-8 bg-background text-foreground dark:bg-zinc-900 dark:text-white">
+      <h2 className="text-md md:text-xl font-medium text-foreground dark:text-white mb-6 flex items-center gap-2">
+        <Shield className="h-6 w-6 text-zinc-500 dark:text-zinc-300" />
         Security Settings
-      </h1>
-      <Card className="mb-8">
+      </h2>
+      <Card className="mb-8 bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
         <CardHeader>
-          <CardTitle>Password</CardTitle>
+          <CardTitle className="font-medium">Password</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" action={passwordAction}>
@@ -102,12 +107,12 @@ export default function SecurityPage() {
             >
               {isPasswordPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Updating...
                 </>
               ) : (
                 <>
-                  <Lock className="mr-2 h-4 w-4" />
+                  <Lock className="h-4 w-4" />
                   Update Password
                 </>
               )}
@@ -116,14 +121,14 @@ export default function SecurityPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
         <CardHeader>
-          <CardTitle>Delete Account</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-500 mb-4">
+          <CardTitle className="font-medium">Delete Account</CardTitle>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
             Account deletion is non-reversable. Please proceed with caution.
           </p>
+        </CardHeader>
+        <CardContent>
           <form action={deleteAction} className="space-y-4">
             <div>
               <Label htmlFor="delete-password" className="mb-2">
@@ -150,12 +155,12 @@ export default function SecurityPage() {
             >
               {isDeletePending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Deleting...
                 </>
               ) : (
                 <>
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                   Delete Account
                 </>
               )}

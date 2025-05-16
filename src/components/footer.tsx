@@ -76,7 +76,7 @@ export function Footer() {
 
           {footerLinks.map((column, columnIndex) => (
             <div key={columnIndex}>
-              <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+              <h3 className="text-md font-medium tracking-wider mb-4">
                 {column.title}
               </h3>
               <ul className="space-y-2">
@@ -95,7 +95,7 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="pt-6 sm:pt-8 border-t border-gray-300 text-center text-gray-400 text-xs sm:text-sm">
+        <div className="pt-6 sm:pt-8 border-t light:border-gray-300 dark:border-zinc-700 text-center text-gray-400 text-xs sm:text-sm">
           <p>© 2025 SaaSify. All rights reserved.</p>
         </div>
       </div>

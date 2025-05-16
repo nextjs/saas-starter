@@ -12,11 +12,11 @@ export function CTASection() {
           subtitle="Don't waste time on boilerplate—focus on what matters. Join thousands of founders building and launching faster with SaaSify."
           centered
         />
-        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 mt-8">
+        <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
           <Link href="/sign-up">
             <Button
               size="lg"
-              className="text-base sm:text-lg rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 hover:bg-zinc-700 cursor-pointer w-full sm:w-auto"
+              className="sm:text-md text-md rounded-lg cursor-pointer w-full sm:w-auto"
             >
               <Layers className="h-5 w-5" />
               Get SaaS Stack

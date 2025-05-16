@@ -9,7 +9,7 @@ const Logo = ({ collapsed = false }: LogoProps) => {
     <div className="flex items-center">
       <Layers className="h-6 w-6 bg-zinc-900 text-white rounded-md p-1" />
       {!collapsed && (
-        <span className="ml-2 text-xl font-semibold text-gray-900">
+        <span className="ml-2 text-lg">
           SaaS Stack
         </span>
       )}

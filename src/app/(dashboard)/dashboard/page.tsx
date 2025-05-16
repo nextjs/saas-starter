@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import { inviteTeamMember, removeTeamMember } from '@/src/app/(login)/actions';
-import { Avatar, AvatarFallback } from '@/src/components/ui/avatar';
-import { Button } from '@/src/components/ui/button';
+import { inviteTeamMember, removeTeamMember } from "@/src/app/(auth)/actions";
+import { Avatar, AvatarFallback } from "@/src/components/ui/avatar";
+import { Button } from "@/src/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
-  CardTitle
-} from '@/src/components/ui/card';
-import { Input } from '@/src/components/ui/input';
-import { Label } from '@/src/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
-import { TeamDataWithMembers, User } from '@/src/lib/db/schema';
-import { customerPortalAction } from '@/src/lib/payments/actions';
-import { Loader2, PlusCircle, Users } from 'lucide-react';
-import { Suspense, useActionState } from 'react';
-import useSWR from 'swr';
+  CardTitle,
+} from "@/src/components/ui/card";
+import { Input } from "@/src/components/ui/input";
+import { Label } from "@/src/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/src/components/ui/radio-group";
+import { TeamDataWithMembers, User } from "@/src/lib/db/schema";
+import { customerPortalAction } from "@/src/lib/payments/actions";
+import { Loader2, PlusCircle, Users } from "lucide-react";
+import { Suspense, useActionState } from "react";
+import useSWR from "swr";
 
 type ActionState = {
   error?: string;
@@ -28,7 +28,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function SubscriptionSkeleton() {
   return (
-    <Card className="mb-8 h-[140px]">
+    <Card className="mb-8 h-[140px] bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
         <CardTitle>Team Subscription</CardTitle>
       </CardHeader>
@@ -37,26 +37,26 @@ function SubscriptionSkeleton() {
 }
 
 function ManageSubscription() {
-  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  const { data: teamData } = useSWR<TeamDataWithMembers>("/api/team", fetcher);
 
   return (
-    <Card className="mb-8">
+    <Card className="mb-8 bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+        <CardTitle className="font-medium">Team Subscription</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div className="mb-4 sm:mb-0">
               <p className="font-medium">
-                Current Plan: {teamData?.planName || 'Free'}
+                Current Plan: {teamData?.planName || "Free"}
               </p>
               <p className="text-sm text-muted-foreground">
-                {teamData?.subscriptionStatus === 'active'
-                  ? 'Billed monthly'
-                  : teamData?.subscriptionStatus === 'trialing'
-                  ? 'Trial period'
-                  : 'No active subscription'}
+                {teamData?.subscriptionStatus === "active"
+                  ? "Billed monthly"
+                  : teamData?.subscriptionStatus === "trialing"
+                    ? "Trial period"
+                    : "No active subscription"}
               </p>
             </div>
             <form action={customerPortalAction}>
@@ -73,7 +73,7 @@ function ManageSubscription() {
 
 function TeamMembersSkeleton() {
   return (
-    <Card className="mb-8 h-[140px]">
+    <Card className="mb-8 h-[140px] bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
         <CardTitle>Team Members</CardTitle>
       </CardHeader>
@@ -93,21 +93,21 @@ function TeamMembersSkeleton() {
 }
 
 function TeamMembers() {
-  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  const { data: teamData } = useSWR<TeamDataWithMembers>("/api/team", fetcher);
   const [removeState, removeAction, isRemovePending] = useActionState<
     ActionState,
     FormData
   >(removeTeamMember, {});
 
-  const getUserDisplayName = (user: Pick<User, 'id' | 'name' | 'email'>) => {
-    return user.name || user.email || 'Unknown User';
+  const getUserDisplayName = (user: Pick<User, "id" | "name" | "email">) => {
+    return user.name || user.email || "Unknown User";
   };
 
   if (!teamData?.teamMembers?.length) {
     return (
-      <Card className="mb-8">
+      <Card className="mb-8 bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
         <CardHeader>
-          <CardTitle>Team Members</CardTitle>
+          <CardTitle className="font-medium">Team Members</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground">No team members yet.</p>
@@ -117,9 +117,9 @@ function TeamMembers() {
   }
 
   return (
-    <Card className="mb-8">
+    <Card className="mb-8 bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
-        <CardTitle>Team Members</CardTitle>
+        <CardTitle className="font-medium">Team Members</CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
@@ -138,9 +138,9 @@ function TeamMembers() {
                   */}
                   <AvatarFallback>
                     {getUserDisplayName(member.user)
-                      .split(' ')
+                      .split(" ")
                       .map((n) => n[0])
-                      .join('')}
+                      .join("")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
@@ -161,7 +161,7 @@ function TeamMembers() {
                     size="sm"
                     disabled={isRemovePending}
                   >
-                    {isRemovePending ? 'Removing...' : 'Remove'}
+                    {isRemovePending ? "Removing..." : "Remove"}
                   </Button>
                 </form>
               ) : null}
@@ -178,26 +178,26 @@ function TeamMembers() {
 
 function InviteTeamMemberSkeleton() {
   return (
-    <Card className="h-[260px]">
+    <Card className="h-[260px] bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+        <CardTitle className="font-medium">Invite Team Member</CardTitle>
       </CardHeader>
     </Card>
   );
 }
 
 function InviteTeamMember() {
-  const { data: user } = useSWR<User>('/api/user', fetcher);
-  const isOwner = user?.role === 'owner';
+  const { data: user } = useSWR<User>("/api/user", fetcher);
+  const isOwner = user?.role === "owner";
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
     FormData
   >(inviteTeamMember, {});
 
   return (
-    <Card>
+    <Card className="bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
       <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+        <CardTitle className="font-medium">Invite Team Member</CardTitle>
       </CardHeader>
       <CardContent>
         <form action={inviteAction} className="space-y-4">
@@ -270,11 +270,11 @@ function InviteTeamMember() {
 
 export default function SettingsPage() {
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6 flex items-center gap-2">
-        <Users className="h-6 w-6 text-zinc-500" />
+    <section className="flex-1 p-4 lg:p-8 bg-background text-foreground dark:bg-zinc-900 dark:text-white">
+      <h2 className="text-md md:text-xl font-medium text-foreground dark:text-white mb-6 flex items-center gap-2">
+        <Users className="h-6 w-6 text-muted-foreground dark:text-zinc-300" />
         Team Settings
-      </h1>
+      </h2>
       <Suspense fallback={<SubscriptionSkeleton />}>
         <ManageSubscription />
       </Suspense>

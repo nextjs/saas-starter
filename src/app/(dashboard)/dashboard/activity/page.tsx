@@ -2,17 +2,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/ca
 import { getActivityLogs } from '@/src/lib/db/queries';
 import { ActivityType } from '@/src/lib/db/schema';
 import {
-    Activity,
-    AlertCircle,
-    CheckCircle,
-    Lock,
-    LogOut,
-    Mail,
-    Settings,
-    UserCog,
-    UserMinus,
-    UserPlus,
-    type LucideIcon,
+  AlertCircle,
+  CheckCircle,
+  Lock,
+  LogOut,
+  Mail,
+  Settings,
+  UserCog,
+  UserMinus,
+  UserPlus,
+  type LucideIcon
 } from 'lucide-react';
 
 const iconMap: Record<ActivityType, LucideIcon> = {
@@ -73,14 +72,14 @@ export default async function ActivityPage() {
   const logs = await getActivityLogs();
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
-        <Activity className="h-6 w-6 text-zinc-500" />
+    <section className="flex-1 p-4 lg:p-8 bg-background text-foreground dark:bg-zinc-900 dark:text-white">
+      <h2 className="text-md md:text-xl font-medium text-foreground dark:text-white mb-6 flex items-center gap-2">
+        <Settings className="h-6 w-6 text-muted-foreground dark:text-zinc-300" />
         Activity Log
-      </h1>
-      <Card>
+      </h2>
+      <Card className="bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle className="font-medium">Recent Activity</CardTitle>
         </CardHeader>
         <CardContent>
           {logs.length > 0 ? (
@@ -93,15 +92,15 @@ export default async function ActivityPage() {
 
                 return (
                   <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-zinc-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-zinc-600" />
+                    <div className="bg-muted rounded-full p-2">
+                      <Icon className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-foreground">
                         {formattedAction}
                         {log.ipAddress && ` from IP ${log.ipAddress}`}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {getRelativeTime(new Date(log.timestamp))}
                       </p>
                     </div>
@@ -111,11 +110,11 @@ export default async function ActivityPage() {
             </ul>
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12">
-              <AlertCircle className="h-12 w-12 text-zinc-500 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <AlertCircle className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">
                 No activity yet
               </h3>
-              <p className="text-sm text-gray-500 max-w-sm">
+              <p className="text-sm text-muted-foreground max-w-sm">
                 When you perform actions like signing in or updating your
                 account, they'll appear here.
               </p>

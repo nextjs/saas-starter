@@ -1,5 +1,6 @@
 "use client";
 
+import { Header } from "@/src/app/(dashboard)/layout";
 import Logo from "@/src/components/logo";
 import { Button } from "@/src/components/ui/button";
 import {
@@ -46,31 +47,33 @@ export default function DashboardLayout({
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-8xl mx-auto w-full">
       {/* Mobile header */}
-      <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
+      <div className="lg:hidden flex items-center justify-between bg-background border-b border-border p-4">
         <div className="flex items-center">
           <Logo />
         </div>
-        <Button
-          className="-mr-3"
-          variant="ghost"
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        >
-          <Menu className="h-6 w-6 cursor-pointer" />
-          <span className="sr-only">Toggle sidebar</span>
-        </Button>
+        <div className="flex items-center">
+          <Button
+            className="-mr-3"
+            variant="ghost"
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          >
+            <Menu className="h-6 w-6 cursor-pointer" />
+            <span className="sr-only">Toggle sidebar</span>
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-1 overflow-hidden h-full">
         {/* Sidebar */}
         <aside
           className={`
-            bg-white lg:bg-gray-50 border-r border-gray-200
-            lg:block ${isSidebarOpen ? "block" : "hidden"}
-            lg:relative absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0
-            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-            flex flex-col
-            ${isSidebarCollapsed ? "w-20" : "w-64"}
-          `}
+              bg-background lg:bg-muted border-r border-border
+              lg:block ${isSidebarOpen ? "block" : "hidden"}
+              lg:relative absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0
+              ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+              flex flex-col
+              ${isSidebarCollapsed ? "w-20" : "w-64"}
+            `}
         >
           <div
             className={`flex items-center justify-between p-4 ${
@@ -129,7 +132,10 @@ export default function DashboardLayout({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-0 lg:p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto p-0">
+          <Header />
+          {children}
+        </main>
       </div>
     </div>
   );

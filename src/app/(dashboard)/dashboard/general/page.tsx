@@ -1,6 +1,6 @@
 'use client';
 
-import { updateAccount } from '@/src/app/(login)/actions';
+import { updateAccount } from '@/src/app/(auth)/actions';
 import { Button } from '@/src/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/src/components/ui/card';
 import { Input } from '@/src/components/ui/input';
@@ -78,15 +78,14 @@ export default function GeneralPage() {
   );
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6 flex items-center gap-2">
-        <Settings className="h-6 w-6 text-zinc-500" />
+    <section className="flex-1 p-4 lg:p-8 bg-background text-foreground dark:bg-zinc-900 dark:text-white">
+      <h2 className="text-md md:text-xl font-medium text-foreground dark:text-white mb-6 flex items-center gap-2">
+        <Settings className="h-6 w-6 text-muted-foreground dark:text-zinc-300" />
         General Settings
-      </h1>
-
-      <Card>
+      </h2>
+      <Card className="bg-white dark:bg-zinc-800 border border-border dark:border-zinc-700">
         <CardHeader>
-          <CardTitle>Account Information</CardTitle>
+          <CardTitle className="font-medium">Account Information</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" action={formAction}>

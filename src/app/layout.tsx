@@ -3,11 +3,12 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import { SWRConfig } from "swr";
+import { ThemeProvider } from "../context/theme-context";
 import { getTeamForUser, getUser } from "../lib/db/queries";
 
 export const metadata: Metadata = {
-  title: "SaaS Stack | Build and Launch in a Weekend",
-  description: "Get started quickly with Next.js, Postgres, and Stripe.",
+  title: "SaaS Stack",
+  description: "Build and Launch a SaaS in a Weekend",
 };
 
 export const viewport: Viewport = {
@@ -24,9 +25,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${inter.className}`}
+      className={`${inter.className}`}
     >
-      <body className="min-h-[100dvh] bg-gray-50">
+      <body className="min-h-[100dvh] bg-background text-foreground">
         <SWRConfig
           value={{
             fallback: {
@@ -35,7 +36,9 @@ export default function RootLayout({
             },
           }}
         >
-          {children}
+          <ThemeProvider>
+            {children}
+          </ThemeProvider>
         </SWRConfig>
       </body>
     </html>
