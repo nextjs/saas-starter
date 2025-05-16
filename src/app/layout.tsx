@@ -1,10 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
-
 import { SWRConfig } from "swr";
-import { ThemeProvider } from "../context/theme-context";
+import { ThemeProvider } from "../components/theme-provider";
 import { getTeamForUser, getUser } from "../lib/db/queries";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SaaS Stack",
@@ -23,10 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${inter.className}`}
-    >
+    <html lang="en" className={`${inter.className}`}>
       <body className="min-h-[100dvh] bg-background text-foreground">
         <SWRConfig
           value={{
@@ -36,7 +32,12 @@ export default function RootLayout({
             },
           }}
         >
-          <ThemeProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             {children}
           </ThemeProvider>
         </SWRConfig>
