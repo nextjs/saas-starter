@@ -3,6 +3,9 @@ import { db } from './drizzle';
 import { users, teams, teamMembers } from './schema';
 import { hashPassword } from '@/lib/auth/session';
 
+const DEFAULT_USER_EMAIL = 'test@test.com';
+const DEFAULT_USER_PASSWORD = 'admin123';
+
 async function createStripeProducts() {
   console.log('Creating Stripe products and prices...');
 
@@ -39,36 +42,48 @@ async function createStripeProducts() {
   console.log('Stripe products and prices created successfully.');
 }
 
-async function seed() {
-  const email = 'test@test.com';
-  const password = 'admin123';
-  const passwordHash = await hashPassword(password);
-
-  const [user] = await db
-    .insert(users)
-    .values([
-      {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
-      },
-    ])
-    .returning();
-
-  console.log('Initial user created.');
-
+async function createTeam() {
   const [team] = await db
     .insert(teams)
     .values({
       name: 'Test Team',
     })
-    .returning();
+  .returning();
 
+  console.log(`Team "${team.name}" created.`);
+
+  return team;
+}
+
+async function createUser({ teamId, role }: { teamId: number, role: string }) { 
+  const email = DEFAULT_USER_EMAIL.replace('@', `+${role}@`);
+  const password = await hashPassword(DEFAULT_USER_PASSWORD);
+  const [user] = await db
+    .insert(users)
+    .values({
+      email,
+      passwordHash: password,
+      role,
+    })
+    .returning();
+  
   await db.insert(teamMembers).values({
-    teamId: team.id,
+    teamId,
     userId: user.id,
-    role: 'owner',
+    role,
   });
+
+  console.log(`User "${user.email}" created with role "${role}".`);
+
+  return user;
+}
+
+async function seed() {
+  const team = await createTeam();
+  await Promise.all([
+    createUser({ teamId: team.id, role: 'owner' }),
+    createUser({ teamId: team.id, role: 'member' }),
+  ]);
 
   await createStripeProducts();
 }
