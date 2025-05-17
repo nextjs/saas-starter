@@ -46,17 +46,19 @@ Use the included setup script to create your `.env` file:
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+Run the database migrations and seed the database with a default team and users:
 
 ```bash
 pnpm db:migrate
 pnpm db:seed
 ```
 
-This will create the following user and team:
+This will create the following team and users:
 
-- User: `test@test.com`
-- Password: `admin123`
+- Team: `Test Team`
+- Users: (password: `admin123`)
+  - Owner: `test+owner@test.com`
+  - Member: `test+member@test.com`
 
 You can also create new users through the `/sign-up` route.
 
@@ -112,6 +114,7 @@ In your Vercel project settings (or during deployment), add all the necessary en
 
 While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
 
+- https://turbostarter.dev
 - https://achromatic.dev
 - https://shipfa.st
 - https://makerkit.dev
