@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { SWRConfig } from "swr";
-import { ThemeProvider } from "../components/theme-provider";
+import { ThemeProvider } from "../context/theme-context";
 import { getTeamForUser, getUser } from "../lib/db/queries";
 import "./globals.css";
 
@@ -32,14 +32,7 @@ export default function RootLayout({
             },
           }}
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </SWRConfig>
       </body>
     </html>

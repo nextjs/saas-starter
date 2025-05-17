@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Logo from "./logo";
+import { ThemeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
 
 function HomeHeader() {
@@ -77,6 +78,7 @@ function HomeHeader() {
           <Button asChild variant="default">
             <Link href="/sign-up">Sign Up</Link>
           </Button>
+          <ThemeToggle />
         </div>
       </div>
       {/* Mobile menu */}
