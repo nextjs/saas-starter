@@ -18,10 +18,10 @@ export function validatedAction<S extends z.ZodType<any, any>, T>(
   schema: S,
   action: ValidatedActionFunction<S, T>
 ) {
-  return async (prevState: ActionState, formData: FormData): Promise<T> => {
+  return async (prevState: ActionState, formData: FormData) => {
     const result = schema.safeParse(Object.fromEntries(formData));
     if (!result.success) {
-      return { error: result.error.errors[0].message } as T;
+      return { error: result.error.errors[0].message };
     }
 
     return action(result.data, formData);
@@ -38,7 +38,7 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
   schema: S,
   action: ValidatedActionWithUserFunction<S, T>
 ) {
-  return async (prevState: ActionState, formData: FormData): Promise<T> => {
+  return async (prevState: ActionState, formData: FormData) => {
     const user = await getUser();
     if (!user) {
       throw new Error('User is not authenticated');
@@ -46,7 +46,7 @@ export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
 
     const result = schema.safeParse(Object.fromEntries(formData));
     if (!result.success) {
-      return { error: result.error.errors[0].message } as T;
+      return { error: result.error.errors[0].message };
     }
 
     return action(result.data, formData, user);
