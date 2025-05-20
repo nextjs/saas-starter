@@ -1,10 +1,10 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 /*
   ---break---
 */
 @custom-variant dark (&:is(.dark *));
 
-@plugin 'tailwindcss-animate';
+@import "tw-animate-css";
 
 @variant dark (&:is(.dark *));
 
@@ -77,7 +77,7 @@
 
 @layer utilities {
   body {
-    font-family: 'Manrope', Arial, Helvetica, sans-serif;
+    font-family: "Manrope", Arial, Helvetica, sans-serif;
   }
 }
 
