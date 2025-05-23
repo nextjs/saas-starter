@@ -1,0 +1,106 @@
+{
+    "aiop": [
+      {
+        "id": "d3ef1371-2804-44e1-9a4c-d2186b744256",
+        "name": "GPT 1",
+        "subtitle": "Comprehensive AI-Driven Affiliate Marketing Course 1 subtitle",
+        "image": "/img/icons8-chatgpt.svg",
+        "icon": "Brain"
+      },
+      {
+        "id": "f1a8d5ab-c470-4ae3-9f3d-e0d8530bdb3a",
+        "name": "Comprehensive AI-Driven Affiliate Marketing Course2 ",
+        "icon": "Brain"
+      }
+    ],
+    "data": {
+      "d3ef1371-2804-44e1-9a4c-d2186b744256": [
+        {
+          "id": "6057a0f8-3126-4a75-b2b1-c61e0c218d18",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "fa-solid fa-brain",
+          "body":
+            [
+                {
+                    "title": "GPT 1?",
+                    "icon": "fa-solid fa-brain",
+                    "image": "/img/icons8-chatgpt.svg",
+                    "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+                },
+                {
+                    "title": "What is Affiliate Marketing 2?",
+                    "icon": "fa-solid fa-brain",
+                    "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+                }
+            ]
+        },
+        {
+          "id": "13e6b0ed-02bf-42ba-81b5-a7d44c3e5f5d",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "fa-solid fa-brain"
+        },
+        {
+          "id": "32af3ce7-059e-4c85-8755-37d8d80c5483",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "fa-solid fa-brain"
+        },
+        {
+          "id": "46489d90-cb9e-43ed-82e9-f4be3de70c66",
+          "part": "Rozdział 2",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        },
+        {
+          "id": "0b14b69a-046f-4c38-a757-a7e377d2d580",
+          "part": "Rozdział 3",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        }
+      ],
+      "f1a8d5ab-c470-4ae3-9f3d-e0d8530bdb3a": [
+        {
+          "id": "4ce513f7-c533-416a-a5d0-d378d0f25315",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        },
+        {
+          "id": "00f1d87b-9bfb-47f5-a65c-2e42103b719a",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        },
+        {
+          "id": "dc42484e-b072-481d-b357-949e4e48ecf4",
+          "part": "Rozdział 1",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        },
+        {
+          "id": "56eb4407-92dd-405a-b8af-0509203ad6dd",
+          "part": "Rozdział 2",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        },
+        {
+          "id": "c9a08050-a971-4f53-b803-64ddc387251a",
+          "part": "Rozdział 2",
+          "subject": "Comprehensive AI-Driven Affiliate Marketing Course 1",
+          "desc": "Comprehensive AI-Driven Affiliate Marketing Course 1 description",
+          "icon": "BookType"
+        }
+      ]
+    }
+} 

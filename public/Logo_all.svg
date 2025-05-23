@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 1182 1182" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1.5792,0,0,1.5792,-219.257,-173.015)">
+        <ellipse cx="512.156" cy="357.294" rx="16.134" ry="15.548" style="fill:rgb(78,143,53);"/>
+        <g transform="matrix(1,0,0,1,1.5781,4.33977)">
+            <ellipse cx="505.63" cy="228.613" rx="28.603" ry="28.011" style="fill:url(#_Radial1);"/>
+        </g>
+        <g transform="matrix(1.03571,0,0,1.04255,-17.3985,-10.0104)">
+            <ellipse cx="489.57" cy="233.22" rx="2.413" ry="2.025" style="fill:url(#_Radial2);"/>
+        </g>
+        <ellipse cx="552.579" cy="133.335" rx="6.904" ry="7.299"/>
+        <path d="M485.828,815.349C432.555,807.623 390.96,781.628 360.39,738.033C345.387,716.639 336.585,692.703 333.691,666.757C331.236,644.749 331.081,622.704 339.799,601.847C346.151,586.65 353.7,571.948 360.836,557.084C381.601,513.833 402.419,470.609 423.236,427.384C426.328,420.964 427.709,414.254 427.69,407.108C427.597,373.109 427.626,339.109 427.662,305.11C427.673,294.251 433.087,288.767 443.941,288.721C463.606,288.638 483.273,288.687 502.939,288.687C528.417,288.687 553.896,288.675 579.374,288.701C592.549,288.714 597.339,293.59 597.341,306.881C597.344,338.047 597.428,369.213 597.301,400.379C597.257,411.236 599.48,421.283 604.323,431.14C630.77,484.962 656.817,538.981 683.15,592.86C689.411,605.67 692.492,619.246 693.13,633.267C695.624,688.099 677.36,734.642 636.168,771.411C608.694,795.936 576.143,809.586 539.873,815.445C521.859,818.355 504.131,818.843 485.828,815.349M543.5,315.285C515.842,315.282 488.184,315.278 460.525,315.276C453.97,315.275 453.998,315.278 454.003,322.014C454.026,350.506 454.04,378.997 454.037,407.489C454.035,419.964 451.516,431.652 445.905,443.075C420.941,493.895 396.543,544.991 371.817,595.928C364.938,610.099 359.186,624.349 359.018,640.578C358.788,662.677 361.152,684.226 370.982,704.216C404.411,772.197 476.174,804.317 551.242,786.85C611.496,772.83 660.011,722.018 665.918,658.885C667.811,638.658 666.746,619.101 657.583,600.449C633.06,550.526 608.925,500.412 584.238,450.57C576.535,435.018 570.356,419.526 570.756,401.652C571.355,374.84 570.82,348.004 570.982,321.18C571.009,316.63 569.634,314.972 564.989,315.206C558.176,315.549 551.331,315.289 543.5,315.285Z" style="fill-rule:nonzero;"/>
+        <ellipse cx="545.674" cy="181.665" rx="30.378" ry="29.195" style="fill:url(#_Radial3);"/>
+        <ellipse cx="527.011" cy="183.418" rx="2.909" ry="2.779" style="fill:url(#_Radial4);"/>
+        <ellipse cx="515.397" cy="272.488" rx="5.861" ry="5.343"/>
+        <path d="M439.462,669.868C440.968,670.163 444.677,670.958 448.346,671.734C452.325,672.576 456.265,673.327 457.288,673.432C463.42,674.062 469.172,673.11 475.392,672.88C489.626,672.353 502.581,666.974 515.346,661.271C537.208,651.505 558.08,639.505 580.958,632.034C601.266,625.401 621.768,619.672 643.477,621.081C647.105,621.316 650.703,622.155 654.288,622.854C657.048,623.393 657.876,625.658 658.236,628.042C660.686,644.266 659.724,660.534 655.149,676.056C638.509,732.514 599.105,766.198 543.295,778.886C483.089,792.573 422.45,770.821 385.589,715.753C380.75,708.523 376.623,700.956 372.986,693.078C370.428,687.536 369.335,681.646 368.911,675.673C368.255,666.432 373.809,660.408 383.645,659.789C391.135,659.318 398.541,660.453 405.874,662.072C411.049,663.214 416.284,664.091 422.243,665.257C427.601,666.559 431.086,667.813 435.782,669.022C437.993,669.591 437.77,669.496 438.19,669.597" style="fill:url(#_Linear5);fill-rule:nonzero;"/>
+        <path d="M621.717,703.152C617.489,709.755 612.847,716.071 607.64,721.913C602.549,727.627 597.134,733.055 591.772,738.522C586.495,743.904 580.013,748.069 575.49,754.208C606.445,737.845 631.403,715.711 644.083,682.125C649.629,667.435 653.593,652.34 653.145,636.387C653.024,632.054 651.599,629.716 646.946,629.05C640.457,628.123 634.001,628.071 627.516,628.465C625.676,628.577 623.589,628.605 622.036,630.523C622.937,631.339 623.591,632.1 624.396,632.633C634.125,639.072 637.908,648.478 637.26,659.686C636.353,675.372 630.352,689.385 621.717,703.152M414.206,672.401C407.366,670.294 400.37,668.93 393.305,667.83C388.81,667.13 386.001,668.704 384.497,673.071C381.431,681.975 390.146,699.343 398.536,706.913C402.004,702.143 398.1,698.342 402.705,693.585C405.84,690.347 411.559,691.793 416.037,691.313C426.442,690.197 437.644,691.599 448.022,690.28C454.787,689.42 461.384,687.356 467.502,683.735C449.216,683.206 432.074,678.044 414.206,672.401Z" style="fill:white;fill-rule:nonzero;"/>
+        <path d="M437.999,669.546C438.047,669.557 438.101,669.572 438.152,669.586" style="fill-rule:nonzero;"/>
+        <path d="M438.152,669.586C438.212,669.603 438.268,669.62 438.304,669.631" style="fill-rule:nonzero;"/>
+        <g transform="matrix(1.0167,0,0,1.11429,-8.05205,-60.1529)">
+            <ellipse cx="507.918" cy="548.961" rx="25.802" ry="22.624" style="fill:url(#_Radial6);"/>
+        </g>
+        <g transform="matrix(1,0,0,0.952978,0,28.7065)">
+            <path d="M423.005,665.365C408.891,659.571 394.112,656.698 379.326,655.304C377.706,655.151 374.479,655.457 374.434,654.591C374.338,652.725 376.532,652.865 377.848,652.681C388.953,651.127 399.776,652.986 410.446,655.776C423.94,659.306 437.32,663.244 451.253,664.836C475.183,667.572 497.07,661.378 517.947,650.182C532.5,642.378 546.03,632.901 560.343,624.704C584.406,610.925 610.246,608.271 637.157,612.066C642.011,612.751 651.4,614.558 651.874,616.175C651.989,617.62 645.306,615.72 642.388,615.287C611.233,610.667 583.566,619.813 557.502,636.118C539.17,647.586 511.633,664.079 484.478,670.238C468.282,673.911 454.777,670.834 438.184,669C438.061,668.986 437.034,668.817 436.858,668.776C431.808,667.6 428.678,666.892 423.765,665.63" style="fill:url(#_Linear7);fill-rule:nonzero;"/>
+        </g>
+        <g transform="matrix(1,0,0,1,5.13704,6.67815)">
+            <ellipse cx="548.371" cy="577.887" rx="20.684" ry="20.2" style="fill:url(#_Radial8);"/>
+        </g>
+        <ellipse cx="473.959" cy="458.613" rx="7.309" ry="7.171"/>
+        <circle cx="518.314" cy="498.974" r="18.207" style="fill:url(#_Radial9);"/>
+        <ellipse cx="581.283" cy="508.67" rx="6.841" ry="6.679"/>
+        <ellipse cx="553.663" cy="369.705" rx="6.964" ry="6.653"/>
+        <ellipse cx="534.426" cy="445.306" rx="24.477" ry="23.511" style="fill:url(#_Radial10);"/>
+        <ellipse cx="451.952" cy="634.608" rx="13.251" ry="11.42"/>
+        <ellipse cx="502.503" cy="418.003" rx="11.239" ry="10.687" style="fill:rgb(78,143,53);"/>
+        <ellipse cx="599.49" cy="584.567" rx="7.703" ry="7.38"/>
+        <ellipse cx="488.688" cy="614.139" rx="7.003" ry="7.11"/>
+        <ellipse cx="519.706" cy="386.597" rx="10.308" ry="10.515" style="fill:rgb(54,141,85);"/>
+        <ellipse cx="447.265" cy="546.268" rx="5.764" ry="5.818"/>
+    </g>
+    <defs>
+        <radialGradient id="_Radial1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(10.2576,-14.2029,14.2029,10.2576,505.827,219.145)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="1" style="stop-color:rgb(78,143,53);stop-opacity:1"/></radialGradient>
+        <radialGradient id="_Radial2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1.6289,-1.5037,1.80736,1.45864,489.565,233.185)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="1" style="stop-color:rgb(78,143,53);stop-opacity:1"/></radialGradient>
+        <radialGradient id="_Radial3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-20.9098,17.3591,-17.3591,-20.9098,546.463,170.223)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="0.83" style="stop-color:rgb(44,170,89);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(0,153,54);stop-opacity:1"/></radialGradient>
+        <radialGradient id="_Radial4" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(3.10981,-0.961253,0.977699,3.10108,526.963,183.327)"><stop offset="0" style="stop-color:white;stop-opacity:1"/><stop offset="0.52" style="stop-color:rgb(195,231,208);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(0,153,54);stop-opacity:1"/></radialGradient>
+        <linearGradient id="_Linear5" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(267.948,-98.3023,98.3023,267.948,387.398,725.969)"><stop offset="0" style="stop-color:rgb(236,161,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(175,31,0);stop-opacity:1"/></linearGradient>
+        <radialGradient id="_Radial6" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-9.05005,9.18943,-10.0714,-8.25749,509.72,541.872)"><stop offset="0" style="stop-color:rgb(34,0,255);stop-opacity:1"/><stop offset="0.45" style="stop-color:rgb(30,0,225);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(20,0,153);stop-opacity:1"/></radialGradient>
+        <linearGradient id="_Linear7" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(282.414,-103.843,98.9599,296.348,366.64,717.368)"><stop offset="0" style="stop-color:rgb(236,161,0);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(239,78,43);stop-opacity:1"/></linearGradient>
+        <radialGradient id="_Radial8" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(5.5549,-7.23821,7.23821,5.5549,550.624,570.648)"><stop offset="0" style="stop-color:rgb(0,147,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(0,88,153);stop-opacity:1"/></radialGradient>
+        <radialGradient id="_Radial9" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-4.71325,6.39656,-6.39656,-4.71325,519.907,493.161)"><stop offset="0" style="stop-color:rgb(0,125,255);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(0,75,153);stop-opacity:1"/></radialGradient>
+        <radialGradient id="_Radial10" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-7.10144,10.7837,-10.7837,-7.10144,537.6,438.536)"><stop offset="0" style="stop-color:rgb(100,189,66);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(51,132,20);stop-opacity:1"/></radialGradient>
+    </defs>
+</svg>

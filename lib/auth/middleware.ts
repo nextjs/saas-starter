@@ -62,12 +62,42 @@ export function withTeam<T>(action: ActionWithTeamFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const user = await getUser();
     if (!user) {
-      redirect('/sign-in');
+      redirect('/login/sign-in');
     }
 
-    const team = await getTeamForUser();
+    const team = await getTeamForUser(user.id);
     if (!team) {
       throw new Error('Team not found');
+    }
+
+    return action(formData, team);
+  };
+}
+
+type SubscribedActionFunction<T> = (
+  formData: FormData,
+  team: TeamDataWithMembers
+) => Promise<T>;
+
+export function withSubscription<T>(action: SubscribedActionFunction<T>) {
+  return async (formData: FormData): Promise<T> => {
+    const user = await getUser();
+    if (!user) {
+      redirect('/login/sign-in');
+    }
+
+    const team = await getTeamForUser(user.id);
+    if (!team) {
+      throw new Error('Team not found');
+    }
+
+    // Check if subscription is active or in trial
+    const hasActiveSubscription = 
+      team.subscriptionStatus === 'active' || 
+      team.subscriptionStatus === 'trialing';
+    
+    if (!hasActiveSubscription) {
+      redirect('/dashboard/settings?subscription=required');
     }
 
     return action(formData, team);

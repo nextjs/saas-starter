@@ -1,0 +1,394 @@
+import { redirect } from 'next/navigation';
+import { getUser, getTeamForUser, getAllUserProgress } from '@/lib/db/queries';
+import { db } from '@/lib/db/drizzle';
+import { tools, prompts } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
+import fs from 'fs';
+import path from 'path';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cookies } from 'next/headers';
+import PartItem from './components/PartItem';
+
+// Pobierz dane planu szkoleniowego z pliku JSON
+async function getLessonPlan() {
+  const filePath = path.join(process.cwd(), 'plan.json');
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  return JSON.parse(fileContents);
+}
+
+// Pobierz nazwy części/rozdziałów z pliku part.json
+async function getPartDetails() {
+  const filePath = path.join(process.cwd(), 'part.json');
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const data = JSON.parse(fileContents);
+  
+  // Przekształć tablicę w obiekt, gdzie kluczem jest id części
+  const partMap: {[key: number]: {name: string, icon: string}} = {};
+  data.parts.forEach((part: {id: number, name: string, icon?: string}) => {
+    partMap[part.id] = {
+      name: part.name,
+      icon: part.icon || 'BookType' // Default icon if not specified
+    };
+  });
+  
+  return partMap;
+}
+
+// Struktura dla części kursu
+interface PartInfo {
+  id: number;
+  name: string;
+  icon: string;
+  lessons: any[];
+}
+
+// Struktura do przechowywania informacji o ukończonych lekcjach
+interface CompletedLesson {
+  id: number;
+  completedAt: string; // ISO string z datą ukończenia
+}
+
+// Render the main page
+export default async function AppPage() {
+  // Get the current user
+  const user = await getUser();
+  if (!user) {
+    redirect('/login/sign-in');
+  }
+
+  // Get the team and check subscription
+  const team = await getTeamForUser(user.id);
+  if (!team) {
+    redirect('/dashboard');
+  }
+
+  // Check if subscription is active or in trial period
+  const hasActiveSubscription = 
+    team.subscriptionStatus === 'active' || 
+    team.subscriptionStatus === 'trialing';
+  
+  if (!hasActiveSubscription) {
+    redirect('/pricing?access=premium');
+  }
+
+  // Pobierz plan szkoleniowy
+  const plan = await getLessonPlan();
+  const lessons = plan.data;
+
+  // Pobierz postęp użytkownika z bazy danych
+  const userProgress = await getAllUserProgress(user.id);
+  const completedLessonIds = userProgress
+    .filter(progress => progress.completed)
+    .map(progress => progress.lessonId);
+  
+  const completedLessons = completedLessonIds.length;
+  const percentComplete = Math.round((completedLessons / lessons.length) * 100);
+  
+  // Sprawdź, czy można ukończyć lekcję dzisiaj (czy użytkownik już ukończył lekcję dzisiaj)
+  let canCompleteToday = true;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Początek dzisiejszego dnia
+  
+  // Pobierz wartość LESSON_START z procesu środowiskowego
+  const lessonStartEnv = process.env.LESSON_START;
+  const lessonStart = lessonStartEnv ? parseInt(lessonStartEnv, 10) : 1;
+  console.log('LESSON_START value:', lessonStart);
+  
+  // Sprawdź, czy użytkownik ukończył jakąś lekcję dzisiaj (z wyjątkiem lekcji w zakresie LESSON_START)
+  const todayCompletedLessons = userProgress.filter(progress => {
+    if (!progress.completed) return false;
+    
+    const completedDate = new Date(progress.updatedAt);
+    completedDate.setHours(0, 0, 0, 0);
+    return completedDate.getTime() === today.getTime() && progress.lessonId > lessonStart;
+  });
+  
+  if (todayCompletedLessons.length > 0) {
+    canCompleteToday = false;
+  }
+
+  // Określamy, które lekcje są dostępne dla użytkownika
+  // 1. Ukończone lekcje są zawsze dostępne
+  // 2. Lekcje do wartości LESSON_START są od razu dostępne
+  // 3. Dodatkowo dostępna jest pierwsza nieukończona lekcja po LESSON_START
+  const availableLessonIds: number[] = [...completedLessonIds];
+  let nextAvailableLessonId = 1;
+
+  // Dodaj wszystkie lekcje do LESSON_START jako dostępne
+  for (let i = 1; i <= lessonStart && i <= lessons.length; i++) {
+    if (!availableLessonIds.includes(i)) {
+      availableLessonIds.push(i);
+    }
+  }
+
+  // Znajdź pierwszą nieukończoną lekcję po LESSON_START
+  for (let i = 0; i < lessons.length; i++) {
+    const lessonId = i + 1;
+    if (lessonId > lessonStart && !completedLessonIds.includes(lessonId)) {
+      nextAvailableLessonId = lessonId;
+      break;
+    }
+  }
+
+  // Dodaj następną dostępną lekcję do listy dostępnych
+  if (!availableLessonIds.includes(nextAvailableLessonId)) {
+    availableLessonIds.push(nextAvailableLessonId);
+  }
+
+  // Sortuj listę dostępnych lekcji
+  availableLessonIds.sort((a, b) => a - b);
+
+  // Pobierz nazwy części kursu z pliku part.json
+  const partDetails = await getPartDetails();
+  
+  // Pobierz cookies
+  const cookieStore = await cookies();
+  
+  // Pobierz z cookies informację o ostatnio otwartej części kursu
+  const openPartCookie = cookieStore.get('openPartId');
+  
+  // Czytamy też ostatnio otwartą lekcję do podświetlenia
+  const lastViewedLessonIdCookie = cookieStore.get('lastViewedLessonId');
+  const lastViewedLessonId = lastViewedLessonIdCookie ? parseInt(lastViewedLessonIdCookie.value) : null;
+  
+  // Determine the part containing the last viewed lesson
+  let lastViewedLessonPart = null;
+  if (lastViewedLessonId !== null) {
+    const lessonIndex = lastViewedLessonId - 1;
+    if (lessonIndex >= 0 && lessonIndex < lessons.length) {
+      lastViewedLessonPart = lessons[lessonIndex].part || 1;
+    }
+  }
+  
+  // Find the part that contains the next available lesson (marked as "Next")
+  let nextLessonPart = null;
+  if (nextAvailableLessonId) {
+    const nextLessonIndex = nextAvailableLessonId - 1;
+    if (nextLessonIndex >= 0 && nextLessonIndex < lessons.length) {
+      nextLessonPart = lessons[nextLessonIndex].part || 1;
+    }
+  }
+  
+  // Determine which part to expand:
+  // 1. Use the cookie value if it exists
+  // 2. If no cookie but user has viewed a lesson, use that lesson's part
+  // 3. Otherwise, use the part containing the next lesson
+  let openPartId;
+  if (openPartCookie) {
+    openPartId = parseInt(openPartCookie.value);
+  } else if (lastViewedLessonPart !== null) {
+    openPartId = lastViewedLessonPart;
+  } else if (nextLessonPart !== null) {
+    openPartId = nextLessonPart;
+  } else {
+    openPartId = 1; // Default to first part if all else fails
+  }
+  
+  // Grupuj lekcje według części (part)
+  const parts: { [key: number]: PartInfo } = {};
+  
+  lessons.forEach((lesson: any, index: number) => {
+    const lessonId = index + 1;
+    const part = lesson.part || 1;
+    
+    if (!parts[part]) {
+      parts[part] = {
+        id: part,
+        name: partDetails[part]?.name || `Część ${part}`,
+        icon: partDetails[part]?.icon || 'BookType',
+        lessons: []
+      };
+    }
+    
+    parts[part].lessons.push({
+      ...lesson,
+      lessonId
+    });
+  });
+  
+  // Sortuj części według numeru
+  const sortedParts = Object.values(parts).sort((a, b) => a.id - b.id);
+
+  // Fetch prompt content for today from prompts table
+  const todayDate = new Date();
+  const promptResult = await db.select().from(prompts).where(eq(prompts.content_date, todayDate)).limit(1);
+  const prompt = promptResult.length > 0 ? promptResult[0] : null;
+  const codeContent = prompt?.code_content || '';
+  const paragraphContent = prompt?.paragraph_content || '';
+  // Fetch tool content for today from tools table
+  const toolResult = await db.select().from(tools).where(eq(tools.content_date, todayDate)).limit(1);
+  const tool = toolResult.length > 0 ? toolResult[0] : null;
+
+  return (
+    <div className="flex flex-col lg:flex-row w-full min-h-[calc(100dvh-60px)]">
+      {/* Left Sidebar with Lessons */}
+      <aside className="w-full lg:w-80 xl:w-96 overflow-y-auto bg-white border-r border-gray-100 shadow-sm lg:h-auto">
+        <div className="sticky top-0 z-10 flex justify-between items-center bg-white/80 backdrop-blur-md p-4 border-b border-gray-100">
+          <h2 className="text-xl font-bold text-gray-900">Lessons</h2>
+          <div className="flex items-center">
+            <span className="text-sm text-gray-500 mr-2">{percentComplete}% Complete</span>
+            <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-blue-500 to-teal-500"
+                style={{ width: `${percentComplete}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Parts and lessons sidebar */}
+        <div className="px-2 py-3">
+          {Object.values(parts).map((part) => {
+            // Only show parts that contain at least one lesson
+            if (part.lessons.length === 0) return null;
+            
+            const isExpanded = openPartId === part.id;
+            
+            // Check if this part contains lessons that are available or completed
+            const hasAvailableLessons = part.lessons.some(lesson => 
+              availableLessonIds.includes(lesson.id)
+            );
+            
+            return (
+              <PartItem
+                key={part.id}
+                part={part}
+                isExpanded={isExpanded}
+                hasAvailableLessons={hasAvailableLessons}
+                availableLessonIds={availableLessonIds}
+                completedLessonIds={completedLessonIds}
+                nextAvailableLessonId={nextAvailableLessonId}
+                lastViewedLessonId={lastViewedLessonId}
+              />
+            );
+          })}
+        </div>
+      </aside>
+      
+      {/* Main Content */}
+      <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-auto">
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {/* User's progress */}
+            <Card className="col-span-1 md:col-span-2">
+              <CardHeader>
+                <CardTitle>Your AI Prompt Engineering Journey</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
+                  <div className="mb-4 sm:mb-0">
+                    <p className="text-gray-500 text-sm sm:text-base mb-1">Course progress</p>
+                    <div className="flex items-center">
+                      <div className="w-full sm:w-60 h-2 bg-gray-100 rounded-full mr-3">
+                        <div 
+                          className="h-full bg-gradient-to-r from-blue-500 to-teal-500 rounded-full" 
+                          style={{ width: `${percentComplete}%` }}
+                        ></div>
+                      </div>
+                      <span className="text-sm font-medium">{percentComplete}%</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:items-end">
+                    <p className="text-gray-500 text-sm sm:text-base mb-1">Lessons completed</p>
+                    <p className="text-xl font-bold">{completedLessons} / {lessons.length}</p>
+                  </div>
+                </div>
+                
+                {!canCompleteToday && (
+                  <div className="p-4 bg-amber-50 border border-amber-100 rounded-lg mb-4">
+                    <div className="flex">
+                      <RefreshCw className="h-5 w-5 text-amber-500 mr-2 flex-shrink-0" />
+                      <div>
+                        <p className="text-amber-800 font-medium">Daily lesson limit reached</p>
+                        <p className="text-amber-700 text-sm mt-1">
+                          You've completed your lesson for today. Come back tomorrow to continue your learning journey!
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {nextAvailableLessonId && (
+                  <div className="mt-2">
+                    <Link href={`/app/lessons/${nextAvailableLessonId}`}>
+                      <Button className="w-full sm:w-auto px-4 py-2 text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 rounded-lg">
+                        {completedLessonIds.includes(nextAvailableLessonId) 
+                          ? 'Review next lesson' 
+                          : 'Continue learning'}
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Recommended Lessons */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Recommended Lesson</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {nextAvailableLessonId && nextAvailableLessonId <= lessons.length && (
+                  <div>
+                    <h3 className="font-semibold text-base sm:text-lg mb-2">
+                      {lessons[nextAvailableLessonId - 1]?.title || 'Next Lesson'}
+                    </h3>
+                    <p className="text-gray-600 text-sm sm:text-base mb-4">
+                      {lessons[nextAvailableLessonId - 1]?.description 
+                        ? lessons[nextAvailableLessonId - 1].description.substring(0, 120) + '...'
+                        : 'Start this lesson to learn more about the topic.'}
+                    </p>
+                    <Link href={`/app/lessons/${nextAvailableLessonId}`}>
+                      <Button size="responsive" className="w-full sm:w-auto text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 rounded-lg">
+                        Start Lesson
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+            
+            {/* Upcoming Concepts */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Your Learning Path</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-3">
+                  {nextAvailableLessonId && (
+                    Array.from({ length: Math.min(3, lessons.length - nextAvailableLessonId + 1) }, (_, i) => {
+                      const lessonIndex = nextAvailableLessonId + i - 1;
+                      if (lessonIndex < lessons.length) {
+                        const lesson = lessons[lessonIndex];
+                        if (!lesson) return null;
+                        
+                        return (
+                          <li key={lessonIndex} className="flex items-start">
+                            <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center mr-3 mt-0.5 bg-blue-50 text-blue-700 text-sm font-medium">
+                              {lesson.id || lessonIndex + 1}
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{lesson.title || `Lesson ${lessonIndex + 1}`}</p>
+                              <p className="text-sm text-gray-500 mt-0.5">
+                                {i === 0 ? 'Up next' : `Coming ${i === 1 ? 'soon' : 'later'}`}
+                              </p>
+                            </div>
+                          </li>
+                        );
+                      }
+                      return null;
+                    })
+                  )}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+} 

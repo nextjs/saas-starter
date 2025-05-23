@@ -1,0 +1,1 @@
+import { updatePassword, deleteAccount } from '@/app/login/actions'; 

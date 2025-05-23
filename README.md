@@ -1,44 +1,14 @@
-# Next.js SaaS Starter
+# Wstęp
+Jest to aplikacja która ma na celu szkolenia gdzie dzien po dniu pokazuje krótkie lekcje. 
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
-
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
-
-## Features
-
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
-
-## Tech Stack
-
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
 pnpm install
 ```
 
 ## Running Locally
-
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
-
-```bash
-stripe login
-```
 
 Use the included setup script to create your `.env` file:
 
@@ -46,7 +16,7 @@ Use the included setup script to create your `.env` file:
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+Then, run the database migrations and seed the database with a default user and team:
 
 ```bash
 pnpm db:migrate
@@ -58,7 +28,7 @@ This will create the following user and team:
 - User: `test@test.com`
 - Password: `admin123`
 
-You can also create new users through the `/sign-up` route.
+You can, of course, create new users as well through `/login/sign-up`.
 
 Finally, run the Next.js development server:
 
@@ -68,7 +38,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+Optionally, you can listen for Stripe webhooks locally through their CLI to handle subscription change events:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -115,4 +85,8 @@ While this template is intentionally minimal and to be used as a learning resour
 - https://achromatic.dev
 - https://shipfa.st
 - https://makerkit.dev
-- https://zerotoshipped.com
+
+# Przydatne materiały
+
+## Linki
+Lista ikon https://lucide.dev/icons/

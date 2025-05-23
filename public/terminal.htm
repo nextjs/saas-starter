@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Realistyczny interfejs czatu AI</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+    
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #1e1e1e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #f0f0f0;
+    }
+    .chat-container {
+      width: 600px;
+      height: 500px;
+      background: #252526;
+      border-radius: 4px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #3e3e42;
+    }
+    .chat-header {
+      background: #333333;
+      padding: 12px 16px;
+      border-bottom: 1px solid #3e3e42;
+      display: flex;
+      align-items: center;
+    }
+    .assistant-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: #0078d4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 12px;
+    }
+    .assistant-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+    .assistant-name {
+      font-weight: 700;
+      color: #f0f0f0;
+      letter-spacing: -0.5px;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: #1e1e1e;
+    }
+    .message {
+      max-width: 80%;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .user-message {
+      background: #0046b8;
+      color: #ffffff;
+      align-self: flex-end;
+      border: 1px solid #0057e0;
+    }
+    .assistant-message {
+      background: #143d14;
+      color: #b3ffb3;
+      align-self: flex-start;
+      border: 1px solid #1e561e;
+    }
+    .message-container {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .message-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .user-avatar {
+      background: #0046b8;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      border: 1px solid #0057e0;
+    }
+    .assistant-avatar {
+      background: #143d14;
+      border: 1px solid #1e561e;
+    }
+    .chat-input {
+      padding: 12px;
+      border-top: 1px solid #3e3e42;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #333333;
+    }
+    .input-box {
+      flex: 1;
+      border: 1px solid #3e3e42;
+      border-radius: 4px;
+      padding: 10px 12px;
+      font-size: 13px;
+      background: #252526;
+      color: #f0f0f0;
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-box:focus {
+      border-color: #0078d4;
+    }
+    .send-button {
+      background: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s, background-color 0.2s;
+    }
+    .send-button.visible {
+      opacity: 1;
+    }
+    .send-button:hover {
+      background: #0069c0;
+    }
+    .send-button.pressed {
+      background: #005ca3;
+      transform: scale(0.95);
+    }
+    .typing-indicator {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: #143d14;
+      border-radius: 4px;
+      width: fit-content;
+      margin-top: 8px;
+      border: 1px solid #1e561e;
+    }
+    .typing-dot {
+      width: 5px;
+      height: 5px;
+      background: #b3ffb3;
+      border-radius: 50%;
+      animation: typing-animation 1.4s infinite ease-in-out;
+    }
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes typing-animation {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-3px);
+      }
+    }
+    #cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: #b3ffb3;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+      vertical-align: middle;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e1e1e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3e3e42;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4e4e52;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="assistant-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 16h2v-6h-2v6zm0-8h2V8h-2v2z"/>
+        </svg>
+      </div>
+      <div class="assistant-name">AI Assistant</div>
+    </div>
+    
+        <div class="chat-messages" id="chatMessages">
+        <!-- Messages will be added here dynamically -->
+        </div>
+    
+    <div class="chat-input">
+      <input type="text" class="input-box" id="inputBox" placeholder="Type your message...">
+      <button class="send-button" id="sendButton" title="Send message">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const userPrompt = "Please generate summary e-mail to my team.";
+    const aiResponse = "Hi Team,\n\nJust a quick update on our current progress. We've completed 80% of the project milestones and are on track to meet our deadline. Key achievements this week include finalizing the design specs and implementing the core functionality.\n\nOur next steps are to complete testing and prepare for deployment next week.\n\nLet me know if you have any questions!\n\nBest regards,\nAI Assistant";
+    
+    // Drugi prompt i odpowiedź
+    const secondUserPrompt = "Generate an image of a futuristic city skyline.";
+    const secondAiResponseText = "Here's a futuristic city skyline I've created for you:";
+    
+    // Third Q&A
+    const thirdUserPrompt = "I have sales data from the last quarter. How can I effectively present growth trends to the management board?";
+    const thirdAiResponseText = "To effectively present growth trends to management, utilize visual representations like line charts showing YoY and QoQ comparisons, with a focus on key performance metrics against targets. Create a concise one-page executive dashboard highlighting the main growth drivers and their impacts on overall business performance. Be prepared with supporting data for deeper questions, but keep your initial presentation focused on actionable insights that can inform strategic decisions.";
+    
+    // Fourth Q&A
+    const fourthUserPrompt = "What are the most promising applications of artificial intelligence in healthcare that we might see implemented within the next decade?";
+    const fourthAiResponseText = "In the next decade, AI in healthcare will likely revolutionize personalized medicine through algorithms that analyze genetic data to create truly individualized treatment plans with minimal side effects. We'll also see AI-powered diagnostic tools that can detect diseases like cancer at much earlier stages than current methods, potentially saving millions of lives through earlier interventions. Additionally, AI assistants will transform patient care by continuously monitoring health data from wearable devices, predicting potential health issues before symptoms appear, and providing real-time guidance to both patients and healthcare providers.";
+    
+    // Fifth Q&A
+    const fifthUserPrompt = "Can you share a recipe for a simple and healthy breakfast for someone with limited time?";
+    const fifthAiResponseText = "For a quick and nutritious breakfast, try a 5-minute Greek yogurt power bowl. Start with a cup of plain Greek yogurt as your protein base, then add a handful of mixed berries and a sliced banana for natural sweetness and essential vitamins. Top with two tablespoons of mixed nuts and seeds (like almonds, walnuts, and chia seeds) for healthy fats and crunch, and finish with a drizzle of honey or maple syrup. This balanced breakfast provides protein, fiber, and healthy fats to keep you energized throughout the morning, and you can prepare the ingredients the night before to assemble in under a minute when you're rushing out the door.";
+    
+    const chatMessages = document.getElementById('chatMessages');
+    const inputBox = document.getElementById('inputBox');
+    const sendButton = document.getElementById('sendButton');
+    
+    // Function to create user message
+    function createUserMessage(text) {
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'message-container';
+      messageContainer.style.justifyContent = 'flex-end';
+      
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message user-message';
+      messageElement.textContent = text;
+      
+      const avatarElement = document.createElement('div');
+      avatarElement.className = 'message-avatar user-avatar';
+      avatarElement.textContent = 'U';
+      
+      messageContainer.appendChild(messageElement);
+      messageContainer.appendChild(avatarElement);
+      
+      return messageContainer;
+    }
+    
+    // Function to create AI message container
+    function createAIMessageContainer() {
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'message-container';
+      
+      const avatarElement = document.createElement('div');
+      avatarElement.className = 'message-avatar assistant-avatar';
+      
+      const avatarSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      avatarSvg.setAttribute('viewBox', '0 0 24 24');
+      avatarSvg.setAttribute('width', '16');
+      avatarSvg.setAttribute('height', '16');
+      avatarSvg.setAttribute('fill', 'none');
+      avatarSvg.setAttribute('stroke', 'white');
+      avatarSvg.setAttribute('stroke-width', '2');
+      
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 16h2v-6h-2v6zm0-8h2V8h-2v2z');
+      
+      avatarSvg.appendChild(path);
+      avatarElement.appendChild(avatarSvg);
+      
+      const messageElement = document.createElement('div');
+      messageElement.className = 'message assistant-message';
+      
+      messageContainer.appendChild(avatarElement);
+      messageContainer.appendChild(messageElement);
+      
+      return { container: messageContainer, message: messageElement };
+    }
+    
+    // Function to display typing indicator
+    function showTypingIndicator() {
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'typing-indicator';
+      typingIndicator.id = 'typingIndicator';
+      typingIndicator.style.display = 'flex';
+      
+      for (let i = 0; i < 3; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'typing-dot';
+        typingIndicator.appendChild(dot);
+      }
+      
+      const messageContainer = document.createElement('div');
+      messageContainer.className = 'message-container';
+      
+      const avatarElement = document.createElement('div');
+      avatarElement.className = 'message-avatar assistant-avatar';
+      
+      const avatarSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      avatarSvg.setAttribute('viewBox', '0 0 24 24');
+      avatarSvg.setAttribute('width', '16');
+      avatarSvg.setAttribute('height', '16');
+      avatarSvg.setAttribute('fill', 'none');
+      avatarSvg.setAttribute('stroke', 'white');
+      avatarSvg.setAttribute('stroke-width', '2');
+      
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 16h2v-6h-2v6zm0-8h2V8h-2v2z');
+      
+      avatarSvg.appendChild(path);
+      avatarElement.appendChild(avatarSvg);
+      
+      messageContainer.appendChild(avatarElement);
+      messageContainer.appendChild(typingIndicator);
+      
+      chatMessages.appendChild(messageContainer);
+      return messageContainer;
+    }
+    
+    // Function to simulate user typing
+    function simulateUserTyping() {
+      let index = 0;
+      inputBox.value = '';
+      
+      function typeChar() {
+        if (index < userPrompt.length) {
+          inputBox.value += userPrompt[index];
+          index++;
+          setTimeout(typeChar, 50);
+        } else {
+          // When typing is complete, show the send button
+          sendButton.classList.add('visible');
+        }
+      }
+      
+      typeChar();
+    }
+    
+    // Function to send the message - DEFINIUJEMY TĄ FUNKCJĘ WCZEŚNIEJ
+    function sendMessage() {
+      if (inputBox.value.trim() === '') return;
+      
+      // Create and add user message
+      const userMessageElement = createUserMessage(inputBox.value);
+      chatMessages.appendChild(userMessageElement);
+      
+      // Clear input and hide send button
+      inputBox.value = '';
+      sendButton.classList.remove('visible');
+      
+      // Show typing indicator
+      const typingIndicatorContainer = showTypingIndicator();
+      
+      // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // After a brief delay, remove typing indicator and show AI response
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicatorContainer);
+        typeAIResponse();
+      }, 1500);
+    }
+    
+    // Function to create AI image response
+    function createAIImageResponse() {
+      const { container, message } = createAIMessageContainer();
+      chatMessages.appendChild(container);
+      
+      // Create text response
+      const textElement = document.createElement('div');
+      textElement.textContent = secondAiResponseText;
+      message.appendChild(textElement);
+      
+      // Create some space
+      const spacer = document.createElement('div');
+      spacer.style.height = '12px';
+      message.appendChild(spacer);
+      
+      // Create SVG image of futuristic city skyline
+      const svgContainer = document.createElement('div');
+      svgContainer.style.width = '100%';
+      svgContainer.style.display = 'flex';
+      svgContainer.style.justifyContent = 'center';
+      
+      const svgContent = `
+        <svg width="320" height="180" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background gradient -->
+          <defs>
+            <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#05071F" />
+              <stop offset="40%" stop-color="#122554" />
+              <stop offset="70%" stop-color="#5D208F" />
+              <stop offset="100%" stop-color="#AA2175" />
+            </linearGradient>
+          </defs>
+          
+          <!-- Sky background -->
+          <rect width="320" height="180" fill="url(#skyGradient)" />
+          
+          <!-- Stars -->
+          <g fill="#FFFFFF">
+            <circle cx="30" cy="20" r="0.8" opacity="0.8" />
+            <circle cx="50" cy="15" r="0.6" opacity="0.7" />
+            <circle cx="70" cy="30" r="0.7" opacity="0.9" />
+            <circle cx="120" cy="10" r="0.9" opacity="0.8" />
+            <circle cx="180" cy="25" r="0.7" opacity="0.7" />
+            <circle cx="220" cy="15" r="0.8" opacity="0.9" />
+            <circle cx="250" cy="30" r="0.6" opacity="0.8" />
+            <circle cx="280" cy="20" r="0.7" opacity="0.7" />
+            <circle cx="300" cy="40" r="0.8" opacity="0.9" />
+          </g>
+          
+          <!-- Moon -->
+          <circle cx="280" cy="40" r="15" fill="#E6E6E6" opacity="0.9" />
+          <circle cx="275" cy="35" r="5" fill="#CCCCCC" opacity="0.4" />
+          
+          <!-- Distant buildings silhouette -->
+          <g fill="#122554" opacity="0.7">
+            <rect x="10" y="120" width="15" height="60" />
+            <rect x="30" y="100" width="20" height="80" />
+            <rect x="55" y="110" width="25" height="70" />
+            <rect x="85" y="90" width="15" height="90" />
+            <rect x="220" y="120" width="15" height="60" />
+            <rect x="240" y="100" width="20" height="80" />
+            <rect x="265" y="110" width="25" height="70" />
+            <rect x="295" y="90" width="15" height="90" />
+          </g>
+          
+          <!-- Main futuristic buildings -->
+          <g>
+            <!-- Building 1 - Main tower -->
+            <rect x="110" y="50" width="30" height="130" fill="#0A2342" />
+            <rect x="112" y="55" width="26" height="120" fill="#05C7F2" opacity="0.3" />
+            
+            <!-- Building 1 - Windows -->
+            <g fill="#05F2DB" opacity="0.9">
+              <rect x="115" y="60" width="4" height="4" />
+              <rect x="122" y="60" width="4" height="4" />
+              <rect x="129" y="60" width="4" height="4" />
+              
+              <rect x="115" y="70" width="4" height="4" />
+              <rect x="122" y="70" width="4" height="4" />
+              <rect x="129" y="70" width="4" height="4" />
+              
+              <rect x="115" y="80" width="4" height="4" />
+              <rect x="122" y="80" width="4" height="4" />
+              <rect x="129" y="80" width="4" height="4" />
+              
+              <rect x="115" y="90" width="4" height="4" />
+              <rect x="122" y="90" width="4" height="4" />
+              <rect x="129" y="90" width="4" height="4" />
+              
+              <rect x="115" y="100" width="4" height="4" />
+              <rect x="122" y="100" width="4" height="4" />
+              <rect x="129" y="100" width="4" height="4" />
+              
+              <rect x="115" y="110" width="4" height="4" />
+              <rect x="122" y="110" width="4" height="4" />
+              <rect x="129" y="110" width="4" height="4" />
+              
+              <rect x="115" y="120" width="4" height="4" />
+              <rect x="122" y="120" width="4" height="4" />
+              <rect x="129" y="120" width="4" height="4" />
+              
+              <rect x="115" y="130" width="4" height="4" />
+              <rect x="122" y="130" width="4" height="4" />
+              <rect x="129" y="130" width="4" height="4" />
+              
+              <rect x="115" y="140" width="4" height="4" />
+              <rect x="122" y="140" width="4" height="4" />
+              <rect x="129" y="140" width="4" height="4" />
+              
+              <rect x="115" y="150" width="4" height="4" />
+              <rect x="122" y="150" width="4" height="4" />
+              <rect x="129" y="150" width="4" height="4" />
+              
+              <rect x="115" y="160" width="4" height="4" />
+              <rect x="122" y="160" width="4" height="4" />
+              <rect x="129" y="160" width="4" height="4" />
+            </g>
+            
+            <!-- Tower antenna -->
+            <rect x="122" y="30" width="6" height="20" fill="#0A2342" />
+            <circle cx="125" cy="25" r="3" fill="#F20530" />
+            <circle cx="125" cy="25" r="1.5" fill="#F2BC1B" />
+            
+            <!-- Building 2 - Wide tower -->
+            <rect x="150" y="80" width="40" height="100" fill="#0A2342" />
+            <rect x="152" y="85" width="36" height="90" fill="#05C7F2" opacity="0.3" />
+            
+            <!-- Building 2 - Windows -->
+            <g fill="#05F2DB" opacity="0.9">
+              <rect x="155" y="90" width="5" height="5" />
+              <rect x="165" y="90" width="5" height="5" />
+              <rect x="175" y="90" width="5" height="5" />
+              <rect x="185" y="90" width="5" height="5" />
+              
+              <rect x="155" y="100" width="5" height="5" />
+              <rect x="165" y="100" width="5" height="5" />
+              <rect x="175" y="100" width="5" height="5" />
+              <rect x="185" y="100" width="5" height="5" />
+              
+              <rect x="155" y="110" width="5" height="5" />
+              <rect x="165" y="110" width="5" height="5" />
+              <rect x="175" y="110" width="5" height="5" />
+              <rect x="185" y="110" width="5" height="5" />
+              
+              <rect x="155" y="120" width="5" height="5" />
+              <rect x="165" y="120" width="5" height="5" />
+              <rect x="175" y="120" width="5" height="5" />
+              <rect x="185" y="120" width="5" height="5" />
+              
+              <rect x="155" y="130" width="5" height="5" />
+              <rect x="165" y="130" width="5" height="5" />
+              <rect x="175" y="130" width="5" height="5" />
+              <rect x="185" y="130" width="5" height="5" />
+              
+              <rect x="155" y="140" width="5" height="5" />
+              <rect x="165" y="140" width="5" height="5" />
+              <rect x="175" y="140" width="5" height="5" />
+              <rect x="185" y="140" width="5" height="5" />
+              
+              <rect x="155" y="150" width="5" height="5" />
+              <rect x="165" y="150" width="5" height="5" />
+              <rect x="175" y="150" width="5" height="5" />
+              <rect x="185" y="150" width="5" height="5" />
+              
+              <rect x="155" y="160" width="5" height="5" />
+              <rect x="165" y="160" width="5" height="5" />
+              <rect x="175" y="160" width="5" height="5" />
+              <rect x="185" y="160" width="5" height="5" />
+            </g>
+            
+            <!-- Building 3 - Pointed tower -->
+            <polygon points="200,70 220,70 230,30 190,30" fill="#0A2342" />
+            <polygon points="195,70 215,70 225,35 185,35" fill="#05C7F2" opacity="0.3" />
+            
+            <rect x="190" y="70" width="30" height="110" fill="#0A2342" />
+            <rect x="192" y="75" width="26" height="100" fill="#05C7F2" opacity="0.3" />
+            
+            <!-- Building 3 - Windows -->
+            <g fill="#05F2DB" opacity="0.9">
+              <rect x="197" y="80" width="4" height="4" />
+              <rect x="204" y="80" width="4" height="4" />
+              <rect x="211" y="80" width="4" height="4" />
+              
+              <rect x="197" y="90" width="4" height="4" />
+              <rect x="204" y="90" width="4" height="4" />
+              <rect x="211" y="90" width="4" height="4" />
+              
+              <rect x="197" y="100" width="4" height="4" />
+              <rect x="204" y="100" width="4" height="4" />
+              <rect x="211" y="100" width="4" height="4" />
+              
+              <rect x="197" y="110" width="4" height="4" />
+              <rect x="204" y="110" width="4" height="4" />
+              <rect x="211" y="110" width="4" height="4" />
+              
+              <rect x="197" y="120" width="4" height="4" />
+              <rect x="204" y="120" width="4" height="4" />
+              <rect x="211" y="120" width="4" height="4" />
+              
+              <rect x="197" y="130" width="4" height="4" />
+              <rect x="204" y="130" width="4" height="4" />
+              <rect x="211" y="130" width="4" height="4" />
+              
+              <rect x="197" y="140" width="4" height="4" />
+              <rect x="204" y="140" width="4" height="4" />
+              <rect x="211" y="140" width="4" height="4" />
+              
+              <rect x="197" y="150" width="4" height="4" />
+              <rect x="204" y="150" width="4" height="4" />
+              <rect x="211" y="150" width="4" height="4" />
+              
+              <rect x="197" y="160" width="4" height="4" />
+              <rect x="204" y="160" width="4" height="4" />
+              <rect x="211" y="160" width="4" height="4" />
+              
+              <!-- Pyramid windows -->
+              <rect x="200" y="50" width="3" height="3" />
+              <rect x="207" y="50" width="3" height="3" />
+              <rect x="203" y="40" width="3" height="3" />
+            </g>
+          </g>
+          
+          <!-- Floating hovercrafts/drones -->
+          <g>
+            <ellipse cx="50" cy="70" rx="5" ry="2" fill="#F20530" opacity="0.8" />
+            <ellipse cx="50" cy="70" rx="3" ry="1" fill="#F2BC1B" opacity="0.9" />
+            
+            <ellipse cx="250" cy="90" rx="6" ry="2" fill="#F20530" opacity="0.8" />
+            <ellipse cx="250" cy="90" rx="4" ry="1" fill="#F2BC1B" opacity="0.9" />
+            
+            <ellipse cx="100" cy="50" rx="4" ry="1.5" fill="#F20530" opacity="0.8" />
+            <ellipse cx="100" cy="50" rx="2" ry="0.8" fill="#F2BC1B" opacity="0.9" />
+          </g>
+          
+          <!-- Light beams/rays from buildings -->
+          <g opacity="0.4">
+            <polygon points="125,60 120,30 130,30" fill="#05F2DB" />
+            <polygon points="170,90 165,60 175,60" fill="#05F2DB" />
+            <polygon points="205,80 200,50 210,50" fill="#05F2DB" />
+          </g>
+          
+          <!-- Flowing data streams in the air (represented as lines) -->
+          <g stroke="#05F2DB" stroke-width="0.5" opacity="0.6">
+            <path d="M 125 50 C 150 30, 180 40, 205 30" />
+            <path d="M 170 100 C 190 80, 220 90, 240 70" />
+            <path d="M 110 70 C 130 50, 150 60, 170 40" />
+          </g>
+        </svg>
+      `;
+      
+      svgContainer.innerHTML = svgContent;
+      message.appendChild(svgContainer);
+      
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      // After showing the image response, start typing the third user prompt
+      setTimeout(simulateThirdPrompt, 2000);
+    }
+    
+    // Function to type the AI response character by character
+    function typeAIResponse() {
+      const { container, message } = createAIMessageContainer();
+      chatMessages.appendChild(container);
+      
+      let index = 0;
+      const typingSpeed = 25; // milliseconds per character
+      
+      // Create a span for the typed text and cursor
+      const textSpan = document.createElement('span');
+      const cursorSpan = document.createElement('span');
+      cursorSpan.id = 'cursor';
+      
+      message.appendChild(textSpan);
+      message.appendChild(cursorSpan);
+      
+      function typeNextChar() {
+        if (index < aiResponse.length) {
+          if (aiResponse[index] === '\n') {
+            textSpan.innerHTML += '<br>';
+          } else {
+            textSpan.textContent += aiResponse[index];
+          }
+          index++;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          setTimeout(typeNextChar, typingSpeed);
+        } else {
+          // After finishing the first response, start second prompt
+          setTimeout(simulateSecondPrompt, 2000);
+        }
+      }
+      
+      typeNextChar();
+    }
+    
+    // Function to simulate the second user prompt
+    function simulateSecondPrompt() {
+      // Clear input
+      inputBox.value = '';
+      
+      // Start typing the second prompt
+      let index = 0;
+      
+      function typeChar() {
+        if (index < secondUserPrompt.length) {
+          inputBox.value += secondUserPrompt[index];
+          index++;
+          setTimeout(typeChar, 50);
+        } else {
+          // When typing is complete, show send button and press it
+          sendButton.classList.add('visible');
+          setTimeout(() => {
+            // Simulate button press
+            sendButton.classList.add('pressed');
+            
+            // Send second message after a brief delay
+            setTimeout(() => {
+              sendSecondMessage();
+              // Remove pressed effect after sending
+              setTimeout(() => {
+                sendButton.classList.remove('pressed');
+              }, 200);
+            }, 300);
+          }, 500);
+        }
+      }
+      
+      typeChar();
+    }
+    
+    // Function to send the second message
+    function sendSecondMessage() {
+      if (inputBox.value.trim() === '') return;
+      
+      // Create and add user message
+      const userMessageElement = createUserMessage(inputBox.value);
+      chatMessages.appendChild(userMessageElement);
+      
+      // Clear input and hide send button
+      inputBox.value = '';
+      sendButton.classList.remove('visible');
+      
+      // Show typing indicator
+      const typingIndicatorContainer = showTypingIndicator();
+      
+      // Scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // After a brief delay, remove typing indicator and show AI response
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicatorContainer);
+        createAIImageResponse();
+      }, 1500);
+    }
+    
+    // Function to simulate third user prompt typing
+    function simulateThirdPrompt() {
+      inputBox.value = '';
+      let index = 0;
+      function typeChar() {
+        if (index < thirdUserPrompt.length) {
+          inputBox.value += thirdUserPrompt[index];
+          index++;
+          setTimeout(typeChar, 50);
+        } else {
+          sendButton.classList.add('visible');
+          setTimeout(() => {
+            sendButton.classList.add('pressed');
+            setTimeout(() => {
+              sendThirdMessage();
+              setTimeout(() => sendButton.classList.remove('pressed'), 200);
+            }, 300);
+          }, 500);
+        }
+      }
+      typeChar();
+    }
+
+    // Function to send the third user message and show typing indicator
+    function sendThirdMessage() {
+      const userMsg = createUserMessage(thirdUserPrompt);
+      chatMessages.appendChild(userMsg);
+      inputBox.value = '';
+      sendButton.classList.remove('visible');
+      const typingIndicator = showTypingIndicator();
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicator);
+        typeThirdAIResponse();
+      }, 1500);
+    }
+
+    // Function to type the third AI response char by char
+    function typeThirdAIResponse() {
+      const { container, message } = createAIMessageContainer();
+      chatMessages.appendChild(container);
+      let idx = 0;
+      const speed = 25;
+      const textSpan = document.createElement('span');
+      const cursorSpan = document.createElement('span');
+      cursorSpan.id = 'cursor';
+      message.appendChild(textSpan);
+      message.appendChild(cursorSpan);
+
+      function typeNext() {
+        if (idx < thirdAiResponseText.length) {
+          const ch = thirdAiResponseText[idx++];
+          if (ch === '\n') textSpan.innerHTML += '<br>';
+          else textSpan.innerHTML += ch;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          setTimeout(typeNext, speed);
+        } else {
+          // After third answer, start fourth prompt typing
+          setTimeout(simulateFourthPrompt, 2000);
+        }
+      }
+      typeNext();
+    }
+    
+    // Function to simulate fourth user prompt typing
+    function simulateFourthPrompt() {
+      inputBox.value = '';
+      let i = 0;
+      function typeChar() {
+        if (i < fourthUserPrompt.length) {
+          inputBox.value += fourthUserPrompt[i++];
+          setTimeout(typeChar, 50);
+        } else {
+          sendButton.classList.add('visible');
+          setTimeout(() => {
+            sendButton.classList.add('pressed');
+            setTimeout(() => {
+              sendFourthMessage();
+              sendButton.classList.remove('pressed');
+            }, 300);
+          }, 500);
+        }
+      }
+      typeChar();
+    }
+
+    // Function to send fourth user message and show typing indicator
+    function sendFourthMessage() {
+      const userMsg = createUserMessage(fourthUserPrompt);
+      chatMessages.appendChild(userMsg);
+      inputBox.value = '';
+      sendButton.classList.remove('visible');
+      const typingIndicator = showTypingIndicator();
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicator);
+        typeFourthAIResponse();
+      }, 1500);
+    }
+
+    // Function to type the fourth AI response char by char
+    function typeFourthAIResponse() {
+      const { container, message } = createAIMessageContainer();
+      chatMessages.appendChild(container);
+      let j = 0;
+      const speed2 = 25;
+      const textSpan4 = document.createElement('span');
+      const cursor4 = document.createElement('span'); cursor4.id = 'cursor';
+      message.appendChild(textSpan4); message.appendChild(cursor4);
+      function typeNext4() {
+        if (j < fourthAiResponseText.length) {
+          const c = fourthAiResponseText[j++];
+          if (c === '\n') textSpan4.innerHTML += '<br>';
+          else textSpan4.innerHTML += c;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          setTimeout(typeNext4, speed2);
+        } else {
+          // After fourth answer, start typing the fifth prompt
+          setTimeout(simulateFifthPrompt, 2000);
+        }
+      }
+      typeNext4();
+    }
+    
+    // Function to simulate fifth user prompt typing
+    function simulateFifthPrompt() {
+      inputBox.value = '';
+      let k = 0;
+      function typeChar() {
+        if (k < fifthUserPrompt.length) {
+          inputBox.value += fifthUserPrompt[k++];
+          setTimeout(typeChar, 50);
+        } else {
+          sendButton.classList.add('visible');
+          setTimeout(() => {
+            sendButton.classList.add('pressed');
+            setTimeout(() => {
+              sendFifthMessage();
+              sendButton.classList.remove('pressed');
+            }, 300);
+          }, 500);
+        }
+      }
+      typeChar();
+    }
+    
+    // Function to send fifth user message and show typing indicator
+    function sendFifthMessage() {
+      const userMsg = createUserMessage(fifthUserPrompt);
+      chatMessages.appendChild(userMsg);
+      inputBox.value = '';
+      sendButton.classList.remove('visible');
+      const typingIndicator = showTypingIndicator();
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      setTimeout(() => {
+        chatMessages.removeChild(typingIndicator);
+        typeFifthAIResponse();
+      }, 1500);
+    }
+    
+    // Function to type the fifth AI response char by char
+    function typeFifthAIResponse() {
+      const { container, message } = createAIMessageContainer();
+      chatMessages.appendChild(container);
+      let m = 0;
+      const speed3 = 25;
+      const textSpan5 = document.createElement('span');
+      const cursor5 = document.createElement('span'); cursor5.id = 'cursor';
+      message.appendChild(textSpan5); message.appendChild(cursor5);
+      function typeNext5() {
+        if (m < fifthAiResponseText.length) {
+          const ch = fifthAiResponseText[m++];
+          if (ch === '\n') textSpan5.innerHTML += '<br>';
+          else textSpan5.innerHTML += ch;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          setTimeout(typeNext5, speed3);
+        } else {
+          // After fifth answer, loop back: wait then clear chat and restart
+          setTimeout(() => {
+            chatMessages.innerHTML = '';
+            window.onload();
+          }, 3000);
+        }
+      }
+      typeNext5();
+    }
+    
+    // Event listeners
+    sendButton.addEventListener("click", sendMessage);
+    inputBox.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        sendMessage();
+      }
+    });
+    
+    // Start the simulation when page loads
+    window.onload = () => {
+      // Focus on input box
+      inputBox.focus();
+      
+      // Start typing the user prompt after a short delay
+      setTimeout(simulateUserTyping, 500);
+      
+      // Automatically send the message after typing is complete
+      setTimeout(() => {
+        // Simulate button press visual effect
+        sendButton.classList.add('visible');
+        sendButton.classList.add('pressed');
+        
+        // Send the message after a brief delay to show the button press
+        setTimeout(() => {
+          sendMessage();
+          // Remove pressed effect after sending
+          setTimeout(() => {
+            sendButton.classList.remove('pressed');
+          }, 200);
+        }, 300);
+      }, userPrompt.length * 50 + 800); // Calculate delay based on typing speed plus a buffer
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+{
+    "challenges": [
+        {
+            "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+            "challenge_id": 1,
+            "title": "2025 28-Day AI Challenge",
+            "description": "Complete the 28-day AI challenge to enhance your skills.",
+            "time_duration": "3 Days"
+          },
+          {
+            "id": "e8fd159b-57c4-4d36-9bd7-a59ca13057bb",   
+            "challenge_id": 2,
+            "title": "14-Day AI Side Gigs Challenge",
+            "description": "Learn how to leverage AI for side gigs in just 14 days.",
+            "time_duration": "14 Days"
+          }
+    ],
+    "data": {
+        "f47ac10b-58cc-4372-a567-0e02b2c3d479": [
+            {
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d3fa",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe2c3b14",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-0880480440de",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },{
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d322",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe2c3b12",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-2880480440d2",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }
+            ,{
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d322",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe223b12",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-088048044022",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }
+        ],
+        "e8fd159b-57c4-4d36-9bd7-a59ca13057bb": [
+            {
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d3fa",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe2c3b14",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-0880480440de",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },{
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d322",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe2c3b12",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-2880480440d2",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }
+            ,{
+                "id": "35bcc692-7242-4e45-a09b-f2490e17d322",
+                "title": "Day 1: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            },
+            {
+                "id": "cb4df7f0-e74f-4748-b877-5b98fe223b12",
+                "title": "Day 2: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }, 
+            {
+                "id": "916c657e-8ed8-4b2c-b135-088048044022",
+                "title": "Day 3: Introduction to AI",
+                "description": "Learn the basics of AI and its applications.",
+                "icon": "fa-solid fa-brain",
+                "image": "/img/icons8-chatgpt.svg",
+                "content": "aaaa  Affiliate marketing is a type of performance-based marketing where a business rewards one or more affiliates for each visitor or customer brought by the affiliate's own marketing efforts."
+            }
+        ]
+    }
+    
+}

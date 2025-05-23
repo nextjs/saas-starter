@@ -1,130 +1,341 @@
 import { Button } from '@/components/ui/button';
-import { ArrowRight, CreditCard, Database } from 'lucide-react';
-import { Terminal } from './terminal';
+import { ArrowRight, Info, Clock, BookOpen, Smartphone, Zap, Target, Shield } from 'lucide-react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWrench, faPenNib, faHandshake, faMoneyBillWave, faBrain, faBullhorn } from '@fortawesome/free-solid-svg-icons';
 
 export default function HomePage() {
   return (
-    <main>
-      <section className="py-20">
+    <main className="mb-12">
+      {/* Hero Section */}
+      <section className="relative py-24 overflow-hidden">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-green-50 -z-10" />
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-blue-200 rounded-full blur-3xl opacity-30" />
+        <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-teal-200 rounded-full blur-3xl opacity-20" />
+        
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-            <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-              <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+          <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center">
+            <div className="sm:text-center lg:text-left lg:col-span-6">
+              <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:leading-tight">
+              Unleash the AI Advantage:
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-teal-500">Transform Your Future Today</span>
               </h1>
-              <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
+              <p className="mt-5 text-xl text-gray-600 leading-relaxed">
+              Master artificial intelligence, double your income, and revolutionize your everyday life!
+              Would you like me to create a few more alternatives with different angles or emphases?
               </p>
-              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
+              <div className="mt-10 flex flex-col sm:justify-center lg:justify-start">
                 <a
-                  href="https://vercel.com/templates/next.js/next-js-saas-starter"
-                  target="_blank"
+                  href="/quiz"
                 >
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="text-lg rounded-full"
+                    className="text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 rounded-full shadow-md hover:shadow-lg transition-all duration-200 px-6"
                   >
-                    Deploy your own
+                    Get Started
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
+                {/* Trust avatars */}
+                <div className="mt-4 flex items-center space-x-4">
+                  <div className="flex -space-x-2">
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                  </div>
+                  <span className="text-blue-900 text-lg font-medium">More than 3000+ people joined</span>
+                </div>
               </div>
             </div>
-            <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              <Terminal />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 bg-white w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-            <div>
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <svg viewBox="0 0 24 24" className="h-6 w-6">
-                  <path
-                    fill="currentColor"
-                    d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"
-                  />
-                </svg>
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <Database className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-10 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
-                <CreditCard className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
-                </h2>
-                <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
-                </p>
+            <div className="mt-16 sm:mt-24 lg:mt-0 lg:col-span-6">
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl">
+                <div className="bg-gray-800 flex items-center px-4 py-2 rounded-t-2xl">
+                  <div className="bg-blue-600 w-6 h-6 flex items-center justify-center rounded-full">
+                    <Info className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="ml-2 text-white text-lg font-semibold">AI Assistant</div>
+                </div>
+                <iframe
+                  src="/terminal.htm"
+                  className="w-full h-96 rounded-b-2xl"
+                  title="AI Assistant Chat Simulation"
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-16 bg-gray-50">
+      {/* Features Section */}
+      <section className="py-24 relative">
+        <div className="absolute inset-0 bg-white/70 backdrop-blur-md -z-10" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
-              </h2>
-              <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don't waste time on boilerplate - focus on
-                what makes your product unique.
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">Smart Tools for Modern Creators & Entrepreneurs</h2>
+            <p className="mt-4 text-xl text-gray-600 max-w-3xl mx-auto">
+            Turn Ideas Into Income with AI
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faWrench} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI Productivity</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Boost your daily efficiency with AI tools designed to simplify routine tasks, automate repetitive actions, and help you stay focused. Whether you're managing projects, handling emails, or organizing your schedule – AI can help you save time and stay in control.</p>
+            </div>
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faPenNib} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI Content Creation</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Effortlessly create engaging, high-quality content for your blog, website, or social media channels. AI writing assistants can help you brainstorm ideas, draft articles, generate headlines, and even optimize content for SEO – giving you more time to focus on your creativity.</p>
+            </div>
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faHandshake} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI Affiliate Marketing</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Use the power of AI to find profitable affiliate products, create compelling promotional content, and automate your marketing strategies. With the right tools, you can increase your affiliate income with less manual work and smarter targeting.</p>
+            </div>
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faMoneyBillWave} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI Income Streams</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Discover how to generate new online income streams by using AI tools to build digital products, automate services, or create scalable content. Whether you're just getting started or looking to grow your online business, AI can help you do more with less effort.</p>
+            </div>
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faBrain} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI-Powered Business</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Transform your business with AI-driven automation and analytics. From managing customer data to optimizing workflows and predicting trends, AI helps you make faster, smarter decisions that reduce costs and unlock growth opportunities.</p>
+            </div>
+            <div className="card-drift bg-white p-8 rounded-2xl shadow-md border border-gray-100 transition-transform hover:-translate-y-1 hover:shadow-lg">
+              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gradient-to-r from-blue-100 to-teal-100 mb-6">
+                <FontAwesomeIcon icon={faBullhorn} className="h-6 w-6 text-teal-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">AI Marketing</h3>
+              <p className="mt-4 text-gray-600 leading-relaxed">Take your marketing to the next level using AI tools for ad creation, audience targeting, performance tracking, and social media automation. With real-time data and intelligent suggestions, you can connect with the right people and boost your sales more effectively.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Promotional Coursiv Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-gradient-to-br from-blue-50 to-green-50 flex flex-col md:flex-row items-center p-12">
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-bold text-gray-900">Increase your income potential with Focus your AI</h2>
+              <p className="mt-4 text-lg text-gray-600">Master essential digital skills and AI tools to work smarter, grow faster, and earn more.</p>
+              <div className="mt-6 flex flex-col">
+                <Button size="lg" className="text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 rounded-full shadow-md hover:shadow-lg transition-all duration-200 px-6 py-3">
+                  <a href="/quiz" className="flex items-center">
+                    Get Started <ArrowRight className="ml-2 h-5 w-5" />
+                  </a>
+                </Button>
+                {/* Trust avatars */}
+                <div className="mt-4 flex items-center space-x-4">
+                  <div className="flex -space-x-2">
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                  </div>
+                  <span className="text-blue-900 text-lg font-medium">More than 3000+ people joined</span>
+                </div>
+              </div>
+            </div>
+            <div className="md:w-1/2 mt-8 md:mt-0 flex justify-center">
+              {/* Avatar placeholders */}
+              <div className="grid grid-cols-3 gap-4">
+                <div className="h-16 w-16 bg-gray-200 rounded-full" />
+                <div className="h-16 w-16 bg-gray-200 rounded-full" />
+                <div className="h-16 w-16 bg-gray-200 rounded-full" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why people choose AI Design Prompt Section */}
+      <section className="py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative border border-gray-200 rounded-2xl overflow-hidden bg-white">
+            <div className="lg:grid lg:grid-cols-12 lg:gap-8 items-center p-12">
+              <div className="lg:col-span-6 flex justify-center mb-8 lg:mb-0">
+                <div className="h-96 w-full max-w-md bg-gray-200 rounded-xl" />
+              </div>
+              <div className="lg:col-span-6 lg:pl-12">
+                <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">Why people choose AI Design Prompt</h2>
+                <p className="mt-4 text-lg text-gray-600 max-w-3xl">Join a growing community of creators, freelancers, and entrepreneurs who use SkillForge AI to unlock the power of digital skills and artificial intelligence.</p>
+                <div className="mt-10 space-y-8">
+                  <div className="flex items-start">
+                    <Clock className="h-6 w-6 text-teal-500 mt-1 flex-shrink-0" />
+                    <div className="ml-4">
+                      <h3 className="text-xl font-semibold text-gray-900">Learn on your terms</h3>
+                      <p className="mt-2 text-gray-600">No fluff, no overwhelm. Just 15 minutes a day to build real, valuable skills—at your pace, no matter your background.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <BookOpen className="h-6 w-6 text-teal-500 mt-1 flex-shrink-0" />
+                    <div className="ml-4">
+                      <h3 className="text-xl font-semibold text-gray-900">Tailored to your style</h3>
+                      <p className="mt-2 text-gray-600">Whether you prefer listening, reading, or doing—our content comes in audio lessons, quick tutorials, and interactive mini-projects.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <Smartphone className="h-6 w-6 text-teal-500 mt-1 flex-shrink-0" />
+                    <div className="ml-4">
+                      <h3 className="text-xl font-semibold text-gray-900">Ready when you are</h3>
+                      <p className="mt-2 text-gray-600">Access everything from your phone, tablet, or laptop. Learn anywhere, anytime—even offline.</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start">
+                    <Zap className="h-6 w-6 text-teal-500 mt-1 flex-shrink-0" />
+                    <div className="ml-4">
+                      <h3 className="text-xl font-semibold text-gray-900">Results you can feel</h3>
+                      <p className="mt-2 text-gray-600">Use powerful AI tools from day one. Build your portfolio, launch new projects, or start earning more—right as you learn.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Journey Section */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-bold text-gray-900">Your journey with AI, simplified</h2>
+          <p className="mt-4 text-lg text-gray-600">Explore practical lessons and real tools—on your schedule, at your pace.</p>
+        </div>
+      </section>
+
+      {/* Steps Section */}
+      <section className="py-12 mb-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="flex items-start gap-4">
+              <Target className="h-16 w-16 text-teal-500 flex-shrink-0" />
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Step 1: Define your goals, unlock your path</h3>
+                <p className="mt-1 text-gray-600">You set the direction—we'll take care of the roadmap. Once you define your learning goals, we build a personalized plan filled with the most relevant AI tools and skills to help you grow efficiently and stay inspired.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <BookOpen className="h-16 w-16 text-teal-500 flex-shrink-0" />
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Step 2: Build real, useful skills</h3>
+                <p className="mt-1 text-gray-600">Our lessons are built for action—not just theory. You'll learn by doing, using real tools and solving real problems that align with your personal learning path.</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <Shield className="h-16 w-16 text-teal-500 flex-shrink-0" />
+              <div>
+                <h3 className="text-xl font-semibold text-gray-900">Step 3: Use AI with confidence</h3>
+                <p className="mt-1 text-gray-600">With the right tools and a clear plan, you'll start putting AI into action—confidently and creatively. Whether it's content creation, automation, or decision-making, you'll know exactly how to make AI work for you.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-gradient-to-b from-blue-500 to-blue-700 text-white overflow-hidden relative">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-0 left-10 w-40 h-40 rounded-full bg-white blur-2xl"></div>
+          <div className="absolute bottom-0 right-10 w-60 h-60 rounded-full bg-white blur-3xl"></div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+            <div className="mb-12 lg:mb-0">
+              <h2 className="text-4xl font-bold sm:text-5xl mb-6">Start Your Smart Learning Journey Today</h2>
+              <p className="text-lg text-blue-100 max-w-2xl mb-10">
+                Start your AI journey today – it only takes 15 minutes a day. With short, focused lessons and hands-on tools, you'll quickly build practical skills that fit your goals, your schedule, and your pace.
               </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <a href="https://github.com/nextjs/saas-starter" target="_blank">
+              <div className="flex flex-col">
                 <Button
                   size="lg"
-                  variant="outline"
-                  className="text-lg rounded-full"
+                  className="bg-blue-600 text-white hover:bg-blue-500 hover:scale-105 transition-all duration-200 rounded-full shadow-lg px-8 py-6 font-medium border border-blue-400"
                 >
-                  View the code
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  View Pricing
                 </Button>
-              </a>
+                {/* Trust avatars */}
+                <div className="mt-4 flex items-center space-x-4">
+                  <div className="flex -space-x-2">
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                    <div className="h-10 w-10 bg-gray-300 rounded-full border-2 border-white"></div>
+                  </div>
+                  <span className="text-white text-lg font-medium">More than 3000+ people joined</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <div className="bg-blue-600/30 backdrop-blur-md p-8 rounded-3xl border border-blue-400/30 shadow-2xl hover:shadow-blue-500/20 transition-all duration-300 w-full max-w-md">
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/40 to-blue-700/40 hover:from-blue-500/50 hover:to-blue-700/50 transition-all duration-200 text-center shadow-lg">
+                    <div className="text-4xl font-bold mb-1">3000+</div>
+                    <div className="text-blue-100">Happy Users</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/40 to-blue-700/40 hover:from-blue-500/50 hover:to-blue-700/50 transition-all duration-200 text-center shadow-lg">
+                    <div className="text-4xl font-bold mb-1">24/7</div>
+                    <div className="text-blue-100">Support</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/40 to-blue-700/40 hover:from-blue-500/50 hover:to-blue-700/50 transition-all duration-200 text-center shadow-lg">
+                    <div className="text-4xl font-bold mb-1">99.9%</div>
+                    <div className="text-blue-100">Uptime</div>
+                  </div>
+                  <div className="p-6 rounded-2xl bg-gradient-to-br from-blue-500/40 to-blue-700/40 hover:from-blue-500/50 hover:to-blue-700/50 transition-all duration-200 text-center shadow-lg">
+                    <div className="text-4xl font-bold mb-1">7-day</div>
+                    <div className="text-blue-100">Free Trial</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Disclaimer Section */}
+      <div className="mt-8 bg-white border border-gray-200 rounded-xl p-6 mb-8 max-w-4xl mx-auto">
+        <p className="text-lg font-bold mb-2">Disclaimer</p>
+        <p className="text-sm text-gray-600">
+          Focus your AI serves exclusively as an educational platform and explicitly does not provide any financial, investment, or career advice under any circumstances. All content is presented for informational and educational purposes only. Prior to making any career or financial decisions, we strongly urge you to consult with qualified professional advisors. Focus your AI maintains absolute neutrality and has no bias whatsoever towards or against any stocks, companies, or entities mentioned throughout this platform. Nothing contained within this site should be interpreted as a recommendation or endorsement of any kind.
+        </p>
+      </div>
+
+      {/* Footer Section */}
+      <footer className="bg-gray-100 py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center">
+          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6">
+            <img src="/Logo_all.svg" alt="Logo" className="h-10 w-auto" />
+            <nav className="flex flex-wrap space-x-4">
+              <a href="/" className="text-gray-700 hover:text-gray-900">Home</a>
+              <a href="/privacy" className="text-gray-700 hover:text-gray-900">Privacy Policy</a>
+              <a href="/terms" className="text-gray-700 hover:text-gray-900">Terms & Conditions</a>
+              <a href="/subscription-terms" className="text-gray-700 hover:text-gray-900">Subscription Terms</a>
+              <a href="/support" className="text-gray-700 hover:text-gray-900">Support Center</a>
+            </nav>
+          </div>
+        </div>
+      </footer>
+      <div className="text-center text-gray-500 text-sm mt-4">
+        Product by DexterLab 2025 ©All Rights Reserved.
+      </div>
     </main>
   );
 }
+

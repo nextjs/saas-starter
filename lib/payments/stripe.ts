@@ -8,7 +8,7 @@ import {
 } from '@/lib/db/queries';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil'
+  apiVersion: '2025-03-31.basil'
 });
 
 export async function createCheckoutSession({
@@ -21,7 +21,7 @@ export async function createCheckoutSession({
   const user = await getUser();
 
   if (!team || !user) {
-    redirect(`/sign-up?redirect=checkout&priceId=${priceId}`);
+    redirect(`/login/sign-up?redirect=checkout&priceId=${priceId}`);
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -37,10 +37,7 @@ export async function createCheckoutSession({
     cancel_url: `${process.env.BASE_URL}/pricing`,
     customer: team.stripeCustomerId || undefined,
     client_reference_id: user.id.toString(),
-    allow_promotion_codes: true,
-    subscription_data: {
-      trial_period_days: 14
-    }
+    allow_promotion_codes: true
   });
 
   redirect(session.url!);
@@ -86,6 +83,9 @@ export async function createCustomerPortalSession(team: Team) {
             }
           ]
         },
+        payment_method_update: {
+          enabled: true
+        },
         subscription_cancel: {
           enabled: true,
           mode: 'at_period_end',
@@ -99,9 +99,6 @@ export async function createCustomerPortalSession(team: Team) {
               'other'
             ]
           }
-        },
-        payment_method_update: {
-          enabled: true
         }
       }
     });
@@ -159,7 +156,9 @@ export async function getStripePrices() {
       typeof price.product === 'string' ? price.product : price.product.id,
     unitAmount: price.unit_amount,
     currency: price.currency,
+    currencySymbol: price.currency === 'usd' ? '$' : '€',
     interval: price.recurring?.interval,
+    intervalCount: price.recurring?.interval_count || 1,
     trialPeriodDays: price.recurring?.trial_period_days
   }));
 }

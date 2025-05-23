@@ -1,0 +1,19 @@
+{
+  "parts": [
+    {
+      "id": "fba3699e-791b-4993-ad66-5851fcbe7a59",
+      "name": "Podstawy AI Engineering",
+      "icon": "BookType"
+    },
+    {
+      "id": "b1b86cc5-6f84-45b4-a759-5243d20daa13",
+      "name": "Zaawansowane koncepcje AI",
+      "icon": "Brain"
+    },
+    {
+      "id": "4ec2bd6b-fd41-4f2d-ac45-621db133eb5b",
+      "name": "Praktyczne zastosowania",
+      "icon": "Code"
+    }
+  ]
+} 

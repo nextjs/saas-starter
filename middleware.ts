@@ -3,14 +3,16 @@ import type { NextRequest } from 'next/server';
 import { signToken, verifyToken } from '@/lib/auth/session';
 
 const protectedRoutes = '/dashboard';
+const subscriberRoutes = '/app';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const sessionCookie = request.cookies.get('session');
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
+  const isSubscriberRoute = pathname.startsWith(subscriberRoutes);
 
-  if (isProtectedRoute && !sessionCookie) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+  if ((isProtectedRoute || isSubscriberRoute) && !sessionCookie) {
+    return NextResponse.redirect(new URL('/login/sign-in', request.url));
   }
 
   let res = NextResponse.next();
@@ -34,8 +36,8 @@ export async function middleware(request: NextRequest) {
     } catch (error) {
       console.error('Error updating session:', error);
       res.cookies.delete('session');
-      if (isProtectedRoute) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
+      if (isProtectedRoute || isSubscriberRoute) {
+        return NextResponse.redirect(new URL('/login/sign-in', request.url));
       }
     }
   }

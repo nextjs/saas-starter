@@ -1,0 +1,193 @@
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.confettiPiece {
+  position: absolute;
+  will-change: transform;
+  opacity: 0;
+  transform-origin: center;
+  filter: drop-shadow(0 0 4px rgba(0,0,0,0.1));
+}
+
+@keyframes explode {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(var(--rotation-start)) scale(0.1);
+  }
+  5% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(var(--rotation-start)) scale(1.2);
+  }
+  15% {
+    opacity: 1;
+    transform: translate(calc(var(--final-left) * 0.3), calc(var(--final-top) * 0.3)) 
+               rotate(calc(var(--rotation-start) + var(--rotation-end) * 0.2)) 
+               scale(1);
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--final-left), var(--final-top)) 
+               rotate(var(--rotation-end)) 
+               scale(0);
+  }
+}
+
+.animate {
+  animation: explode var(--duration) cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.square {
+  width: 100%;
+  height: 100%;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: calc(100% / 2) solid transparent;
+  border-right: calc(100% / 2) solid transparent;
+  border-bottom: 100% solid currentColor;
+  background-color: transparent !important;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+}
+
+.heart {
+  background-color: transparent !important;
+  width: 100%;
+  height: 90%;
+  position: relative;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+}
+
+.heart:before,
+.heart:after {
+  content: "";
+  position: absolute;
+  width: 60%;
+  height: 90%;
+  background-color: inherit; 
+  border-radius: 50% 50% 0 0;
+}
+
+.heart:before {
+  left: 0;
+  transform: rotate(-45deg);
+  transform-origin: 100% 100%;
+}
+
+.heart:after {
+  right: 0;
+  transform: rotate(45deg);
+  transform-origin: 0 100%;
+}
+
+.star {
+  background-color: transparent !important;
+  position: relative;
+  width: 0;
+  height: 0;
+  margin: 25% 0;
+  color: currentColor;
+  border-right: 100% solid transparent;
+  border-bottom: 70% solid currentColor;
+  border-left: 100% solid transparent;
+  transform: rotate(35deg);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+}
+
+.star:before {
+  content: '';
+  position: absolute;
+  height: 0;
+  width: 0;
+  top: -45%;
+  left: -65%;
+  border-bottom: 80% solid currentColor;
+  border-left: 30% solid transparent;
+  border-right: 30% solid transparent;
+  transform: rotate(-35deg);
+}
+
+.star:after {
+  content: '';
+  position: absolute;
+  top: 3%;
+  left: -105%;
+  width: 0;
+  height: 0;
+  border-right: 100% solid transparent;
+  border-bottom: 70% solid currentColor;
+  border-left: 100% solid transparent;
+  transform: rotate(-70deg);
+}
+
+.diamond {
+  width: 100%;
+  height: 100%;
+  background-color: transparent !important;
+  transform: rotate(45deg);
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.15));
+}
+
+.diamond:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: inherit;
+}
+
+.successMessage {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 28px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  color: #0f172a;
+  font-size: 1.75rem;
+  font-weight: 700;
+  z-index: 10000;
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  border: 2px solid #e2e8f0;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  40% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+} 
