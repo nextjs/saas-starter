@@ -1,34 +1,34 @@
-'use client';
+"use client"
 
-import { useActionState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
-import { updateAccount } from '@/app/(login)/actions';
-import { User } from '@/lib/db/schema';
-import useSWR from 'swr';
-import { Suspense } from 'react';
+import { useActionState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Loader2 } from "lucide-react"
+import { updateAccount } from "@/app/(login)/actions"
+import { User } from "@/lib/db/schema"
+import useSWR from "swr"
+import { Suspense } from "react"
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json())
 
 type ActionState = {
-  name?: string;
-  error?: string;
-  success?: string;
-};
+  name?: string
+  error?: string
+  success?: string
+}
 
 type AccountFormProps = {
-  state: ActionState;
-  nameValue?: string;
-  emailValue?: string;
-};
+  state: ActionState
+  nameValue?: string
+  emailValue?: string
+}
 
 function AccountForm({
   state,
-  nameValue = '',
-  emailValue = ''
+  nameValue = "",
+  emailValue = "",
 }: AccountFormProps) {
   return (
     <>
@@ -58,25 +58,25 @@ function AccountForm({
         />
       </div>
     </>
-  );
+  )
 }
 
 function AccountFormWithData({ state }: { state: ActionState }) {
-  const { data: user } = useSWR<User>('/api/user', fetcher);
+  const { data: user } = useSWR<User>("/api/user", fetcher)
   return (
     <AccountForm
       state={state}
-      nameValue={user?.name ?? ''}
-      emailValue={user?.email ?? ''}
+      nameValue={user?.name ?? ""}
+      emailValue={user?.email ?? ""}
     />
-  );
+  )
 }
 
 export default function GeneralPage() {
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     updateAccount,
     {}
-  );
+  )
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -89,7 +89,7 @@ export default function GeneralPage() {
           <CardTitle>Account Information</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" action={formAction}>
+          <form className="space-y-4">
             <Suspense fallback={<AccountForm state={state} />}>
               <AccountFormWithData state={state} />
             </Suspense>
@@ -103,6 +103,7 @@ export default function GeneralPage() {
               type="submit"
               className="bg-orange-500 hover:bg-orange-600 text-white"
               disabled={isPending}
+              formAction={formAction}
             >
               {isPending ? (
                 <>
@@ -110,12 +111,12 @@ export default function GeneralPage() {
                   Saving...
                 </>
               ) : (
-                'Save Changes'
+                "Save Changes"
               )}
             </Button>
           </form>
         </CardContent>
       </Card>
     </section>
-  );
+  )
 }
