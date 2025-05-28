@@ -3,7 +3,7 @@
 import useSWR from 'swr';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Home, LogOut } from 'lucide-react';
 
 import { User } from '@/lib/db/schema';
@@ -22,7 +22,9 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 const UserMenu = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { data: user } = useSWR<User>('/api/user', fetcher);
+    
     const router = useRouter();
+    const pathname = usePathname();
 
     async function handleSignOut() {
         await signOut();
@@ -40,7 +42,7 @@ const UserMenu = () => {
                     Pricing
                 </Link>
                 <Button asChild className="rounded-full">
-                    <Link href="/sign-up">Sign Up</Link>
+                    <Link href="/sign-up">{pathname === '/sign-up' ? 'Sign In' : 'Sign Up'}</Link>
                 </Button>
             </>
         );
