@@ -11,20 +11,21 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { signOut } from '@/app/(login)/actions';
+import { signOut } from '@/app/(login)/actions'; // Menggunakan aksi yang dimodifikasi
 import { useRouter } from 'next/navigation';
-import { User } from '@/lib/db/schema';
+import { User } from '@/lib/db/schema'; // Menggunakan tipe User yang disesuaikan
 import useSWR from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  // Mengambil data user dari API Route Next.js, yang kemudian memanggil backend Express.js
   const { data: user } = useSWR<User>('/api/user', fetcher);
   const router = useRouter();
 
   async function handleSignOut() {
-    await signOut();
+    await signOut(); // Memanggil aksi signOut yang berkomunikasi dengan Express.js
     router.refresh();
     router.push('/');
   }
@@ -36,10 +37,10 @@ function UserMenu() {
           href="/pricing"
           className="text-sm font-medium text-gray-700 hover:text-gray-900"
         >
-          Pricing
+          Harga
         </Link>
         <Button asChild className="rounded-full">
-          <Link href="/sign-up">Sign Up</Link>
+          <Link href="/sign-up">Daftar</Link>
         </Button>
       </>
     );
@@ -51,10 +52,10 @@ function UserMenu() {
         <Avatar className="cursor-pointer size-9">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback>
-            {user.email
-              .split(' ')
-              .map((n) => n[0])
-              .join('')}
+            {/* Menggunakan nama atau email untuk fallback avatar */}
+            {user.name
+              ? user.name.split(' ').map((n) => n[0]).join('')
+              : user.email.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
@@ -69,7 +70,7 @@ function UserMenu() {
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
+              <span>Keluar</span>
             </DropdownMenuItem>
           </button>
         </form>
