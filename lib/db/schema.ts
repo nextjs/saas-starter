@@ -1,133 +1,65 @@
-import {
-  pgTable,
-  serial,
-  varchar,
-  text,
-  timestamp,
-  integer,
-} from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+// lib/db/schema.ts
+// File ini sekarang hanya berisi definisi tipe TypeScript
+// yang mencerminkan struktur data dari backend Express.js Anda.
 
-export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 100 }),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
-  role: varchar('role', { length: 20 }).notNull().default('member'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
-});
-
-export const teams = pgTable('teams', {
-  id: serial('id').primaryKey(),
-  name: varchar('name', { length: 100 }).notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  stripeCustomerId: text('stripe_customer_id').unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').unique(),
-  stripeProductId: text('stripe_product_id'),
-  planName: varchar('plan_name', { length: 50 }),
-  subscriptionStatus: varchar('subscription_status', { length: 20 }),
-});
-
-export const teamMembers = pgTable('team_members', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id')
-    .notNull()
-    .references(() => users.id),
-  teamId: integer('team_id')
-    .notNull()
-    .references(() => teams.id),
-  role: varchar('role', { length: 50 }).notNull(),
-  joinedAt: timestamp('joined_at').notNull().defaultNow(),
-});
-
-export const activityLogs = pgTable('activity_logs', {
-  id: serial('id').primaryKey(),
-  teamId: integer('team_id')
-    .notNull()
-    .references(() => teams.id),
-  userId: integer('user_id').references(() => users.id),
-  action: text('action').notNull(),
-  timestamp: timestamp('timestamp').notNull().defaultNow(),
-  ipAddress: varchar('ip_address', { length: 45 }),
-});
-
-export const invitations = pgTable('invitations', {
-  id: serial('id').primaryKey(),
-  teamId: integer('team_id')
-    .notNull()
-    .references(() => teams.id),
-  email: varchar('email', { length: 255 }).notNull(),
-  role: varchar('role', { length: 50 }).notNull(),
-  invitedBy: integer('invited_by')
-    .notNull()
-    .references(() => users.id),
-  invitedAt: timestamp('invited_at').notNull().defaultNow(),
-  status: varchar('status', { length: 20 }).notNull().default('pending'),
-});
-
-export const teamsRelations = relations(teams, ({ many }) => ({
-  teamMembers: many(teamMembers),
-  activityLogs: many(activityLogs),
-  invitations: many(invitations),
-}));
-
-export const usersRelations = relations(users, ({ many }) => ({
-  teamMembers: many(teamMembers),
-  invitationsSent: many(invitations),
-}));
-
-export const invitationsRelations = relations(invitations, ({ one }) => ({
-  team: one(teams, {
-    fields: [invitations.teamId],
-    references: [teams.id],
-  }),
-  invitedBy: one(users, {
-    fields: [invitations.invitedBy],
-    references: [users.id],
-  }),
-}));
-
-export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
-  user: one(users, {
-    fields: [teamMembers.userId],
-    references: [users.id],
-  }),
-  team: one(teams, {
-    fields: [teamMembers.teamId],
-    references: [teams.id],
-  }),
-}));
-
-export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
-  team: one(teams, {
-    fields: [activityLogs.teamId],
-    references: [teams.id],
-  }),
-  user: one(users, {
-    fields: [activityLogs.userId],
-    references: [users.id],
-  }),
-}));
-
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-export type Team = typeof teams.$inferSelect;
-export type NewTeam = typeof teams.$inferInsert;
-export type TeamMember = typeof teamMembers.$inferSelect;
-export type NewTeamMember = typeof teamMembers.$inferInsert;
-export type ActivityLog = typeof activityLogs.$inferSelect;
-export type NewActivityLog = typeof activityLogs.$inferInsert;
-export type Invitation = typeof invitations.$inferSelect;
-export type NewInvitation = typeof invitations.$inferInsert;
-export type TeamDataWithMembers = Team & {
-  teamMembers: (TeamMember & {
-    user: Pick<User, 'id' | 'name' | 'email'>;
-  })[];
+// Tipe untuk Pengguna, disesuaikan dengan respons /api/auth/profile dan /api/auth/login
+export type User = {
+  id: number;
+  name: string | null; // Dari 'username' atau 'name' di respons Express.js
+  email: string;
+  passwordHash: string; // Dummy, tidak akan diisi dari frontend
+  createdAt: Date; // Dari 'created_at' di respons Express.js
+  updatedAt: Date; // Dari 'last_login' atau 'updated_at' di respons Express.js
+  deletedAt: Date | null; // Jika ada di respons Express.js
+  emailVerified: boolean; // Dari 'email_verified' di respons /login dan /register
 };
 
+// Tipe untuk Tim, disesuaikan dengan respons /api/team (tanpa anggota tim)
+// Properti terkait Stripe DIHILANGKAN
+// Properti teamMembers DIHILANGKAN
+export type Team = {
+  id: number;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  planName: string | null; // Dari 'plan_name' di respons Express.js
+  subscriptionStatus: string | null; // Dari 'subscription_status' di respons Express.js
+};
+
+// Tipe untuk Log Aktivitas, disesuaikan dengan respons /v1/usage
+export type ActivityLog = {
+  id: number;
+  teamId: number | null; // Jika ada di log usage Express.js (dibuat opsional)
+  userId: number;
+  action: string; // Misalnya 'chat_completion', 'auth_check', 'models_list'
+  timestamp: Date; // Dari 'created_at' atau 'usage_date' di log usage Express.js
+  ipAddress: string | null; // Jika ada di log usage Express.js (dibuat opsional)
+  userName: string | null; // Jika log usage Express.js menyertakan nama pengguna (dibuat opsional)
+};
+
+// Tipe untuk Kunci API, disesuaikan dengan respons /api/keys
+export type ApiKey = {
+  id: string; // Ini adalah 'id_key_string' atau 'api_key' dari Express.js
+  keyInternalId: number; // Ini adalah 'key_uuid' atau 'id' internal dari Express.js
+  name: string | null;
+  tier: string; // Nama tier, misalnya 'Free', 'Basic'
+  dailyUsage: number;
+  monthlyUsage: number;
+  dailyLimit: number;
+  monthlyLimit: number;
+  isActive: boolean;
+  createdAt: Date;
+  lastUsed: Date | null;
+  dailyResetAt: Date;
+  monthlyResetAt: Date;
+  creator: string;
+};
+
+// Tipe untuk TeamDataWithMembers (dibuat kosong karena teamMembers dihilangkan)
+export type TeamDataWithMembers = Team;
+
+
+// Definisi ActivityType (tetap relevan untuk frontend)
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',
   SIGN_IN = 'SIGN_IN',
@@ -135,8 +67,25 @@ export enum ActivityType {
   UPDATE_PASSWORD = 'UPDATE_PASSWORD',
   DELETE_ACCOUNT = 'DELETE_ACCOUNT',
   UPDATE_ACCOUNT = 'UPDATE_ACCOUNT',
-  CREATE_TEAM = 'CREATE_TEAM',
-  REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
-  INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
-  ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  // Aksi terkait tim DIHILANGKAN jika tidak ada di backend atau tidak relevan
+  // CREATE_TEAM = 'CREATE_TEAM',
+  // REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
+  // INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
+  // ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+
+  // Aksi yang berasal dari request_type usage_logs Express.js
+  CHAT_COMPLETION = 'chat_completion',
+  EMBEDDINGS = 'embeddings',
+  MODERATION = 'moderation',
+  REASONING = 'reasoning',
+  AUTH_CHECK = 'auth_check',
+  MODELS_LIST = 'models_list',
+  USAGE_QUERY = 'usage_query',
+  SYSTEM_STATUS_CHECK = 'system_status_check',
+
+  // Aksi kustom untuk frontend jika Express.js tidak mengembalikan string aksi yang tepat
+  API_KEY_GENERATED = 'API_KEY_GENERATED',
+  API_KEY_DEACTIVATED = 'API_KEY_DEACTIVATED',
+  API_KEY_DELETED = 'API_KEY_DELETED',
+  UNKNOWN_ACTION = 'unknown_action',
 }
