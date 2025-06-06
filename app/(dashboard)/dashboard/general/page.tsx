@@ -6,8 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Loader2 } from 'lucide-react';
-import { updateAccount } from '@/app/(login)/actions';
-import { User } from '@/lib/db/schema';
+import { updateAccount } from '@/app/(login)/actions'; // Menggunakan aksi yang dimodifikasi
+import { User } from '@/lib/db/schema'; // Menggunakan tipe User yang disesuaikan
 import useSWR from 'swr';
 import { Suspense } from 'react';
 
@@ -34,12 +34,12 @@ function AccountForm({
     <>
       <div>
         <Label htmlFor="name" className="mb-2">
-          Name
+          Nama Pengguna
         </Label>
         <Input
           id="name"
           name="name"
-          placeholder="Enter your name"
+          placeholder="Masukkan nama pengguna Anda"
           defaultValue={state.name || nameValue}
           required
         />
@@ -52,7 +52,7 @@ function AccountForm({
           id="email"
           name="email"
           type="email"
-          placeholder="Enter your email"
+          placeholder="Masukkan email Anda"
           defaultValue={emailValue}
           required
         />
@@ -62,11 +62,12 @@ function AccountForm({
 }
 
 function AccountFormWithData({ state }: { state: ActionState }) {
+  // Mengambil data user dari API Route Next.js, yang kemudian memanggil backend Express.js
   const { data: user } = useSWR<User>('/api/user', fetcher);
   return (
     <AccountForm
       state={state}
-      nameValue={user?.name ?? ''}
+      nameValue={user?.name ?? ''} // Menggunakan properti 'name' dari objek User yang sudah disesuaikan
       emailValue={user?.email ?? ''}
     />
   );
@@ -74,19 +75,19 @@ function AccountFormWithData({ state }: { state: ActionState }) {
 
 export default function GeneralPage() {
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
-    updateAccount,
+    updateAccount, // Menggunakan aksi yang dimodifikasi
     {}
   );
 
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
-        General Settings
+        Pengaturan Umum
       </h1>
 
       <Card>
         <CardHeader>
-          <CardTitle>Account Information</CardTitle>
+          <CardTitle>Informasi Akun</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" action={formAction}>
@@ -107,15 +108,16 @@ export default function GeneralPage() {
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Saving...
+                  Menyimpan...
                 </>
               ) : (
-                'Save Changes'
+                'Simpan Perubahan'
               )}
             </Button>
           </form>
         </CardContent>
       </Card>
     </section>
-  );
+  ); 
 }
+              
