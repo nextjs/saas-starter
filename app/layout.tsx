@@ -1,12 +1,12 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
-import { getUser, getTeamForUser } from '@/lib/db/queries';
+import { getUser, getTeamForUser } from '@/lib/db/queries'; // Menggunakan fungsi yang sudah dimodifikasi
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'Next.js SaaS Frontend',
+  description: 'Frontend untuk aplikasi SaaS dengan backend Express.js.'
 };
 
 export const viewport: Viewport = {
@@ -29,8 +29,7 @@ export default function RootLayout({
         <SWRConfig
           value={{
             fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
+              // Kita tidak await di sini; komponen yang membaca data ini akan suspend
               '/api/user': getUser(),
               '/api/team': getTeamForUser()
             }
