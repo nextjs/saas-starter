@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Lock, Trash2, Loader2 } from 'lucide-react';
 import { useActionState } from 'react';
-import { updatePassword, deleteAccount } from '@/app/(login)/actions';
+import { updatePassword, deleteAccount } from '@/app/(login)/actions'; // Menggunakan aksi yang dimodifikasi
 
 type PasswordState = {
   currentPassword?: string;
@@ -26,27 +26,27 @@ export default function SecurityPage() {
   const [passwordState, passwordAction, isPasswordPending] = useActionState<
     PasswordState,
     FormData
-  >(updatePassword, {});
+  >(updatePassword, {}); // Menggunakan aksi yang dimodifikasi
 
   const [deleteState, deleteAction, isDeletePending] = useActionState<
     DeleteState,
     FormData
-  >(deleteAccount, {});
+  >(deleteAccount, {}); // Menggunakan aksi yang dimodifikasi
 
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium bold text-gray-900 mb-6">
-        Security Settings
+        Pengaturan Keamanan
       </h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Password</CardTitle>
+          <CardTitle>Kata Sandi</CardTitle>
         </CardHeader>
         <CardContent>
           <form className="space-y-4" action={passwordAction}>
             <div>
               <Label htmlFor="current-password" className="mb-2">
-                Current Password
+                Kata Sandi Saat Ini
               </Label>
               <Input
                 id="current-password"
@@ -61,7 +61,7 @@ export default function SecurityPage() {
             </div>
             <div>
               <Label htmlFor="new-password" className="mb-2">
-                New Password
+                Kata Sandi Baru
               </Label>
               <Input
                 id="new-password"
@@ -76,7 +76,7 @@ export default function SecurityPage() {
             </div>
             <div>
               <Label htmlFor="confirm-password" className="mb-2">
-                Confirm New Password
+                Konfirmasi Kata Sandi Baru
               </Label>
               <Input
                 id="confirm-password"
@@ -102,12 +102,12 @@ export default function SecurityPage() {
               {isPasswordPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  Memperbarui...
                 </>
               ) : (
                 <>
                   <Lock className="mr-2 h-4 w-4" />
-                  Update Password
+                  Perbarui Kata Sandi
                 </>
               )}
             </Button>
@@ -117,16 +117,16 @@ export default function SecurityPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Delete Account</CardTitle>
+          <CardTitle>Hapus Akun</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-gray-500 mb-4">
-            Account deletion is non-reversable. Please proceed with caution.
+            Penghapusan akun tidak dapat dibatalkan. Harap lanjutkan dengan hati-hati.
           </p>
           <form action={deleteAction} className="space-y-4">
             <div>
               <Label htmlFor="delete-password" className="mb-2">
-                Confirm Password
+                Konfirmasi Kata Sandi
               </Label>
               <Input
                 id="delete-password"
@@ -150,12 +150,12 @@ export default function SecurityPage() {
               {isDeletePending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Deleting...
+                  Menghapus...
                 </>
               ) : (
                 <>
                   <Trash2 className="mr-2 h-4 w-4" />
-                  Delete Account
+                  Hapus Akun
                 </>
               )}
             </Button>
