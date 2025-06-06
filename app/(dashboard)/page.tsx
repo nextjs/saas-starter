@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { ArrowRight, CreditCard, Database } from 'lucide-react';
-import { Terminal } from './terminal';
+import { Terminal } from './terminal'; // Terminal component tidak memerlukan data backend
 
 export default function HomePage() {
   return (
@@ -10,13 +10,12 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
               <h1 className="text-4xl font-bold text-gray-900 tracking-tight sm:text-5xl md:text-6xl">
-                Build Your SaaS
-                <span className="block text-orange-500">Faster Than Ever</span>
+                Bangun SaaS Anda
+                <span className="block text-orange-500">Lebih Cepat Dari Sebelumnya</span>
               </h1>
               <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                Launch your SaaS product in record time with our powerful,
-                ready-to-use template. Packed with modern technologies and
-                essential integrations.
+                Luncurkan produk SaaS Anda dalam waktu singkat dengan template kami yang kuat dan siap pakai.
+                Dilengkapi dengan teknologi modern dan integrasi penting.
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
                 <a
@@ -28,7 +27,7 @@ export default function HomePage() {
                     variant="outline"
                     className="text-lg rounded-full"
                   >
-                    Deploy your own
+                    Deploy Milik Anda Sendiri
                     <ArrowRight className="ml-2 h-5 w-5" />
                   </Button>
                 </a>
@@ -46,6 +45,7 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             <div>
               <div className="flex items-center justify-center h-12 w-12 rounded-md bg-orange-500 text-white">
+                {/* Ikon untuk Next.js dan React */}
                 <svg viewBox="0 0 24 24" className="h-6 w-6">
                   <path
                     fill="currentColor"
@@ -55,11 +55,10 @@ export default function HomePage() {
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Next.js and React
+                  Next.js dan React
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Leverage the power of modern web technologies for optimal
-                  performance and developer experience.
+                  Manfaatkan kekuatan teknologi web modern untuk performa optimal dan pengalaman pengembang.
                 </p>
               </div>
             </div>
@@ -70,11 +69,10 @@ export default function HomePage() {
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Postgres and Drizzle ORM
+                  Database Anda (via Express.js)
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Robust database solution with an intuitive ORM for efficient
-                  data management and scalability.
+                  Solusi database yang kuat dengan ORM/ODM pilihan Anda di backend Express.js untuk manajemen data yang efisien dan skalabilitas.
                 </p>
               </div>
             </div>
@@ -85,11 +83,10 @@ export default function HomePage() {
               </div>
               <div className="mt-5">
                 <h2 className="text-lg font-medium text-gray-900">
-                  Stripe Integration
+                  Integrasi Pembayaran Kustom
                 </h2>
                 <p className="mt-2 text-base text-gray-500">
-                  Seamless payment processing and subscription management with
-                  industry-leading Stripe integration.
+                  Alur pembayaran yang disesuaikan, di mana permintaan berlangganan dikelola melalui email.
                 </p>
               </div>
             </div>
@@ -102,12 +99,10 @@ export default function HomePage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
-                Ready to launch your SaaS?
+                Siap meluncurkan SaaS Anda?
               </h2>
               <p className="mt-3 max-w-3xl text-lg text-gray-500">
-                Our template provides everything you need to get your SaaS up
-                and running quickly. Don't waste time on boilerplate - focus on
-                what makes your product unique.
+                Template frontend kami menyediakan semua yang Anda butuhkan untuk menjalankan SaaS Anda dengan cepat. Jangan buang waktu untuk boilerplate - fokus pada apa yang membuat produk Anda unik.
               </p>
             </div>
             <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
@@ -117,7 +112,7 @@ export default function HomePage() {
                   variant="outline"
                   className="text-lg rounded-full"
                 >
-                  View the code
+                  Lihat Kode
                   <ArrowRight className="ml-3 h-6 w-6" />
                 </Button>
               </a>
