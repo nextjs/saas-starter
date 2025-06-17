@@ -15,6 +15,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
+- **Production-ready rate limiting** with memory and database strategies
 
 ## Tech Stack
 
@@ -107,7 +108,30 @@ In your Vercel project settings (or during deployment), add all the necessary en
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+6. `RATE_LIMIT_ENABLED`: Set to `true` to enable rate limiting in production.
 
+## Rate Limiting
+
+This template includes a comprehensive rate limiting system to protect your application from abuse and ensure fair usage. The rate limiting implementation supports both memory-based (fast, in-memory LRU cache) and database-based (persistent PostgreSQL) strategies.
+
+### Features
+- **Memory & Database Strategies**: Choose between fast in-memory caching or persistent database storage
+- **IP-based Tracking**: Automatic request tracking and IP address management
+- **Server Actions Support**: Rate limiting for Next.js server actions with proper navigation handling
+- **Configurable Limits**: Different limits for API endpoints, auth endpoints, and public routes
+- **Production Ready**: Built-in monitoring, retry logic, and graceful error handling
+
+### Quick Setup
+1. Add environment variables to your `.env` file:
+```bash
+RATE_LIMIT_ENABLED=true
+RATE_LIMIT_STRATEGY=memory  # or 'database'
+```
+
+2. The system is already integrated into authentication endpoints and API routes
+
+### Documentation
+For detailed configuration, usage examples, and advanced features, see the [Rate Limiting Documentation](./lib/rate-limit/README.md).
 ## Other Templates
 
 While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:

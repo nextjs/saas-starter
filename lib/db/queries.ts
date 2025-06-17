@@ -1,6 +1,15 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { desc, and, eq, isNull, sql } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import {
+  activityLogs,
+  teamMembers,
+  teams,
+  users,
+  invitations,
+  ipAddresses,
+  type NewIpAddress,
+  type IpAddress
+} from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -127,4 +136,96 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+// IP Address tracking functions
+export async function trackIpAddress(ipAddress: string): Promise<IpAddress> {
+  const now = new Date();
+
+  // Try to find existing IP record
+  const [existingIp] = await db
+    .select()
+    .from(ipAddresses)
+    .where(eq(ipAddresses.ipAddress, ipAddress))
+    .limit(1);
+
+  if (existingIp) {
+    // Update existing record
+    const [updatedIp] = await db
+      .update(ipAddresses)
+      .set({
+        totalRequests: sql`${ipAddresses.totalRequests} + 1`,
+        lastSeenAt: now,
+        updatedAt: now
+      })
+      .where(eq(ipAddresses.ipAddress, ipAddress))
+      .returning();
+
+    return updatedIp;
+  } else {
+    // Create new IP record
+    const newIpRecord: NewIpAddress = {
+      ipAddress,
+      totalRequests: 1,
+      lastSeenAt: now,
+      firstSeenAt: now
+    };
+
+    const [createdIp] = await db
+      .insert(ipAddresses)
+      .values(newIpRecord)
+      .returning();
+
+    return createdIp;
+  }
+}
+
+export async function getIpAddress(
+  ipAddress: string
+): Promise<IpAddress | null> {
+  const [ip] = await db
+    .select()
+    .from(ipAddresses)
+    .where(eq(ipAddresses.ipAddress, ipAddress))
+    .limit(1);
+
+  return ip || null;
+}
+
+export async function blockIpAddress(ipAddress: string): Promise<void> {
+  await db
+    .update(ipAddresses)
+    .set({
+      isBlocked: true,
+      updatedAt: new Date()
+    })
+    .where(eq(ipAddresses.ipAddress, ipAddress));
+}
+
+export async function unblockIpAddress(ipAddress: string): Promise<void> {
+  await db
+    .update(ipAddresses)
+    .set({
+      isBlocked: false,
+      updatedAt: new Date()
+    })
+    .where(eq(ipAddresses.ipAddress, ipAddress));
+}
+
+export async function getTopIpAddresses(
+  limit: number = 10
+): Promise<IpAddress[]> {
+  return await db
+    .select()
+    .from(ipAddresses)
+    .orderBy(desc(ipAddresses.totalRequests))
+    .limit(limit);
+}
+
+export async function getBlockedIpAddresses(): Promise<IpAddress[]> {
+  return await db
+    .select()
+    .from(ipAddresses)
+    .where(eq(ipAddresses.isBlocked, true))
+    .orderBy(desc(ipAddresses.lastSeenAt));
 }

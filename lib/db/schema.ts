@@ -5,6 +5,8 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
+  index
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -16,7 +18,7 @@ export const users = pgTable('users', {
   role: varchar('role', { length: 20 }).notNull().default('member'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  deletedAt: timestamp('deleted_at'),
+  deletedAt: timestamp('deleted_at')
 });
 
 export const teams = pgTable('teams', {
@@ -28,7 +30,7 @@ export const teams = pgTable('teams', {
   stripeSubscriptionId: text('stripe_subscription_id').unique(),
   stripeProductId: text('stripe_product_id'),
   planName: varchar('plan_name', { length: 50 }),
-  subscriptionStatus: varchar('subscription_status', { length: 20 }),
+  subscriptionStatus: varchar('subscription_status', { length: 20 })
 });
 
 export const teamMembers = pgTable('team_members', {
@@ -40,7 +42,7 @@ export const teamMembers = pgTable('team_members', {
     .notNull()
     .references(() => teams.id),
   role: varchar('role', { length: 50 }).notNull(),
-  joinedAt: timestamp('joined_at').notNull().defaultNow(),
+  joinedAt: timestamp('joined_at').notNull().defaultNow()
 });
 
 export const activityLogs = pgTable('activity_logs', {
@@ -51,7 +53,35 @@ export const activityLogs = pgTable('activity_logs', {
   userId: integer('user_id').references(() => users.id),
   action: text('action').notNull(),
   timestamp: timestamp('timestamp').notNull().defaultNow(),
-  ipAddress: varchar('ip_address', { length: 45 }),
+  ipAddress: varchar('ip_address', { length: 45 })
+});
+
+export const rateLimits = pgTable(
+  'rate_limits',
+  {
+    id: text('id').primaryKey(),
+    count: integer('count').notNull().default(0),
+    resetTime: timestamp('reset_time').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    updatedAt: timestamp('updated_at').notNull().defaultNow()
+  },
+  (table) => ({
+    resetTimeIdx: index('idx_rate_limits_reset_time').on(table.resetTime)
+  })
+);
+
+export const ipAddresses = pgTable('ip_addresses', {
+  id: serial('id').primaryKey(),
+  ipAddress: varchar('ip_address', { length: 45 }).notNull().unique(),
+  country: varchar('country', { length: 100 }),
+  region: varchar('region', { length: 100 }),
+  city: varchar('city', { length: 100 }),
+  isBlocked: boolean('is_blocked').notNull().default(false),
+  totalRequests: integer('total_requests').notNull().default(0),
+  lastSeenAt: timestamp('last_seen_at').notNull().defaultNow(),
+  firstSeenAt: timestamp('first_seen_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow()
 });
 
 export const invitations = pgTable('invitations', {
@@ -65,51 +95,51 @@ export const invitations = pgTable('invitations', {
     .notNull()
     .references(() => users.id),
   invitedAt: timestamp('invited_at').notNull().defaultNow(),
-  status: varchar('status', { length: 20 }).notNull().default('pending'),
+  status: varchar('status', { length: 20 }).notNull().default('pending')
 });
 
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
-  invitations: many(invitations),
+  invitations: many(invitations)
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
-  invitationsSent: many(invitations),
+  invitationsSent: many(invitations)
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
   team: one(teams, {
     fields: [invitations.teamId],
-    references: [teams.id],
+    references: [teams.id]
   }),
   invitedBy: one(users, {
     fields: [invitations.invitedBy],
-    references: [users.id],
-  }),
+    references: [users.id]
+  })
 }));
 
 export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
   user: one(users, {
     fields: [teamMembers.userId],
-    references: [users.id],
+    references: [users.id]
   }),
   team: one(teams, {
     fields: [teamMembers.teamId],
-    references: [teams.id],
-  }),
+    references: [teams.id]
+  })
 }));
 
 export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   team: one(teams, {
     fields: [activityLogs.teamId],
-    references: [teams.id],
+    references: [teams.id]
   }),
   user: one(users, {
     fields: [activityLogs.userId],
-    references: [users.id],
-  }),
+    references: [users.id]
+  })
 }));
 
 export type User = typeof users.$inferSelect;
@@ -122,6 +152,8 @@ export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
+export type IpAddress = typeof ipAddresses.$inferSelect;
+export type NewIpAddress = typeof ipAddresses.$inferInsert;
 export type TeamDataWithMembers = Team & {
   teamMembers: (TeamMember & {
     user: Pick<User, 'id' | 'name' | 'email'>;
@@ -138,5 +170,5 @@ export enum ActivityType {
   CREATE_TEAM = 'CREATE_TEAM',
   REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
-  ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  ACCEPT_INVITATION = 'ACCEPT_INVITATION'
 }
