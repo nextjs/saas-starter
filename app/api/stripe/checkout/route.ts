@@ -1,3 +1,4 @@
+import { withRateLimit } from '@/lib/rate-limit/utils';
 import { eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import { users, teams, teamMembers } from '@/lib/db/schema';
@@ -6,17 +7,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { stripe } from '@/lib/payments/stripe';
 import Stripe from 'stripe';
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
+async function handleStripeCheckout(request: Request) {
+  const url = new URL(request.url);
+  const searchParams = url.searchParams;
   const sessionId = searchParams.get('session_id');
 
   if (!sessionId) {
-    return NextResponse.redirect(new URL('/pricing', request.url));
+    return NextResponse.redirect(new URL('/pricing', url.origin));
   }
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['customer', 'subscription'],
+      expand: ['customer', 'subscription']
     });
 
     if (!session.customer || typeof session.customer === 'string') {
@@ -34,7 +36,7 @@ export async function GET(request: NextRequest) {
     }
 
     const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
-      expand: ['items.data.price.product'],
+      expand: ['items.data.price.product']
     });
 
     const plan = subscription.items.data[0]?.price;
@@ -66,7 +68,7 @@ export async function GET(request: NextRequest) {
 
     const userTeam = await db
       .select({
-        teamId: teamMembers.teamId,
+        teamId: teamMembers.teamId
       })
       .from(teamMembers)
       .where(eq(teamMembers.userId, user[0].id))
@@ -84,14 +86,16 @@ export async function GET(request: NextRequest) {
         stripeProductId: productId,
         planName: (plan.product as Stripe.Product).name,
         subscriptionStatus: subscription.status,
-        updatedAt: new Date(),
+        updatedAt: new Date()
       })
       .where(eq(teams.id, userTeam[0].teamId));
 
     await setSession(user[0]);
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+    return NextResponse.redirect(new URL('/dashboard', url.origin));
   } catch (error) {
     console.error('Error handling successful checkout:', error);
-    return NextResponse.redirect(new URL('/error', request.url));
+    return NextResponse.redirect(new URL('/error', url.origin));
   }
 }
+
+export const GET = withRateLimit(handleStripeCheckout);

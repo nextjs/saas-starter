@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
 import { User } from '@/lib/db/schema';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -25,7 +25,8 @@ function UserMenu() {
 
   async function handleSignOut() {
     await signOut();
-    router.refresh();
+    // Invalidate the user cache to immediately update UI
+    await mutate('/api/user', null, false);
     router.push('/');
   }
 
