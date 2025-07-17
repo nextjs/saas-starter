@@ -108,6 +108,18 @@ In your Vercel project settings (or during deployment), add all the necessary en
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
 
+### Optional: Business Intelligence with Metabase
+
+[Metabase](https://www.metabase.com) is an open-source business intelligence platform. You can use it to ask questions about your data, or embed it in your app to let your customers explore data on their own.
+
+To run your own [free self-hosted Metabase](https://www.metabase.com/start/oss), use:
+
+```shell
+docker run -d --name metabase -p 3001:3000 metabase/metabase
+```
+
+Then open `http://localhost:3001` and [connect your PostgreSQL](https://www.metabase.com/docs/latest/databases/connections/postgresql) database using the credentials from your `POSTGRES_URL` environment variable.
+
 ## Other Templates
 
 While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
