@@ -9,7 +9,7 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
-  type LucideIcon,
+  type LucideIcon, RotateCcwKey,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
 import { getActivityLogs } from '@/lib/db/queries';
@@ -25,7 +25,30 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
   [ActivityType.INVITE_TEAM_MEMBER]: Mail,
   [ActivityType.ACCEPT_INVITATION]: CheckCircle,
+  [ActivityType.PASSWORD_RESET]: RotateCcwKey
 };
+
+function getActionStyles(action: ActivityType) {
+  switch (action) {
+    case ActivityType.SIGN_UP:
+    case ActivityType.CREATE_TEAM:
+    case ActivityType.ACCEPT_INVITATION:
+      return 'bg-green-100 text-green-600';
+    case ActivityType.INVITE_TEAM_MEMBER:
+    case ActivityType.SIGN_IN:
+      return 'bg-blue-100 text-blue-600';
+    case ActivityType.UPDATE_PASSWORD:
+    case ActivityType.PASSWORD_RESET:
+    case ActivityType.UPDATE_ACCOUNT:
+      return 'bg-yellow-100 text-yellow-600';
+    case ActivityType.DELETE_ACCOUNT:
+    case ActivityType.REMOVE_TEAM_MEMBER:
+    case ActivityType.SIGN_OUT:
+      return 'bg-red-100 text-red-600';
+    default:
+      return 'bg-gray-100 text-gray-600';
+  }
+}
 
 function getRelativeTime(date: Date) {
   const now = new Date();
@@ -51,6 +74,8 @@ function formatAction(action: ActivityType): string {
       return 'You signed out';
     case ActivityType.UPDATE_PASSWORD:
       return 'You changed your password';
+    case ActivityType.PASSWORD_RESET:
+      return 'You requested a password reset';
     case ActivityType.DELETE_ACCOUNT:
       return 'You deleted your account';
     case ActivityType.UPDATE_ACCOUNT:
@@ -88,11 +113,11 @@ export default async function ActivityPage() {
                 const formattedAction = formatAction(
                   log.action as ActivityType
                 );
-
+                const styles = getActionStyles(log.action as ActivityType);
                 return (
                   <li key={log.id} className="flex items-center space-x-4">
-                    <div className="bg-orange-100 rounded-full p-2">
-                      <Icon className="w-5 h-5 text-orange-600" />
+                    <div className={`rounded-full p-2 flex items-center justify-center ${styles}`}>
+                      <Icon className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">

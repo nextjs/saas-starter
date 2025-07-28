@@ -62,9 +62,8 @@ export function withTeam<T>(action: ActionWithTeamFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const user = await getUser();
     if (!user) {
-      redirect('/sign-in');
+      redirect('/auth/login');
     }
-
     const team = await getTeamForUser();
     if (!team) {
       throw new Error('Team not found');

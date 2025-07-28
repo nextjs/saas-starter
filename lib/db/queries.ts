@@ -1,39 +1,25 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/lib/auth/session';
+import {activityLogs, ActivityType, NewActivityLog, teamMembers, teams, users} from './schema';
+import { createClient } from '@/lib/supabase/server';
 
 export async function getUser() {
-  const sessionCookie = (await cookies()).get('session');
-  if (!sessionCookie || !sessionCookie.value) {
+  const supabase = await createClient();
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) {
+    return null;
+  }
+  const profile = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, authUser.id))
+      .limit(1);
+
+  if (profile.length === 0) {
     return null;
   }
 
-  const sessionData = await verifyToken(sessionCookie.value);
-  if (
-    !sessionData ||
-    !sessionData.user ||
-    typeof sessionData.user.id !== 'number'
-  ) {
-    return null;
-  }
-
-  if (new Date(sessionData.expires) < new Date()) {
-    return null;
-  }
-
-  const user = await db
-    .select()
-    .from(users)
-    .where(and(eq(users.id, sessionData.user.id), isNull(users.deletedAt)))
-    .limit(1);
-
-  if (user.length === 0) {
-    return null;
-  }
-
-  return user[0];
+  return profile[0];
 }
 
 export async function getTeamByStripeCustomerId(customerId: string) {
@@ -64,7 +50,7 @@ export async function updateTeamSubscription(
     .where(eq(teams.id, teamId));
 }
 
-export async function getUserWithTeam(userId: number) {
+export async function getUserWithTeam(userId: string) {
   const result = await db
     .select({
       user: users,
@@ -127,4 +113,22 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+export async function logActivity(
+    teamId: number | null | undefined,
+    userId: string,
+    type: ActivityType,
+    ipAddress?: string
+) {
+    if (teamId === null || teamId === undefined) {
+        return;
+    }
+    const newActivity: NewActivityLog = {
+        teamId,
+        userId,
+        action: type,
+        ipAddress: ipAddress || ''
+    };
+    await db.insert(activityLogs).values(newActivity);
 }
