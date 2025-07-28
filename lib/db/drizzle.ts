@@ -1,6 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import * as schema from './schema';
+import * as mainSchema from './schema';
+import * as externalSchema from './external';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -8,6 +9,6 @@ dotenv.config();
 if (!process.env.POSTGRES_URL) {
   throw new Error('POSTGRES_URL environment variable is not set');
 }
-
+const combinedSchema = { ...mainSchema, ...externalSchema };
 export const client = postgres(process.env.POSTGRES_URL);
-export const db = drizzle(client, { schema });
+export const db = drizzle(client, { schema: combinedSchema });

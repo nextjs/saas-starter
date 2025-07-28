@@ -1,6 +1,15 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import {activityLogs, ActivityType, NewActivityLog, teamMembers, teams, users} from './schema';
+import {
+    activityLogs,
+    ActivityType,
+    NewActivityLog,
+    teamMembers,
+    teams,
+    users,
+    teamRestaraunts,
+} from './schema';
+import { restaraunts } from './external';
 import { createClient } from '@/lib/supabase/server';
 
 export async function getUser() {
@@ -131,4 +140,49 @@ export async function logActivity(
         ipAddress: ipAddress || ''
     };
     await db.insert(activityLogs).values(newActivity);
+}
+
+export async function getRestarauntsForTeam(teamId: number) {
+    const teamRestaurants = await db.query.teamRestaraunts.findMany({
+        where: eq(teamRestaraunts.teamId, teamId),
+        with: {
+            restaraunt: true
+        }
+    });
+
+    return teamRestaurants.map((tr) => tr.restaraunt);
+}
+
+export async function getRestarauntDetails(restarauntId: string) {
+    const user = await getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const hasAccess = await verifyUserRestaurantAccess(user.id, restarauntId);
+    if (!hasAccess) throw new Error('Unauthorized access to restaurant details');
+
+    return await db.query.restaraunts.findFirst({
+        where: eq(restaraunts.id, restarauntId),
+        with: {
+            agentPrompts: true,
+            menus: true,
+            publicConfigurations: true
+        }
+    });
+}
+
+export async function verifyUserRestaurantAccess(
+    userId: string,
+    restaurantId: string
+): Promise<boolean> {
+    const userWithTeam = await getUserWithTeam(userId);
+    if (!userWithTeam?.teamId) return false;
+
+    const link = await db.query.teamRestaraunts.findFirst({
+        where: and(
+            eq(teamRestaraunts.teamId, userWithTeam.teamId),
+            eq(teamRestaraunts.restarauntId, restaurantId)
+        )
+    });
+
+    return !!link;
 }

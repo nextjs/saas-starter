@@ -11,12 +11,22 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@ai-sdk/google": "2.0.0-beta.16",
+    "@ai-sdk/react": "2.0.0-beta.29",
+    "@icons-pack/react-simple-icons": "^13.7.0",
+    "@radix-ui/react-checkbox": "^1.3.2",
+    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-select": "^2.2.5",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.12",
     "@supabase/ssr": "^0.6.1",
     "@supabase/supabase-js": "^2.52.1",
     "@tailwindcss/postcss": "4.1.7",
+    "@tanstack/react-table": "^8.21.3",
     "@types/node": "^22.15.18",
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
+    "ai": "5.0.0-beta.29",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -37,6 +47,7 @@
     "tailwindcss": "4.1.7",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5.8.3",
+    "uuid": "^11.1.0",
     "zod": "^3.24.4"
   }
 }

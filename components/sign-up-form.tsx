@@ -12,13 +12,33 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import {signUp} from '@/app/auth/actions'
 import { Loader2 } from 'lucide-react'
 import {ActionState} from "@/lib/auth/middleware";
+import {SiGoogle} from "@icons-pack/react-simple-icons";
+import {createClient} from "@/lib/supabase/client";
 
 export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(signUp, {error:''});
+  const [isSocialLoading, setIsSocialLoading] = useState(false);
+
+  const handleSocialLogin = async (provider: 'google') => {
+    setIsSocialLoading(true);
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+
+    if (error) {
+      console.error("Social login error:", error);
+      setIsSocialLoading(false);
+    }
+  };
   return (
       <div className={cn('flex flex-col gap-6', className)} {...props}>
         <Card>
@@ -64,17 +84,43 @@ export function SignUpForm({ className, ...props }: React.ComponentPropsWithoutR
                   />
                 </div>
                 {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
-                <Button type="submit" className="w-full" disabled={pending}>
+                <Button type="submit" className="w-full" disabled={pending || isSocialLoading}>
                   {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating an account...</> : 'Sign up'}
                 </Button>
               </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{' '}
-                <Link href="/auth/login" className="underline underline-offset-4">
-                  Login
-                </Link>
-              </div>
             </form>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Or sign up with
+              </span>
+              </div>
+            </div>
+
+            <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => handleSocialLogin('google')}
+                disabled={pending || isSocialLoading}
+            >
+              {isSocialLoading ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                  <SiGoogle className="mr-2 h-4 w-4" />
+              )}{' '}
+              Github
+            </Button>
+
+            <div className="mt-6 text-center text-sm">
+              Already have an account?{' '}
+              <Link href="/auth/login" className="underline underline-offset-4">
+                Login
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>

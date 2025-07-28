@@ -11,6 +11,13 @@ import { relations } from 'drizzle-orm';
 
 import {authUsers} from "@/lib/db/external";
 
+import {
+  restaraunts,
+  agentPrompts,
+  menus,
+  publicConfigurations
+} from '@/lib/db/external';
+
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().references(() => authUsers.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 100 }),
@@ -43,6 +50,16 @@ export const teamMembers = pgTable('team_members', {
     .references(() => teams.id),
   role: varchar('role', { length: 50 }).notNull(),
   joinedAt: timestamp('joined_at').notNull().defaultNow(),
+});
+
+export const teamRestaraunts = pgTable('team_restaraunts', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id')
+      .notNull()
+      .references(() => teams.id, { onDelete: 'cascade' }),
+  restarauntId: uuid('restaraunt_id') // Keeping spelling consistent
+      .notNull()
+      .references(() => restaraunts.id, { onDelete: 'cascade' })
 });
 
 export const activityLogs = pgTable('activity_logs', {
@@ -114,6 +131,51 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const teamRestarauntsRelations = relations(
+    teamRestaraunts,
+    ({ one }) => ({
+      team: one(teams, {
+        fields: [teamRestaraunts.teamId],
+        references: [teams.id]
+      }),
+      restaraunt: one(restaraunts, {
+        fields: [teamRestaraunts.restarauntId],
+        references: [restaraunts.id]
+      })
+    })
+);
+
+export const restarauntsRelations = relations(restaraunts, ({ many }) => ({
+  agentPrompts: many(agentPrompts),
+  menus: many(menus),
+  publicConfigurations: many(publicConfigurations),
+  teamRestaraunts: many(teamRestaraunts)
+}));
+
+export const agentPromptsRelations = relations(agentPrompts, ({ one }) => ({
+  restaraunt: one(restaraunts, {
+    fields: [agentPrompts.restaurantId],
+    references: [restaraunts.id]
+  })
+}));
+
+export const menusRelations = relations(menus, ({ one }) => ({
+  restaraunt: one(restaraunts, {
+    fields: [menus.restaurantId],
+    references: [restaraunts.id]
+  })
+}));
+
+export const publicConfigurationsRelations = relations(
+    publicConfigurations,
+    ({ one }) => ({
+      restaraunt: one(restaraunts, {
+        fields: [publicConfigurations.restaurantId],
+        references: [restaraunts.id]
+      })
+    })
+);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -130,6 +192,19 @@ export type TeamDataWithMembers = Team & {
   })[];
 };
 
+export type Restaraunt = typeof restaraunts.$inferSelect;
+export type NewRestaraunt = typeof restaraunts.$inferInsert;
+export type AgentPrompt = typeof agentPrompts.$inferSelect;
+export type NewAgentPrompt = typeof agentPrompts.$inferInsert;
+export type Menu = typeof menus.$inferSelect;
+export type NewMenu = typeof menus.$inferInsert;
+export type PublicConfiguration = typeof publicConfigurations.$inferSelect;
+export type NewPublicConfiguration = typeof publicConfigurations.$inferInsert;
+export type TeamRestaraunt = typeof teamRestaraunts.$inferSelect;
+export type NewTeamRestaraunt = typeof teamRestaraunts.$inferInsert;
+export { agentTypeEnum } from '@/lib/db/external';
+
+
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',
   SIGN_IN = 'SIGN_IN',
@@ -142,4 +217,7 @@ export enum ActivityType {
   REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  CREATE_RESTAURANT = 'CREATE_RESTAURANT',
+  UPDATE_RESTAURANT = 'UPDATE_RESTAURANT',
+  DELETE_RESTAURANT = 'DELETE_RESTAURANT'
 }

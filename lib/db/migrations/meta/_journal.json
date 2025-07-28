@@ -8,6 +8,13 @@
       "when": 1753621501060,
       "tag": "0000_dark_firebird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1753704766671,
+      "tag": "0001_silent_forge",
+      "breakpoints": true
     }
   ]
 }

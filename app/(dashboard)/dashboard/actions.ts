@@ -2,107 +2,254 @@
 
 import { z } from 'zod';
 import { and, eq } from 'drizzle-orm';
+import { v4 as uuidv4 } from 'uuid';
 import { db } from '@/lib/db/drizzle';
 import {
-    users,
-    teamMembers,
-    invitations,
+    NewRestaraunt,
+    NewTeamRestaraunt,
     ActivityType,
+    NewAgentPrompt,
+    agentTypeEnum,
+    NewPublicConfiguration,
+    NewMenu
 } from '@/lib/db/schema';
-import { getUserWithTeam, logActivity } from '@/lib/db/queries';
+import {
+    restaraunts,
+    agentPrompts,
+    publicConfigurations,
+    menus
+} from '@/lib/db/external';
+import { teamRestaraunts } from '@/lib/db/schema';
+import {
+    getUserWithTeam,
+    logActivity,
+    verifyUserRestaurantAccess
+} from '@/lib/db/queries';
 import { validatedActionWithUser } from '@/lib/auth/middleware';
 
-const removeTeamMemberSchema = z.object({
-    memberId: z.coerce.number() // Use coerce for FormData values
+// --- Restaurant Actions ---
+
+const createRestarauntSchema = z.object({
+    name: z.string().min(1, 'Restaurant name is required').max(100)
 });
 
-export const removeTeamMember = validatedActionWithUser(
-    removeTeamMemberSchema,
+export const createRestaraunt = validatedActionWithUser(
+    createRestarauntSchema,
     async (data, _, user) => {
-        const { memberId } = data;
         const userWithTeam = await getUserWithTeam(user.id);
-
         if (!userWithTeam?.teamId) {
-            return { error: 'User is not part of a team' };
+            return { error: 'You must be part of a team to create a restaurant.' };
         }
 
-        await db
-            .delete(teamMembers)
-            .where(
-                and(
-                    eq(teamMembers.id, memberId),
-                    eq(teamMembers.teamId, userWithTeam.teamId)
-                )
-            );
+        const newRestaraunt: NewRestaraunt = {
+            name: data.name,
+            domain: uuidv4() // Generate a unique domain
+        };
+
+        const [createdRestaraunt] = await db
+            .insert(restaraunts)
+            .values(newRestaraunt)
+            .returning();
+
+        if (!createdRestaraunt) {
+            return { error: 'Failed to create restaurant.' };
+        }
+
+        const newTeamRestarauntLink: NewTeamRestaraunt = {
+            teamId: userWithTeam.teamId,
+            restarauntId: createdRestaraunt.id
+        };
+
+        await db.insert(teamRestaraunts).values(newTeamRestarauntLink);
 
         await logActivity(
             userWithTeam.teamId,
             user.id,
-            ActivityType.REMOVE_TEAM_MEMBER
+            ActivityType.CREATE_RESTAURANT
         );
 
-        return { success: 'Team member removed successfully' };
+        return {
+            success: 'Restaurant created successfully.',
+            data: createdRestaraunt
+        };
     }
 );
 
-const inviteTeamMemberSchema = z.object({
-    email: z.string().email('Invalid email address'),
-    role: z.enum(['member', 'owner'])
+const updateRestarauntSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string().min(1, 'Restaurant name is required').max(100).optional(),
+    properties: z.any().optional() // Or a more specific zod schema for properties
 });
 
-export const inviteTeamMember = validatedActionWithUser(
-    inviteTeamMemberSchema,
+export const updateRestaraunt = validatedActionWithUser(
+    updateRestarauntSchema,
     async (data, _, user) => {
-        const { email, role } = data;
-        const userWithTeam = await getUserWithTeam(user.id);
-
-        if (!userWithTeam?.teamId) {
-            return { error: 'User is not part of a team' };
+        const hasAccess = await verifyUserRestaurantAccess(user.id, data.id);
+        if (!hasAccess) {
+            return { error: "You don't have permission to modify this restaurant." };
         }
 
-        const existingMember = await db
-            .select()
-            .from(users)
-            .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
-            .where(
-                and(eq(users.email, email), eq(teamMembers.teamId, userWithTeam.teamId))
+        await db
+            .update(restaraunts)
+            .set({
+                name: data.name,
+                properties: data.properties,
+                updatedAt: new Date()
+            })
+            .where(eq(restaraunts.id, data.id));
+
+        return { success: 'Restaurant updated successfully.' };
+    }
+);
+
+const deleteRestarauntSchema = z.object({
+    id: z.string().uuid()
+});
+
+export const deleteRestaraunt = validatedActionWithUser(
+    deleteRestarauntSchema,
+    async (data, _, user) => {
+        const hasAccess = await verifyUserRestaurantAccess(user.id, data.id);
+        if (!hasAccess) {
+            return { error: "You don't have permission to delete this restaurant." };
+        }
+
+        await db.delete(restaraunts).where(eq(restaraunts.id, data.id));
+
+        return { success: 'Restaurant deleted successfully.' };
+    }
+);
+
+// --- Agent Prompt Actions ---
+
+const updateAgentPromptSchema = z.object({
+    restaurantId: z.string().uuid(),
+    agentName: z.enum(agentTypeEnum.enumValues),
+    promptText: z.string().min(1, 'Prompt text cannot be empty.')
+});
+
+export const updateAgentPrompt = validatedActionWithUser(
+    updateAgentPromptSchema,
+    async (data, _, user) => {
+        const hasAccess = await verifyUserRestaurantAccess(
+            user.id,
+            data.restaurantId
+        );
+        if (!hasAccess) {
+            return { error: "You don't have permission to modify this restaurant." };
+        }
+
+        const newPrompt: NewAgentPrompt = {
+            restaurantId: data.restaurantId,
+            agentName: data.agentName,
+            promptText: data.promptText
+        };
+
+        const existing = await db.query.agentPrompts.findFirst({
+            where: and(
+                eq(agentPrompts.restaurantId, data.restaurantId),
+                eq(agentPrompts.agentName, data.agentName)
             )
-            .limit(1);
-
-        if (existingMember.length > 0) {
-            return { error: 'User is already a member of this team' };
-        }
-
-        const existingInvitation = await db
-            .select()
-            .from(invitations)
-            .where(
-                and(
-                    eq(invitations.email, email),
-                    eq(invitations.teamId, userWithTeam.teamId),
-                    eq(invitations.status, 'pending')
-                )
-            )
-            .limit(1);
-
-        if (existingInvitation.length > 0) {
-            return { error: 'An invitation has already been sent to this email' };
-        }
-
-        await db.insert(invitations).values({
-            teamId: userWithTeam.teamId,
-            email,
-            role,
-            invitedBy: user.id,
-            status: 'pending'
         });
 
-        await logActivity(
-            userWithTeam.teamId,
-            user.id,
-            ActivityType.INVITE_TEAM_MEMBER
-        );
+        if (existing) {
+            await db
+                .update(agentPrompts)
+                .set({ promptText: data.promptText })
+                .where(eq(agentPrompts.id, existing.id));
+        } else {
+            await db.insert(agentPrompts).values(newPrompt);
+        }
 
-        return { success: 'Invitation sent successfully' };
+        return { success: 'Agent prompt updated successfully.' };
+    }
+);
+
+// --- Public Configuration Actions ---
+
+const updatePublicConfigurationSchema = z.object({
+    restaurantId: z.string().uuid(),
+    branding: z.any(),
+    restaurant: z.any(),
+    features: z.any()
+});
+
+export const updatePublicConfiguration = validatedActionWithUser(
+    updatePublicConfigurationSchema,
+    async (data, _, user) => {
+        const hasAccess = await verifyUserRestaurantAccess(
+            user.id,
+            data.restaurantId
+        );
+        if (!hasAccess) {
+            return { error: "You don't have permission to modify this restaurant." };
+        }
+
+        const newConfig: NewPublicConfiguration = {
+            restaurantId: data.restaurantId,
+            branding: data.branding,
+            restaurant: data.restaurant,
+            features: data.features
+        };
+
+        const existing = await db.query.publicConfigurations.findFirst({
+            where: eq(publicConfigurations.restaurantId, data.restaurantId)
+        });
+
+        if (existing) {
+            await db
+                .update(publicConfigurations)
+                .set({
+                    branding: data.branding,
+                    restaurant: data.restaurant,
+                    features: data.features
+                })
+                .where(eq(publicConfigurations.id, existing.id));
+        } else {
+            await db.insert(publicConfigurations).values(newConfig);
+        }
+
+        return { success: 'Public configuration updated successfully.' };
+    }
+);
+
+// --- Menu Actions ---
+const updateMenuSchema = z.object({
+    restaurantId: z.string().uuid(),
+    menuData: z.any()
+});
+
+export const updateMenu = validatedActionWithUser(
+    updateMenuSchema,
+    async (data, _, user) => {
+        const hasAccess = await verifyUserRestaurantAccess(
+            user.id,
+            data.restaurantId
+        );
+        if (!hasAccess) {
+            return {
+                error: "You don't have permission to modify this restaurant's menu."
+            };
+        }
+
+        const newMenu: NewMenu = {
+            restaurantId: data.restaurantId,
+            menuData: data.menuData
+        };
+
+        const existing = await db.query.menus.findFirst({
+            where: eq(menus.restaurantId, data.restaurantId)
+        });
+
+        if (existing) {
+            await db
+                .update(menus)
+                .set({ menuData: data.menuData })
+                .where(eq(menus.id, existing.id));
+        } else {
+            await db.insert(menus).values(newMenu);
+        }
+
+        return { success: 'Menu updated successfully.' };
     }
 );
