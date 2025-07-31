@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@ai-sdk/google':
         specifier: 2.0.0-beta.16
-        version: 2.0.0-beta.16(zod@3.24.4)
+        version: 2.0.0-beta.16(zod@4.0.14)
       '@ai-sdk/react':
         specifier: 2.0.0-beta.29
-        version: 2.0.0-beta.29(react@19.1.0)(zod@3.24.4)
+        version: 2.0.0-beta.29(react@19.1.0)(zod@4.0.14)
       '@icons-pack/react-simple-icons':
         specifier: ^13.7.0
         version: 13.7.0(react@19.1.0)
@@ -55,7 +55,7 @@ importers:
         version: 19.1.5(@types/react@19.1.4)
       ai:
         specifier: 5.0.0-beta.29
-        version: 5.0.0-beta.29(zod@3.24.4)
+        version: 5.0.0-beta.29(zod@4.0.14)
       autoprefixer:
         specifier: ^10.4.21
         version: 10.4.21(postcss@8.5.3)
@@ -80,6 +80,9 @@ importers:
       next:
         specifier: 15.4.0-canary.47
         version: 15.4.0-canary.47(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      next-themes:
+        specifier: ^1.0.0-beta.0
+        version: 1.0.0-beta.0(next@15.4.0-canary.47(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       postcss:
         specifier: ^8.5.3
         version: 8.5.3
@@ -110,6 +113,9 @@ importers:
       tailwindcss:
         specifier: 4.1.7
         version: 4.1.7
+      tailwindcss-animate:
+        specifier: ^1.0.7
+        version: 1.0.7(tailwindcss@4.1.7)
       tw-animate-css:
         specifier: ^1.3.0
         version: 1.3.0
@@ -120,8 +126,8 @@ importers:
         specifier: ^11.1.0
         version: 11.1.0
       zod:
-        specifier: ^3.24.4
-        version: 3.24.4
+        specifier: ^4.0.14
+        version: 4.0.14
 
 packages:
 
@@ -1906,6 +1912,13 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
+  next-themes@1.0.0-beta.0:
+    resolution: {integrity: sha512-DitiYQqduW+m/e6WF7LjuIlvh1O8z0tgStGdwGZa27+R47v9xz/4tgq1NH0y6xQqhbm9/ao3yZQS4Hbcy3/OFw==}
+    peerDependencies:
+      next: '*'
+      react: '*'
+      react-dom: '*'
+
   next@15.4.0-canary.47:
     resolution: {integrity: sha512-p7SMspJPTaiKYdDzz/bubvUz5omPUla/C6YiqNFgdB4khC8RzLWGX8ku7tpf+znZQH2T8glb7HjDLSB5EiLlgQ==}
     engines: {node: ^18.18.0 || ^19.8.0 || >= 20.0.0}
@@ -2094,6 +2107,11 @@ packages:
   tailwind-merge@3.3.0:
     resolution: {integrity: sha512-fyW/pEfcQSiigd5SNn0nApUOxx0zB/dm6UDU/rEwc2c3sX2smWUNbapHv+QRqLGVp9GWX3THIa7MUGPo+YkDzQ==}
 
+  tailwindcss-animate@1.0.7:
+    resolution: {integrity: sha512-bl6mpH3T7I3UFxuvDEXLxy/VuFxBk5bbzplh7tXI68mwMokNYd1t9qPBHlnyTwfa4JGC4zP516I1hYYtQ/vspA==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+
   tailwindcss@4.1.7:
     resolution: {integrity: sha512-kr1o/ErIdNhTz8uzAYL7TpaUuzKIE6QPQ4qmSdxnoX/lo+5wmUHQA6h3L5yIqEImSRnAAURDirLu/BgiXGPAhg==}
 
@@ -2193,44 +2211,44 @@ packages:
     peerDependencies:
       zod: ^3.24.1
 
-  zod@3.24.4:
-    resolution: {integrity: sha512-OdqJE9UDRPwWsrHjLN2F8bPxvwJBK22EHLWtanu0LSYr5YqzsaaW3RMgmjwr8Rypg5k+meEJdSPXJZXE/yqOMg==}
+  zod@4.0.14:
+    resolution: {integrity: sha512-nGFJTnJN6cM2v9kXL+SOBq3AtjQby3Mv5ySGFof5UGRHrRioSJ5iG680cYNjE/yWk671nROcpPj4hAS8nyLhSw==}
 
 snapshots:
 
-  '@ai-sdk/gateway@1.0.0-beta.15(zod@3.24.4)':
+  '@ai-sdk/gateway@1.0.0-beta.15(zod@4.0.14)':
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
-      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@3.24.4)
-      zod: 3.24.4
+      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@4.0.14)
+      zod: 4.0.14
 
-  '@ai-sdk/google@2.0.0-beta.16(zod@3.24.4)':
+  '@ai-sdk/google@2.0.0-beta.16(zod@4.0.14)':
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
-      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@3.24.4)
-      zod: 3.24.4
+      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@4.0.14)
+      zod: 4.0.14
 
-  '@ai-sdk/provider-utils@3.0.0-beta.7(zod@3.24.4)':
+  '@ai-sdk/provider-utils@3.0.0-beta.7(zod@4.0.14)':
     dependencies:
       '@ai-sdk/provider': 2.0.0-beta.1
       '@standard-schema/spec': 1.0.0
       eventsource-parser: 3.0.3
-      zod: 3.24.4
-      zod-to-json-schema: 3.24.6(zod@3.24.4)
+      zod: 4.0.14
+      zod-to-json-schema: 3.24.6(zod@4.0.14)
 
   '@ai-sdk/provider@2.0.0-beta.1':
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@2.0.0-beta.29(react@19.1.0)(zod@3.24.4)':
+  '@ai-sdk/react@2.0.0-beta.29(react@19.1.0)(zod@4.0.14)':
     dependencies:
-      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@3.24.4)
-      ai: 5.0.0-beta.29(zod@3.24.4)
+      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@4.0.14)
+      ai: 5.0.0-beta.29(zod@4.0.14)
       react: 19.1.0
       swr: 2.3.3(react@19.1.0)
       throttleit: 2.1.0
     optionalDependencies:
-      zod: 3.24.4
+      zod: 4.0.14
 
   '@alloc/quick-lru@5.2.0': {}
 
@@ -3447,13 +3465,13 @@ snapshots:
     dependencies:
       '@types/node': 22.15.18
 
-  ai@5.0.0-beta.29(zod@3.24.4):
+  ai@5.0.0-beta.29(zod@4.0.14):
     dependencies:
-      '@ai-sdk/gateway': 1.0.0-beta.15(zod@3.24.4)
+      '@ai-sdk/gateway': 1.0.0-beta.15(zod@4.0.14)
       '@ai-sdk/provider': 2.0.0-beta.1
-      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@3.24.4)
+      '@ai-sdk/provider-utils': 3.0.0-beta.7(zod@4.0.14)
       '@opentelemetry/api': 1.9.0
-      zod: 3.24.4
+      zod: 4.0.14
 
   aria-hidden@1.2.4:
     dependencies:
@@ -3770,6 +3788,12 @@ snapshots:
 
   nanoid@3.3.11: {}
 
+  next-themes@1.0.0-beta.0(next@15.4.0-canary.47(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
+    dependencies:
+      next: 15.4.0-canary.47(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+
   next@15.4.0-canary.47(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:
       '@next/env': 15.4.0-canary.47
@@ -4020,6 +4044,10 @@ snapshots:
 
   tailwind-merge@3.3.0: {}
 
+  tailwindcss-animate@1.0.7(tailwindcss@4.1.7):
+    dependencies:
+      tailwindcss: 4.1.7
+
   tailwindcss@4.1.7: {}
 
   tapable@2.2.1: {}
@@ -4088,8 +4116,8 @@ snapshots:
 
   yallist@5.0.0: {}
 
-  zod-to-json-schema@3.24.6(zod@3.24.4):
+  zod-to-json-schema@3.24.6(zod@4.0.14):
     dependencies:
-      zod: 3.24.4
+      zod: 4.0.14
 
-  zod@3.24.4: {}
+  zod@4.0.14: {}

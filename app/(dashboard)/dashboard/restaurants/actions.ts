@@ -164,7 +164,7 @@ export async function updatePublicConfiguration(
     const result = updatePublicConfigurationSchema.safeParse(rawData);
     if (!result.success) {
         console.error("Zod validation failed:", result.error.flatten());
-        return { error: result.error.errors[0].message };
+        return { error: result.error.message };
     }
 
     const data = result.data;

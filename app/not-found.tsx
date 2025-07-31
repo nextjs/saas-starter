@@ -8,7 +8,7 @@ export default function NotFound() {
         <div className="flex justify-center">
           <CircleIcon className="size-12 text-orange-500" />
         </div>
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-4xl font-bold text-primary tracking-tight">
           Page Not Found
         </h1>
         <p className="text-base text-gray-500">

@@ -1,4 +1,3 @@
-//<file path="app/(dashboard)/dashboard/restaurants/[id]/page.tsx">
 'use client';
 
 import { use } from 'react';

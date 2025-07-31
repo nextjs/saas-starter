@@ -1,190 +1,191 @@
+//<file path="app/(dashboard)/dashboard/page.tsx">
 'use client';
 
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle
 } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, PlusCircle, AlertCircle, Settings } from 'lucide-react';
+import { Loader2, Plus, Settings, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import { useActionState, useEffect, useRef, Suspense } from 'react';
+import { useActionState, useEffect, useRef, Suspense, useState } from 'react';
 import useSWR, { mutate } from 'swr';
-import { Restaraunt } from '@/lib/db/schema';
+import type { Restaraunt } from '@/lib/db/schema';
 import { createRestaraunt } from './restaurants/[id]/actions';
 
 type CreateActionState = {
-  error?: string;
-  success?: string;
-  data?: Restaraunt;
+    error?: string;
+    success?: string;
+    data?: Restaraunt;
 };
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function CreateRestaurantForm() {
-  const [state, formAction, isPending] = useActionState<
-      CreateActionState,
-      FormData
-  >(createRestaraunt, {});
-  const formRef = useRef<HTMLFormElement>(null);
+function AddRestaurantCard() {
+    const [open, setOpen] = useState(false);
+    const [state, formAction, isPending] = useActionState<
+        CreateActionState,
+        FormData
+    >(createRestaraunt, {});
+    const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (state.success) {
-      formRef.current?.reset();
-      mutate('/api/team/restaurants');
-    }
-  }, [state.success]);
+    useEffect(() => {
+        if (state.success) {
+            formRef.current?.reset();
+            mutate('/api/team/restaurants');
+            setOpen(false); // Close dialog on success
+        }
+    }, [state.success]);
 
-  return (
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Create a New Restaurant</CardTitle>
-          <CardDescription>
-            Add a new restaurant to your team to start configuring it.
-          </CardDescription>
-        </CardHeader>
-        <form action={formAction} ref={formRef}>
-          <CardContent>
-            <div className="grid gap-2">
-              <Label htmlFor="name">Restaurant Name</Label>
-              <Input
-                  id="name"
-                  name="name"
-                  placeholder="e.g., The Grand Bistro"
-                  required
-              />
-            </div>
-            {state.error && (
-                <p className="text-sm text-red-500 mt-2">{state.error}</p>
-            )}
-            {state.success && !state.error && (
-                <p className="text-sm text-green-500 mt-2">{state.success}</p>
-            )}
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating...
-                  </>
-              ) : (
-                  <>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Create Restaurant
-                  </>
-              )}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-  );
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Card className="flex flex-col items-center justify-center h-48 border-2 border-dashed hover:border-primary hover:bg-muted/50 transition-all cursor-pointer group !gap-2">
+                    <Plus className="h-12 w-12 text-muted-foreground group-hover:text-primary group-hover:scale-110 transition-transform" />
+                    <p className="font-medium text-muted-foreground group-hover:text-primary">
+                        Add Restaurant
+                    </p>
+                </Card>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Create a New Restaurant</DialogTitle>
+                    <DialogDescription>
+                        Add a new restaurant to your team to start configuring it.
+                    </DialogDescription>
+                </DialogHeader>
+                <form action={formAction} ref={formRef} className="space-y-4">
+                    <div className="grid gap-2">
+                        <Label htmlFor="name">Restaurant Name</Label>
+                        <Input
+                            id="name"
+                            name="name"
+                            placeholder="e.g., The Grand Bistro"
+                            required
+                        />
+                    </div>
+                    {state.error && (
+                        <p className="text-sm text-red-500">{state.error}</p>
+                    )}
+                    <div className="flex justify-end">
+                        <Button type="submit" disabled={isPending}>
+                            {isPending ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Creating...
+                                </>
+                            ) : (
+                                'Create Restaurant'
+                            )}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
 }
 
-function RestaurantsListSkeleton() {
-  return (
-      <div className="space-y-4">
-        {[...Array(2)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 w-2/5 bg-gray-200 rounded"></div>
-                <div className="h-4 w-1/3 bg-gray-200 rounded mt-2"></div>
-              </CardHeader>
-              <CardFooter>
-                <div className="h-10 w-32 bg-gray-200 rounded-md"></div>
-              </CardFooter>
-            </Card>
-        ))}
-      </div>
-  );
-}
-
-function RestaurantsList() {
-  const {
-    data: restaurants,
-    error,
-    isLoading
-  } = useSWR<Restaraunt[]>('/api/team/restaurants', fetcher);
-
-  if (isLoading) {
-    return <RestaurantsListSkeleton />;
-  }
-
-  if (error) {
+function RestaurantCard({ restaurant }: { restaurant: Restaraunt }) {
     return (
-        <Card className="bg-red-50 border-red-200">
-          <CardHeader>
-            <CardTitle className="text-red-800">
-              Error Loading Restaurants
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-red-700">
-              We couldn't fetch your restaurants. Please try refreshing the page.
-            </p>
-          </CardContent>
-        </Card>
-    );
-  }
-
-  if (!restaurants || restaurants.length === 0) {
-    return (
-        <div className="text-center py-12 border-2 border-dashed rounded-lg">
-          <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-          <h3 className="mt-2 text-lg font-semibold text-gray-900">
-            No restaurants found
-          </h3>
-          <p className="mt-1 text-sm text-gray-500">
-            Get started by creating your first restaurant above.
-          </p>
-        </div>
-    );
-  }
-
-  return (
-      <div className="space-y-4">
-        {restaurants.map((restaurant) => (
-            <Card key={restaurant.id}>
-              <CardHeader>
+        <Card key={restaurant.id} className="flex flex-col h-48">
+            <CardHeader className="flex-grow">
                 <CardTitle>{restaurant.name}</CardTitle>
                 <CardDescription>Domain: {restaurant.domain}</CardDescription>
-              </CardHeader>
-              <CardFooter>
-                <Button asChild variant="outline">
-                  <Link href={`/dashboard/restaurants/${restaurant.id}`}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Configure
-                  </Link>
+            </CardHeader>
+            <CardFooter>
+                <Button asChild variant="outline" className="w-full">
+                    <Link href={`/dashboard/restaurants/${restaurant.id}`}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Configure
+                    </Link>
                 </Button>
-              </CardFooter>
+            </CardFooter>
+        </Card>
+    );
+}
+
+function RestaurantsGridSkeleton() {
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+                <Card key={i} className="animate-pulse h-48">
+                    <CardHeader className="flex-grow">
+                        <div className="h-6 w-3/5 bg-muted rounded"></div>
+                        <div className="h-4 w-4/5 bg-muted rounded mt-2"></div>
+                    </CardHeader>
+                    <CardFooter>
+                        <div className="h-10 w-full bg-muted rounded-md"></div>
+                    </CardFooter>
+                </Card>
+            ))}
+        </div>
+    );
+}
+
+function RestaurantsGrid() {
+    const {
+        data: restaurants,
+        error,
+        isLoading
+    } = useSWR<Restaraunt[]>('/api/team/restaurants', fetcher);
+
+    if (isLoading) {
+        return <RestaurantsGridSkeleton />;
+    }
+
+    if (error) {
+        return (
+            <Card className="bg-destructive/10 border-destructive/30">
+                <CardHeader>
+                    <CardTitle className="text-destructive">
+                        Error Loading Restaurants
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-destructive/80">
+                        We couldn't fetch your restaurants. Please try refreshing the page.
+                    </p>
+                </CardContent>
             </Card>
-        ))}
-      </div>
-  );
+        );
+    }
+
+    return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {restaurants?.map((restaurant) => (
+                <RestaurantCard key={restaurant.id} restaurant={restaurant} />
+            ))}
+            <AddRestaurantCard />
+        </div>
+    );
 }
 
 export default function DashboardPage() {
-  return (
-      <section className="flex-1 p-4 lg:p-8">
-        <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <h1 className="text-lg lg:text-2xl font-medium mb-2 sm:mb-0">
-            My Restaurants
-          </h1>
-        </div>
-
-        <CreateRestaurantForm />
-
-        <h2 className="text-lg font-medium text-gray-900 mb-4 mt-8">
-          Existing Restaurants
-        </h2>
-        <Suspense fallback={<RestaurantsListSkeleton />}>
-          <RestaurantsList />
-        </Suspense>
-      </section>
-  );
+    return (
+        <section className="flex-1 p-4 lg:p-8">
+            <div className="mb-6">
+                <h1 className="text-lg lg:text-2xl font-medium">My Restaurants</h1>
+                <p className="text-muted-foreground">
+                    Manage your restaurants or add a new one.
+                </p>
+            </div>
+            <Suspense fallback={<RestaurantsGridSkeleton />}>
+                <RestaurantsGrid />
+            </Suspense>
+        </section>
+    );
 }

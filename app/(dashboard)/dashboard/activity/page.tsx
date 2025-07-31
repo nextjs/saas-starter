@@ -9,6 +9,9 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
+  CirclePlus,
+  CircleMinus,
+  ListRestart,
   type LucideIcon, RotateCcwKey,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
@@ -25,7 +28,10 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
   [ActivityType.INVITE_TEAM_MEMBER]: Mail,
   [ActivityType.ACCEPT_INVITATION]: CheckCircle,
-  [ActivityType.PASSWORD_RESET]: RotateCcwKey
+  [ActivityType.PASSWORD_RESET]: RotateCcwKey,
+  [ActivityType.CREATE_RESTAURANT]: CirclePlus,
+  [ActivityType.UPDATE_RESTAURANT]: ListRestart,
+  [ActivityType.DELETE_RESTAURANT]: CircleMinus
 };
 
 function getActionStyles(action: ActivityType) {
@@ -88,6 +94,12 @@ function formatAction(action: ActivityType): string {
       return 'You invited a team member';
     case ActivityType.ACCEPT_INVITATION:
       return 'You accepted an invitation';
+    case ActivityType.CREATE_RESTAURANT:
+      return 'You created an restaurant';
+    case ActivityType.UPDATE_RESTAURANT:
+      return 'You updated an restaurant';
+    case ActivityType.DELETE_RESTAURANT:
+      return 'You deleted an restaurant';
     default:
       return 'Unknown action occurred';
   }
@@ -98,7 +110,7 @@ export default async function ActivityPage() {
 
   return (
     <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
+      <h1 className="text-lg lg:text-2xl font-medium text-primary mb-6">
         Activity Log
       </h1>
       <Card>
@@ -120,7 +132,7 @@ export default async function ActivityPage() {
                       <Icon className="w-5 h-5" />
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-primary">
                         {formattedAction}
                         {log.ipAddress && ` from IP ${log.ipAddress}`}
                       </p>
@@ -135,7 +147,7 @@ export default async function ActivityPage() {
           ) : (
             <div className="flex flex-col items-center justify-center text-center py-12">
               <AlertCircle className="h-12 w-12 text-orange-500 mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              <h3 className="text-lg font-semibold text-primary mb-2">
                 No activity yet
               </h3>
               <p className="text-sm text-gray-500 max-w-sm">

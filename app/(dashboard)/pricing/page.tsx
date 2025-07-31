@@ -67,11 +67,11 @@ function PricingCard({
 }) {
   return (
     <div className="pt-6">
-      <h2 className="text-2xl font-medium text-gray-900 mb-2">{name}</h2>
+      <h2 className="text-2xl font-medium text-primary mb-2">{name}</h2>
       <p className="text-sm text-gray-600 mb-4">
         with {trialDays} day free trial
       </p>
-      <p className="text-4xl font-medium text-gray-900 mb-6">
+      <p className="text-4xl font-medium text-primary mb-6">
         ${price / 100}{' '}
         <span className="text-xl font-normal text-gray-600">
           per user / {interval}
