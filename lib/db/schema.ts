@@ -56,7 +56,8 @@ export const teamRestaraunts = pgTable('team_restaraunts', {
   id: serial('id').primaryKey(),
   teamId: integer('team_id')
       .notNull()
-      .references(() => teams.id, { onDelete: 'cascade' }),
+      .references(() => teams.id, { onDelete: 'cascade' })
+      .unique(),
   restarauntId: uuid('restaraunt_id') // Keeping spelling consistent
       .notNull()
       .references(() => restaraunts.id, { onDelete: 'cascade' })

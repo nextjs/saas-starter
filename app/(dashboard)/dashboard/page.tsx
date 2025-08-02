@@ -17,14 +17,21 @@ import {
     DialogTitle,
     DialogTrigger
 } from '@/components/ui/dialog';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Plus, Settings, AlertCircle } from 'lucide-react';
+import { Loader2, Plus, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { useActionState, useEffect, useRef, Suspense, useState } from 'react';
 import useSWR, { mutate } from 'swr';
-import type { Restaraunt } from '@/lib/db/schema';
+import type { Restaraunt, TeamDataWithMembers } from '@/lib/db/schema';
 import { createRestaraunt } from './restaurants/[id]/actions';
 
 type CreateActionState = {
@@ -42,6 +49,7 @@ function AddRestaurantCard() {
         FormData
     >(createRestaraunt, {});
     const formRef = useRef<HTMLFormElement>(null);
+    const { data: teams, isLoading: isLoadingTeams } = useSWR<TeamDataWithMembers[]>('/api/team', fetcher);
 
     useEffect(() => {
         if (state.success) {
@@ -65,7 +73,7 @@ function AddRestaurantCard() {
                 <DialogHeader>
                     <DialogTitle>Create a New Restaurant</DialogTitle>
                     <DialogDescription>
-                        Add a new restaurant to your team to start configuring it.
+                        Add a new restaurant to one of your teams to start configuring it.
                     </DialogDescription>
                 </DialogHeader>
                 <form action={formAction} ref={formRef} className="space-y-4">
@@ -78,11 +86,26 @@ function AddRestaurantCard() {
                             required
                         />
                     </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="teamId">Team</Label>
+                        <Select name="teamId" required>
+                            <SelectTrigger disabled={isLoadingTeams}>
+                                <SelectValue placeholder={isLoadingTeams ? "Loading teams..." : "Select a team"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {teams?.map(team => (
+                                    <SelectItem key={team.id} value={team.id.toString()}>
+                                        {team.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
                     {state.error && (
                         <p className="text-sm text-red-500">{state.error}</p>
                     )}
                     <div className="flex justify-end">
-                        <Button type="submit" disabled={isPending}>
+                        <Button type="submit" disabled={isPending || isLoadingTeams}>
                             {isPending ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

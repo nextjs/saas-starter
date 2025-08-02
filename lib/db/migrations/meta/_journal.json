@@ -15,6 +15,13 @@
       "when": 1753704766671,
       "tag": "0001_silent_forge",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1754134762957,
+      "tag": "0002_gifted_killmonger",
+      "breakpoints": true
     }
   ]
 }

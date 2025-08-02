@@ -1,7 +1,7 @@
+//<file path="lib/auth/middleware.ts">
 import { z } from 'zod';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
-import { getTeamForUser, getUser } from '@/lib/db/queries';
-import { redirect } from 'next/navigation';
+import { User } from '@/lib/db/schema';
+import { getUser } from '@/lib/db/queries';
 
 export type ActionState = {
   error?: string;
@@ -10,18 +10,24 @@ export type ActionState = {
 };
 
 type ValidatedActionFunction<S extends z.ZodType<any, any>, T> = (
-  data: z.infer<S>,
-  formData: FormData
+    data: z.infer<S>,
+    formData?: FormData
 ) => Promise<T>;
 
 export function validatedAction<S extends z.ZodType<any, any>, T>(
-  schema: S,
-  action: ValidatedActionFunction<S, T>
+    schema: S,
+    action: ValidatedActionFunction<S, T>
 ) {
-  return async (prevState: ActionState, formData: FormData) => {
-    const result = schema.safeParse(Object.fromEntries(formData));
+  return async (prevState: ActionState, formData?: FormData) => {
+    const dataToParse = formData ? Object.fromEntries(formData) : {};
+    const result = schema.safeParse(dataToParse);
+
     if (!result.success) {
-      return { error: result.error.errors[0].message };
+      const issues = result.error.issues;
+      if (issues && issues.length > 0) {
+        return { error: issues[0].message };
+      }
+      return { error: "An unknown validation error occurred." };
     }
 
     return action(result.data, formData);
@@ -29,46 +35,32 @@ export function validatedAction<S extends z.ZodType<any, any>, T>(
 }
 
 type ValidatedActionWithUserFunction<S extends z.ZodType<any, any>, T> = (
-  data: z.infer<S>,
-  formData: FormData,
-  user: User
+    data: z.infer<S>,
+    user: User,
+    formData?: FormData
 ) => Promise<T>;
 
 export function validatedActionWithUser<S extends z.ZodType<any, any>, T>(
-  schema: S,
-  action: ValidatedActionWithUserFunction<S, T>
+    schema: S,
+    action: ValidatedActionWithUserFunction<S, T>
 ) {
-  return async (prevState: ActionState, formData: FormData) => {
+  return async (prevState: ActionState, formData?: FormData) => {
     const user = await getUser();
     if (!user) {
       throw new Error('User is not authenticated');
     }
 
-    const result = schema.safeParse(Object.fromEntries(formData));
+    const dataToParse = formData ? Object.fromEntries(formData) : {};
+    const result = schema.safeParse(dataToParse);
+
     if (!result.success) {
-      return { error: result.error.errors[0].message };
+      const issues = result.error.issues;
+      if (issues && issues.length > 0) {
+        return { error: issues[0].message };
+      }
+      return { error: "An unknown validation error occurred." };
     }
 
-    return action(result.data, formData, user);
-  };
-}
-
-type ActionWithTeamFunction<T> = (
-  formData: FormData,
-  team: TeamDataWithMembers
-) => Promise<T>;
-
-export function withTeam<T>(action: ActionWithTeamFunction<T>) {
-  return async (formData: FormData): Promise<T> => {
-    const user = await getUser();
-    if (!user) {
-      redirect('/auth/login');
-    }
-    const team = await getTeamForUser();
-    if (!team) {
-      throw new Error('Team not found');
-    }
-
-    return action(formData, team);
+    return action(result.data, user, formData);
   };
 }

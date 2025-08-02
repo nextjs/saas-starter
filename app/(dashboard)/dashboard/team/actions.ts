@@ -1,3 +1,4 @@
+//<file path="app/(dashboard)/dashboard/team/actions.ts">
 'use server';
 
 import { z } from 'zod';
@@ -5,12 +6,16 @@ import { and, eq } from 'drizzle-orm';
 import { db } from '@/lib/db/drizzle';
 import {
     users,
+    teams,
     teamMembers,
     invitations,
     ActivityType,
+    NewTeam,
+    NewTeamMember,
 } from '@/lib/db/schema';
-import { getUserWithTeam, logActivity } from '@/lib/db/queries';
+import { getUser, getUserWithTeam, logActivity } from '@/lib/db/queries';
 import { validatedActionWithUser } from '@/lib/auth/middleware';
+import { revalidatePath } from 'next/cache';
 
 const removeTeamMemberSchema = z.object({
     memberId: z.coerce.number() // Use coerce for FormData values
@@ -47,17 +52,21 @@ export const removeTeamMember = validatedActionWithUser(
 
 const inviteTeamMemberSchema = z.object({
     email: z.string().email('Invalid email address'),
-    role: z.enum(['member', 'owner'])
+    role: z.enum(['member', 'owner']),
+    teamId: z.coerce.number()
 });
 
 export const inviteTeamMember = validatedActionWithUser(
     inviteTeamMemberSchema,
     async (data, _, user) => {
-        const { email, role } = data;
-        const userWithTeam = await getUserWithTeam(user.id);
+        const { email, role, teamId } = data;
 
-        if (!userWithTeam?.teamId) {
-            return { error: 'User is not part of a team' };
+        // Verify user is a member of the team they are inviting to
+        const userMembership = await db.query.teamMembers.findFirst({
+            where: and(eq(teamMembers.userId, user.id), eq(teamMembers.teamId, teamId))
+        });
+        if (!userMembership) {
+            return { error: 'You are not a member of this team.' };
         }
 
         const existingMember = await db
@@ -65,7 +74,7 @@ export const inviteTeamMember = validatedActionWithUser(
             .from(users)
             .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
             .where(
-                and(eq(users.email, email), eq(teamMembers.teamId, userWithTeam.teamId))
+                and(eq(users.email, email), eq(teamMembers.teamId, teamId))
             )
             .limit(1);
 
@@ -79,7 +88,7 @@ export const inviteTeamMember = validatedActionWithUser(
             .where(
                 and(
                     eq(invitations.email, email),
-                    eq(invitations.teamId, userWithTeam.teamId),
+                    eq(invitations.teamId, teamId),
                     eq(invitations.status, 'pending')
                 )
             )
@@ -90,19 +99,47 @@ export const inviteTeamMember = validatedActionWithUser(
         }
 
         await db.insert(invitations).values({
-            teamId: userWithTeam.teamId,
+            teamId: teamId,
             email,
             role,
             invitedBy: user.id,
             status: 'pending'
         });
 
-        await logActivity(
-            userWithTeam.teamId,
-            user.id,
-            ActivityType.INVITE_TEAM_MEMBER
-        );
+        await logActivity(teamId, user.id, ActivityType.INVITE_TEAM_MEMBER);
 
         return { success: 'Invitation sent successfully' };
+    }
+);
+
+
+const createTeamSchema = z.object({
+    name: z.string().min(1, 'Team name is required').max(100)
+});
+
+export const createTeam = validatedActionWithUser(
+    createTeamSchema,
+    async (data, _, user) => {
+        const { name } = data;
+
+        const newTeam: NewTeam = { name };
+        const [createdTeam] = await db.insert(teams).values(newTeam).returning();
+
+        if (!createdTeam) {
+            return { error: 'Failed to create team.' };
+        }
+
+        const newTeamMember: NewTeamMember = {
+            userId: user.id,
+            teamId: createdTeam.id,
+            role: 'owner'
+        };
+        await db.insert(teamMembers).values(newTeamMember);
+
+        await logActivity(createdTeam.id, user.id, ActivityType.CREATE_TEAM);
+
+        revalidatePath('/dashboard/team');
+
+        return { success: 'Team created successfully!', data: createdTeam };
     }
 );

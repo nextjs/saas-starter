@@ -1,17 +1,16 @@
 import { NextResponse } from 'next/server';
-import { getTeamForUser, getRestarauntsForTeam } from '@/lib/db/queries';
+import {getTeamForUser, getRestarauntsForTeam, getTeamsForUser, getRestarauntsForUser} from '@/lib/db/queries';
 
 export async function GET() {
     try {
-        const team = await getTeamForUser();
-        if (!team) {
+        const teams = await getTeamsForUser();
+        if (!teams) {
             return NextResponse.json(
-                { error: 'User is not part of a team' },
+                { error: 'User is not part of any team' },
                 { status: 403 }
             );
         }
-
-        const restaurants = await getRestarauntsForTeam(team.id);
+        const restaurants = await getRestarauntsForUser();
         return NextResponse.json(restaurants);
     } catch (error) {
         console.error('Failed to fetch restaurants:', error);

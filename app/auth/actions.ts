@@ -42,55 +42,45 @@ async function logActivity(
 
 const signInSchema = z.object({
     email: z.string().email().min(3).max(255),
-    password: z.string().min(8).max(100)
+    password: z.string().min(8).max(100),
+    priceId: z.string().optional(),
+    deviceCount: z.coerce.number().optional(),
+    interval: z.enum(['month', 'year']).optional(),
 });
 
-export const signIn = validatedAction(signInSchema, async (data, formData) => {
+export const signIn = validatedAction(signInSchema, async (data) => {
     const supabase = await createClient();
-    const { email, password } = data;
+    const { email, password, priceId, deviceCount, interval } = data;
 
-    const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-        return {
-            error: 'Invalid email or password. Please try again.',
-            email,
-            password,
-        };
+        return { error: 'Invalid email or password. Please try again.' };
     }
 
-    const userWithTeam = await db
-        .select({
-            user: users,
-            team: teams
-        })
+    const [userWithTeam] = await db
+        .select({ user: users, team: teams })
         .from(users)
         .leftJoin(teamMembers, eq(users.id, teamMembers.userId))
         .leftJoin(teams, eq(teamMembers.teamId, teams.id))
         .where(eq(users.email, email))
         .limit(1);
 
-    if (userWithTeam.length === 0) {
-        return {
-            error: 'Invalid email or password. Please try again.',
-            email,
-            password
-        };
+    if (!userWithTeam) {
+        return { error: 'Invalid email or password. Please try again.' };
     }
 
-    const { user: foundUser, team: foundTeam } = userWithTeam[0];
+    const { user: foundUser, team: foundTeam } = userWithTeam;
 
-    await Promise.all([
-        logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN)
-    ]);
+    await logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN);
 
-    const redirectTo = formData.get('redirect') as string | null;
-    if (redirectTo === 'checkout') {
-        const priceId = formData.get('priceId') as string;
-        return createCheckoutSession({ team: foundTeam, priceId });
+    if (priceId && interval) {
+        return createCheckoutSession({
+            team: foundTeam,
+            priceId,
+            deviceCount: deviceCount || 0,
+            interval,
+        });
     }
 
     redirect('/dashboard');
@@ -101,7 +91,11 @@ const signUpSchema = z
         email: z.string().email(),
         password: z.string().min(8, 'Password must be at least 8 characters'),
         repeatPassword: z.string().min(8),
-        inviteId: z.string().optional()
+        inviteId: z.string().optional(),
+        // Add checkout fields
+        priceId: z.string().optional(),
+        deviceCount: z.coerce.number().optional(),
+        interval: z.enum(['month', 'year']).optional(),
     })
     .refine((data) => data.password === data.repeatPassword, {
         message: 'Passwords do not match',
@@ -111,7 +105,8 @@ const signUpSchema = z
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     const supabase = await createClient();
-    const { email, password, inviteId } = data;
+    const { email, password, inviteId, priceId, deviceCount, interval } = data;
+
     // Sign up the user in Supabase Auth
     const { data: { user: createdUser }, error } = await supabase.auth.signUp({
         email,
@@ -123,19 +118,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
     if (error || !createdUser) {
         console.error('Sign up error:', error);
-        return {
-            error: 'Failed to create user. An account with this email may already exist.',
-            email,
-            password,
-        };
-    }
-
-    if (!createdUser) {
-        return {
-            error: 'Failed to create user. Please try again.',
-            email,
-            password
-        };
+        return { error: 'Failed to create user. An account with this email may already exist.' };
     }
 
     let teamId: number;
@@ -143,79 +126,42 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     let createdTeam: typeof teams.$inferSelect | null = null;
 
     if (inviteId) {
-        // Check if there's a valid invitation
-        const [invitation] = await db
-            .select()
-            .from(invitations)
-            .where(
-                and(
-                    eq(invitations.id, parseInt(inviteId)),
-                    eq(invitations.email, email),
-                    eq(invitations.status, 'pending')
-                )
-            )
-            .limit(1);
-
+        const [invitation] = await db.select().from(invitations).where(and(eq(invitations.id, parseInt(inviteId)), eq(invitations.email, email), eq(invitations.status, 'pending'))).limit(1);
         if (invitation) {
             teamId = invitation.teamId;
             userRole = invitation.role;
-
-            await db
-                .update(invitations)
-                .set({ status: 'accepted' })
-                .where(eq(invitations.id, invitation.id));
-
+            await db.update(invitations).set({ status: 'accepted' }).where(eq(invitations.id, invitation.id));
             await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
-
-            [createdTeam] = await db
-                .select()
-                .from(teams)
-                .where(eq(teams.id, teamId))
-                .limit(1);
+            [createdTeam] = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
         } else {
-            return { error: 'Invalid or expired invitation.', email, password };
+            return { error: 'Invalid or expired invitation.' };
         }
     } else {
-        // Create a new team if there's no invitation
-        const newTeam: NewTeam = {
-            name: `${email}'s Team`
-        };
-
+        const newTeam: NewTeam = { name: `${email}'s Team` };
         [createdTeam] = await db.insert(teams).values(newTeam).returning();
-
         if (!createdTeam) {
-            return {
-                error: 'Failed to create team. Please try again.',
-                email,
-                password
-            };
+            return { error: 'Failed to create team. Please try again.' };
         }
-
         teamId = createdTeam.id;
         userRole = 'owner';
-
         await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
     }
 
-    const newTeamMember: NewTeamMember = {
-        userId: createdUser.id,
-        teamId: teamId,
-        role: userRole
-    };
-
-    await db.update(users).set({
-        role: userRole,
-    }).where(eq(users.id, createdUser.id))
-
+    const newTeamMember: NewTeamMember = { userId: createdUser.id, teamId: teamId, role: userRole };
+    await db.update(users).set({ role: userRole }).where(eq(users.id, createdUser.id))
     await Promise.all([
         db.insert(teamMembers).values(newTeamMember),
         logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
     ]);
 
     const redirectTo = formData.get('redirect') as string | null;
-    if (redirectTo === 'checkout') {
-        const priceId = formData.get('priceId') as string;
-        return createCheckoutSession({ team: createdTeam, priceId });
+    if (redirectTo === 'checkout' && priceId && interval) {
+        return createCheckoutSession({
+            team: createdTeam,
+            priceId,
+            deviceCount: deviceCount || 0,
+            interval,
+        });
     }
 
     redirect('/auth/sign-up-success');

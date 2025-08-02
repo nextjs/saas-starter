@@ -42,6 +42,7 @@ export async function updateSession(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth') &&
+    !request.nextUrl.pathname.startsWith('/pricing/embed') &&
     request.nextUrl.pathname.startsWith(protectedRoutes)
   ) {
     // no user, potentially respond by redirecting the user to the login page

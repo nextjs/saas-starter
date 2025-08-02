@@ -1,5 +1,6 @@
-'use client'
+'use client';
 
+import { Suspense } from 'react';
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -17,7 +18,40 @@ import { signIn } from '@/app/auth/actions'
 import { Loader2 } from 'lucide-react'
 import { SiGoogle } from '@icons-pack/react-simple-icons';
 import { createClient } from '@/lib/supabase/client'
-import {ActionState} from "@/lib/auth/middleware";
+import { ActionState } from "@/lib/auth/middleware";
+import { useSearchParams } from 'next/navigation';
+
+function LoginFormFields() {
+  const searchParams = useSearchParams();
+  const priceId = searchParams.get('priceId');
+  const deviceCount = searchParams.get('deviceCount');
+  const interval = searchParams.get('interval');
+
+  return (
+      <>
+        {priceId && (
+            <>
+              <input type="hidden" name="priceId" value={priceId} />
+              <input type="hidden" name="deviceCount" value={deviceCount || '0'} />
+              <input type="hidden" name="interval" value={interval || 'month'} />
+            </>
+        )}
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input id="email" name="email" type="email" placeholder="m@example.com" required />
+        </div>
+        <div className="grid gap-2">
+          <div className="flex items-center">
+            <Label htmlFor="password">Password</Label>
+            <Link href="/auth/forgot-password" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
+              Forgot your password?
+            </Link>
+          </div>
+          <Input id="password" name="password" type="password" required />
+        </div>
+      </>
+  );
+}
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
   const [state, formAction, pending] = useActionState<ActionState, FormData>(signIn, {error:''});
@@ -34,10 +68,6 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
     });
 
     if (error) {
-      // Since this is a separate flow from the form action,
-      // we can't easily set the 'state'. We'll log the error
-      // and let the user retry. A redirect to an error page
-      // would also be an option.
       console.error("Social login error:", error);
       setIsSocialLoading(false);
     }
@@ -53,33 +83,10 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
           <CardContent>
             <form action={formAction}>
               <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <div className="flex items-center">
-                    <Label htmlFor="password">Password</Label>
-                    <Link
-                        href="/auth/forgot-password"
-                        className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                  <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                  />
-                </div>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <LoginFormFields />
+                </Suspense>
+
                 {state?.error && <p className="text-sm text-red-500">{state.error}</p>}
                 <Button type="submit" className="w-full" disabled={pending || isSocialLoading}>
                   {pending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in...</> : 'Login'}
@@ -87,37 +94,9 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
               </div>
             </form>
 
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or continue with
-              </span>
-              </div>
-            </div>
-
-            <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => handleSocialLogin('google')}
-                disabled={pending || isSocialLoading}
-            >
-              {isSocialLoading ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                  <SiGoogle className="mr-2 h-4 w-4" />
-              )}{' '}
-              Google
-            </Button>
-
-            <div className="mt-6 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/sign-up" className="underline underline-offset-4">
-                Sign up
-              </Link>
-            </div>
+            <div className="relative my-6"><div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div><div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">Or continue with</span></div></div>
+            <Button variant="outline" className="w-full" onClick={() => handleSocialLogin('google')} disabled={pending || isSocialLoading}>{isSocialLoading ? (<Loader2 className="mr-2 h-4 w-4 animate-spin" />) : (<SiGoogle className="mr-2 h-4 w-4" />)}{' '}Google</Button>
+            <div className="mt-6 text-center text-sm">Don't have an account?{' '}<Link href="/auth/sign-up" className="underline underline-offset-4">Sign up</Link></div>
           </CardContent>
         </Card>
       </div>

@@ -33,8 +33,10 @@
     "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.1",
     "drizzle-orm": "^0.43.1",
+    "embla-carousel-react": "^8.6.0",
     "lucide-react": "^0.511.0",
     "next": "15.4.0-canary.47",
+    "next-themes": "^1.0.0-beta.0",
     "postcss": "^8.5.3",
     "postgres": "^3.4.5",
     "radix-ui": "^1.4.2",
@@ -45,10 +47,9 @@
     "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "4.1.7",
+    "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5.8.3",
-    "next-themes": "^1.0.0-beta.0",
-    "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "zod": "^4.0.14"
   }
