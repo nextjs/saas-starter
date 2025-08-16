@@ -1,6 +1,6 @@
 import { desc, and, eq, isNull } from 'drizzle-orm';
 import { db } from './drizzle';
-import { activityLogs, teamMembers, teams, users } from './schema';
+import { activityLogs, teamMembers, teams, users, notes } from './schema';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/auth/session';
 
@@ -127,4 +127,72 @@ export async function getTeamForUser() {
   });
 
   return result?.team || null;
+}
+
+export async function getNotes() {
+  const user = await getUser();
+  if (!user) {
+    return [];
+  }
+
+  return await db
+    .select()
+    .from(notes)
+    .where(eq(notes.userId, user.id))
+    .orderBy(desc(notes.updatedAt));
+}
+
+export async function getNote(id: number) {
+  const user = await getUser();
+  if (!user) {
+    return null;
+  }
+
+  const result = await db
+    .select()
+    .from(notes)
+    .where(and(eq(notes.id, id), eq(notes.userId, user.id)))
+    .limit(1);
+
+  return result[0] || null;
+}
+
+export async function createNote(data: { title?: string; content: string }) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  const [note] = await db
+    .insert(notes)
+    .values({
+      userId: user.id,
+      title: data.title || '',
+      content: data.content,
+    })
+    .returning();
+
+  return note;
+}
+
+export async function updateNote(
+  id: number,
+  data: { title?: string; content: string }
+) {
+  const user = await getUser();
+  if (!user) {
+    throw new Error('User not authenticated');
+  }
+
+  const [note] = await db
+    .update(notes)
+    .set({
+      title: data.title || '',
+      content: data.content,
+      updatedAt: new Date(),
+    })
+    .where(and(eq(notes.id, id), eq(notes.userId, user.id)))
+    .returning();
+
+  return note;
 }
