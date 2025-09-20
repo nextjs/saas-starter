@@ -30,10 +30,11 @@ const config = [
   // Custom rules for type-safe environment variables
   {
     rules: {
-      "no-restricted-globals": [
+      "no-restricted-syntax": [
         "error",
         {
-          name: "process",
+          selector:
+            "MemberExpression[object.name='process'][property.name='env']",
           message:
             "Use env imports from './env/server' or './env/client' instead of process.env for type safety and validation.",
         },
@@ -45,7 +46,7 @@ const config = [
   {
     files: ["env/**/*.ts", "next.config.*", "drizzle.config.*"],
     rules: {
-      "no-restricted-globals": "off",
+      "no-restricted-syntax": "off",
     },
   },
 ];
