@@ -1,12 +1,13 @@
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
-import dotenv from 'dotenv';
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
+import dotenv from "dotenv";
 
 dotenv.config();
 
+// Using process.env here for CLI script compatibility (setup, seed, migrations)
 if (!process.env.POSTGRES_URL) {
-  throw new Error('POSTGRES_URL environment variable is not set');
+  throw new Error("POSTGRES_URL environment variable is not set");
 }
 
 export const client = postgres(process.env.POSTGRES_URL);

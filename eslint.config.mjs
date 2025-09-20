@@ -44,7 +44,12 @@ const config = [
 
   // Allow process.env in designated configuration files
   {
-    files: ["env/**/*.ts", "next.config.*", "drizzle.config.*"],
+    files: [
+      "env/**/*.ts",
+      "next.config.*",
+      "drizzle.config.*",
+      "lib/db/drizzle.ts",
+    ],
     rules: {
       "no-restricted-syntax": "off",
     },
