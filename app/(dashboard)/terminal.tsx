@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { Copy, Check } from "lucide-react";
 
 export function Terminal() {
   const [terminalStep, setTerminalStep] = useState(0);
   const [copied, setCopied] = useState(false);
   const terminalSteps = [
-    'git clone https://github.com/nextjs/saas-starter',
-    'pnpm install',
-    'pnpm db:setup',
-    'pnpm db:migrate',
-    'pnpm db:seed',
-    'pnpm dev 🎉',
+    "git clone https://github.com/wiah/speedbase.git",
+    "pnpm install",
+    "pnpm db:setup",
+    "pnpm db:migrate",
+    "pnpm db:seed",
+    "pnpm dev 🎉",
   ];
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function Terminal() {
   }, [terminalStep]);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(terminalSteps.join('\n'));
+    navigator.clipboard.writeText(terminalSteps.join("\n"));
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -56,7 +56,9 @@ export function Terminal() {
           {terminalSteps.map((step, index) => (
             <div
               key={index}
-              className={`${index > terminalStep ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+              className={`${
+                index > terminalStep ? "opacity-0" : "opacity-100"
+              } transition-opacity duration-300`}
             >
               <span className="text-green-400">$</span> {step}
             </div>
