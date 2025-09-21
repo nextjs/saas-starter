@@ -115,7 +115,7 @@ async function setupLocalPostgres() {
 services:
   postgres:
     image: postgres:16.4-alpine
-    container_name: next_saas_starter_postgres
+    container_name: next_speedbase_postgres
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
