@@ -23,6 +23,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Env variable validation (build-time)**: [t3-env](https://env.t3.gg/docs/introduction)
 
 ## Getting Started
 
