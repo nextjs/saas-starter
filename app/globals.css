@@ -73,6 +73,14 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
   }
+  
+  .dark *,
+  .dark ::after,
+  .dark ::before,
+  .dark ::backdrop,
+  .dark ::file-selector-button {
+    border-color: var(--color-gray-800, currentColor);
+  }
 }
 
 @layer utilities {
