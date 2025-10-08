@@ -1,0 +1,52 @@
+---
+globs: lib/s3/**/*.ts,app/api/**/upload/**/*.ts,app/(dashboard)/spaces/**/upload/**/*.ts
+---
+
+# File Upload and S3 Integration
+
+## S3 Client Usage
+- Use functions from [lib/s3/client.ts](mdc:lib/s3/client.ts)
+- Pre-signed URLs for direct-to-S3 uploads
+- No server-side MD5 verification (simplified approach)
+
+## Upload Flow
+1. Client requests pre-signed URL from `/api/spaces/[slug]/upload/presign`
+2. Client uploads directly to S3 using pre-signed URL
+3. Client confirms upload completion via `/api/spaces/[slug]/upload/complete`
+4. Server saves upload metadata to database
+
+## S3 Configuration
+Required environment variables:
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_REGION`
+- `AWS_S3_BUCKET`
+
+## Upload Metadata
+```typescript
+type UploadRecord = {
+  id: number;
+  teamId: number;
+  filename: string;
+  s3Key: string;
+  fileSize: number;
+  contentType: string;
+  md5Hash?: string; // Optional metadata only
+  description?: string;
+  changelog?: string;
+  version?: string;
+  uploadedBy: number;
+  uploadedAt: Date;
+};
+```
+
+## Security Considerations
+- Validate file types and sizes on client and server
+- Use pre-signed URLs with expiration times
+- Implement proper access controls for space-based uploads
+- Store files with unique S3 keys to prevent conflicts
+
+## Error Handling
+- Handle S3 upload failures gracefully
+- Provide clear error messages to users
+- Log upload attempts for debugging

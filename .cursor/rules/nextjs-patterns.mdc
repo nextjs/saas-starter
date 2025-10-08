@@ -1,0 +1,40 @@
+---
+globs: *.tsx,*.ts
+---
+
+# Next.js 15 Patterns and Conventions
+
+## Server Components and Async Params
+Always await `params` in server components before accessing properties:
+```typescript
+// ❌ Wrong
+export default function Page({ params }: { params: { slug: string } }) {
+  return <div>{params.slug}</div>
+}
+
+// ✅ Correct
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  return <div>{slug}</div>
+}
+```
+
+## API Routes
+- Use `NextRequest` and `NextResponse` for API routes
+- Always handle authentication with `getSession()` from [lib/auth/session.ts](mdc:lib/auth/session.ts)
+- Return proper HTTP status codes and error messages
+
+## Server Actions
+- Use `'use server'` directive at the top
+- Import from [app/(login)/actions.ts](mdc:lib/auth/session.ts) for authentication actions
+- Use `redirect()` from `next/navigation` for redirects after successful actions
+
+## Error Handling
+- Use `notFound()` for 404 pages
+- Implement proper error boundaries
+- Log errors with context for debugging
+
+## Type Safety
+- Use Zod schemas for validation (see [lib/validations/](mdc:lib/validations/))
+- Define proper TypeScript interfaces
+- Use Drizzle ORM types from [lib/db/schema.ts](mdc:lib/db/schema.ts)

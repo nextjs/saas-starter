@@ -5,6 +5,8 @@ import {
   text,
   timestamp,
   integer,
+  boolean,
+  bigint,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -12,7 +14,9 @@ export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }),
   email: varchar('email', { length: 255 }).notNull().unique(),
-  passwordHash: text('password_hash').notNull(),
+  passwordHash: text('password_hash'), // Made nullable for M365 users
+  externalId: varchar('external_id', { length: 255 }), // Microsoft Graph user ID
+  authProvider: varchar('auth_provider', { length: 20 }).notNull().default('local'), // 'local' or 'microsoft'
   role: varchar('role', { length: 20 }).notNull().default('member'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -22,13 +26,12 @@ export const users = pgTable('users', {
 export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
+  slug: varchar('slug', { length: 50 }).notNull().unique(),
+  description: text('description'),
+  s3Prefix: varchar('s3_prefix', { length: 100 }).notNull().unique(),
+  isActive: boolean('is_active').notNull().default(true),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  stripeCustomerId: text('stripe_customer_id').unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').unique(),
-  stripeProductId: text('stripe_product_id'),
-  planName: varchar('plan_name', { length: 50 }),
-  subscriptionStatus: varchar('subscription_status', { length: 20 }),
 });
 
 export const teamMembers = pgTable('team_members', {
@@ -68,15 +71,38 @@ export const invitations = pgTable('invitations', {
   status: varchar('status', { length: 20 }).notNull().default('pending'),
 });
 
+export const uploads = pgTable('uploads', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id')
+    .notNull()
+    .references(() => teams.id),
+  filename: varchar('filename', { length: 255 }).notNull(),
+  s3Key: varchar('s3_key', { length: 512 }).notNull().unique(),
+  fileSize: bigint('file_size', { mode: 'number' }).notNull(),
+  contentType: varchar('content_type', { length: 100 }),
+  md5Hash: varchar('md5_hash', { length: 32 }),
+  description: text('description'),
+  changelog: text('changelog'),
+  version: varchar('version', { length: 50 }),
+  uploadedBy: integer('uploaded_by')
+    .notNull()
+    .references(() => users.id),
+  uploadedAt: timestamp('uploaded_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
 export const teamsRelations = relations(teams, ({ many }) => ({
   teamMembers: many(teamMembers),
   activityLogs: many(activityLogs),
   invitations: many(invitations),
+  uploads: many(uploads),
 }));
 
 export const usersRelations = relations(users, ({ many }) => ({
   teamMembers: many(teamMembers),
   invitationsSent: many(invitations),
+  uploads: many(uploads),
 }));
 
 export const invitationsRelations = relations(invitations, ({ one }) => ({
@@ -112,6 +138,17 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+export const uploadsRelations = relations(uploads, ({ one }) => ({
+  team: one(teams, {
+    fields: [uploads.teamId],
+    references: [teams.id],
+  }),
+  uploadedByUser: one(users, {
+    fields: [uploads.uploadedBy],
+    references: [users.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -122,10 +159,15 @@ export type ActivityLog = typeof activityLogs.$inferSelect;
 export type NewActivityLog = typeof activityLogs.$inferInsert;
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
+export type Upload = typeof uploads.$inferSelect;
+export type NewUpload = typeof uploads.$inferInsert;
 export type TeamDataWithMembers = Team & {
   teamMembers: (TeamMember & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
+};
+export type UploadWithUser = Upload & {
+  uploadedByUser: Pick<User, 'id' | 'name' | 'email'>;
 };
 
 export enum ActivityType {
@@ -139,4 +181,7 @@ export enum ActivityType {
   REMOVE_TEAM_MEMBER = 'REMOVE_TEAM_MEMBER',
   INVITE_TEAM_MEMBER = 'INVITE_TEAM_MEMBER',
   ACCEPT_INVITATION = 'ACCEPT_INVITATION',
+  UPLOAD_FILE = 'UPLOAD_FILE',
+  DOWNLOAD_FILE = 'DOWNLOAD_FILE',
+  DELETE_FILE = 'DELETE_FILE',
 }

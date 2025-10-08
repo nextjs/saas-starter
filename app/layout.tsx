@@ -5,8 +5,8 @@ import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'Sunlighten - Partner Storage',
+  description: 'Secure platform for partners to upload and manage Android tablet OTA images.'
 };
 
 export const viewport: Viewport = {
@@ -20,12 +20,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html
       lang="en"
       className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
     >
-      <body className="min-h-[100dvh] bg-gray-50">
+      <body className="min-h-[100dvh] bg-gray-50" suppressHydrationWarning={true}>
         <SWRConfig
           value={{
             fallback: {

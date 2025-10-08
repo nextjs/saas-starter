@@ -9,6 +9,9 @@ import {
   UserMinus,
   Mail,
   CheckCircle,
+  Upload,
+  Download,
+  Trash2,
   type LucideIcon,
 } from 'lucide-react';
 import { ActivityType } from '@/lib/db/schema';
@@ -25,6 +28,9 @@ const iconMap: Record<ActivityType, LucideIcon> = {
   [ActivityType.REMOVE_TEAM_MEMBER]: UserMinus,
   [ActivityType.INVITE_TEAM_MEMBER]: Mail,
   [ActivityType.ACCEPT_INVITATION]: CheckCircle,
+  [ActivityType.UPLOAD_FILE]: Upload,
+  [ActivityType.DOWNLOAD_FILE]: Download,
+  [ActivityType.DELETE_FILE]: Trash2,
 };
 
 function getRelativeTime(date: Date) {
@@ -63,6 +69,12 @@ function formatAction(action: ActivityType): string {
       return 'You invited a team member';
     case ActivityType.ACCEPT_INVITATION:
       return 'You accepted an invitation';
+    case ActivityType.UPLOAD_FILE:
+      return 'You uploaded a file';
+    case ActivityType.DOWNLOAD_FILE:
+      return 'You downloaded a file';
+    case ActivityType.DELETE_FILE:
+      return 'You deleted a file';
     default:
       return 'Unknown action occurred';
   }
@@ -83,7 +95,7 @@ export default async function ActivityPage() {
         <CardContent>
           {logs.length > 0 ? (
             <ul className="space-y-4">
-              {logs.map((log) => {
+              {logs.map((log: any) => {
                 const Icon = iconMap[log.action as ActivityType] || Settings;
                 const formattedAction = formatAction(
                   log.action as ActivityType

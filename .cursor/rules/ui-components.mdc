@@ -1,0 +1,52 @@
+---
+globs: components/**/*.tsx,app/**/*.tsx
+---
+
+# UI Components and Styling
+
+## Component Library
+- Use components from [components/ui/](mdc:components/ui/) directory
+- Built with Radix UI primitives and Tailwind CSS
+- Consistent design system with orange accent color
+
+## Styling Conventions
+- Use Tailwind CSS classes for styling
+- Follow the existing color scheme (orange primary, gray neutrals)
+- Use consistent spacing and typography scales
+- Implement responsive design with mobile-first approach
+
+## Component Patterns
+```typescript
+// Button component usage
+import { Button } from '@/components/ui/button';
+
+<Button variant="default" size="lg" className="custom-class">
+  Button Text
+</Button>
+```
+
+## Form Components
+- Use `Input` and `Label` components for form fields
+- Implement proper form validation with error states
+- Use consistent form styling and spacing
+
+## Loading States
+- Use `Suspense` boundaries for loading states
+- Implement skeleton loaders for better UX
+- Show loading spinners for async operations
+
+## Error States
+- Display user-friendly error messages
+- Use consistent error styling (red text, error icons)
+- Provide actionable error recovery options
+
+## Accessibility
+- Use proper ARIA labels and roles
+- Ensure keyboard navigation works
+- Maintain good color contrast ratios
+- Use semantic HTML elements
+
+## Icons
+- Use Lucide React icons consistently
+- Import specific icons: `import { Upload, FolderOpen } from 'lucide-react'`
+- Use appropriate icon sizes and colors

@@ -1,0 +1,49 @@
+---
+globs: app/(dashboard)/spaces/**/*.tsx,lib/db/queries/spaces.ts
+---
+
+# Space Management (Multi-tenancy)
+
+## Space Concept
+Spaces are isolated workspaces for partners, adapted from the existing "teams" concept in the codebase.
+
+## Key Files
+- [lib/db/queries/spaces.ts](mdc:lib/db/queries/spaces.ts) - Space-related database queries
+- [app/(dashboard)/spaces/](mdc:app/(dashboard)/spaces/) - Space management pages
+
+## Space Structure
+```typescript
+type Space = {
+  id: number;
+  name: string;
+  slug: string; // URL-friendly identifier
+  description?: string;
+  s3Prefix: string; // S3 folder prefix for file organization
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+};
+```
+
+## Access Control
+- Users must be members of a space to access it
+- Check space membership before allowing file operations
+- Use `getUserSpaces()` to get user's accessible spaces
+- Implement proper breadcrumb navigation
+
+## URL Structure
+- `/spaces` - List all user's spaces
+- `/spaces/[slug]` - Individual space dashboard
+- `/spaces/[slug]/files` - Space file management
+- `/spaces/[slug]/upload` - File upload interface
+
+## Space Queries
+- `getUserSpaces(userId)` - Get spaces user has access to
+- `getSpaceBySlug(slug)` - Get space by slug
+- `getSpaceMembers(spaceId)` - Get space members
+- `getSpaceFiles(spaceId, pagination)` - Get space files
+
+## File Organization
+- Files are stored in S3 with space-specific prefixes
+- Use `space.s3Prefix` for S3 key organization
+- Implement proper file naming and versioning

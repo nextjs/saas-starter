@@ -1,10 +1,6 @@
-import { Suspense } from 'react';
-import { Login } from '../login';
+import { redirect } from 'next/navigation';
 
 export default function SignUpPage() {
-  return (
-    <Suspense>
-      <Login mode="signup" />
-    </Suspense>
-  );
+  // Sign-up is disabled - redirect to sign-in page
+  redirect('/sign-in');
 }

@@ -1,43 +1,61 @@
 'use client';
 
 import Link from 'next/link';
-import { useActionState } from 'react';
+import { useActionState, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CircleIcon, Loader2 } from 'lucide-react';
-import { signIn, signUp } from './actions';
+import { Loader2 } from 'lucide-react';
+import { signIn } from './actions';
+import { getMicrosoftAuthUrl } from './microsoft-actions';
 import { ActionState } from '@/lib/auth/middleware';
 
-export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
+export function Login() {
   const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect');
-  const priceId = searchParams.get('priceId');
-  const inviteId = searchParams.get('inviteId');
+  const redirect = searchParams.get('redirect') || '';
+  const priceId = searchParams.get('priceId') || '';
+  const inviteId = searchParams.get('inviteId') || '';
+  const error = searchParams.get('error') || '';
+  
   const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    mode === 'signin' ? signIn : signUp,
-    { error: '' }
+    signIn,
+    { error: error }
   );
+
+  const [microsoftLoading, setMicrosoftLoading] = useState(false);
+
+  const handleMicrosoftLogin = async () => {
+    setMicrosoftLoading(true);
+    try {
+      const authUrl = await getMicrosoftAuthUrl();
+      window.location.href = authUrl;
+    } catch (error) {
+      console.error('Error initiating Microsoft login:', error);
+      setMicrosoftLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-[100dvh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <CircleIcon className="h-12 w-12 text-orange-500" />
+          <img 
+            src="/SunlightenLogo_4C_182x87.svg" 
+            alt="Sunlighten" 
+            className="h-16 w-auto"
+          />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {mode === 'signin'
-            ? 'Sign in to your account'
-            : 'Create your account'}
+          Sign in to your account
         </h2>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <form className="space-y-6" action={formAction}>
-          <input type="hidden" name="redirect" value={redirect || ''} />
-          <input type="hidden" name="priceId" value={priceId || ''} />
-          <input type="hidden" name="inviteId" value={inviteId || ''} />
+          <input type="hidden" name="redirect" value={redirect} />
+          <input type="hidden" name="priceId" value={priceId} />
+          <input type="hidden" name="inviteId" value={inviteId} />
           <div>
             <Label
               htmlFor="email"
@@ -72,9 +90,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete={
-                  mode === 'signin' ? 'current-password' : 'new-password'
-                }
+                autoComplete="current-password"
                 defaultValue={state.password}
                 required
                 minLength={8}
@@ -100,10 +116,8 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                   <Loader2 className="animate-spin mr-2 h-4 w-4" />
                   Loading...
                 </>
-              ) : mode === 'signin' ? (
-                'Sign in'
               ) : (
-                'Sign up'
+                'Sign in'
               )}
             </Button>
           </div>
@@ -116,24 +130,35 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="px-2 bg-gray-50 text-gray-500">
-                {mode === 'signin'
-                  ? 'New to our platform?'
-                  : 'Already have an account?'}
+                Or continue with
               </span>
             </div>
           </div>
 
           <div className="mt-6">
-            <Link
-              href={`${mode === 'signin' ? '/sign-up' : '/sign-in'}${
-                redirect ? `?redirect=${redirect}` : ''
-              }${priceId ? `&priceId=${priceId}` : ''}`}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            <Button
+              type="button"
+              onClick={handleMicrosoftLogin}
+              disabled={microsoftLoading}
+              className="w-full flex justify-center items-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
             >
-              {mode === 'signin'
-                ? 'Create an account'
-                : 'Sign in to existing account'}
-            </Link>
+              {microsoftLoading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  Connecting...
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
+                    <path
+                      fill="#0078d4"
+                      d="M11.4 24H0V12.6h11.4V24zM24 24H12.6V12.6H24V24zM11.4 11.4H0V0h11.4v11.4zM24 11.4H12.6V0H24v11.4z"
+                    />
+                  </svg>
+                  Login with Microsoft 365
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </div>

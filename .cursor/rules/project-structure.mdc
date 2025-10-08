@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+---
+
+# OTA Image Management Portal - Project Structure
+
+This is a Next.js 15 OTA Image Management Portal built for partners to upload and manage Android tablet OTA images.
+
+## Core Architecture
+- **Framework**: Next.js 15 with App Router
+- **Database**: PostgreSQL with Drizzle ORM
+- **Storage**: AWS S3 for file uploads
+- **Authentication**: Custom JWT-based session system
+- **Styling**: Tailwind CSS with custom UI components
+
+## Key Directories
+- `app/` - Next.js App Router pages and API routes
+  - `(dashboard)/` - Protected dashboard pages
+  - `(login)/` - Authentication pages
+  - `api/` - Backend API endpoints
+- `lib/` - Core application logic
+  - `auth/` - Authentication and session management
+  - `db/` - Database schema, queries, and migrations
+  - `s3/` - AWS S3 integration
+  - `validations/` - Zod schemas for data validation
+- `components/ui/` - Reusable UI components
+- `docs/` - Project documentation
+
+## Database Schema
+- `users` - User accounts with authentication
+- `teams` - Spaces/workspaces (adapted from teams concept)
+- `team_members` - User-space relationships
+- `uploads` - File upload records
+- `activity_logs` - User activity tracking
+
+## Authentication Flow
+- Custom JWT session system (not NextAuth.js)
+- Session management in [lib/auth/session.ts](mdc:lib/auth/session.ts)
+- Middleware protection in [middleware.ts](mdc:middleware.ts)
+
+## File Upload Flow
+- Pre-signed S3 URLs for direct uploads
+- No server-side MD5 verification (simplified)
+- Upload metadata stored in database

@@ -5,8 +5,22 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1726443359662,
-      "tag": "0000_soft_the_anarchist",
+      "when": 1738060800000,
+      "tag": "0000_initial_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1759309348990,
+      "tag": "0001_perfect_exodus",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759385421480,
+      "tag": "0002_cheerful_shen",
       "breakpoints": true
     }
   ]

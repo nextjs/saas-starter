@@ -39,3 +39,6 @@ next-env.d.ts
 # Docker
 postgres_data/
 .env*.local
+test-results/
+playwright-report/
+.env.production

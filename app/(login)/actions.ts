@@ -19,7 +19,6 @@ import {
 import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createCheckoutSession } from '@/lib/payments/stripe';
 import { getUser, getUserWithTeam } from '@/lib/db/queries';
 import {
   validatedAction,
@@ -73,6 +72,15 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 
   const { user: foundUser, team: foundTeam } = userWithTeam[0];
 
+  // Check if user has a password hash (not a Microsoft 365 user)
+  if (!foundUser.passwordHash) {
+    return {
+      error: 'Invalid email or password. Please try again.',
+      email,
+      password
+    };
+  }
+
   const isPasswordValid = await comparePasswords(
     password,
     foundUser.passwordHash
@@ -91,135 +99,132 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN)
   ]);
 
-  const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: foundTeam, priceId });
-  }
-
+  // Use redirect from next/navigation for server actions
   redirect('/dashboard');
 });
 
-const signUpSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  inviteId: z.string().optional()
-});
+// SignUp functionality disabled - users must be added by admin
+// const signUpSchema = z.object({
+//   email: z.string().email(),
+//   password: z.string().min(8),
+//   inviteId: z.string().optional()
+// });
 
-export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password, inviteId } = data;
+// export const signUp = validatedAction(signUpSchema, async (data, formData) => {
+//   const { email, password, inviteId } = data;
 
-  const existingUser = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+//   const existingUser = await db
+//     .select()
+//     .from(users)
+//     .where(eq(users.email, email))
+//     .limit(1);
 
-  if (existingUser.length > 0) {
-    return {
-      error: 'Failed to create user. Please try again.',
-      email,
-      password
-    };
-  }
+//   if (existingUser.length > 0) {
+//     return {
+//       error: 'Failed to create user. Please try again.',
+//       email,
+//       password
+//     };
+//   }
 
-  const passwordHash = await hashPassword(password);
+//   const passwordHash = await hashPassword(password);
 
-  const newUser: NewUser = {
-    email,
-    passwordHash,
-    role: 'owner' // Default role, will be overridden if there's an invitation
-  };
+//   const newUser: NewUser = {
+//     email,
+//     passwordHash,
+//     role: 'owner' // Default role, will be overridden if there's an invitation
+//   };
 
-  const [createdUser] = await db.insert(users).values(newUser).returning();
+//   const [createdUser] = await db.insert(users).values(newUser).returning();
 
-  if (!createdUser) {
-    return {
-      error: 'Failed to create user. Please try again.',
-      email,
-      password
-    };
-  }
+//   if (!createdUser) {
+//     return {
+//       error: 'Failed to create user. Please try again.',
+//       email,
+//       password
+//     };
+//   }
 
-  let teamId: number;
-  let userRole: string;
-  let createdTeam: typeof teams.$inferSelect | null = null;
+//   let teamId: number;
+//   let userRole: string;
+//   let createdTeam: typeof teams.$inferSelect | null = null;
 
-  if (inviteId) {
-    // Check if there's a valid invitation
-    const [invitation] = await db
-      .select()
-      .from(invitations)
-      .where(
-        and(
-          eq(invitations.id, parseInt(inviteId)),
-          eq(invitations.email, email),
-          eq(invitations.status, 'pending')
-        )
-      )
-      .limit(1);
+//   if (inviteId) {
+//     // Check if there's a valid invitation
+//     const [invitation] = await db
+//       .select()
+//       .from(invitations)
+//       .where(
+//         and(
+//           eq(invitations.id, parseInt(inviteId)),
+//           eq(invitations.email, email),
+//           eq(invitations.status, 'pending')
+//         )
+//       )
+//       .limit(1);
 
-    if (invitation) {
-      teamId = invitation.teamId;
-      userRole = invitation.role;
+//     if (invitation) {
+//       teamId = invitation.teamId;
+//       userRole = invitation.role;
 
-      await db
-        .update(invitations)
-        .set({ status: 'accepted' })
-        .where(eq(invitations.id, invitation.id));
+//       await db
+//         .update(invitations)
+//         .set({ status: 'accepted' })
+//         .where(eq(invitations.id, invitation.id));
 
-      await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
+//       await logActivity(teamId, createdUser.id, ActivityType.ACCEPT_INVITATION);
 
-      [createdTeam] = await db
-        .select()
-        .from(teams)
-        .where(eq(teams.id, teamId))
-        .limit(1);
-    } else {
-      return { error: 'Invalid or expired invitation.', email, password };
-    }
-  } else {
-    // Create a new team if there's no invitation
-    const newTeam: NewTeam = {
-      name: `${email}'s Team`
-    };
+//       [createdTeam] = await db
+//         .select()
+//         .from(teams)
+//         .where(eq(teams.id, teamId))
+//         .limit(1);
+//     } else {
+//       return { error: 'Invalid or expired invitation.', email, password };
+//     }
+//   } else {
+//     // Create a new team if there's no invitation
+//     const teamSlug = email.split('@')[0].toLowerCase().replace(/[^a-z0-9]/g, '-');
+//     const s3Prefix = `team-${teamSlug}-${Date.now()}`;
+    
+//     const newTeam: NewTeam = {
+//       name: `${email}'s Team`,
+//       slug: teamSlug,
+//       s3Prefix: s3Prefix
+//     };
 
-    [createdTeam] = await db.insert(teams).values(newTeam).returning();
+//     [createdTeam] = await db.insert(teams).values(newTeam).returning();
 
-    if (!createdTeam) {
-      return {
-        error: 'Failed to create team. Please try again.',
-        email,
-        password
-      };
-    }
+//     if (!createdTeam) {
+//       return {
+//         error: 'Failed to create team. Please try again.',
+//         email,
+//         password
+//       };
+//     }
 
-    teamId = createdTeam.id;
-    userRole = 'owner';
+//     teamId = createdTeam.id;
+//     userRole = 'owner';
 
-    await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
-  }
+//     await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
+//   }
 
-  const newTeamMember: NewTeamMember = {
-    userId: createdUser.id,
-    teamId: teamId,
-    role: userRole
-  };
+//   const newTeamMember: NewTeamMember = {
+//     userId: createdUser.id,
+//     teamId: teamId,
+//     role: userRole
+//   };
 
-  await Promise.all([
-    db.insert(teamMembers).values(newTeamMember),
-    logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
-    setSession(createdUser)
-  ]);
+//   await Promise.all([
+//     db.insert(teamMembers).values(newTeamMember),
+//     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP)
+//   ]);
+  
+//   // Set session after user is created and has an ID
+//   await setSession(createdUser);
 
-  const redirectTo = formData.get('redirect') as string | null;
-  if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: createdTeam, priceId });
-  }
-
-  redirect('/dashboard');
-});
+//   redirect('/dashboard');
+// });
 
 export async function signOut() {
   const user = (await getUser()) as User;
@@ -238,6 +243,16 @@ export const updatePassword = validatedActionWithUser(
   updatePasswordSchema,
   async (data, _, user) => {
     const { currentPassword, newPassword, confirmPassword } = data;
+
+    // Check if user has a password hash (not a Microsoft 365 user)
+    if (!user.passwordHash) {
+      return {
+        currentPassword,
+        newPassword,
+        confirmPassword,
+        error: 'Password update not available for Microsoft 365 users.'
+      };
+    }
 
     const isPasswordValid = await comparePasswords(
       currentPassword,
@@ -296,6 +311,14 @@ export const deleteAccount = validatedActionWithUser(
   deleteAccountSchema,
   async (data, _, user) => {
     const { password } = data;
+
+    // Check if user has a password hash (not a Microsoft 365 user)
+    if (!user.passwordHash) {
+      return {
+        password,
+        error: 'Account deletion not available for Microsoft 365 users.'
+      };
+    }
 
     const isPasswordValid = await comparePasswords(password, user.passwordHash);
     if (!isPasswordValid) {

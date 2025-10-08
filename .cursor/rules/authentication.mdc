@@ -1,0 +1,49 @@
+---
+globs: lib/auth/**/*.ts,app/(login)/**/*.ts,app/api/**/*.ts
+---
+
+# Authentication System Patterns
+
+## Custom JWT Session System
+This project uses a custom JWT-based authentication system, NOT NextAuth.js.
+
+## Key Files
+- [lib/auth/session.ts](mdc:lib/auth/session.ts) - Core session management
+- [lib/auth/middleware.ts](mdc:lib/auth/middleware.ts) - Authentication middleware
+- [app/(login)/actions.ts](mdc:app/(login)/actions.ts) - Login/signup actions
+
+## Session Management
+```typescript
+import { getSession, setSession } from '@/lib/auth/session';
+
+// Get current session
+const session = await getSession();
+if (!session?.user?.id) {
+  // Handle unauthenticated user
+}
+
+// Set session after login
+await setSession(user);
+```
+
+## Authentication Checks
+- Always use `getSession()` instead of `getServerSession()`
+- Check for `session?.user?.id` before processing protected requests
+- Return 401 status for unauthorized access
+
+## Password Handling
+- Use `hashPassword()` and `comparePasswords()` from session.ts
+- Never store plain text passwords
+- Use bcryptjs for password hashing
+
+## Session Data Structure
+```typescript
+type SessionData = {
+  user: { id: number };
+  expires: string;
+};
+```
+
+## Environment Variables
+- `AUTH_SECRET` - Required for JWT signing
+- Must be set in `.env.local` for development

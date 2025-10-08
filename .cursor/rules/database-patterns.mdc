@@ -1,0 +1,44 @@
+---
+globs: lib/db/**/*.ts,app/api/**/*.ts
+---
+
+# Database and API Patterns
+
+## Drizzle ORM Usage
+- Import types from [lib/db/schema.ts](mdc:lib/db/schema.ts)
+- Use query functions from [lib/db/queries/](mdc:lib/db/queries/) directory
+- Always handle database errors gracefully
+
+## Query Organization
+- Keep database queries in separate files under `lib/db/queries/`
+- Use descriptive function names (e.g., `getUserSpaces`, `getSpaceBySlug`)
+- Include proper error handling and type safety
+
+## API Route Structure
+```typescript
+export async function GET(request: NextRequest) {
+  try {
+    const session = await getSession();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
+    // Your logic here
+    
+    return NextResponse.json({ data });
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+```
+
+## Authentication Checks
+- Always verify session with `getSession()` before processing requests
+- Return 401 for unauthenticated requests
+- Use `getUserSpaces()` to check space access permissions
+
+## Error Responses
+- Use consistent error message format
+- Include appropriate HTTP status codes
+- Log errors for debugging but don't expose sensitive information

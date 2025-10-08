@@ -1,96 +1,136 @@
-# Next.js SaaS Starter
+# Sunlighten - Partner Storage
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
-
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+A comprehensive Next.js application for partners to upload and manage Android tablet OTA images with enterprise-grade features and robust testing.
 
 ## Features
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+- **File Management**: Upload, download, and manage OTA image files
+- **Space Management**: Organize files by teams/partners
+- **User Authentication**: Secure JWT-based authentication system
+- **Role-Based Access**: Owner and Member roles with different permissions
+- **Activity Logging**: Comprehensive audit trail for all actions
+- **Responsive Design**: Mobile-first design with Tailwind CSS
+- **Comprehensive Testing**: Full E2E test suite with Playwright
+- **API Integration**: RESTful APIs with proper error handling
+- **File Validation**: Type and size validation for uploads
+- **Progress Tracking**: Real-time upload progress and status
 
 ## Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Framework**: [Next.js 15](https://nextjs.org/) with App Router
+- **Database**: [PostgreSQL](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Storage**: [AWS S3](https://aws.amazon.com/s3/) for file uploads
+- **Authentication**: Custom JWT-based session system
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) with custom components
+- **Testing**: [Playwright](https://playwright.dev/) for E2E testing
+- **UI Components**: Custom components with [Radix UI](https://www.radix-ui.com/)
+- **Validation**: [Zod](https://zod.dev/) for schema validation
 
 ## Getting Started
 
 ```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
-pnpm install
+git clone <repository-url>
+cd external_storage_portal
+npm install
 ```
 
 ## Running Locally
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+### 1. Environment Setup
 
-```bash
-stripe login
+Create your `.env.local` file with the following variables:
+
+```env
+DATABASE_URL="postgresql://username:password@localhost:5432/ota_portal"
+AUTH_SECRET="your-secret-key-here"
+S3_ACCESS_KEY_ID="your-aws-access-key"
+S3_SECRET_ACCESS_KEY="your-aws-secret-key"
+S3_REGION="us-east-1"
+S3_BUCKET="your-s3-bucket-name"
 ```
 
-Use the included setup script to create your `.env` file:
+### 2. Database Setup
 
 ```bash
-pnpm db:setup
+# Setup database
+npm run db:setup
+
+# Run migrations
+npm run db:migrate
+
+# Seed with test data
+npm run db:seed
 ```
 
-Run the database migrations and seed the database with a default user and team:
+This creates:
+- **Test User**: `test@test.com` / `admin123`
+- **Test Space**: Blaupunkt OTA images
+- **Sample Data**: Users, teams, and file records
+
+### 3. Start Development Server
 
 ```bash
-pnpm db:migrate
-pnpm db:seed
+npm run dev
 ```
 
-This will create the following user and team:
+Open [http://localhost:3000](http://localhost:3000) to see the application.
 
-- User: `test@test.com`
-- Password: `admin123`
+**Production URL**: [https://partner-storage.infra.sunlighten.com](https://partner-storage.infra.sunlighten.com)
 
-You can also create new users through the `/sign-up` route.
+## Testing
 
-Finally, run the Next.js development server:
+### E2E Testing with Playwright
 
 ```bash
-pnpm dev
+# Install Playwright browsers
+npx playwright install
+
+# Run all tests
+npm test
+
+# Run tests with UI
+npm run test:ui
+
+# Run specific test file
+npx playwright test auth.spec.ts
+
+# Run tests for specific browser
+npx playwright test --project=chromium
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+### Test Categories
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+- **Authentication**: Login, logout, session management
+- **Dashboard**: Navigation, data display, responsive design
+- **Spaces**: File management, upload/download, metadata
+- **API Integration**: Endpoint testing, error handling
+- **File Upload**: Various file types, progress tracking
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
+### Test Documentation
+
+See [docs/TESTING.md](docs/TESTING.md) for comprehensive testing guide.
+
+## Project Structure
+
 ```
-
-## Testing Payments
-
-To test Stripe payments, use the following test card details:
-
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+├── app/                    # Next.js App Router pages
+│   ├── (dashboard)/        # Protected dashboard pages
+│   ├── (login)/           # Authentication pages
+│   └── api/               # API routes
+├── lib/                   # Core application logic
+│   ├── auth/              # Authentication system
+│   ├── db/                # Database schema and queries
+│   └── s3/                # AWS S3 integration
+├── tests/                 # E2E test suite
+│   ├── utils/             # Test utilities and helpers
+│   └── *.spec.ts          # Test files
+├── components/            # Reusable UI components
+└── docs/                  # Project documentation
+```
 
 ## Going to Production
 
 When you're ready to deploy your SaaS application to production, follow these steps:
-
-### Set up a production Stripe webhook
-
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
 
 ### Deploy to Vercel
 
@@ -103,10 +143,8 @@ When you're ready to deploy your SaaS application to production, follow these st
 In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
 
 1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+2. `POSTGRES_URL`: Set this to your production database URL.
+3. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
 
 ## Other Templates
 

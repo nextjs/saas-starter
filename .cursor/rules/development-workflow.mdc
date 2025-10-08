@@ -1,0 +1,51 @@
+---
+description: Development workflow and common tasks
+---
+
+# Development Workflow
+
+## Getting Started
+1. Ensure Docker is running for PostgreSQL
+2. Run `npm run db:setup` to start database
+3. Run `npm run db:migrate` to apply migrations
+4. Run `npm run db:seed` to populate test data
+5. Run `npm run dev` to start development server
+
+## Database Management
+- Use Drizzle Kit for migrations: `npx drizzle-kit generate`
+- Apply migrations: `npx drizzle-kit migrate`
+- Check database schema: `npx drizzle-kit introspect`
+
+## Environment Setup
+Required environment variables in `.env.local`:
+```
+POSTGRES_URL="postgresql://postgres:postgres@localhost:54322/postgres"
+AUTH_SECRET="your-super-secret-jwt-key"
+S3_ACCESS_KEY_ID="your-aws-key"
+S3_SECRET_ACCESS_KEY="your-aws-secret"
+S3_REGION="us-east-1"
+S3_BUCKET="your-s3-bucket"
+```
+
+## Testing Credentials
+- Email: `admin@example.com`
+- Password: `password123` (from seed data)
+
+## Common Issues
+1. **JWT Errors**: Ensure `AUTH_SECRET` is set
+2. **Database Connection**: Check if Docker container is running
+3. **S3 Errors**: Verify AWS credentials and bucket permissions
+4. **Next.js 15 Params**: Always await `params` in server components
+
+## Code Quality
+- Use TypeScript strictly
+- Follow existing patterns and conventions
+- Implement proper error handling
+- Add appropriate logging for debugging
+- Use consistent naming conventions
+
+## File Organization
+- Keep related functionality together
+- Use descriptive file and function names
+- Separate concerns (auth, database, UI, etc.)
+- Follow Next.js App Router conventions
