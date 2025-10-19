@@ -1,14 +1,14 @@
-'use client';
+'use client';// 声明这是前端组件，支持事件和交互
 
-import Link from 'next/link';
-import { useActionState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import Link from 'next/link';// 跳转路由
+import { useActionState } from 'react';// React 18 的表单处理新钩子
+import { useSearchParams } from 'next/navigation';// 读取URL参数，支持跳转、邀请等
+import { Button } from '@/components/ui/button';// 引入项目自定义UI组件
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CircleIcon, Loader2 } from 'lucide-react';
-import { signIn, signUp } from './actions';
-import { ActionState } from '@/lib/auth/middleware';
+import { CircleIcon, Loader2 } from 'lucide-react';// 图标，用于美化UI
+import { signIn, signUp } from './actions';// 导入实际登录/注册逻辑（应该是 server actions）
+import { ActionState } from '@/lib/auth/middleware';// 状态类型定义
 
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const searchParams = useSearchParams();

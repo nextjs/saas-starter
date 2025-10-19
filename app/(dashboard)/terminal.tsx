@@ -7,20 +7,21 @@ export function Terminal() {
   const [terminalStep, setTerminalStep] = useState(0);
   const [copied, setCopied] = useState(false);
   const terminalSteps = [
-    'git clone https://github.com/nextjs/saas-starter',
-    'pnpm install',
-    'pnpm db:setup',
-    'pnpm db:migrate',
-    'pnpm db:seed',
-    'pnpm dev 🎉',
+    '樊宵 · 时代诗人',
+    '逐梦足球场',
+    '光影导演人生',
+    '浪漫主义的自由书写',
+    '"诗，是流动的光影与不灭的梦想"',
+    '—— 你好，世界 🎉',
   ];
+  
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setTerminalStep((prev) =>
         prev < terminalSteps.length - 1 ? prev + 1 : prev
       );
-    }, 500);
+    }, 1000);
 
     return () => clearTimeout(timer);
   }, [terminalStep]);
