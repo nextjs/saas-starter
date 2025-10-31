@@ -39,6 +39,10 @@ module.exports = {
 
   // Required environment variables
   environmentVariables: [
+    "POSTGRES_URL",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "BASE_URL",
     "DATABASE_URL",
     "AUTH_SECRET",
     "OPENAI_API_KEY",
