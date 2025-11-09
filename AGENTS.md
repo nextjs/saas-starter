@@ -17,3 +17,7 @@ Use Conventional Commits (`feat:`, `fix:`, `refactor:`) as in `fix: mutate inste
 
 ## Security & Configuration Tips
 Create secrets through `pnpm db:setup` or `openssl rand -base64 32` and keep `.env.local` out of git. Provide Stripe keys and Postgres URLs through environment variables in Vercel or Docker overrides. When editing auth or middleware, ensure new routes still call `getUser()`/`getTeamForUser()` and avoid leaking sensitive SWR fallback data.
+
+# Role
+あなたはNext.js 14とTypeScriptの専門家です。
+フルスタック開発の経験が豊富です。

@@ -5,6 +5,7 @@ import {
   text,
   timestamp,
   integer,
+  pgEnum,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
@@ -112,6 +113,106 @@ export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
   }),
 }));
 
+// Articles
+export const articleStatusEnum = pgEnum('article_status', [
+  'draft',
+  'published',
+  'archived',
+]);
+
+export const articles = pgTable('articles', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content'),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+  status: articleStatusEnum('status').notNull().default('draft'),
+  authorId: integer('author_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  teamId: integer('team_id')
+    .notNull()
+    .references(() => teams.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const categories = pgTable('categories', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+});
+
+export const tags = pgTable('tags', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  slug: varchar('slug', { length: 255 }).notNull().unique(),
+});
+
+export const articlesToCategories = pgTable('articles_to_categories', {
+  articleId: integer('article_id')
+    .notNull()
+    .references(() => articles.id, { onDelete: 'cascade' }),
+  categoryId: integer('category_id')
+    .notNull()
+    .references(() => categories.id, { onDelete: 'cascade' }),
+});
+
+export const articlesToTags = pgTable('articles_to_tags', {
+  articleId: integer('article_id')
+    .notNull()
+    .references(() => articles.id, { onDelete: 'cascade' }),
+  tagId: integer('tag_id')
+    .notNull()
+    .references(() => tags.id, { onDelete: 'cascade' }),
+});
+
+// Relations
+export const articlesRelations = relations(articles, ({ one, many }) => ({
+  author: one(users, {
+    fields: [articles.authorId],
+    references: [users.id],
+  }),
+  team: one(teams, {
+    fields: [articles.teamId],
+    references: [teams.id],
+  }),
+  articlesToCategories: many(articlesToCategories),
+  articlesToTags: many(articlesToTags),
+}));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  articlesToCategories: many(articlesToCategories),
+}));
+
+export const tagsRelations = relations(tags, ({ many }) => ({
+  articlesToTags: many(articlesToTags),
+}));
+
+export const articlesToCategoriesRelations = relations(
+  articlesToCategories,
+  ({ one }) => ({
+    article: one(articles, {
+      fields: [articlesToCategories.articleId],
+      references: [articles.id],
+    }),
+    category: one(categories, {
+      fields: [articlesToCategories.categoryId],
+      references: [categories.id],
+    }),
+  })
+);
+
+export const articlesToTagsRelations = relations(articlesToTags, ({ one }) => ({
+  article: one(articles, {
+    fields: [articlesToTags.articleId],
+    references: [articles.id],
+  }),
+  tag: one(tags, {
+    fields: [articlesToTags.tagId],
+    references: [tags.id],
+  }),
+}));
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Team = typeof teams.$inferSelect;
@@ -127,6 +228,13 @@ export type TeamDataWithMembers = Team & {
     user: Pick<User, 'id' | 'name' | 'email'>;
   })[];
 };
+
+export type Article = typeof articles.$inferSelect;
+export type NewArticle = typeof articles.$inferInsert;
+export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;
+export type Tag = typeof tags.$inferSelect;
+export type NewTag = typeof tags.$inferInsert;
 
 export enum ActivityType {
   SIGN_UP = 'SIGN_UP',
