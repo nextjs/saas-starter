@@ -85,6 +85,28 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
             </div>
           </div>
 
+          {mode === 'signup' && (
+            <div className="flex items-start">
+              <div className="flex items-center h-5">
+                <input
+                  id="newsletter"
+                  name="newsletter"
+                  type="checkbox"
+                  defaultChecked={true}
+                  className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                />
+              </div>
+              <div className="ml-3 text-sm">
+                <label htmlFor="newsletter" className="font-medium text-gray-700">
+                  Abonner på nyhetsbrev
+                </label>
+                <p className="text-gray-500">
+                  Få oppdateringer og tips for å forbedre dine prompts og e-poster
+                </p>
+              </div>
+            </div>
+          )}
+
           {state?.error && (
             <div className="text-red-500 text-sm">{state.error}</div>
           )}

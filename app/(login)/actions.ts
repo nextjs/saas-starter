@@ -103,11 +103,12 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 const signUpSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
-  inviteId: z.string().optional()
+  inviteId: z.string().optional(),
+  newsletter: z.string().optional()
 });
 
 export const signUp = validatedAction(signUpSchema, async (data, formData) => {
-  const { email, password, inviteId } = data;
+  const { email, password, inviteId, newsletter } = data;
 
   const existingUser = await db
     .select()
@@ -124,11 +125,15 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   }
 
   const passwordHash = await hashPassword(password);
+  const newsletterSubscribed = newsletter === 'on';
 
   const newUser: NewUser = {
     email,
     passwordHash,
-    role: 'owner' // Default role, will be overridden if there's an invitation
+    role: 'owner', // Default role, will be overridden if there's an invitation
+    newsletterSubscribed,
+    dailyPromptLimit: 4, // Registered users get 4 per day (1 more than anonymous)
+    signupBonusUsed: false // Will be marked true after first day
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
