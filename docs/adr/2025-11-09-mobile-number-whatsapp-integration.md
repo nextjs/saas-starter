@@ -45,7 +45,7 @@ Added five new columns to the `users` table:
 **Existing Users:**
 
 - Dashboard displays prominent amber banner prompting mobile number addition
-- Banner appears on all dashboard pages except /dashboard/general
+- Banner appears on all dashboard pages except /dashboard/settings
 - Can be dismissed temporarily but persists across sessions until number is added
 
 **Verification Process:**
@@ -58,7 +58,7 @@ Added five new columns to the `users` table:
 
 **Number Management:**
 
-- Users can view, change, and re-verify their mobile number in /dashboard/general
+- Users can view, change, and re-verify their mobile number in /dashboard/settings
 - Changing number resets verification status
 - Visual indicators show verification status (✓ Verified / ⚠ Not verified)
 

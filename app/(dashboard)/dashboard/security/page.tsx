@@ -3,12 +3,14 @@
 import { deleteAccount, updatePassword } from "@/app/(login)/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ActivityType } from "@/lib/db/activity";
 import {
   AlertCircle,
   CheckCircle,
+  Download,
   Loader2,
   Lock,
   LogIn,
@@ -19,7 +21,7 @@ import {
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import useSWR from "swr";
 
 type PasswordState = {
@@ -102,6 +104,8 @@ export default function SecurityPage() {
     FormData
   >(deleteAccount, {});
 
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+
   return (
     <section className="flex-1 p-4 lg:p-8">
       <Card className="mb-8">
@@ -183,34 +187,66 @@ export default function SecurityPage() {
 
       <Card className="mb-8">
         <CardHeader className="pt-6">
-          <CardTitle>Delete Account</CardTitle>
+          <CardTitle>Account Actions</CardTitle>
         </CardHeader>
         <CardContent className="py-6">
           <p className="text-sm text-gray-500 mb-4">
-            Account deletion is non-reversable. Please proceed with caution.
+            Export your data or permanently delete your account.
           </p>
-          <form action={deleteAction} className="space-y-4">
-            <div>
-              <Label htmlFor="delete-password" className="mb-2">
-                Confirm Password
-              </Label>
-              <Input
-                id="delete-password"
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                maxLength={100}
-                defaultValue={deleteState.password}
-              />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <form method="get" action="/api/user/export">
+              <Button
+                type="submit"
+                className="bg-white border border-gray-200 text-gray-900 flex items-center gap-2"
+              >
+                <Download className="h-4 w-4" />
+                Export Data
+              </Button>
+            </form>
+
+            <div className="ml-0 sm:ml-auto">
+              <Button
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
+                onClick={() => setDeleteModalOpen(true)}
+              >
+                <Trash2 className="h-4 w-4" />
+                Delete Account
+              </Button>
             </div>
-            {deleteState.error && (
-              <p className="text-red-500 text-sm">{deleteState.error}</p>
-            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <ConfirmDialog
+        open={deleteModalOpen}
+        title="Delete Account"
+        description="Account deletion is non-reversible. Please enter your password to confirm."
+        onClose={() => setDeleteModalOpen(false)}
+      >
+        <form action={deleteAction} className="space-y-4">
+          <div>
+            <Label htmlFor="delete-password" className="mb-2">
+              Confirm Password
+            </Label>
+            <Input
+              id="delete-password"
+              name="password"
+              type="password"
+              required
+              minLength={8}
+              maxLength={100}
+              defaultValue={deleteState.password}
+            />
+          </div>
+          {deleteState.error && (
+            <p className="text-red-500 text-sm">{deleteState.error}</p>
+          )}
+          <div className="flex justify-end">
             <Button
               type="submit"
               variant="destructive"
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
               disabled={isDeletePending}
             >
               {isDeletePending ? (
@@ -220,14 +256,14 @@ export default function SecurityPage() {
                 </>
               ) : (
                 <>
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                   Delete Account
                 </>
               )}
             </Button>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </form>
+      </ConfirmDialog>
 
       <Card>
         <CardHeader className="pt-6">

@@ -6,6 +6,7 @@ import {
   Activity,
   Bookmark,
   MessageSquare,
+  Send,
   Settings,
   Shield,
 } from "lucide-react";
@@ -26,20 +27,29 @@ export default function DashboardLayout({
 
   useEffect(() => {
     // Check if user has mobile number
-    if (user && !user.mobileNumber && pathname !== "/dashboard/general") {
+    if (
+      user &&
+      !user.mobileNumber &&
+      pathname !== "/dashboard/integrations" &&
+      pathname !== "/dashboard/settings"
+    ) {
       setShowMobilePrompt(true);
     } else {
       setShowMobilePrompt(false);
     }
   }, [user, pathname]);
 
-  const navItems = useMemo(() => [
-    { href: "/dashboard/memories", icon: Bookmark, label: "Memories" },
-    { href: "/dashboard/chat", icon: MessageSquare, label: "Chat" },
-    { href: "/dashboard/metrics", icon: Activity, label: "Metrics" },
-    { href: "/dashboard/security", icon: Shield, label: "Security" },
-    { href: "/dashboard/general", icon: Settings, label: "General" },
-  ], []);
+  const navItems = useMemo(
+    () => [
+      { href: "/dashboard/memories", icon: Bookmark, label: "Memories" },
+      { href: "/dashboard/chat", icon: MessageSquare, label: "Chat" },
+      { href: "/dashboard/metrics", icon: Activity, label: "Metrics" },
+      { href: "/dashboard/integrations", icon: Send, label: "Integrations" },
+      { href: "/dashboard/security", icon: Shield, label: "Security" },
+      { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+    ],
+    []
+  );
 
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
@@ -96,7 +106,7 @@ export default function DashboardLayout({
                     Please add and verify your mobile number to access WhatsApp
                     services.
                   </p>
-                  <Link href="/dashboard/general">
+                  <Link href="/dashboard/integrations">
                     <Button
                       className="mt-2 bg-amber-600 hover:bg-amber-700 text-white text-sm"
                       size="sm"

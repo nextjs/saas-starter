@@ -1,5 +1,6 @@
 // relations removed as team-related tables are dropped
 import {
+  boolean,
   integer,
   pgTable,
   serial,
@@ -85,7 +86,25 @@ export const invitations = pgTable("invitations", {
   status: varchar("status", { length: 20 }).notNull().default("pending"),
 });
 
+export const integrations = pgTable("integrations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  type: varchar("type", { length: 50 }).notNull(), // 'whatsapp', 'telegram', 'google_calendar', 'todoist'
+  enabled: boolean("enabled").notNull().default(false),
+  accessToken: text("access_token"),
+  refreshToken: text("refresh_token"),
+  externalId: varchar("external_id", { length: 255 }), // User's ID in external service
+  metadata: text("metadata"), // JSON-encoded additional data
+  lastSyncedAt: timestamp("last_synced_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Memory = typeof memories.$inferSelect;
 export type NewMemory = typeof memories.$inferInsert;
+export type Integration = typeof integrations.$inferSelect;
+export type NewIntegration = typeof integrations.$inferInsert;

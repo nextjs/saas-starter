@@ -4,7 +4,7 @@
 
 Unvios uses Twilio to send SMS verification codes for mobile number verification. This is required for WhatsApp integration.
 
-**Status**: ✅ Implemented and Ready  
+**Status**: ✅ Implemented and Ready
 **Related ADR**: `docs/adr/2025-11-09-mobile-number-whatsapp-integration.md`
 
 ---
@@ -48,7 +48,7 @@ pnpm dev
 
 ### Step 5: Test
 
-1. Navigate to: `http://localhost:3000/sign-up` or `/dashboard/general`
+1. Navigate to: `http://localhost:3000/sign-up` or `/dashboard/settings`
 2. Enter phone number with country code
 3. Click "Send Verification Code"
 4. **You should receive SMS within seconds!** 📨
@@ -58,11 +58,13 @@ pnpm dev
 ## Cost & Pricing
 
 **Free Trial:**
+
 - $15 credit = ~750 SMS
 - Can only send to verified numbers
 - Includes "Sent from Twilio Trial Account" prefix
 
 **After Trial:**
+
 - No monthly fees (pay-as-you-go)
 - Portugal: ~$0.056 per SMS
 - US: ~$0.0079 per SMS
@@ -77,6 +79,7 @@ See [Twilio Pricing](https://www.twilio.com/pricing/messaging) for all countries
 **The system works without Twilio configured!**
 
 If `TWILIO_*` variables are missing:
+
 - ✅ Verification codes are logged to console
 - ✅ Full functionality for development/testing
 - ✅ Look for: `📱 SMS VERIFICATION CODE` in terminal
@@ -88,20 +91,24 @@ If `TWILIO_*` variables are missing:
 ## Upgrading to Production
 
 ### 1. Upgrade Account
+
 - Go to: Twilio Console → **Billing**
 - Add payment method
 - No monthly fees, pay per SMS only
 
 ### 2. Enable International SMS
+
 - Go to: **Settings** → **Geo Permissions**
 - Enable countries you serve (e.g., Portugal, US)
 
 ### 3. Remove Trial Limitations
+
 - Send to any number (not just verified)
 - Remove trial message prefix
 - Higher sending limits
 
 ### 4. Set Up Monitoring
+
 - Configure usage alerts
 - Set spending limits
 - Monitor delivery rates
@@ -135,11 +142,13 @@ If `TWILIO_*` variables are missing:
 ## Implementation Details
 
 **Files:**
+
 - `lib/firebase-admin.ts` - `sendVerificationSMS()` function
 - `app/api/user/mobile/route.ts` - API endpoint
 - Database: `users` table with mobile verification fields
 
 **Flow:**
+
 1. User enters phone number
 2. System generates 6-digit code
 3. Code saved to DB with 10-minute expiration
@@ -148,6 +157,7 @@ If `TWILIO_*` variables are missing:
 6. Number marked as verified in database
 
 **Security:**
+
 - Codes expire after 10 minutes
 - Rate limiting on verification attempts
 - Phone numbers validated with E.164 format

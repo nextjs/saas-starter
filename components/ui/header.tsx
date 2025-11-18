@@ -24,6 +24,7 @@ import {
   Bookmark,
   LogOut,
   MessageSquare,
+  Send,
   Settings,
   Shield,
   X,
@@ -53,8 +54,9 @@ function UserMenu() {
       { href: "/dashboard/memories", icon: Bookmark, label: "Memories" },
       { href: "/dashboard/chat", icon: MessageSquare, label: "Chat" },
       { href: "/dashboard/metrics", icon: Activity, label: "Metrics" },
+      { href: "/dashboard/integrations", icon: Send, label: "Integrations" },
       { href: "/dashboard/security", icon: Shield, label: "Security" },
-      { href: "/dashboard/general", icon: Settings, label: "General" },
+      { href: "/dashboard/settings", icon: Settings, label: "Settings" },
     ],
     []
   );
@@ -151,7 +153,7 @@ function UserMenu() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem className="cursor-pointer">
               <Link
-                href="/dashboard/general"
+                href="/dashboard/settings"
                 className="flex w-full items-center"
               >
                 <Settings className="mr-2 h-4 w-4" />
