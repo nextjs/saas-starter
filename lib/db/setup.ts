@@ -77,25 +77,25 @@ async function checkStripeCLI() {
   }
 }
 
-async function getPostgresURL(): Promise<string> {
-  console.log('Step 2: Setting up Postgres');
+async function getMongoDBURI(): Promise<string> {
+  console.log('Step 2: Setting up MongoDB');
   const dbChoice = await question(
-    'Do you want to use a local Postgres instance with Docker (L) or a remote Postgres instance (R)? (L/R): '
+    'Do you want to use a local MongoDB instance with Docker (L) or a remote MongoDB instance (R)? (L/R): '
   );
 
   if (dbChoice.toLowerCase() === 'l') {
-    console.log('Setting up local Postgres instance with Docker...');
-    await setupLocalPostgres();
-    return 'postgres://postgres:postgres@localhost:54322/postgres';
+    console.log('Setting up local MongoDB instance with Docker...');
+    await setupLocalMongoDB();
+    return 'mongodb://mongo:mongo@localhost:27017/saas-starter?authSource=admin';
   } else {
     console.log(
-      'You can find Postgres databases at: https://vercel.com/marketplace?category=databases'
+      'You can find MongoDB databases at: https://www.mongodb.com/cloud/atlas/register'
     );
-    return await question('Enter your POSTGRES_URL: ');
+    return await question('Enter your MONGODB_URI: ');
   }
 }
 
-async function setupLocalPostgres() {
+async function setupLocalMongoDB() {
   console.log('Checking if Docker is installed...');
   try {
     await execAsync('docker --version');
@@ -113,20 +113,38 @@ async function setupLocalPostgres() {
   console.log('Creating docker-compose.yml file...');
   const dockerComposeContent = `
 services:
-  postgres:
-    image: postgres:16.4-alpine
-    container_name: next_saas_starter_postgres
+  mongodb:
+    image: mongo:8.0
+    container_name: next_saas_starter_mongodb
     environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+      MONGO_INITDB_DATABASE: saas-starter
     ports:
-      - "54322:5432"
+      - "27017:27017"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - mongodb_data:/data/db
+    command: mongod --replSet rs0
+
+  # Init container to configure replica set (required for transactions)
+  mongo-init:
+    image: mongo:8.0
+    depends_on:
+      - mongodb
+    restart: "no"
+    entrypoint: >
+      bash -c "
+        sleep 5 &&
+        mongosh --host mongodb:27017 -u mongo -p mongo --authenticationDatabase admin --eval '
+        rs.initiate({
+          _id: \"rs0\",
+          members: [{ _id: 0, host: \"mongodb:27017\" }]
+        })
+        ' || true
+      "
 
 volumes:
-  postgres_data:
+  mongodb_data:
 `;
 
   await fs.writeFile(
@@ -138,10 +156,13 @@ volumes:
   console.log('Starting Docker container with `docker compose up -d`...');
   try {
     await execAsync('docker compose up -d');
-    console.log('Docker container started successfully.');
+    console.log('Docker containers started successfully.');
+    console.log('Waiting for MongoDB replica set to initialize...');
+    await new Promise(resolve => setTimeout(resolve, 10000));
+    console.log('MongoDB is ready!');
   } catch (error) {
     console.error(
-      'Failed to start Docker container. Please check your Docker installation and try again.'
+      'Failed to start Docker containers. Please check your Docker installation and try again.'
     );
     process.exit(1);
   }
@@ -196,14 +217,14 @@ async function writeEnvFile(envVars: Record<string, string>) {
 async function main() {
   await checkStripeCLI();
 
-  const POSTGRES_URL = await getPostgresURL();
+  const MONGODB_URI = await getMongoDBURI();
   const STRIPE_SECRET_KEY = await getStripeSecretKey();
   const STRIPE_WEBHOOK_SECRET = await createStripeWebhook();
   const BASE_URL = 'http://localhost:3000';
   const AUTH_SECRET = generateAuthSecret();
 
   await writeEnvFile({
-    POSTGRES_URL,
+    MONGODB_URI,
     STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET,
     BASE_URL,
@@ -211,6 +232,9 @@ async function main() {
   });
 
   console.log('🎉 Setup completed successfully!');
+  console.log('\nNext steps:');
+  console.log('1. Run `npm run db:seed` to seed the database with initial data');
+  console.log('2. Run `npm run dev` to start the development server');
 }
 
 main().catch(console.error);

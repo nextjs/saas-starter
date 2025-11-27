@@ -1,6 +1,6 @@
 import { stripe } from '../payments/stripe';
-import { db } from './drizzle';
-import { users, teams, teamMembers } from './schema';
+import { connectToDatabase } from './mongodb';
+import { User, Team } from './models';
 import { hashPassword } from '@/lib/auth/session';
 
 async function createStripeProducts() {
@@ -40,35 +40,50 @@ async function createStripeProducts() {
 }
 
 async function seed() {
+  // Connect to MongoDB
+  await connectToDatabase();
+
   const email = 'test@test.com';
   const password = 'admin123';
   const passwordHash = await hashPassword(password);
 
-  const [user] = await db
-    .insert(users)
-    .values([
+  // Create test team first
+  const team = await Team.create({
+    name: 'Test Team',
+    members: [], // Will be updated after user creation
+  });
+
+  console.log('Initial team created.');
+
+  // Create test user with team membership
+  const user = await User.create({
+    email: email,
+    passwordHash: passwordHash,
+    role: 'owner',
+    teamMemberships: [
       {
-        email: email,
-        passwordHash: passwordHash,
-        role: "owner",
+        teamId: team._id,
+        role: 'owner',
+        joinedAt: new Date(),
       },
-    ])
-    .returning();
+    ],
+  });
 
   console.log('Initial user created.');
 
-  const [team] = await db
-    .insert(teams)
-    .values({
-      name: 'Test Team',
-    })
-    .returning();
+  // Update team with member details (denormalized)
+  team.members = [
+    {
+      userId: user._id,
+      name: user.name,
+      email: user.email,
+      role: 'owner',
+      joinedAt: new Date(),
+    },
+  ];
+  await team.save();
 
-  await db.insert(teamMembers).values({
-    teamId: team.id,
-    userId: user.id,
-    role: 'owner',
-  });
+  console.log('Team updated with member.');
 
   await createStripeProducts();
 }
