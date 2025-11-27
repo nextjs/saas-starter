@@ -2,8 +2,6 @@
 
 This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
-
 ## Features
 
 - Marketing landing page (`/`) with animated Terminal element
@@ -19,8 +17,8 @@ This is a starter template for building a SaaS application using **Next.js** wit
 ## Tech Stack
 
 - **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **Database**: [MongoDB](https://www.mongodb.com/)
+- **ODM**: [Mongoose](https://mongoosejs.com/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
 
@@ -46,10 +44,9 @@ Use the included setup script to create your `.env` file:
 pnpm db:setup
 ```
 
-Run the database migrations and seed the database with a default user and team:
+Seed the database with a default user and team:
 
 ```bash
-pnpm db:migrate
 pnpm db:seed
 ```
 
@@ -92,20 +89,20 @@ When you're ready to deploy your SaaS application to production, follow these st
 2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
 3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
 
-### Deploy to Vercel
+### Deploy to your hosting provider
 
 1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
+2. Deploy to your preferred hosting provider (e.g., Railway, Render, DigitalOcean, AWS, etc.).
+3. Follow your provider's deployment process for Next.js applications.
 
 ### Add environment variables
 
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
+In your hosting provider's settings, add all the necessary environment variables. Make sure to update the values for the production environment, including:
 
 1. `BASE_URL`: Set this to your production domain.
 2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
+4. `MONGODB_URI`: Set this to your production MongoDB connection string (e.g., MongoDB Atlas).
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
 
 ## Other Templates

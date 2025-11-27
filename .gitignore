@@ -28,14 +28,11 @@ yarn-error.log*
 # local env files
 .env
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 .vscode
 
 # Docker
-postgres_data/
+mongodb_data/
 .env*.local
