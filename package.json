@@ -24,7 +24,7 @@
     "drizzle-orm": "^0.43.1",
     "jose": "^6.0.11",
     "lucide-react": "^0.511.0",
-    "next": "15.4.0-canary.47",
+    "next": "15.6.0-canary.58",
     "postcss": "^8.5.3",
     "postgres": "^3.4.5",
     "radix-ui": "^1.4.2",
