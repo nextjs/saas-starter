@@ -4,8 +4,10 @@ import { Team } from '@/lib/db/schema';
 import {
   getTeamByStripeCustomerId,
   getUser,
-  updateTeamSubscription
+  updateTeamSubscription,
+  getTeamMembers
 } from '@/lib/db/queries';
+import { sendSubscriptionUpdatedEmail } from '@/lib/email';
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
@@ -128,14 +130,31 @@ export async function handleSubscriptionChange(
     return;
   }
 
+  const teamMembers = await getTeamMembers(team.id);
+  const owners = teamMembers.filter((member) => member.role === 'owner');
+
   if (status === 'active' || status === 'trialing') {
     const plan = subscription.items.data[0]?.plan;
+    const planName = (plan?.product as Stripe.Product).name;
+
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,
       stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
+      planName,
       subscriptionStatus: status
     });
+
+    // Send email notifications to team owners
+    await Promise.all(
+      owners.map((owner) =>
+        sendSubscriptionUpdatedEmail(
+          owner.email,
+          owner.name || owner.email,
+          planName,
+          status
+        )
+      )
+    );
   } else if (status === 'canceled' || status === 'unpaid') {
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: null,
@@ -143,6 +162,18 @@ export async function handleSubscriptionChange(
       planName: null,
       subscriptionStatus: status
     });
+
+    // Send cancellation email to team owners
+    await Promise.all(
+      owners.map((owner) =>
+        sendSubscriptionUpdatedEmail(
+          owner.email,
+          owner.name || owner.email,
+          team.planName || 'subscription',
+          status
+        )
+      )
+    );
   }
 }
 

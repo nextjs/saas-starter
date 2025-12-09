@@ -25,6 +25,7 @@ import {
   validatedAction,
   validatedActionWithUser
 } from '@/lib/auth/middleware';
+import { sendWelcomeEmail, sendTeamInvitationEmail } from '@/lib/email';
 
 async function logActivity(
   teamId: number | null | undefined,
@@ -209,7 +210,8 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   await Promise.all([
     db.insert(teamMembers).values(newTeamMember),
     logActivity(teamId, createdUser.id, ActivityType.SIGN_UP),
-    setSession(createdUser)
+    setSession(createdUser),
+    sendWelcomeEmail(createdUser.email, createdUser.name || createdUser.email, createdTeam?.name)
   ]);
 
   const redirectTo = formData.get('redirect') as string | null;
@@ -437,22 +439,27 @@ export const inviteTeamMember = validatedActionWithUser(
     }
 
     // Create a new invitation
-    await db.insert(invitations).values({
+    const [invitation] = await db.insert(invitations).values({
       teamId: userWithTeam.teamId,
       email,
       role,
       invitedBy: user.id,
       status: 'pending'
-    });
+    }).returning();
 
-    await logActivity(
-      userWithTeam.teamId,
-      user.id,
-      ActivityType.INVITE_TEAM_MEMBER
-    );
-
-    // TODO: Send invitation email and include ?inviteId={id} to sign-up URL
-    // await sendInvitationEmail(email, userWithTeam.team.name, role)
+    await Promise.all([
+      logActivity(
+        userWithTeam.teamId,
+        user.id,
+        ActivityType.INVITE_TEAM_MEMBER
+      ),
+      sendTeamInvitationEmail(
+        email,
+        user.name || user.email,
+        userWithTeam.teamName || 'the team',
+        invitation.id.toString()
+      )
+    ]);
 
     return { success: 'Invitation sent successfully' };
   }

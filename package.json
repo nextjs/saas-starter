@@ -11,6 +11,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@react-email/components": "^1.0.1",
     "@tailwindcss/postcss": "4.1.7",
     "@types/node": "^22.15.18",
     "@types/react": "19.1.4",
@@ -30,7 +31,10 @@
     "radix-ui": "^1.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-email": "^5.0.4",
+    "resend": "^6.5.0",
     "server-only": "^0.0.1",
+    "sharp": "^0.34.5",
     "stripe": "^18.1.0",
     "swr": "^2.3.3",
     "tailwind-merge": "^3.3.0",

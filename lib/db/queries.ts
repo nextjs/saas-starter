@@ -128,3 +128,18 @@ export async function getTeamForUser() {
 
   return result?.team || null;
 }
+
+export async function getTeamMembers(teamId: number) {
+  const result = await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: teamMembers.role
+    })
+    .from(teamMembers)
+    .leftJoin(users, eq(teamMembers.userId, users.id))
+    .where(eq(teamMembers.teamId, teamId));
+
+  return result;
+}
