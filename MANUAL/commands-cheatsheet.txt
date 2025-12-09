@@ -1,0 +1,401 @@
+================================================================================
+                    DEVELOPER COMMANDS CHEATSHEET
+              Organized by frequency of use & importance
+================================================================================
+
+TABLE OF CONTENTS
+-----------------
+1. DAILY WORKFLOW (Most Used)
+2. DOCKER & DATABASE
+3. GIT VERSION CONTROL
+4. TESTING & DEBUGGING
+5. PACKAGE MANAGEMENT
+6. FILE OPERATIONS
+7. SYSTEM & PROCESS
+8. NETWORKING
+9. STRIPE PAYMENTS
+10. SHORTCUTS & ALIASES
+
+================================================================================
+1. DAILY WORKFLOW (Most Used)
+================================================================================
+
+START DEVELOPMENT
+-----------------
+docker compose up -d           # Start PostgreSQL container
+pnpm dev                       # Start Next.js dev server (Turbopack)
+pnpm db:studio                 # Open Drizzle Studio (DB GUI)
+
+STOP DEVELOPMENT
+----------------
+ctrl+c                         # Stop dev server
+docker compose down            # Stop PostgreSQL container
+
+BUILD & DEPLOY
+--------------
+pnpm build                     # Build for production
+pnpm start                     # Run production build locally
+pnpm test:run                  # Run all tests once
+
+QUICK SETUP (New Machine)
+-------------------------
+pnpm install                   # 1. Install dependencies
+cp .env.example .env           # 2. Create environment file
+docker compose up -d           # 3. Start database
+pnpm db:migrate                # 4. Run migrations
+pnpm db:seed                   # 5. Seed sample data (needs Stripe keys)
+pnpm dev                       # 6. Start development
+
+================================================================================
+2. DOCKER & DATABASE
+================================================================================
+
+DOCKER ESSENTIALS
+-----------------
+docker compose up -d           # Start all services (detached)
+docker compose down            # Stop all services
+docker compose logs -f         # Follow container logs
+docker ps                      # List running containers
+docker ps -a                   # List all containers (including stopped)
+docker restart container       # Restart a container
+
+DOCKER TROUBLESHOOTING
+----------------------
+docker compose down -v         # Stop and remove volumes (fresh start)
+docker system prune            # Clean unused data
+docker logs saas-starter-db    # View PostgreSQL logs
+
+DATABASE (Drizzle ORM)
+----------------------
+pnpm db:studio                 # Open visual database browser
+pnpm db:migrate                # Run pending migrations
+pnpm db:generate               # Generate migration from schema changes
+pnpm db:seed                   # Seed database with sample data
+pnpm db:setup                  # Initial database setup
+
+DATABASE ADVANCED
+-----------------
+npx drizzle-kit push           # Push schema changes directly (dev only)
+npx drizzle-kit drop           # Drop a migration
+
+POSTGRESQL DIRECT ACCESS
+------------------------
+docker exec -it saas-starter-db psql -U postgres -d saas_db
+                               # Connect to PostgreSQL shell
+
+DRIZZLE CODE PATTERNS
+---------------------
+# Import
+import { db } from '@/lib/db'
+import { users } from '@/lib/db/schema'
+import { eq } from 'drizzle-orm'
+
+# CRUD Operations
+await db.select().from(users)                              # Select all
+await db.select().from(users).where(eq(users.id, 1))       # Select where
+await db.insert(users).values({ email: 'x@y.com' })        # Insert
+await db.update(users).set({ name: 'New' }).where(eq(users.id, 1))  # Update
+await db.delete(users).where(eq(users.id, 1))              # Delete
+
+================================================================================
+3. GIT VERSION CONTROL
+================================================================================
+
+DAILY GIT
+---------
+git status                     # Check what's changed
+git add .                      # Stage all changes
+git commit -m "message"        # Commit with message
+git push                       # Push to remote
+git pull                       # Pull latest changes
+
+BRANCHES
+--------
+git branch                     # List branches
+git branch new-feature         # Create branch
+git checkout branch-name       # Switch branch
+git checkout -b new-feature    # Create and switch
+git merge branch-name          # Merge branch into current
+git branch -d branch-name      # Delete branch
+
+HISTORY & UNDO
+--------------
+git log --oneline              # Compact history
+git log -5                     # Last 5 commits
+git diff                       # Show unstaged changes
+git diff --staged              # Show staged changes
+git stash                      # Temporarily save changes
+git stash pop                  # Restore stashed changes
+git checkout -- filename       # Discard changes to file
+git reset HEAD~1               # Undo last commit (keep changes)
+
+================================================================================
+4. TESTING & DEBUGGING
+================================================================================
+
+TESTING (Vitest)
+----------------
+pnpm test                      # Run unit tests in watch mode
+pnpm test:run                  # Run all unit tests once
+pnpm test:coverage             # Run with coverage report
+pnpm test filename             # Run specific test file
+pnpm test -t "test name"       # Run tests matching name
+
+E2E TESTING (Puppeteer)
+-----------------------
+pnpm test:e2e                  # Run E2E tests in watch mode
+pnpm test:e2e:run              # Run all E2E tests once
+npx puppeteer browsers install chrome  # Install Chrome browser for tests
+
+# E2E Test Files
+tests/e2e/auth.spec.ts         # Authentication flow tests
+tests/e2e/dashboard.spec.ts    # Dashboard navigation tests
+tests/e2e/pricing.spec.ts      # Pricing page tests
+
+DEBUGGING
+---------
+NODE_OPTIONS='--inspect' pnpm dev   # Start with Node debugger
+DEBUG=* pnpm dev                    # Enable debug output
+console.log(JSON.stringify(obj, null, 2))  # Pretty print object
+
+TYPE CHECKING
+-------------
+npx tsc --noEmit               # Type check without building
+npx tsc --watch                # Watch mode type checking
+
+PORT ISSUES
+-----------
+lsof -i :3000                  # Check what's using port 3000
+kill -9 PID                    # Kill process by PID
+npx kill-port 3000             # Kill process on port
+
+CACHE CLEARING (When Things Break)
+----------------------------------
+rm -rf .next                   # Clear Next.js cache
+rm -rf node_modules && pnpm install  # Fresh dependencies
+pnpm store prune               # Clear pnpm cache
+rm -rf .turbo                  # Clear Turbo cache
+
+================================================================================
+5. PACKAGE MANAGEMENT
+================================================================================
+
+PNPM (Project Package Manager)
+------------------------------
+pnpm install                   # Install all dependencies
+pnpm add package               # Add dependency
+pnpm add -D package            # Add dev dependency
+pnpm remove package            # Remove package
+pnpm update                    # Update all packages
+pnpm outdated                  # Check for outdated packages
+pnpm why package               # Show why package is installed
+
+APT (System Package Manager)
+----------------------------
+sudo apt update                # Update package list
+sudo apt upgrade               # Upgrade packages
+sudo apt install package       # Install package
+sudo apt remove package        # Remove package
+sudo apt autoremove            # Remove unused packages
+apt search keyword             # Search for packages
+
+================================================================================
+6. FILE OPERATIONS
+================================================================================
+
+NAVIGATION
+----------
+pwd                            # Print working directory
+cd /path/to/dir                # Change directory
+cd ~                           # Go to home directory
+cd ..                          # Go up one directory
+cd -                           # Go to previous directory
+
+LISTING
+-------
+ls                             # List files
+ls -la                         # List all with details
+ls -lh                         # Human-readable sizes
+tree                           # Directory tree view
+
+CREATE & COPY
+-------------
+mkdir dirname                  # Create directory
+mkdir -p path/to/nested        # Create nested directories
+touch filename                 # Create empty file
+cp file1 file2                 # Copy file
+cp -r dir1 dir2                # Copy directory
+
+MOVE & DELETE
+-------------
+mv oldname newname             # Rename or move
+rm filename                    # Remove file
+rm -r dirname                  # Remove directory
+rm -rf dirname                 # Force remove (careful!)
+
+VIEW FILES
+----------
+cat filename                   # Display entire file
+less filename                  # Paginated view (q to quit)
+head -20 filename              # First 20 lines
+tail -20 filename              # Last 20 lines
+tail -f filename               # Follow file (live logs)
+code filename                  # Open in VS Code
+
+SEARCH
+------
+find . -name "*.ts"            # Find files by name
+grep "pattern" filename        # Search in file
+grep -r "pattern" .            # Search recursively
+grep -i "pattern" file         # Case-insensitive
+
+PERMISSIONS
+-----------
+chmod +x filename              # Make executable
+chmod 755 filename             # rwxr-xr-x
+chmod 644 filename             # rw-r--r--
+sudo chown -R user:group dir   # Change ownership
+
+COMPRESSION
+-----------
+tar -czf archive.tar.gz dir/   # Create tar.gz
+tar -xzf archive.tar.gz        # Extract tar.gz
+zip -r archive.zip dir/        # Create zip
+unzip file.zip                 # Extract zip
+
+================================================================================
+7. SYSTEM & PROCESS
+================================================================================
+
+SYSTEM INFO
+-----------
+uname -a                       # System information
+lsb_release -a                 # Ubuntu version
+df -h                          # Disk space usage
+free -h                        # Memory usage
+htop                           # Process monitor (interactive)
+
+PROCESS MANAGEMENT
+------------------
+ps aux                         # List all processes
+ps aux | grep name             # Find process
+kill PID                       # Kill by process ID
+killall processname            # Kill by name
+ctrl+c                         # Stop current process
+ctrl+z                         # Suspend process
+bg                             # Resume in background
+fg                             # Bring to foreground
+
+SERVICES (systemd)
+------------------
+systemctl status service       # Check service status
+sudo systemctl start service   # Start service
+sudo systemctl stop service    # Stop service
+sudo systemctl restart service # Restart service
+sudo systemctl enable service  # Enable on boot
+
+USER MANAGEMENT
+---------------
+whoami                         # Current user
+groups                         # Show user groups
+sudo usermod -aG group user    # Add user to group
+sudo passwd username           # Change password
+
+================================================================================
+8. NETWORKING
+================================================================================
+
+CONNECTIVITY
+------------
+ping google.com                # Test internet
+ip addr                        # Show IP addresses
+curl https://example.com       # HTTP request
+wget https://url/file          # Download file
+
+PORTS & CONNECTIONS
+-------------------
+ss -tulpn                      # Show listening ports
+netstat -tulpn                 # Alternative (older)
+lsof -i :3000                  # What's using port 3000
+
+DNS
+---
+nslookup domain.com            # DNS lookup
+dig domain.com                 # Detailed DNS info
+
+================================================================================
+9. STRIPE PAYMENTS
+================================================================================
+
+STRIPE CLI
+----------
+stripe login                   # Authenticate
+stripe listen --forward-to localhost:3000/api/stripe/webhook
+                               # Forward webhooks to local dev
+stripe trigger payment_intent.succeeded
+                               # Trigger test event
+stripe logs tail               # Tail API logs
+
+================================================================================
+10. SHORTCUTS & ALIASES
+================================================================================
+
+TERMINAL SHORTCUTS
+------------------
+ctrl+c                         # Stop current command
+ctrl+l                         # Clear screen
+ctrl+r                         # Search command history
+ctrl+a                         # Go to start of line
+ctrl+e                         # Go to end of line
+tab                            # Autocomplete
+!!                             # Repeat last command
+history                        # Show command history
+
+RECOMMENDED ALIASES (add to ~/.bashrc)
+--------------------------------------
+# Development
+alias dev="pnpm dev"
+alias build="pnpm build"
+alias test="pnpm test:run"
+alias e2e="pnpm test:e2e:run"
+
+# Database
+alias dbs="pnpm db:studio"
+alias dbm="pnpm db:migrate"
+
+# Docker
+alias dcu="docker compose up -d"
+alias dcd="docker compose down"
+alias dcl="docker compose logs -f"
+
+# Git
+alias gs="git status"
+alias ga="git add ."
+alias gc="git commit -m"
+alias gp="git push"
+alias gl="git pull"
+
+# Apply aliases: source ~/.bashrc
+
+================================================================================
+                         QUICK REFERENCE CARD
+================================================================================
+
+MOST USED DAILY:
+  docker compose up -d    Start database
+  pnpm dev                Start dev server
+  pnpm db:studio          View database
+  git status/add/commit   Version control
+  pnpm test:run           Run unit tests
+  pnpm test:e2e:run       Run E2E tests
+  pnpm build              Build for production
+  docker compose down     Stop database
+
+CONNECTION STRING:
+  postgresql://postgres:postgres@localhost:5432/saas_db
+
+PROJECT URLS:
+  App:          http://localhost:3000
+  DB Studio:    http://localhost:4983 (when running pnpm db:studio)
+
+================================================================================
