@@ -45,7 +45,7 @@ async function logActivity(
 }
 
 const signInSchema = z.object({
-  email: z.string().email().min(3).max(255),
+  email: z.string().trim().toLowerCase().email().min(3).max(255),
   password: z.string().min(8).max(100)
 });
 
@@ -101,7 +101,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 });
 
 const signUpSchema = z.object({
-  email: z.string().email(),
+  email: z.string().trim().toLowerCase().email(),
   password: z.string().min(8),
   inviteId: z.string().optional()
 });
@@ -340,7 +340,7 @@ export const deleteAccount = validatedActionWithUser(
 
 const updateAccountSchema = z.object({
   name: z.string().min(1, 'Name is required').max(100),
-  email: z.string().email('Invalid email address')
+  email: z.string().trim().toLowerCase().email('Invalid email address')
 });
 
 export const updateAccount = validatedActionWithUser(
@@ -392,7 +392,7 @@ export const removeTeamMember = validatedActionWithUser(
 );
 
 const inviteTeamMemberSchema = z.object({
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
   role: z.enum(['member', 'owner'])
 });
 
