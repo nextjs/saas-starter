@@ -5,10 +5,11 @@
     "build": "next build",
     "start": "next start",
     "db:setup": "npx tsx lib/db/setup.ts",
-    "db:seed": "npx tsx lib/db/seed.ts",
+    "db:seed": "npx tsx lib/db/seed-runner.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "postinstall": "drizzle-kit push"
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.1.7",
