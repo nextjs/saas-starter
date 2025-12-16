@@ -359,7 +359,7 @@ export const updateAccount = validatedActionWithUser(
 );
 
 const removeTeamMemberSchema = z.object({
-  memberId: z.number()
+  memberId: z.string().transform((val) => Number(val)),
 });
 
 export const removeTeamMember = validatedActionWithUser(

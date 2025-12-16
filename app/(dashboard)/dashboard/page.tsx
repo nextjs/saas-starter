@@ -10,8 +10,8 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
-import { useActionState } from 'react';
-import { TeamDataWithMembers, User } from '@/lib/db/schema';
+import { useActionState, useState } from 'react';
+import { TeamDataWithMembers, TeamMemberWithUser, User } from '@/lib/db/schema';
 import { removeTeamMember, inviteTeamMember } from '@/app/(login)/actions';
 import useSWR from 'swr';
 import { Suspense } from 'react';
@@ -95,14 +95,6 @@ function TeamMembersSkeleton() {
 
 function TeamMembers() {
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-  const [removeState, removeAction, isRemovePending] = useActionState<
-    ActionState,
-    FormData
-  >(removeTeamMember, {});
-
-  const getUserDisplayName = (user: Pick<User, 'id' | 'name' | 'email'>) => {
-    return user.name || user.email || 'Unknown User';
-  };
 
   if (!teamData?.teamMembers?.length) {
     return (
@@ -125,55 +117,87 @@ function TeamMembers() {
       <CardContent>
         <ul className="space-y-4">
           {teamData.teamMembers.map((member, index) => (
-            <li key={member.id} className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Avatar>
-                  {/* 
-                    This app doesn't save profile images, but here
-                    is how you'd show them:
-
-                    <AvatarImage
-                      src={member.user.image || ''}
-                      alt={getUserDisplayName(member.user)}
-                    />
-                  */}
-                  <AvatarFallback>
-                    {getUserDisplayName(member.user)
-                      .split(' ')
-                      .map((n) => n[0])
-                      .join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">
-                    {getUserDisplayName(member.user)}
-                  </p>
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {member.role}
-                  </p>
-                </div>
-              </div>
-              {index > 1 ? (
-                <form action={removeAction}>
-                  <input type="hidden" name="memberId" value={member.id} />
-                  <Button
-                    type="submit"
-                    variant="outline"
-                    size="sm"
-                    disabled={isRemovePending}
-                  >
-                    {isRemovePending ? 'Removing...' : 'Remove'}
-                  </Button>
-                </form>
-              ) : null}
-            </li>
+            <TeamMemberRow key={member.id} member={member} index={index} />
           ))}
         </ul>
-        {removeState?.error && (
-          <p className="text-red-500 mt-4">{removeState.error}</p>
-        )}
       </CardContent>
     </Card>
+  );
+}
+
+function TeamMemberRow({
+  member,
+  index,
+}: {
+  member: TeamMemberWithUser;
+  index: number;
+}) {
+  const [visible, setVisible] = useState(true);
+  const [removeState, removeAction, isRemovePending] = useActionState<
+    ActionState,
+    FormData
+  >(async (actionState,formData) => {
+    const result = await removeTeamMember(actionState,formData);
+    if ('success' in result && typeof result.success !== 'undefined') {
+      setVisible(false);
+    }
+    return result;
+  }, {});
+
+  const getUserDisplayName = (user: Pick<User, "id" | "name" | "email">) => {
+    return user.name || user.email || "Unknown User";
+  };
+
+  if (!visible) return null;
+
+  return (
+    <li className="flex items-center justify-between">
+      <div className="flex items-center space-x-4">
+        <Avatar>
+          {/* 
+            This app doesn't save profile images, but here
+            is how you'd show them:
+
+            <AvatarImage
+              src={member.user.image || ''}
+              alt={getUserDisplayName(member.user)}
+            />
+          */}
+          <AvatarFallback>
+            {getUserDisplayName(member.user)
+              .split(' ')
+              .map((n) => n[0])
+              .join('')}
+          </AvatarFallback>
+        </Avatar>
+        <div>
+          <p className="font-medium">
+            {getUserDisplayName(member.user)}
+          </p>
+          <p className="text-sm text-muted-foreground capitalize">
+            {member.role}
+          </p>
+        </div>
+      </div>
+      {index > 0 && (
+        <div className="flex flex-col items-end">
+          <form action={removeAction}>
+            <input type="hidden" name="memberId" value={member.id} />
+            <Button
+              type="submit"
+              variant="outline"
+              size="sm"
+              disabled={isRemovePending}
+            >
+              {isRemovePending ? 'Removing...' : 'Remove'}
+            </Button>
+          </form>
+          {removeState?.error && (
+            <p className="text-red-500 text-xs">{removeState.error}</p>
+          )}
+        </div>
+      )}
+    </li>
   );
 }
 
