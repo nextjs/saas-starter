@@ -23,6 +23,24 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - **ORM**: [Drizzle](https://orm.drizzle.team/)
 - **Payments**: [Stripe](https://stripe.com/)
 - **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+- **Error Tracking**: [BugMail](https://bugmail.site/) (optional)
+
+## Error Tracking (Optional)
+
+This starter includes [BugMail](https://bugmail.site/) — a simple, lightweight error tracking alternative to Sentry. When errors occur, you get clean, formatted bug reports via email.
+
+### Setup
+
+Add these to your `.env` file:
+
+```bash
+NEXT_PUBLIC_BUGMAIL_API_KEY=your_api_key
+NEXT_PUBLIC_BUGMAIL_PROJECT_ID=your_project_id
+```
+
+Get your keys from [bugmail.site](https://bugmail.site/).
+
+**Note:** BugMail is completely optional. If the environment variables are not set, the app works normally without it.
 
 ## Getting Started
 
