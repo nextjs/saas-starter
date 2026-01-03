@@ -40,12 +40,43 @@ pnpm install
 stripe login
 ```
 
+去vercel上面申请了neon-green-chair免费版的数据库，并尝试建立本地连接，方便下一步部署
+
 Use the included setup script to create your `.env` file:
 
 ```bash
 pnpm db:setup
 ```
 
+```bash
+pnpm db:setup
+
+> @ db:setup C:\Users\FX\IdeaProjects\fx-saas
+> npx tsx lib/db/setup.ts
+
+Step 1: Checking if Stripe CLI is installed and authenticated...
+Stripe CLI is installed.
+Stripe CLI is authenticated.
+Step 2: Setting up Postgres
+Do you want to use a local Postgres instance with Docker (L) or a remote Postgres instance (R)? (L/R): R  选择R远程数据库
+You can find Postgres databases at: https://vercel.com/marketplace?category=databases
+Enter your POSTGRES_URL: 去vercel上面申请了neon-green-chair免费版的数据库，并尝试建立本地连接
+Step 3: Getting Stripe Secret Key
+You can find your Stripe Secret Key at: https://dashboard.stripe.com/test/apikeys
+Enter your Stripe Secret Key: 去该网站申请测试KEY https://dashboard.stripe.com/acct_1SIrbsICXUfDaKJj/test/apikeys
+Step 4: Creating Stripe webhook...
+Stripe webhook created.
+Step 5: Generating AUTH_SECRET...
+Stripe webhook created.
+Step 5: Generating AUTH_SECRET...
+Step 6: Writing environment variables to .env
+.env file created with the necessary variables.
+🎉 Setup completed successfully!
+Step 6: Writing environment variables to .env
+.env file created with the necessary variables.
+🎉 Setup completed successfully!
+🎉 Setup completed successfully!
+```
 Run the database migrations and seed the database with a default user and team:
 
 ```bash
@@ -74,6 +105,28 @@ You can listen for Stripe webhooks locally through their CLI to handle subscript
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
 
+登录 Stripe Dashboard
+👉 https://dashboard.stripe.com/test/webhooks
+
+点击「+ Add endpoint」
+
+输入你的 Webhook 地址，例如：
+
+https://fx-saas.vercel.app/api/stripe/webhook
+
+
+选择要监听的事件（例如 checkout.session.completed, invoice.paid 等）
+创建成功后，页面会显示一个类似：
+
+whsec_live_xxx
+
+
+的 Signing secret
+
+将它填入线上环境变量（Vercel 的 Dashboard → Project → Settings → Environment Variables）：
+
+STRIPE_WEBHOOK_SECRET=whsec_live_xxx
+
 ## Testing Payments
 
 To test Stripe payments, use the following test card details:
@@ -97,6 +150,8 @@ When you're ready to deploy your SaaS application to production, follow these st
 1. Push your code to a GitHub repository.
 2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
 3. Follow the Vercel deployment process, which will guide you through setting up your project.
+
+进入 Vercel 项目的 Settings → Environment Variables建立环境变量，导入本地env文件即可
 
 ### Add environment variables
 
