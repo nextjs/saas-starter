@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle } from 'lucide-react';
+import { CreditBalance } from '@/components/credits/credit-components';
 
 type ActionState = {
   error?: string;
@@ -32,6 +33,16 @@ function SubscriptionSkeleton() {
     <Card className="mb-8 h-[140px]">
       <CardHeader>
         <CardTitle>Team Subscription</CardTitle>
+      </CardHeader>
+    </Card>
+  );
+}
+
+function CreditBalanceSkeleton() {
+  return (
+    <Card className="mb-8 h-[140px]">
+      <CardHeader>
+        <CardTitle>Credit Balance</CardTitle>
       </CardHeader>
     </Card>
   );
@@ -270,9 +281,13 @@ function InviteTeamMember() {
 }
 
 export default function SettingsPage() {
+  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
+      <Suspense fallback={<CreditBalanceSkeleton />}>
+        {teamData && <CreditBalance teamId={teamData.id} />}
+      </Suspense>
       <Suspense fallback={<SubscriptionSkeleton />}>
         <ManageSubscription />
       </Suspense>

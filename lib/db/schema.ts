@@ -22,13 +22,44 @@ export const users = pgTable('users', {
 export const teams = pgTable('teams', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-  updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  stripeCustomerId: text('stripe_customer_id').unique(),
-  stripeSubscriptionId: text('stripe_subscription_id').unique(),
-  stripeProductId: text('stripe_product_id'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  stripeCustomerId: varchar('stripe_customer_id', { length: 255 }).unique(),
+  stripeSubscriptionId: varchar('stripe_subscription_id', { length: 255 }).unique(),
+  stripeProductId: varchar('stripe_product_id', { length: 255 }),
   planName: varchar('plan_name', { length: 50 }),
   subscriptionStatus: varchar('subscription_status', { length: 20 }),
+
+  // New credit system fields
+  creditBalance: integer('credit_balance').default(0).notNull(),
+  creditLimit: integer('credit_limit').default(0).notNull(),
+  creditsGrantedThisPeriod: integer('credits_granted_this_period').default(0).notNull(),
+  billingPeriodStart: timestamp('billing_period_start'),
+  billingPeriodEnd: timestamp('billing_period_end'),
+  stripeMeterId: varchar('stripe_meter_id', { length: 255 }),
+});
+
+export const creditUsageLogs = pgTable('credit_usage_logs', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').references(() => teams.id),
+  userId: integer('user_id').references(() => users.id),
+  creditsUsed: integer('credits_used').notNull(),
+  actionType: varchar('action_type', { length: 100 }).notNull(),
+  description: text('description'),
+  metadata: text('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const creditGrantsLogs = pgTable('credit_grants_logs', {
+  id: serial('id').primaryKey(),
+  teamId: integer('team_id').references(() => teams.id),
+  creditsGranted: integer('credits_granted').notNull(),
+  grantReason: varchar('grant_reason', { length: 100 }).notNull(),
+  stripeGrantId: varchar('stripe_grant_id', { length: 255 }),
+  billingPeriodStart: timestamp('billing_period_start'),
+  billingPeriodEnd: timestamp('billing_period_end'),
+  metadata: text('metadata'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const teamMembers = pgTable('team_members', {
