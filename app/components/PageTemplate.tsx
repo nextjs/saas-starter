@@ -59,6 +59,7 @@ export function PageTemplate({
             </div>
           )}
         </Card>
+        </div>
       </div>
     </Layout>
   )

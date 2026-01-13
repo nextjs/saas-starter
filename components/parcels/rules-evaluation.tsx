@@ -39,54 +39,6 @@ interface RulesEvaluationProps {
 }
 
 export function RulesEvaluation({ rules }: RulesEvaluationProps) {
-  const [expandedRules, setExpandedRules] = React*
-# Verify the file was created
-Test-Path "components\parcels\rules-evaluation.tsx"# Create components/parcels directory
-New-Item -ItemType Directory -Force -Path "components\parcels"
-
-# Create the rules-evaluation. tsx file
-@'
-'use client';
-
-import * as React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { 
-  AlertTriangle, 
-  CheckCircle, 
-  XCircle, 
-  Info,
-  ExternalLink,
-  ChevronDown 
-} from 'lucide-react';
-
-interface Rule {
-  id: string;
-  rule_type: string;
-  description: string;
-  severity: 'critical' | 'warning' | 'info';
-  status: 'compliant' | 'non_compliant' | 'review_required' | 'unknown';
-  sources?:  Array<{
-    id: string;
-    name: string;
-    citation: string;
-    confidence_level: string;
-    document_url?: string;
-  }>;
-}
-
-interface RulesEvaluationProps {
-  rules: Rule[];
-}
-
-export function RulesEvaluation({ rules }: RulesEvaluationProps) {
   const [expandedRules, setExpandedRules] = React.useState<Set<string>>(new Set());
 
   const toggleRule = (ruleId: string) => {
@@ -164,14 +116,14 @@ export function RulesEvaluation({ rules }: RulesEvaluationProps) {
             <div className="flex items-center gap-2">
               <XCircle className="h-5 w-5 text-red-600" />
               <div>
-                <p className="text-2xl font-bold">{summary. non_compliant}</p>
+                <p className="text-2xl font-bold">{summary.non_compliant}</p>
                 <p className="text-sm text-muted-foreground">Issues</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-600" />
               <div>
-                <p className="text-2xl font-bold">{summary. review_required}</p>
+                <p className="text-2xl font-bold">{summary.review_required}</p>
                 <p className="text-sm text-muted-foreground">Review</p>
               </div>
             </div>
@@ -190,11 +142,11 @@ export function RulesEvaluation({ rules }: RulesEvaluationProps) {
         <Card key={type}>
           <CardHeader>
             <CardTitle className="capitalize">
-              {type. replace(/_/g, ' ')} ({typeRules.length})
+              {type.replace(/_/g, ' ')} ({typeRules.length})
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {typeRules. map((rule) => (
+            {typeRules.map((rule) => (
               <Collapsible key={rule.id}>
                 <div className="border rounded-lg p-4">
                   <div className="flex items-start justify-between gap-4">
@@ -203,9 +155,9 @@ export function RulesEvaluation({ rules }: RulesEvaluationProps) {
                       <div className="flex-1">
                         <p className="font-medium">{rule.description}</p>
                         <div className="flex items-center gap-2 mt-2">
-                          {getSeverityBadge(rule. severity)}
+                          {getSeverityBadge(rule.severity)}
                           <Badge variant="outline" className="capitalize">
-                            {rule.status. replace(/_/g, ' ')}
+                            {rule.status.replace(/_/g, ' ')}
                           </Badge>
                         </div>
                       </div>
@@ -235,14 +187,14 @@ export function RulesEvaluation({ rules }: RulesEvaluationProps) {
                             <ExternalLink className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
                             <div className="flex-1">
                               <p className="font-medium">{source.name}</p>
-                              <p className="text-muted-foreground">{source. citation}</p>
+                              <p className="text-muted-foreground">{source.citation}</p>
                               <div className="flex items-center gap-2 mt-1">
                                 <Badge variant="outline" className="text-xs">
                                   {source.confidence_level}
                                 </Badge>
                                 {source.document_url && (
                                   <a
-                                    href={source. document_url}
+                                    href={source.document_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-xs text-primary hover:underline"

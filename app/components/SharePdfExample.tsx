@@ -1,32 +1,4 @@
-// Address Lookup page
-<Card title="Search">
-  {/* Search form */}
-</Card>
-<Card title="Results">
-  {/* Results table */}
-</Card>
-
-// Export PDF page
-<Card title="Confirm">
-  {/* Confirmation form */}
-</Card>
-<Card title="Export">
-  {/* Export button + status */}
-</Card>// Address Lookup page
-<Card title="Search">
-  {/* Search form */}
-</Card>
-<Card title="Results">
-  {/* Results table */}
-</Card>
-
-// Export PDF page
-<Card title="Confirm">
-  {/* Confirmation form */}
-</Card>
-<Card title="Export">
-  {/* Export button + status */}
-</Card>import React from 'react';
+import React from 'react';
 import { SharePdfAcceptanceGate } from '@/app/components/SharePdfAcceptanceGate';
 import { useSharePdfGate } from '@/app/lib/hooks/use-share-pdf-gate';
 
