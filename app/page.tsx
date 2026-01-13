@@ -95,9 +95,9 @@ export default function LandingPage() {
 
       {/* CTA Section */}
       <section className="px-4 sm:px-6 lg:px-8 py-12 sm:py-20 text-center">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">Ready to Get Started?</h2>
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">There's Truth in Every Parcel</h2>
         <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-          Join thousands of real estate professionals using GeoSelect.It
+           Ready to get started? 
         </p>
         <Link href="/sign-up" className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition text-sm sm:text-base">
           Start Your Free Trial Today
