@@ -4,6 +4,8 @@
         "dev": "next dev --turbopack",
         "build": "next build",
         "start": "next start",
+        "lint": "next lint",
+        "typecheck": "tsc --noEmit",
         "test": "vitest",
         "db:setup": "npx tsx lib/db/setup.ts",
         "db:seed": "npx tsx lib/db/seed.ts",
@@ -66,9 +68,11 @@
         "zod": "^3.24.4"
     },
     "devDependencies": {
+        "@jest/globals": "^30.2.0",
         "@ladle/react": "^5.1.1",
         "@playwright/test": "^1.57.0",
         "@types/google.maps": "^3.58.1",
+        "@types/jest": "^30.0.0",
         "@types/node": "^22.15.18",
         "@types/react": "19.1.4",
         "@types/react-dom": "19.1.5",
