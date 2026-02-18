@@ -89,6 +89,10 @@ importers:
       zod:
         specifier: ^3.24.4
         version: 3.24.4
+    devDependencies:
+      baseline-browser-mapping:
+        specifier: ^2.9.19
+        version: 2.9.19
 
 packages:
 
@@ -1426,6 +1430,10 @@ packages:
     hasBin: true
     peerDependencies:
       postcss: ^8.1.0
+
+  baseline-browser-mapping@2.9.19:
+    resolution: {integrity: sha512-ipDqC8FrAl/76p2SSWKSI+H9tFwm7vYqXQrItCuiVPt26Km0jS+NzSsBWAaBusvSbQcfJG+JitdMm+wZAgTYqg==}
+    hasBin: true
 
   bcryptjs@3.0.2:
     resolution: {integrity: sha512-k38b3XOZKv60C4E2hVsXTolJWfkGRMbILBIe2IBITXciy5bOsTKot5kDrf3ZfufQtQOUN5mXceUEpU1rTl9Uog==}
@@ -3230,6 +3238,8 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
+
+  baseline-browser-mapping@2.9.19: {}
 
   bcryptjs@3.0.2: {}
 
