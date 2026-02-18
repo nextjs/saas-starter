@@ -89,8 +89,10 @@ export default function DashboardPage() {
 
   const handleSpark = () => {
     const randomTemplate = PROMPT_TEMPLATES[Math.floor(Math.random() * PROMPT_TEMPLATES.length)];
-    const genre = Object.keys(GENRES)[Math.floor(Math.random() * Object.keys(GENRES).length)];
-    const subGenre = GENRES[genre as keyof typeof GENRES][Math.floor(Math.random() * GENRES[genre as keyof typeof GENRES].length)];
+    const genreKeys = Object.keys(GENRES);
+    const genre = genreKeys[Math.floor(Math.random() * genreKeys.length)];
+    const subGenres = GENRES[genre as keyof typeof GENRES];
+    const subGenre = subGenres[Math.floor(Math.random() * subGenres.length)];
     const vocalType = VOCALS.Type[Math.floor(Math.random() * VOCALS.Type.length)];
     const theme = THEMES.Atmosphere[Math.floor(Math.random() * THEMES.Atmosphere.length)];
     const instr = INSTRUMENTATION.Acoustic[Math.floor(Math.random() * INSTRUMENTATION.Acoustic.length)];
@@ -114,14 +116,13 @@ export default function DashboardPage() {
       "Build a cinematic soundscape that evolves from a quiet whisper to a thunderous climax."
     ];
     const randomEnhancement = enhancements[Math.floor(Math.random() * enhancements.length)];
-    const enhanced = `${inputText}. ${randomEnhancement} Ensure the transition between sections is seamless yet surprising. Incorporate layered vocal harmonies and a dynamic bridge that builds tension before a satisfying resolution. The arrangement should favor organic textures blended with subtle electronic pulses to create a unique sonic signature that resonates with the core emotional theme of the composition.`;
+    const enhanced = `${inputText}. ${randomEnhancement} Incorporate layered vocal harmonies and a dynamic bridge that builds tension before a satisfying resolution. The arrangement should favor organic textures blended with subtle electronic pulses to create a unique sonic signature that resonates with the core emotional theme of the composition.`;
     setInputText(enhanced.slice(0, 300));
   };
 
   const handleGenerate = () => {
     setIsGenerating(true);
     setResult(null);
-    // Simulate API call
     setTimeout(() => {
       setResult({
         summary: `A professional ${inputText.split(',')[0] || 'custom'} track with a focus on ${selectedTags.join(' and ') || 'emotional resonance'}.`,
@@ -132,73 +133,73 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 lg:p-8 flex flex-col items-center">
+    <div className="min-h-screen bg-black text-white p-4 lg:p-8 flex flex-col items-center overflow-x-hidden">
       {/* QUICK START Header */}
       <div className="w-full max-w-4xl mb-6 flex items-center gap-3">
-        <div className="p-2 border-2 border-gold rounded-lg">
-          <Wand2 className="size-6 text-gold" />
+        <div className="p-1.5 sm:p-2 border-2 border-gold rounded-lg flex-shrink-0">
+          <Wand2 className="size-5 sm:size-6 text-gold" />
         </div>
-        <h1 className="text-3xl font-black tracking-[0.2em] text-white">QUICK START</h1>
+        <h1 className="text-xl sm:text-3xl font-black tracking-[0.2em] text-white truncate">QUICK START</h1>
       </div>
 
       {/* Main Dashboard Container */}
-      <div className="w-full max-w-4xl border-2 border-zinc-800 rounded-[2.5rem] p-8 bg-zinc-950/50 relative overflow-hidden shadow-2xl">
+      <div className="w-full max-w-4xl border-2 border-zinc-800 rounded-3xl sm:rounded-[2.5rem] p-4 sm:p-8 bg-zinc-950/50 relative overflow-hidden shadow-2xl">
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-900/50 to-transparent pointer-events-none" />
 
         {/* Dropdowns Row */}
-        <div className="flex flex-wrap gap-3 mb-8 relative z-10">
-          <DropdownItem label="GENRE" icon={<Music2 className="size-4 mr-2" />} data={GENRES} onSelect={addTag} />
-          <DropdownItem label="VOCALS" icon={<Mic2 className="size-4 mr-2" />} data={VOCALS} onSelect={addTag} />
-          <DropdownItem label="THEME" icon={<Palette className="size-4 mr-2" />} data={THEMES} onSelect={addTag} />
-          <DropdownItem label="INSTRUMENTATION" icon={<Piano className="size-4 mr-2" />} data={INSTRUMENTATION} onSelect={addTag} />
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 mb-6 sm:mb-8 relative z-10">
+          <div className="grid grid-cols-2 lg:flex lg:flex-wrap gap-2 sm:gap-3 w-full lg:w-auto lg:flex-1">
+            <DropdownItem label="GENRE" icon={<Music2 className="size-3 sm:size-4 mr-1 sm:mr-2" />} data={GENRES} onSelect={addTag} />
+            <DropdownItem label="VOCALS" icon={<Mic2 className="size-3 sm:size-4 mr-1 sm:mr-2" />} data={VOCALS} onSelect={addTag} />
+            <DropdownItem label="THEME" icon={<Palette className="size-3 sm:size-4 mr-1 sm:mr-2" />} data={THEMES} onSelect={addTag} />
+            <DropdownItem label="INSTR." icon={<Piano className="size-3 sm:size-4 mr-1 sm:mr-2" />} data={INSTRUMENTATION} onSelect={addTag} />
+          </div>
 
-          <div className="flex-1" />
-
-          <div className="flex gap-3">
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 w-full sm:w-auto">
             <Button
               onClick={handleEnhance}
-              className="rounded-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 font-bold px-6 shadow-lg shadow-rose-500/20"
+              className="rounded-full bg-gradient-to-r from-rose-500 to-orange-500 hover:from-rose-600 hover:to-orange-600 font-bold px-4 sm:px-6 shadow-lg shadow-rose-500/20 text-xs sm:text-sm h-9 sm:h-10"
             >
               ENHANCE
             </Button>
             <Button
               onClick={handleSpark}
-              className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 font-bold px-6 shadow-lg shadow-indigo-500/20"
+              className="rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 font-bold px-4 sm:px-6 shadow-lg shadow-indigo-500/20 text-xs sm:text-sm h-9 sm:h-10"
             >
-              <Zap className="size-4 mr-2 fill-current" />
+              <Zap className="size-3 sm:size-4 mr-1 sm:mr-2 fill-current" />
               SPARK
             </Button>
           </div>
         </div>
 
         {/* Text Input Area */}
-        <div className="relative mb-8 z-10">
+        <div className="relative mb-6 sm:mb-8 z-10">
           <textarea
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             placeholder="Describe a dream, a memory, or a vibe..."
-            className="w-full bg-transparent border-none text-2xl font-medium placeholder:text-zinc-700 focus:ring-0 min-h-[120px] resize-none"
+            className="w-full bg-transparent border-none text-lg sm:text-2xl font-medium placeholder:text-zinc-700 focus:ring-0 min-h-[100px] sm:min-h-[120px] resize-none"
           />
         </div>
 
         {/* Suggested Prompts */}
-        <div className="mb-8 z-10 relative">
+        <div className="mb-6 sm:mb-8 z-10 relative">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2 text-zinc-400 text-sm font-bold tracking-widest">
-              <Sparkles className="size-4 text-yellow-400" />
+            <div className="flex items-center gap-2 text-zinc-400 text-[10px] sm:text-sm font-bold tracking-widest">
+              <Sparkles className="size-3 sm:size-4 text-yellow-400" />
               SUGGESTED PROMPTS
             </div>
             <button onClick={refreshPrompts} className="text-zinc-500 hover:text-white transition-colors">
-              <RefreshCw className="size-5" />
+              <RefreshCw className="size-4 sm:size-5" />
             </button>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {prompts.map((prompt, i) => (
               <button
                 key={prompt + i}
                 onClick={() => setInputText(prev => prev ? `${prev}, ${prompt}` : prompt)}
-                className={`px-4 py-2 rounded-lg text-xs font-bold tracking-wider transition-all hover:scale-105 active:scale-95 ${getPromptColor(i)}`}
+                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-[9px] sm:text-xs font-bold tracking-wider transition-all hover:scale-105 active:scale-95 ${getPromptColor(i)}`}
               >
                 {prompt}
               </button>
@@ -211,7 +212,7 @@ export default function DashboardPage() {
           <Button
             onClick={handleGenerate}
             disabled={!inputText || isGenerating}
-            className="w-full py-8 rounded-full border-2 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-500 hover:text-white font-black tracking-[0.3em] text-xl transition-all disabled:opacity-50"
+            className="w-full py-6 sm:py-8 rounded-full border-2 border-zinc-800 bg-zinc-900/50 hover:bg-zinc-800 text-zinc-500 hover:text-white font-black tracking-[0.1em] sm:tracking-[0.3em] text-base sm:text-xl transition-all disabled:opacity-50"
           >
             {isGenerating ? 'GENERATING...' : 'GENERATE TRACK'}
           </Button>
@@ -219,18 +220,18 @@ export default function DashboardPage() {
 
         {/* Results Area */}
         {result && (
-          <div className="mt-8 p-6 bg-zinc-900/80 rounded-3xl border border-zinc-800 animate-in fade-in slide-in-from-bottom-4 duration-500 z-10 relative">
-            <h3 className="text-gold font-bold mb-2 flex items-center gap-2">
-              <Music2 className="size-4" />
+          <div className="mt-6 sm:mt-8 p-4 sm:p-6 bg-zinc-900/80 rounded-2xl sm:rounded-3xl border border-zinc-800 animate-in fade-in slide-in-from-bottom-4 duration-500 z-10 relative">
+            <h3 className="text-gold font-bold text-xs sm:text-sm mb-2 flex items-center gap-2">
+              <Music2 className="size-3 sm:size-4" />
               TRACK SUMMARY
             </h3>
-            <p className="text-zinc-300 mb-6 italic">{result.summary}</p>
+            <p className="text-zinc-300 text-sm sm:text-base mb-4 sm:mb-6 italic">{result.summary}</p>
 
-            <h3 className="text-gold font-bold mb-4 flex items-center gap-2">
-              <LayoutGrid className="size-4" />
+            <h3 className="text-gold font-bold text-xs sm:text-sm mb-3 sm:mb-4 flex items-center gap-2">
+              <LayoutGrid className="size-3 sm:size-4" />
               LYRIC SHEET
             </h3>
-            <pre className="text-zinc-400 font-mono text-sm whitespace-pre-wrap leading-relaxed">
+            <pre className="text-zinc-400 font-mono text-xs sm:text-sm whitespace-pre-wrap leading-relaxed">
               {result.lyrics}
             </pre>
           </div>
@@ -244,15 +245,18 @@ function DropdownItem({ label, icon, data, onSelect }: { label: string, icon: an
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="rounded-full bg-zinc-900/50 border-zinc-800 hover:bg-zinc-800 text-zinc-400 font-bold px-4">
-          {label}
-          <ChevronDown className="size-4 ml-2" />
+        <Button variant="outline" className="w-full rounded-full bg-zinc-900/50 border-zinc-800 hover:bg-zinc-800 text-zinc-400 font-bold px-2 sm:px-4 text-[10px] sm:text-sm h-9 sm:h-10 justify-between sm:justify-center">
+          <span className="flex items-center overflow-hidden">
+            {icon}
+            <span className="truncate">{label}</span>
+          </span>
+          <ChevronDown className="size-3 sm:size-4 ml-1 sm:ml-2 flex-shrink-0" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-zinc-900 border-zinc-800 text-zinc-300 min-w-[200px]">
+      <DropdownMenuContent className="bg-zinc-900 border-zinc-800 text-zinc-300 min-w-[160px] sm:min-w-[200px]">
         {Object.entries(data).map(([category, items]) => (
           <DropdownMenuSub key={category}>
-            <DropdownMenuSubTrigger className="hover:bg-zinc-800 focus:bg-zinc-800">
+            <DropdownMenuSubTrigger className="hover:bg-zinc-800 focus:bg-zinc-800 text-xs sm:text-sm">
               {category}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="bg-zinc-900 border-zinc-800 text-zinc-300">
@@ -260,7 +264,7 @@ function DropdownItem({ label, icon, data, onSelect }: { label: string, icon: an
                 <DropdownMenuItem
                   key={item}
                   onClick={() => onSelect(item)}
-                  className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer"
+                  className="hover:bg-zinc-800 focus:bg-zinc-800 cursor-pointer text-xs sm:text-sm"
                 >
                   {item}
                 </DropdownMenuItem>
