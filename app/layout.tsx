@@ -7,8 +7,8 @@ import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'LyricFlow - AI Songwriting',
+  description: 'The ultimate AI-powered companion for songwriters and poets.'
 };
 
 export const viewport: Viewport = {
