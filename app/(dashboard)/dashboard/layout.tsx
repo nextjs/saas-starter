@@ -25,7 +25,7 @@ export default function DashboardLayout({
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full">
       {/* Mobile header */}
-      <div className="lg:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
+      <div className="lg:hidden flex items-center justify-between bg-black border-b border-zinc-800 p-4">
         <div className="flex items-center">
           <span className="font-medium">
             {navItems.find((item) => item.href === pathname)?.label || 'Dashboard'}
@@ -52,12 +52,12 @@ export default function DashboardLayout({
 
         {/* Sidebar */}
         <aside
-          className={`w-64 bg-white lg:bg-gray-50 border-r border-gray-200 lg:block ${
+          className={`w-64 bg-black lg:bg-black border-r border-zinc-800 lg:block ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
           } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out`}
         >
-          <div className="flex lg:hidden items-center justify-between p-4 border-b border-gray-200">
-             <span className="font-semibold text-orange-500">LyricFlow</span>
+          <div className="flex lg:hidden items-center justify-between p-4 border-b border-zinc-800">
+             <span className="font-semibold text-gold">LyricFlow</span>
              <Button variant="ghost" size="sm" onClick={() => setIsSidebarOpen(false)}>
                 <X className="h-5 w-5" />
              </Button>
@@ -68,7 +68,7 @@ export default function DashboardLayout({
                 <Button
                   variant={pathname === item.href ? 'secondary' : 'ghost'}
                   className={`shadow-none my-1 w-full justify-start ${
-                    pathname === item.href ? 'bg-gray-100' : ''
+                    pathname === item.href ? 'bg-zinc-800' : ''
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >

@@ -1,0 +1,20 @@
+
+> @ dev /app
+> next dev --turbopack
+
+▲ Next.js 16.1.5 (Turbopack, Cache Components)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+✓ Ready in 1506ms
+✓ Compiled in 8ms
+○ Compiling /dashboard ...
+ GET /dashboard 200 in 8.6s (compile: 6.9s, proxy.ts: 354ms, render: 1316ms)
+ GET /api/user 200 in 2.2s (compile: 2.2s, proxy.ts: 11ms, render: 47ms)
+✓ Compiled in 114ms
+ GET /dashboard 200 in 690ms (compile: 112ms, proxy.ts: 5ms, render: 572ms)
+ GET /api/user 200 in 16ms (compile: 4ms, proxy.ts: 4ms, render: 7ms)
+ GET /dashboard 200 in 390ms (compile: 6ms, proxy.ts: 6ms, render: 378ms)
+ GET /api/user 200 in 20ms (compile: 6ms, proxy.ts: 5ms, render: 9ms)
+✓ Compiled in 87ms
