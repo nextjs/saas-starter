@@ -44,13 +44,14 @@ export async function getSession() {
 }
 
 export async function setSession(user: NewUser) {
+  const cookieStore = await cookies();
   const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const session: SessionData = {
     user: { id: user.id! },
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
-  (await cookies()).set('session', encryptedSession, {
+  cookieStore.set('session', encryptedSession, {
     expires: expiresInOneDay,
     httpOnly: true,
     secure: true,

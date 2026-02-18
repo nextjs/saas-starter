@@ -47,8 +47,8 @@ function ManageSubscription() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <div className="mb-4 sm:mb-0">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
               <p className="font-medium">
                 Current Plan: {teamData?.planName || 'Free'}
               </p>
@@ -60,8 +60,8 @@ function ManageSubscription() {
                   : 'No active subscription'}
               </p>
             </div>
-            <form action={customerPortalAction}>
-              <Button type="submit" variant="outline">
+            <form action={customerPortalAction} className="w-full sm:w-auto">
+              <Button type="submit" variant="outline" className="w-full sm:w-auto">
                 Manage Subscription
               </Button>
             </form>
@@ -125,18 +125,9 @@ function TeamMembers() {
       <CardContent>
         <ul className="space-y-4">
           {teamData.teamMembers.map((member, index) => (
-            <li key={member.id} className="flex items-center justify-between">
+            <li key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-b sm:border-0 last:border-0">
               <div className="flex items-center space-x-4">
-                <Avatar>
-                  {/* 
-                    This app doesn't save profile images, but here
-                    is how you'd show them:
-
-                    <AvatarImage
-                      src={member.user.image || ''}
-                      alt={getUserDisplayName(member.user)}
-                    />
-                  */}
+                <Avatar className="flex-shrink-0">
                   <AvatarFallback>
                     {getUserDisplayName(member.user)
                       .split(' ')
@@ -144,8 +135,8 @@ function TeamMembers() {
                       .join('')}
                   </AvatarFallback>
                 </Avatar>
-                <div>
-                  <p className="font-medium">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">
                     {getUserDisplayName(member.user)}
                   </p>
                   <p className="text-sm text-muted-foreground capitalize">
@@ -154,13 +145,14 @@ function TeamMembers() {
                 </div>
               </div>
               {index > 1 ? (
-                <form action={removeAction}>
+                <form action={removeAction} className="w-full sm:w-auto">
                   <input type="hidden" name="memberId" value={member.id} />
                   <Button
                     type="submit"
                     variant="outline"
                     size="sm"
                     disabled={isRemovePending}
+                    className="w-full sm:w-auto"
                   >
                     {isRemovePending ? 'Removing...' : 'Remove'}
                   </Button>
@@ -170,7 +162,7 @@ function TeamMembers() {
           ))}
         </ul>
         {removeState?.error && (
-          <p className="text-red-500 mt-4">{removeState.error}</p>
+          <p className="text-red-500 mt-4 text-sm">{removeState.error}</p>
         )}
       </CardContent>
     </Card>
@@ -203,7 +195,7 @@ function InviteTeamMember() {
       <CardContent>
         <form action={inviteAction} className="space-y-4">
           <div>
-            <Label htmlFor="email" className="mb-2">
+            <Label htmlFor="email" className="mb-2 block">
               Email
             </Label>
             <Input
@@ -216,32 +208,32 @@ function InviteTeamMember() {
             />
           </div>
           <div>
-            <Label>Role</Label>
+            <Label className="mb-2 block">Role</Label>
             <RadioGroup
               defaultValue="member"
               name="role"
-              className="flex space-x-4"
+              className="flex flex-col sm:flex-row gap-4"
               disabled={!isOwner}
             >
-              <div className="flex items-center space-x-2 mt-2">
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="member" id="member" />
-                <Label htmlFor="member">Member</Label>
+                <Label htmlFor="member" className="font-normal cursor-pointer">Member</Label>
               </div>
-              <div className="flex items-center space-x-2 mt-2">
+              <div className="flex items-center space-x-2">
                 <RadioGroupItem value="owner" id="owner" />
-                <Label htmlFor="owner">Owner</Label>
+                <Label htmlFor="owner" className="font-normal cursor-pointer">Owner</Label>
               </div>
             </RadioGroup>
           </div>
           {inviteState?.error && (
-            <p className="text-red-500">{inviteState.error}</p>
+            <p className="text-red-500 text-sm">{inviteState.error}</p>
           )}
           {inviteState?.success && (
-            <p className="text-green-500">{inviteState.success}</p>
+            <p className="text-green-500 text-sm">{inviteState.success}</p>
           )}
           <Button
             type="submit"
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white"
             disabled={isInvitePending || !isOwner}
           >
             {isInvitePending ? (
@@ -259,7 +251,7 @@ function InviteTeamMember() {
         </form>
       </CardContent>
       {!isOwner && (
-        <CardFooter>
+        <CardFooter className="border-t bg-gray-50/50">
           <p className="text-sm text-muted-foreground">
             You must be a team owner to invite new members.
           </p>
