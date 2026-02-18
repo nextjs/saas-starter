@@ -23,3 +23,8 @@
  GET /dashboard 200 in 1192ms (compile: 218ms, proxy.ts: 84ms, render: 889ms)
  GET /api/user 200 in 17ms (compile: 5ms, proxy.ts: 4ms, render: 7ms)
 ✓ Compiled in 86ms
+○ Compiling / ...
+ GET / 200 in 4.5s (compile: 3.1s, proxy.ts: 267ms, render: 1132ms)
+ GET /api/user 200 in 24ms (compile: 5ms, proxy.ts: 6ms, render: 13ms)
+ GET / 200 in 435ms (compile: 19ms, proxy.ts: 5ms, render: 412ms)
+ GET /api/user 200 in 18ms (compile: 4ms, proxy.ts: 6ms, render: 8ms)
