@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, X } from 'lucide-react';
 
 export default function DashboardLayout({
   children
@@ -38,15 +38,27 @@ export default function DashboardLayout({
         </Button>
       </div>
 
-      <div className="flex flex-1 overflow-hidden h-full">
+      <div className="flex flex-1 overflow-hidden h-full relative">
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
         <aside
           className={`w-64 bg-white lg:bg-gray-50 border-r border-gray-200 lg:block ${
-            isSidebarOpen ? 'block' : 'hidden'
-          } lg:relative absolute inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
             isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-          }`}
+          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out`}
         >
+          <div className="flex lg:hidden items-center justify-between p-4 border-b border-gray-200">
+             <span className="font-semibold text-orange-500">ACME</span>
+             <Button variant="ghost" size="sm" onClick={() => setIsSidebarOpen(false)}>
+                <X className="h-5 w-5" />
+             </Button>
+          </div>
           <nav className="h-full overflow-y-auto p-4">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} passHref>
@@ -66,7 +78,9 @@ export default function DashboardLayout({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-0 lg:p-4">{children}</main>
+        <main className="flex-1 overflow-y-auto p-0 lg:p-4">
+          <Suspense fallback={null}>{children}</Suspense>
+        </main>
       </div>
     </div>
   );
