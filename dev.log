@@ -2,14 +2,18 @@
 > @ dev /app
 > next dev --turbopack
 
-⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
+⚠ Port 3000 is in use by an unknown process, using available port 3005 instead.
 ▲ Next.js 16.1.5 (Turbopack, Cache Components)
-- Local:         http://localhost:3003
-- Network:       http://192.168.0.2:3003
+- Local:         http://localhost:3005
+- Network:       http://192.168.0.2:3005
 
 ✓ Starting...
-⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
-✓ Ready in 1613ms
-○ Compiling /dashboard ...
- GET /dashboard 200 in 9.2s (compile: 7.5s, proxy.ts: 286ms, render: 1432ms)
- GET /api/user 200 in 840ms (compile: 807ms, proxy.ts: 10ms, render: 23ms)
+✓ Ready in 1488ms
+ GET /dashboard/song/1 200 in 3.3s (compile: 2.2s, proxy.ts: 187ms, generate-params: 1218ms, render: 887ms)
+ GET /api/user 200 in 91ms (compile: 69ms, proxy.ts: 5ms, render: 17ms)
+ GET /dashboard/song/1 200 in 421ms (compile: 46ms, proxy.ts: 5ms, generate-params: 23ms, render: 370ms)
+ GET /api/user 200 in 17ms (compile: 4ms, proxy.ts: 5ms, render: 9ms)
+ GET /dashboard/song/1 200 in 349ms (compile: 23ms, proxy.ts: 5ms, generate-params: 16ms, render: 321ms)
+ GET /api/user 200 in 13ms (compile: 3ms, proxy.ts: 5ms, render: 5ms)
+ GET /dashboard/song/1 200 in 291ms (compile: 21ms, proxy.ts: 4ms, generate-params: 15ms, render: 265ms)
+ GET /api/user 200 in 14ms (compile: 4ms, proxy.ts: 5ms, render: 5ms)

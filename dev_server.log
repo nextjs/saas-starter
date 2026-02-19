@@ -621,3 +621,44 @@ Debug info:
   location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
 }
 Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+
+thread 'tokio-runtime-worker' (129738) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for track_glob_inner (TaskId 199880))
+
+Caused by:
+    0: Looking up data for TaskId 199880 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for read_dir (TaskId 199881))
+
+Caused by:
+    0: Looking up data for TaskId 199881 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <DiskFileSystem as FileSystem>::raw_read_dir (TaskId 199882))
+
+Caused by:
+    0: Looking up data for TaskId 199882 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <DiskFileSystem as FileSystem>::read (TaskId 199883))
+
+Caused by:
+    0: Looking up data for TaskId 199883 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to /tmp/next-panic-cf5744431bde1873e29ee969d5c87e32.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29&body=Turbopack%20version%3A%20%6047471522%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20%5Bproject%5D%2Fapp%2Fglobals.css%20%5Bapp-client%5D%20%28css%29%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
