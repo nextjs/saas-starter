@@ -14,6 +14,12 @@ const RECENT_WORKS = [
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-black text-white pb-20">
+      {/* Overview Header (Desktop Only) */}
+      <div className="hidden lg:block w-full max-w-5xl mx-auto px-4 pt-8 pb-4">
+        <h2 className="text-xs font-black text-zinc-600 uppercase tracking-[0.3em] italic">Overview</h2>
+        <div className="h-px w-full bg-zinc-900 mt-4" />
+      </div>
+
       {/* QUICK START Section */}
       <QuickstartCard />
 
