@@ -7,8 +7,8 @@ import { Suspense } from 'react';
 import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'LyricFlow - AI Songwriting',
-  description: 'The ultimate AI-powered companion for songwriters and poets.'
+  title: 'LyricFlow | AI-Powered Songwriting Assistant',
+  description: 'Unlock your creative potential with LyricFlow. Generate lyrics, find rhymes, and master genres with our advanced AI songwriting tools.'
 };
 
 export const viewport: Viewport = {
