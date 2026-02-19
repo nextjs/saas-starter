@@ -1,119 +1,105 @@
-# Next.js SaaS Starter
+# LyricFlow - AI-Powered Songwriting & Lyric Enhancer
 
-This is a starter template for building a SaaS application using **Next.js** with support for authentication, Stripe integration for payments, and a dashboard for logged-in users.
+LyricFlow is a modern web application designed to help songwriters, poets, and wordsmiths break through creative blocks and craft perfect lyrics. Combining a distraction-free writing environment with powerful AI-driven enhancement tools, LyricFlow is your ultimate companion in the songwriting journey.
 
-**Demo: [https://next-saas-start.vercel.app/](https://next-saas-start.vercel.app/)**
+## 🚀 Features
 
-## Features
+- **Smart Lyric Editor**: A beautiful, minimalist editor designed specifically for songwriters.
+- **AI Lyric Enhancer**: Get instant suggestions for lines, rhymes, and metaphors to elevate your songwriting.
+- **Syllable Tracking**: Real-time syllable counts for every line to help you maintain perfect rhythm and meter.
+- **Rhyme & Thesaurus Integration**: Quick-access tools for finding the perfect rhyme or synonym without leaving your workflow.
+- **Project Management**: Organize your songs into albums, collections, or simple drafts.
+- **Collaborative Workspaces**: Invite co-writers to your team and work on lyrics together in real-time.
+- **Subscription Plans**: Access premium AI features and unlimited project storage with Stripe-powered plans.
+- **Activity Logging**: Keep track of all changes and creative milestones in your projects.
 
-- Marketing landing page (`/`) with animated Terminal element
-- Pricing page (`/pricing`) which connects to Stripe Checkout
-- Dashboard pages with CRUD operations on users/teams
-- Basic RBAC with Owner and Member roles
-- Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
-- Global middleware to protect logged-in routes
-- Local middleware to protect Server Actions or validate Zod schemas
-- Activity logging system for any user events
+## 🛠️ Tech Stack
 
-## Tech Stack
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Database**: [Postgres](https://www.postgresql.org/) with [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication**: Custom session-based auth with [jose](https://github.com/panva/jose) and [bcryptjs](https://github.com/dcodeIO/bcrypt.js)
+- **Payments**: [Stripe](https://stripe.com/) integration for subscriptions
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com/) (Radix UI, Lucide React)
 
-- **Framework**: [Next.js](https://nextjs.org/)
-- **Database**: [Postgres](https://www.postgresql.org/)
-- **ORM**: [Drizzle](https://orm.drizzle.team/)
-- **Payments**: [Stripe](https://stripe.com/)
-- **UI Library**: [shadcn/ui](https://ui.shadcn.com/)
+## 🏁 Getting Started
 
-## Getting Started
+### Prerequisites
 
-```bash
-git clone https://github.com/nextjs/saas-starter
-cd saas-starter
-pnpm install
-```
+- [Node.js](https://nodejs.org/) (Latest LTS recommended)
+- [pnpm](https://pnpm.io/)
+- [Postgres](https://www.postgresql.org/) database
 
-## Running Locally
+### Installation
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+1. **Clone the repository:**
 
-```bash
-stripe login
-```
+   ```bash
+   git clone https://github.com/yourusername/lyricflow.git
+   cd lyricflow
+   ```
 
-Use the included setup script to create your `.env` file:
+2. **Install dependencies:**
 
-```bash
-pnpm db:setup
-```
+   ```bash
+   pnpm install
+   ```
 
-Run the database migrations and seed the database with a default user and team:
+3. **Set up environment variables:**
 
-```bash
-pnpm db:migrate
-pnpm db:seed
-```
+   Create a `.env` file in the root directory and add your configuration. You can use the included setup script:
 
-This will create the following user and team:
+   ```bash
+   pnpm db:setup
+   ```
 
-- User: `test@test.com`
-- Password: `admin123`
+4. **Initialize the database:**
 
-You can also create new users through the `/sign-up` route.
+   ```bash
+   pnpm db:migrate
+   pnpm db:seed
+   ```
 
-Finally, run the Next.js development server:
+   This will create a default user for testing:
+   - **Email**: `test@test.com`
+   - **Password**: `admin123`
 
-```bash
-pnpm dev
-```
+5. **Run the development server:**
 
-Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
+   ```bash
+   pnpm dev
+   ```
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+   Open [http://localhost:3000](http://localhost:3000) in your browser to see LyricFlow in action.
 
-```bash
-stripe listen --forward-to localhost:3000/api/stripe/webhook
-```
+## 💳 Payment & Subscriptions
 
-## Testing Payments
+LyricFlow uses Stripe to manage subscriptions. To test payments locally:
 
-To test Stripe payments, use the following test card details:
+1. [Install the Stripe CLI](https://docs.stripe.com/stripe-cli).
+2. Login to your Stripe account: `stripe login`.
+3. Start the webhook listener:
+   ```bash
+   stripe listen --forward-to localhost:3000/api/stripe/webhook
+   ```
 
-- Card Number: `4242 4242 4242 4242`
-- Expiration: Any future date
-- CVC: Any 3-digit number
+Use the [Stripe test card numbers](https://docs.stripe.com/testing#cards) for development.
 
-## Going to Production
+## 🚢 Deployment
 
-When you're ready to deploy your SaaS application to production, follow these steps:
+LyricFlow is optimized for deployment on [Vercel](https://vercel.com/).
 
-### Set up a production Stripe webhook
+### Production Environment Variables
 
-1. Go to the Stripe Dashboard and create a new webhook for your production environment.
-2. Set the endpoint URL to your production API route (e.g., `https://yourdomain.com/api/stripe/webhook`).
-3. Select the events you want to listen for (e.g., `checkout.session.completed`, `customer.subscription.updated`).
+Ensure the following variables are set in your production environment:
 
-### Deploy to Vercel
+- `BASE_URL`: Your production domain.
+- `STRIPE_SECRET_KEY`: Production Stripe secret key.
+- `STRIPE_WEBHOOK_SECRET`: Production Stripe webhook secret.
+- `POSTGRES_URL`: Connection string for your production database.
+- `AUTH_SECRET`: A secure random string for JWT signing.
 
-1. Push your code to a GitHub repository.
-2. Connect your repository to [Vercel](https://vercel.com/) and deploy it.
-3. Follow the Vercel deployment process, which will guide you through setting up your project.
+## 📄 License
 
-### Add environment variables
-
-In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
-
-1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
-4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
-
-## Other Templates
-
-While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
-
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com
-- https://turbostarter.dev
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -3,10 +3,12 @@ import type { Metadata, Viewport } from 'next';
 import { Manrope } from 'next/font/google';
 import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
+import { Suspense } from 'react';
+import { cookies } from 'next/headers';
 
 export const metadata: Metadata = {
-  title: 'Next.js SaaS Starter',
-  description: 'Get started quickly with Next.js, Postgres, and Stripe.'
+  title: 'LyricFlow | AI-Powered Songwriting Assistant',
+  description: 'Unlock your creative potential with LyricFlow. Generate lyrics, find rhymes, and master genres with our advanced AI songwriting tools.'
 };
 
 export const viewport: Viewport = {
@@ -23,22 +25,32 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`bg-white dark:bg-gray-950 text-black dark:text-white ${manrope.className}`}
+      className={`dark text-white ${manrope.className}`}
     >
-      <body className="min-h-[100dvh] bg-gray-50">
-        <SWRConfig
-          value={{
-            fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
-            }
-          }}
-        >
-          {children}
-        </SWRConfig>
+      <body className="min-h-[100dvh] bg-black text-white">
+        <Suspense fallback={children}>
+          <SWRConfigWithData>{children}</SWRConfigWithData>
+        </Suspense>
       </body>
     </html>
+  );
+}
+
+async function SWRConfigWithData({ children }: { children: React.ReactNode }) {
+  await cookies();
+  const user = await getUser();
+  const team = await getTeamForUser();
+
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          '/api/user': user,
+          '/api/team': team
+        }
+      }}
+    >
+      {children}
+    </SWRConfig>
   );
 }

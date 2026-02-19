@@ -3,9 +3,9 @@
 import { useActionState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, User as UserIcon } from 'lucide-react';
 import { updateAccount } from '@/app/(login)/actions';
 import { User } from '@/lib/db/schema';
 import useSWR from 'swr';
@@ -31,9 +31,9 @@ function AccountForm({
   emailValue = ''
 }: AccountFormProps) {
   return (
-    <>
-      <div>
-        <Label htmlFor="name" className="mb-2">
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Label htmlFor="name" className="text-zinc-400 font-bold uppercase tracking-wider text-xs">
           Name
         </Label>
         <Input
@@ -42,10 +42,11 @@ function AccountForm({
           placeholder="Enter your name"
           defaultValue={state.name || nameValue}
           required
+          className="bg-zinc-900 border-zinc-800 text-white rounded-xl h-12"
         />
       </div>
-      <div>
-        <Label htmlFor="email" className="mb-2">
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-zinc-400 font-bold uppercase tracking-wider text-xs">
           Email
         </Label>
         <Input
@@ -55,9 +56,10 @@ function AccountForm({
           placeholder="Enter your email"
           defaultValue={emailValue}
           required
+          className="bg-zinc-900 border-zinc-800 text-white rounded-xl h-12"
         />
       </div>
-    </>
+    </div>
   );
 }
 
@@ -79,29 +81,37 @@ export default function GeneralPage() {
   );
 
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium text-gray-900 mb-6">
-        General Settings
-      </h1>
+    <section className="flex-1 p-4 lg:p-8 bg-black">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2 border-2 border-gold rounded-lg">
+          <UserIcon className="size-6 text-gold" />
+        </div>
+        <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white uppercase italic">
+          General <span className="text-gold">Settings</span>
+        </h1>
+      </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Information</CardTitle>
+      <Card className="bg-zinc-950 border-zinc-800 rounded-3xl overflow-hidden max-w-2xl shadow-xl">
+        <CardHeader className="border-b border-zinc-900 pb-6">
+          <CardTitle className="text-white text-xl uppercase italic font-black">Account Information</CardTitle>
+          <CardDescription className="text-zinc-500">Update your profile details and email address.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form className="space-y-4" action={formAction}>
+        <CardContent className="pt-8">
+          <form className="space-y-8" action={formAction}>
             <Suspense fallback={<AccountForm state={state} />}>
               <AccountFormWithData state={state} />
             </Suspense>
+
             {state.error && (
-              <p className="text-red-500 text-sm">{state.error}</p>
+              <p className="text-rose-500 text-sm font-medium">{state.error}</p>
             )}
             {state.success && (
-              <p className="text-green-500 text-sm">{state.success}</p>
+              <p className="text-emerald-500 text-sm font-medium">{state.success}</p>
             )}
+
             <Button
               type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-gold text-black hover:bg-yellow-500 rounded-full px-8 py-6 font-black tracking-widest uppercase transition-all"
               disabled={isPending}
             >
               {isPending ? (
