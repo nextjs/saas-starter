@@ -28,3 +28,93 @@
  GET /api/user 200 in 24ms (compile: 5ms, proxy.ts: 6ms, render: 13ms)
  GET / 200 in 435ms (compile: 19ms, proxy.ts: 5ms, render: 412ms)
  GET /api/user 200 in 18ms (compile: 4ms, proxy.ts: 6ms, render: 8ms)
+Error fetching Stripe products: Error: Invalid API Key provided: sk_test_***************lder
+    at ignore-listed frames {
+  type: 'StripeAuthenticationError',
+  raw: [Object],
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: [Object],
+  requestId: undefined,
+  statusCode: 401,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
+Error fetching Stripe prices: Error: Invalid API Key provided: sk_test_***************lder
+    at ignore-listed frames {
+  type: 'StripeAuthenticationError',
+  raw: [Object],
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: [Object],
+  requestId: undefined,
+  statusCode: 401,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
+ GET /pricing 200 in 4.2s (compile: 2.6s, proxy.ts: 24ms, render: 1530ms)
+ GET /api/user 200 in 16ms (compile: 5ms, proxy.ts: 4ms, render: 7ms)
+Error fetching Stripe products: Error: Invalid API Key provided: sk_test_***************lder
+    at ignore-listed frames {
+  type: 'StripeAuthenticationError',
+  raw: [Object],
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: [Object],
+  requestId: undefined,
+  statusCode: 401,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
+Error fetching Stripe prices: Error: Invalid API Key provided: sk_test_***************lder
+    at ignore-listed frames {
+  type: 'StripeAuthenticationError',
+  raw: [Object],
+  rawType: 'invalid_request_error',
+  code: undefined,
+  doc_url: undefined,
+  param: undefined,
+  detail: undefined,
+  headers: [Object],
+  requestId: undefined,
+  statusCode: 401,
+  userMessage: undefined,
+  charge: undefined,
+  decline_code: undefined,
+  payment_intent: undefined,
+  payment_method: undefined,
+  payment_method_type: undefined,
+  setup_intent: undefined,
+  source: undefined
+}
+ GET /pricing 200 in 698ms (compile: 5ms, proxy.ts: 4ms, render: 689ms)
+ GET /api/user 200 in 13ms (compile: 4ms, proxy.ts: 5ms, render: 5ms)
+ GET /sign-in 200 in 1189ms (compile: 390ms, proxy.ts: 6ms, render: 793ms)
+ GET /sign-in 200 in 334ms (compile: 4ms, proxy.ts: 4ms, render: 325ms)

@@ -7,7 +7,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-  CardFooter
+  CardFooter,
+  CardDescription
 } from '@/components/ui/card';
 import { customerPortalAction } from '@/lib/payments/actions';
 import { useActionState } from 'react';
@@ -18,7 +19,7 @@ import { Suspense } from 'react';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Loader2, PlusCircle } from 'lucide-react';
+import { Loader2, PlusCircle, Users, CreditCard } from 'lucide-react';
 
 type ActionState = {
   error?: string;
@@ -29,9 +30,9 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function SubscriptionSkeleton() {
   return (
-    <Card className="mb-8 h-[140px]">
+    <Card className="bg-zinc-950 border-zinc-800 mb-8 h-[140px] animate-pulse">
       <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+        <CardTitle className="text-white uppercase italic font-black">Team Subscription</CardTitle>
       </CardHeader>
     </Card>
   );
@@ -41,18 +42,21 @@ function ManageSubscription() {
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+    <Card className="bg-zinc-950 border-zinc-800 mb-8 shadow-xl overflow-hidden">
+      <CardHeader className="border-b border-zinc-900">
+        <div className="flex items-center gap-2">
+          <CreditCard className="size-4 text-gold" />
+          <CardTitle className="text-white text-xl uppercase italic font-black">Team Subscription</CardTitle>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-8">
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
             <div>
-              <p className="font-medium">
-                Current Plan: {teamData?.planName || 'Free'}
+              <p className="text-white font-bold text-lg mb-1">
+                Current Plan: <span className="text-gold">{teamData?.planName || 'Free'}</span>
               </p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-zinc-500 text-sm">
                 {teamData?.subscriptionStatus === 'active'
                   ? 'Billed monthly'
                   : teamData?.subscriptionStatus === 'trialing'
@@ -61,7 +65,7 @@ function ManageSubscription() {
               </p>
             </div>
             <form action={customerPortalAction} className="w-full sm:w-auto">
-              <Button type="submit" variant="outline" className="w-full sm:w-auto">
+              <Button type="submit" className="w-full sm:w-auto bg-white text-black hover:bg-zinc-200 rounded-full font-black uppercase tracking-wider text-xs px-6 py-5">
                 Manage Subscription
               </Button>
             </form>
@@ -74,21 +78,10 @@ function ManageSubscription() {
 
 function TeamMembersSkeleton() {
   return (
-    <Card className="mb-8 h-[140px]">
+    <Card className="bg-zinc-950 border-zinc-800 mb-8 h-[140px] animate-pulse">
       <CardHeader>
-        <CardTitle>Team Members</CardTitle>
+        <CardTitle className="text-white uppercase italic font-black">Team Members</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="animate-pulse space-y-4 mt-1">
-          <div className="flex items-center space-x-4">
-            <div className="size-8 rounded-full bg-gray-200"></div>
-            <div className="space-y-2">
-              <div className="h-4 w-32 bg-gray-200 rounded"></div>
-              <div className="h-3 w-14 bg-gray-200 rounded"></div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
     </Card>
   );
 }
@@ -106,29 +99,29 @@ function TeamMembers() {
 
   if (!teamData?.teamMembers?.length) {
     return (
-      <Card className="mb-8">
+      <Card className="bg-zinc-950 border-zinc-800 mb-8">
         <CardHeader>
-          <CardTitle>Team Members</CardTitle>
+          <CardTitle className="text-white uppercase italic font-black">Team Members</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">No team members yet.</p>
+          <p className="text-zinc-500 italic">No team members yet.</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle>Team Members</CardTitle>
+    <Card className="bg-zinc-950 border-zinc-800 mb-8 shadow-xl overflow-hidden">
+      <CardHeader className="border-b border-zinc-900">
+        <CardTitle className="text-white text-xl uppercase italic font-black">Team Members</CardTitle>
       </CardHeader>
-      <CardContent>
-        <ul className="space-y-4">
+      <CardContent className="pt-0">
+        <ul className="divide-y divide-zinc-900">
           {teamData.teamMembers.map((member, index) => (
-            <li key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-2 border-b sm:border-0 last:border-0">
+            <li key={member.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6">
               <div className="flex items-center space-x-4">
-                <Avatar className="flex-shrink-0">
-                  <AvatarFallback>
+                <Avatar className="size-12 border border-zinc-800">
+                  <AvatarFallback className="bg-zinc-900 text-gold font-bold">
                     {getUserDisplayName(member.user)
                       .split(' ')
                       .map((n) => n[0])
@@ -136,10 +129,10 @@ function TeamMembers() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0">
-                  <p className="font-medium truncate">
+                  <p className="font-bold text-white truncate">
                     {getUserDisplayName(member.user)}
                   </p>
-                  <p className="text-sm text-muted-foreground capitalize">
+                  <p className="text-xs text-zinc-500 uppercase tracking-widest mt-0.5">
                     {member.role}
                   </p>
                 </div>
@@ -150,9 +143,8 @@ function TeamMembers() {
                   <Button
                     type="submit"
                     variant="outline"
-                    size="sm"
                     disabled={isRemovePending}
-                    className="w-full sm:w-auto"
+                    className="w-full sm:w-auto border-zinc-800 text-rose-500 hover:bg-rose-500/10 hover:border-rose-500/50 rounded-full font-bold uppercase text-[10px] tracking-widest h-9"
                   >
                     {isRemovePending ? 'Removing...' : 'Remove'}
                   </Button>
@@ -162,7 +154,7 @@ function TeamMembers() {
           ))}
         </ul>
         {removeState?.error && (
-          <p className="text-red-500 mt-4 text-sm">{removeState.error}</p>
+          <p className="text-rose-500 mt-4 text-sm font-medium">{removeState.error}</p>
         )}
       </CardContent>
     </Card>
@@ -171,9 +163,9 @@ function TeamMembers() {
 
 function InviteTeamMemberSkeleton() {
   return (
-    <Card className="h-[260px]">
+    <Card className="bg-zinc-950 border-zinc-800 h-[260px] animate-pulse">
       <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+        <CardTitle className="text-white uppercase italic font-black">Invite Team Member</CardTitle>
       </CardHeader>
     </Card>
   );
@@ -188,15 +180,16 @@ function InviteTeamMember() {
   >(inviteTeamMember, {});
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Invite Team Member</CardTitle>
+    <Card className="bg-zinc-950 border-zinc-800 shadow-xl overflow-hidden">
+      <CardHeader className="border-b border-zinc-900">
+        <CardTitle className="text-white text-xl uppercase italic font-black">Invite Team Member</CardTitle>
+        <CardDescription className="text-zinc-500">Add new collaborators to your songwriting workspace.</CardDescription>
       </CardHeader>
-      <CardContent>
-        <form action={inviteAction} className="space-y-4">
-          <div>
-            <Label htmlFor="email" className="mb-2 block">
-              Email
+      <CardContent className="pt-8">
+        <form action={inviteAction} className="space-y-8">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-zinc-400 font-bold uppercase tracking-wider text-xs">
+              Email Address
             </Label>
             <Input
               id="email"
@@ -205,35 +198,38 @@ function InviteTeamMember() {
               placeholder="Enter email"
               required
               disabled={!isOwner}
+              className="bg-zinc-900 border-zinc-800 text-white rounded-xl h-12"
             />
           </div>
-          <div>
-            <Label className="mb-2 block">Role</Label>
+          <div className="space-y-4">
+            <Label className="text-zinc-400 font-bold uppercase tracking-wider text-xs">Role Selection</Label>
             <RadioGroup
               defaultValue="member"
               name="role"
-              className="flex flex-col sm:flex-row gap-4"
+              className="flex flex-col sm:flex-row gap-6"
               disabled={!isOwner}
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="member" id="member" />
-                <Label htmlFor="member" className="font-normal cursor-pointer">Member</Label>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="member" id="member" className="border-zinc-700 text-gold" />
+                <Label htmlFor="member" className="font-bold text-zinc-300 cursor-pointer text-sm">Member</Label>
               </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="owner" id="owner" />
-                <Label htmlFor="owner" className="font-normal cursor-pointer">Owner</Label>
+              <div className="flex items-center space-x-3">
+                <RadioGroupItem value="owner" id="owner" className="border-zinc-700 text-gold" />
+                <Label htmlFor="owner" className="font-bold text-zinc-300 cursor-pointer text-sm">Owner</Label>
               </div>
             </RadioGroup>
           </div>
+
           {inviteState?.error && (
-            <p className="text-red-500 text-sm">{inviteState.error}</p>
+            <p className="text-rose-500 text-sm font-medium">{inviteState.error}</p>
           )}
           {inviteState?.success && (
-            <p className="text-green-500 text-sm">{inviteState.success}</p>
+            <p className="text-emerald-500 text-sm font-medium">{inviteState.success}</p>
           )}
+
           <Button
             type="submit"
-            className="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white"
+            className="w-full sm:w-auto bg-gold text-black hover:bg-yellow-500 rounded-full px-10 py-6 font-black tracking-widest uppercase transition-all"
             disabled={isInvitePending || !isOwner}
           >
             {isInvitePending ? (
@@ -251,9 +247,9 @@ function InviteTeamMember() {
         </form>
       </CardContent>
       {!isOwner && (
-        <CardFooter className="border-t bg-gray-50/50">
-          <p className="text-sm text-muted-foreground">
-            You must be a team owner to invite new members.
+        <CardFooter className="border-t border-zinc-900 bg-zinc-900/20">
+          <p className="text-xs text-zinc-500 italic">
+            Note: You must be a team owner to invite new members to this workspace.
           </p>
         </CardFooter>
       )}
@@ -263,17 +259,27 @@ function InviteTeamMember() {
 
 export default function TeamPage() {
   return (
-    <section className="flex-1 p-4 lg:p-8">
-      <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
-      <Suspense fallback={<SubscriptionSkeleton />}>
-        <ManageSubscription />
-      </Suspense>
-      <Suspense fallback={<TeamMembersSkeleton />}>
-        <TeamMembers />
-      </Suspense>
-      <Suspense fallback={<InviteTeamMemberSkeleton />}>
-        <InviteTeamMember />
-      </Suspense>
+    <section className="flex-1 p-4 lg:p-8 bg-black">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2 border-2 border-gold rounded-lg">
+          <Users className="size-6 text-gold" />
+        </div>
+        <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-white uppercase italic">
+          Team <span className="text-gold">Settings</span>
+        </h1>
+      </div>
+
+      <div className="max-w-4xl">
+        <Suspense fallback={<SubscriptionSkeleton />}>
+          <ManageSubscription />
+        </Suspense>
+        <Suspense fallback={<TeamMembersSkeleton />}>
+          <TeamMembers />
+        </Suspense>
+        <Suspense fallback={<InviteTeamMemberSkeleton />}>
+          <InviteTeamMember />
+        </Suspense>
+      </div>
     </section>
   );
 }
