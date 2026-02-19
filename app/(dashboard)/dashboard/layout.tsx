@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu, X, LayoutDashboard } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, X, LayoutDashboard, Library } from 'lucide-react';
 
 export default function DashboardLayout({
   children
@@ -16,6 +16,7 @@ export default function DashboardLayout({
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
+    { href: '/dashboard/library', icon: Library, label: 'Library' },
     { href: '/dashboard/team', icon: Users, label: 'Team' },
     { href: '/dashboard/general', icon: Settings, label: 'General' },
     { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
@@ -27,12 +28,12 @@ export default function DashboardLayout({
       {/* Mobile header */}
       <div className="lg:hidden flex items-center justify-between bg-black border-b border-zinc-800 p-4">
         <div className="flex items-center">
-          <span className="font-medium">
+          <span className="font-bold text-white uppercase italic tracking-tight">
             {navItems.find((item) => item.href === pathname)?.label || 'Dashboard'}
           </span>
         </div>
         <Button
-          className="-mr-3"
+          className="-mr-3 text-white"
           variant="ghost"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
@@ -45,7 +46,7 @@ export default function DashboardLayout({
         {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-30 lg:hidden backdrop-blur-sm"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -57,22 +58,24 @@ export default function DashboardLayout({
           } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 transform transition-transform duration-300 ease-in-out`}
         >
           <div className="flex lg:hidden items-center justify-between p-4 border-b border-zinc-800">
-             <span className="font-semibold text-gold">LyricFlow</span>
-             <Button variant="ghost" size="sm" onClick={() => setIsSidebarOpen(false)}>
+             <span className="font-black text-gold uppercase italic tracking-tighter">LyricFlow</span>
+             <Button variant="ghost" size="sm" onClick={() => setIsSidebarOpen(false)} className="text-white">
                 <X className="h-5 w-5" />
              </Button>
           </div>
-          <nav className="h-full overflow-y-auto p-4">
+          <nav className="h-full overflow-y-auto p-4 space-y-1">
             {navItems.map((item) => (
               <Link key={item.href} href={item.href} passHref>
                 <Button
                   variant={pathname === item.href ? 'secondary' : 'ghost'}
-                  className={`shadow-none my-1 w-full justify-start ${
-                    pathname === item.href ? 'bg-zinc-800' : ''
+                  className={`w-full justify-start rounded-xl font-bold uppercase tracking-wider text-xs transition-all ${
+                    pathname === item.href
+                      ? 'bg-zinc-900 text-gold border border-zinc-800 shadow-lg'
+                      : 'text-zinc-500 hover:text-white hover:bg-zinc-900'
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className={`h-4 w-4 mr-3 ${pathname === item.href ? 'text-gold' : 'text-zinc-500'}`} />
                   {item.label}
                 </Button>
               </Link>
@@ -81,7 +84,7 @@ export default function DashboardLayout({
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 overflow-y-auto p-0 lg:p-4">
+        <main className="flex-1 overflow-y-auto p-0 lg:p-4 bg-black">
           <Suspense fallback={null}>{children}</Suspense>
         </main>
       </div>

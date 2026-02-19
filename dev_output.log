@@ -118,3 +118,7 @@ Error fetching Stripe prices: Error: Invalid API Key provided: sk_test_*********
  GET /api/user 200 in 13ms (compile: 4ms, proxy.ts: 5ms, render: 5ms)
  GET /sign-in 200 in 1189ms (compile: 390ms, proxy.ts: 6ms, render: 793ms)
  GET /sign-in 200 in 334ms (compile: 4ms, proxy.ts: 4ms, render: 325ms)
+✓ Compiled in 243ms
+ GET /some-random-page-that-doesnt-exist 404 in 1066ms (compile: 779ms, proxy.ts: 7ms, render: 280ms)
+ GET /sign-in 200 in 1682ms (compile: 417ms, proxy.ts: 14ms, render: 1251ms)
+ GET /sign-in 200 in 249ms (compile: 5ms, proxy.ts: 4ms, render: 240ms)
