@@ -15,7 +15,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Waveform } from './waveform';
+import { Waveform } from '@/components/studio/waveform';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 

@@ -19,12 +19,12 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 // Modular components
-import { BuildTrack } from './editor/BuildTrack';
-import { EditTrack } from './editor/EditTrack';
-import { RefineTrack } from './editor/RefineTrack';
-import { ReviewTrack } from './editor/ReviewTrack';
-import { EnhanceTrack } from './editor/EnhanceTrack';
-import { ExportTrack } from './editor/ExportTrack';
+import { BuildTrack } from './BuildTrack';
+import { EditTrack } from './EditTrack';
+import { RefineTrack } from './RefineTrack';
+import { ReviewTrack } from './ReviewTrack';
+import { EnhanceTrack } from './EnhanceTrack';
+import { ExportTrack } from './ExportTrack';
 
 type Tab = 'BUILD' | 'EDIT' | 'REFINE' | 'REVIEW' | 'ENHANCE' | 'EXPORT';
 

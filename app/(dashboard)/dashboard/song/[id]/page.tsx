@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { LyricEditor } from '@/components/LyricEditor';
+import { LyricEditor } from '@/components/editor';
 
 export default function SongPage() {
   const params = useParams();

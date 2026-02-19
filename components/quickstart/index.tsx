@@ -2,27 +2,27 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { SelectionModal } from '@/components/selection-modal';
-import { QuickStartProcessing } from '@/components/quickstart-processing';
-import { QuickStartResults } from '@/components/quickstart-results';
+import { SelectionModal } from '@/components/studio/selection-modal';
+import { QuickStartProcessing } from './Processing';
+import { QuickStartResults } from './Results';
 import {
   GENRE_CATEGORIES,
   INSTRUMENT_CATEGORIES,
   THEME_CATEGORIES,
   VOCAL_CATEGORIES
-} from './quickstart/types';
+} from './types';
 
 // Modular Components
-import { GenreSelection } from './quickstart/GenreSelection';
-import { InstrumentSelection } from './quickstart/InstrumentSelection';
-import { ThemeSelection } from './quickstart/ThemeSelection';
-import { VocalSelection } from './quickstart/VocalSelection';
-import { LyricSelection } from './quickstart/LyricSelection';
-import { ProjectSelection } from './quickstart/ProjectSelection';
-import { SuggestedPrompts } from './quickstart/SuggestedPrompts';
-import { SparkButton } from './quickstart/SparkButton';
-import { EnhanceButton } from './quickstart/EnhanceButton';
-import { PolishButton } from './quickstart/PolishButton';
+import { GenreSelection } from './GenreSelection';
+import { InstrumentSelection } from './InstrumentSelection';
+import { ThemeSelection } from './ThemeSelection';
+import { VocalSelection } from './VocalSelection';
+import { LyricSelection } from './LyricSelection';
+import { ProjectSelection } from './ProjectSelection';
+import { SuggestedPrompts } from './SuggestedPrompts';
+import { SparkButton } from './SparkButton';
+import { EnhanceButton } from './EnhanceButton';
+import { PolishButton } from './PolishButton';
 
 type Step = 'INPUT' | 'PROCESSING' | 'RESULTS';
 type ModalType = 'GENRE' | 'INSTRUMENT' | 'THEME' | 'VOCALS' | 'LYRICS' | 'PROJECT';
