@@ -255,9 +255,14 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --color-enhance: #f43f5e;
-  --color-spark: #6366f1;
+  --color-rose: #e11d48;
+  --color-indigo: #4338ca;
   --color-gold: #fbbf24;
+  --color-emerald: #059669;
+  --color-cyan: #06b6d4;
+  --color-violet: #8b5cf6;
+  --color-zinc-950: #09090b;
+  --color-zinc-900: #18181b;
   --color-quickstart-bg: #09090b;
   --color-quickstart-border: #27272a;
   --color-inspiration-purple: #4c1d95;

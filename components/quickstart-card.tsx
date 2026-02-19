@@ -5,7 +5,7 @@ import {
   Wand2, Zap, Sparkles, Music2, Mic2,
   Palette, Piano, ChevronRight, RefreshCw,
   LayoutGrid, History, Clock, ArrowRight,
-  ChevronDown
+  ChevronDown, Sparkle
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SelectionModal } from './selection-modal';
@@ -49,15 +49,18 @@ const PROJECT_CATEGORIES = {
 };
 
 const INSPIRATIONS = [
-  { text: 'NEON NIGHTS', color: 'bg-purple-900/50 text-purple-400 border-purple-800' },
-  { text: 'SUMMER ANTHEM', color: 'bg-amber-900/50 text-amber-400 border-amber-800' },
-  { text: 'CYBER CHASE', color: 'bg-indigo-900/50 text-indigo-400 border-indigo-800' },
-  { text: 'STREET STORIES', color: 'bg-emerald-900/50 text-emerald-400 border-emerald-800' },
-  { text: 'QUIET CONFESSION', color: 'bg-cyan-900/50 text-cyan-400 border-cyan-800' },
-  { text: '808 CELLO', color: 'bg-blue-900/50 text-blue-400 border-blue-800' },
-  { text: 'VIOLIN SYNTH', color: 'bg-fuchsia-900/50 text-fuchsia-400 border-fuchsia-800' },
-  { text: 'DISTORTED FLUTE', color: 'bg-lime-900/50 text-lime-400 border-lime-800' },
-  { text: 'GLITCH PIANO', color: 'bg-yellow-900/50 text-yellow-400 border-yellow-800' },
+  { text: 'NEON NIGHTS', color: 'bg-indigo-900/20 text-indigo-400 border-indigo-900/50' },
+  { text: 'SUMMER ANTHEM', color: 'bg-amber-900/20 text-amber-500 border-amber-900/50' },
+  { text: 'CYBER CHASE', color: 'bg-rose-900/20 text-rose-400 border-rose-900/50' },
+  { text: 'DREAM STATE', color: 'bg-purple-900/20 text-purple-400 border-purple-900/50' },
+  { text: 'STREET STORIES', color: 'bg-emerald-900/20 text-emerald-400 border-emerald-900/50' },
+  { text: 'QUIET CONFESSION', color: 'bg-blue-900/20 text-blue-400 border-blue-900/50' },
+  { text: '808 CELLO', color: 'bg-cyan-900/20 text-cyan-400 border-cyan-900/50' },
+  { text: 'DESERT SUN', color: 'bg-orange-900/20 text-orange-400 border-orange-900/50' },
+  { text: 'VIOLIN SYNTH', color: 'bg-indigo-900/20 text-indigo-400 border-indigo-900/50' },
+  { text: 'DISTORTED FLUTE', color: 'bg-lime-900/20 text-lime-400 border-lime-900/50' },
+  { text: 'GLITCH PIANO', color: 'bg-amber-900/20 text-amber-500 border-amber-900/50' },
+  { text: 'CELESTE', color: 'bg-pink-900/20 text-pink-400 border-pink-900/50' },
 ];
 
 export function QuickstartCard() {
@@ -118,61 +121,61 @@ export function QuickstartCard() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto px-4 py-6 space-y-6">
+    <div className="w-full max-w-5xl mx-auto px-4 py-6 space-y-8">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="size-10 sm:size-12 rounded-full border-2 border-gold flex items-center justify-center shadow-[0_0_15px_rgba(251,191,36,0.3)]">
-          <Zap className="size-5 sm:size-6 text-gold fill-gold" />
+        <div className="size-12 sm:size-14 rounded-full border-2 border-gold flex items-center justify-center shadow-[0_0_20px_rgba(251,191,36,0.2)]">
+          <Zap className="size-6 sm:size-7 text-gold fill-gold" />
         </div>
-        <h1 className="text-2xl sm:text-4xl font-black tracking-[0.1em] text-white uppercase italic">QUICKSTART</h1>
+        <h1 className="text-3xl sm:text-5xl font-black tracking-[0.05em] text-white uppercase italic">QUICKSTART</h1>
       </div>
 
       {/* Main Container */}
-      <div className="bg-[#09090b] border-2 border-[#18181b] rounded-[2.5rem] p-4 sm:p-8 shadow-2xl relative overflow-hidden">
+      <div className="bg-[#0c0c12] border-2 border-zinc-900 rounded-[3rem] p-4 sm:p-10 shadow-2xl relative overflow-hidden">
         {/* Glow effect */}
-        <div className="absolute -top-24 -left-24 size-48 bg-indigo-600/5 blur-[100px] pointer-events-none" />
+        <div className="absolute -top-32 -left-32 size-64 bg-indigo-600/10 blur-[120px] pointer-events-none" />
 
         {/* Row 1: GENRE, INSTRUMENT */}
-        <div className="grid grid-cols-2 gap-2 sm:gap-4 mb-3 sm:mb-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 mb-4 sm:mb-6">
           <SelectionButton
             label="GENRE"
             tags={selections.GENRE}
             onClick={() => setActiveModal('GENRE')}
             border="border-emerald-900/30"
-            icon={<ChevronRight className="size-4 text-emerald-800" />}
+            icon={<ChevronRight className="size-4 text-emerald-900" />}
           />
           <SelectionButton
             label="INSTRUMENT"
             tags={selections.INSTRUMENT}
             onClick={() => setActiveModal('INSTRUMENT')}
-            icon={<ChevronRight className="size-4 text-zinc-800" />}
+            icon={<ChevronRight className="size-4 text-zinc-900" />}
           />
         </div>
 
         {/* Row 2: THEME, VOCALS, PROJECT */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
           <SelectionButton
             label="THEME"
             tags={selections.THEME}
             onClick={() => setActiveModal('THEME')}
-            icon={<ChevronRight className="size-4 text-zinc-800" />}
+            icon={<ChevronRight className="size-3 text-zinc-900" />}
           />
           <SelectionButton
             label="VOCALS"
             tags={selections.VOCALS}
             onClick={() => setActiveModal('VOCALS')}
-            icon={<ChevronRight className="size-4 text-zinc-800" />}
+            icon={<ChevronRight className="size-3 text-zinc-900" />}
           />
           <SelectionButton
             label="PROJECT"
             tags={selections.PROJECT}
             onClick={() => setActiveModal('PROJECT')}
-            icon={<ChevronRight className="size-4 text-zinc-800" />}
+            icon={<ChevronRight className="size-3 text-zinc-900" />}
           />
         </div>
 
         {/* Row 3: Action Buttons */}
-        <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-3 gap-3 sm:gap-6 mb-8 sm:mb-10">
            <ActionButton
             onClick={handleSpark}
             icon={<Zap className="size-4 text-gold fill-gold" />}
@@ -182,53 +185,53 @@ export function QuickstartCard() {
           />
           <ActionButton
             onClick={handleEnhance}
-            icon={<Sparkles className="size-4 text-[#e11d48]" />}
+            icon={<Sparkles className="size-4 text-rose" />}
             label="ENHANCE"
-            color="border-[#e11d48]/20 bg-[#e11d48]/5"
-            textColor="text-[#e11d48]"
+            color="border-rose/20 bg-rose/5"
+            textColor="text-rose"
           />
           <ActionButton
             onClick={handlePolish}
-            icon={<Wand2 className="size-4 text-[#06b6d4]" />}
+            icon={<Wand2 className="size-4 text-cyan" />}
             label="POLISH"
-            color="border-[#06b6d4]/20 bg-[#06b6d4]/5"
-            textColor="text-[#06b6d4]"
+            color="border-cyan/20 bg-cyan/5"
+            textColor="text-cyan"
           />
         </div>
 
         {/* Text Area */}
-        <div className="relative mb-6 sm:mb-8">
-          <div className="bg-[#101014] border border-[#18181b] rounded-3xl p-6 min-h-[150px] sm:min-h-[220px] transition-all focus-within:border-zinc-700">
+        <div className="relative mb-8 sm:mb-10">
+          <div className="bg-[#101018] border border-zinc-900 rounded-[2rem] p-8 min-h-[180px] sm:min-h-[260px] transition-all focus-within:border-zinc-800">
             <textarea
               value={inputText}
               onChange={(e) => setInputText(e.target.value.slice(0, 500))}
               placeholder="Describe your song idea..."
-              className="w-full bg-transparent border-none text-zinc-300 placeholder:text-zinc-700 focus:ring-0 resize-none text-base sm:text-2xl font-medium leading-relaxed"
+              className="w-full bg-transparent border-none text-zinc-400 placeholder:text-zinc-800 focus:ring-0 resize-none text-lg sm:text-3xl font-medium leading-relaxed"
             />
-            <div className="absolute bottom-6 right-6 text-[10px] font-black text-zinc-800 tracking-widest uppercase">
+            <div className="absolute bottom-8 right-8 text-[11px] font-black text-zinc-800 tracking-widest uppercase">
               {inputText.length}/500
             </div>
           </div>
         </div>
 
         {/* Inspirations */}
-        <div className="bg-[#0c0c10] border border-[#18181b] rounded-3xl p-6">
-          <div className="flex items-center justify-between mb-6">
+        <div className="bg-[#0c0c14] border border-zinc-900 rounded-[2rem] p-8">
+          <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
-              <Sparkles className="size-5 text-gold" />
-              <h2 className="text-[10px] sm:text-sm font-black tracking-[0.3em] text-zinc-400 uppercase italic">INSPIRATIONS</h2>
+              <Sparkle className="size-6 text-gold fill-gold" />
+              <h2 className="text-[11px] sm:text-sm font-black tracking-[0.4em] text-zinc-400 uppercase italic">INSPIRATIONS</h2>
             </div>
-            <button className="p-1 text-zinc-600 hover:text-white transition-colors">
+            <button className="p-1 text-zinc-700 hover:text-white transition-colors">
               <RefreshCw className="size-5" />
             </button>
           </div>
-          <div className="flex flex-wrap gap-2 sm:gap-3">
+          <div className="flex flex-wrap gap-3 sm:gap-4">
             {INSPIRATIONS.map((item) => (
               <button
                 key={item.text}
                 onClick={() => setInputText(prev => prev ? `${prev}, ${item.text}` : item.text)}
                 className={cn(
-                  "px-4 py-2 sm:px-6 sm:py-3 rounded-xl text-[9px] sm:text-xs font-black tracking-widest uppercase border transition-all active:scale-95 hover:brightness-125",
+                  "px-6 py-3 sm:px-8 sm:py-4 rounded-xl text-[10px] sm:text-xs font-black tracking-widest uppercase border-2 transition-all active:scale-95 hover:brightness-125",
                   item.color
                 )}
               >
@@ -239,11 +242,11 @@ export function QuickstartCard() {
         </div>
 
         {/* Generate Button */}
-        <div className="mt-8 sm:mt-10">
+        <div className="mt-10 sm:mt-12">
           <Button
             onClick={() => setIsGenerating(true)}
             disabled={!inputText || isGenerating}
-            className="w-full py-10 sm:py-12 rounded-[2rem] bg-[#4338ca] hover:bg-[#4f46e5] text-zinc-300 font-black tracking-[0.4em] text-sm sm:text-xl uppercase transition-all shadow-2xl shadow-indigo-900/20 active:scale-[0.99] disabled:opacity-50"
+            className="w-full py-12 sm:py-14 rounded-[2.5rem] bg-indigo hover:bg-indigo/90 text-zinc-300 font-black tracking-[0.5em] text-sm sm:text-2xl uppercase transition-all shadow-2xl shadow-indigo/20 active:scale-[0.99] disabled:opacity-50"
           >
             {isGenerating ? 'ANALYSING PROJECT...' : 'GENERATE TRACK'}
           </Button>
@@ -251,21 +254,21 @@ export function QuickstartCard() {
 
          {/* Results Area */}
          {result && (
-          <div className="mt-8 p-6 bg-zinc-900/80 rounded-[2.5rem] border border-zinc-800 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-gold font-black tracking-widest text-xs mb-3 flex items-center gap-2 uppercase italic">
-              <Music2 className="size-4" />
+          <div className="mt-10 p-8 bg-zinc-950 rounded-[3rem] border border-zinc-900 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-gold font-black tracking-widest text-xs mb-4 flex items-center gap-2 uppercase italic">
+              <Music2 className="size-5" />
               TRACK SUMMARY
             </h3>
-            <div className="text-zinc-300 text-sm leading-relaxed mb-6 font-medium bg-zinc-950/50 p-4 rounded-xl border border-zinc-800 whitespace-pre-wrap italic">
+            <div className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-8 font-medium bg-zinc-900/30 p-6 rounded-2xl border border-zinc-900 whitespace-pre-wrap italic">
               {result.summary}
             </div>
 
-            <h3 className="text-gold font-black tracking-widest text-xs mb-3 flex items-center gap-2 uppercase italic">
-              <LayoutGrid className="size-4" />
+            <h3 className="text-gold font-black tracking-widest text-xs mb-4 flex items-center gap-2 uppercase italic">
+              <LayoutGrid className="size-5" />
               LYRIC SHEET
             </h3>
-            <div className="bg-zinc-950/50 p-6 rounded-xl border border-zinc-800">
-              <pre className="text-zinc-400 font-mono text-xs sm:text-sm whitespace-pre-wrap leading-relaxed italic">
+            <div className="bg-zinc-900/30 p-8 rounded-2xl border border-zinc-900">
+              <pre className="text-zinc-500 font-mono text-xs sm:text-base whitespace-pre-wrap leading-relaxed italic">
                 {result.lyrics}
               </pre>
             </div>
@@ -323,19 +326,19 @@ function SelectionButton({ label, tags, onClick, className, border, icon }: { la
     <button
       onClick={onClick}
       className={cn(
-        "bg-[#101014] border-2 rounded-2xl p-4 sm:p-5 flex items-center justify-between transition-all hover:bg-zinc-900 active:scale-[0.98] group",
-        border || "border-[#18181b]",
+        "bg-[#101018] border-2 rounded-2xl p-5 sm:p-6 flex items-center justify-between transition-all hover:bg-zinc-900 active:scale-[0.98] group",
+        border || "border-zinc-900",
         className
       )}
     >
       <div className="flex flex-col items-start gap-1 overflow-hidden">
-        <span className="text-[10px] font-black tracking-widest text-zinc-500 uppercase">{label}</span>
-        <div className="text-[11px] sm:text-xs font-black text-zinc-300 truncate w-full uppercase text-left">
+        <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">{label}</span>
+        <div className="text-[11px] sm:text-sm font-black text-zinc-400 truncate w-full uppercase text-left">
           {tags.length > 0 ? tags.join(', ') : 'SELECT...'}
         </div>
       </div>
       <div className="flex-shrink-0 ml-2">
-        {icon || <ChevronRight className="size-4 text-zinc-800 group-hover:text-zinc-500 transition-colors" />}
+        {icon || <ChevronRight className="size-4 text-zinc-900 group-hover:text-zinc-600 transition-colors" />}
       </div>
     </button>
   );
@@ -346,7 +349,7 @@ function ActionButton({ onClick, icon, label, color, textColor }: { onClick: () 
     <button
       onClick={onClick}
       className={cn(
-        "flex items-center justify-center gap-2 py-4 sm:py-5 border-2 rounded-2xl transition-all active:scale-[0.95] font-black tracking-[0.2em] text-[10px] sm:text-xs",
+        "flex items-center justify-center gap-2 py-5 sm:py-6 border-2 rounded-2xl transition-all active:scale-[0.95] font-black tracking-[0.25em] text-[10px] sm:text-xs",
         color,
         textColor
       )}
