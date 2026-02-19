@@ -41,7 +41,7 @@ export function SelectionModal({
   const clearAll = () => setCurrentSelected([]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-[#0a0a0f] animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-[#0a0a0f] animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex items-center justify-between p-6 border-b border-zinc-900/50">
         <h2 className="text-sm font-black tracking-[0.3em] text-white uppercase italic">{title}</h2>

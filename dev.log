@@ -14,18 +14,27 @@ Caused by:
     0: Unable to open static sorted file 00000178.sst
     1: No such file or directory (os error 2)
 Persisting failed: Another write batch or compaction is already active (Only a siPersisting failed: Another write batch or coPersisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
-mpaction is already active (Only a single write operations is allowed at a time)
-8ms)
- GET /dashboard/library 200 in 408ms (compile: 4ms, proxy.ts: 4ms, render: 399ms)
- GET /api/user 200 in 15ms (compile: 4ms, proxy.ts: 5ms, render: 5ms)
- GET /dashboard/song/1 200 in 302ms (compile: 39ms, proxy.ts: 4ms, generate-params: 32ms, render: 259ms)
- GET /api/user 200 in 21ms (compile: 5ms, proxy.ts: 9ms, render: 7ms)
-⨯ ./app/(dashboard)/dashboard/song/[id]/page.tsx:4:1
-Module not found: Can't resolve '@/components/LyricEditor'
-[0m [90m 2 |[39m
- [90m 3 |[39m [36mimport[39m { useParams } [36mfrom[39m [32m'next/navigation'[39m[33m;[39m
-[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mLyricEditor[39m } [36mfrom[39m [32m'@/components/LyricEditor'[39m[33m;[39m
- [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+
+thread 'tokio-runtime-worker' (124782) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Data for read_dir (TaskId 78115))
+
+Caused by:
+    0: Looking up data for TaskId 78115 from database failed
+    1: Unable to open static sorted file referenced from 00000180.meta
+    2: Unable to open static sorted file 00000176.sst
+    3: No such file or directory (os error 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (124782) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Data for read_dir (TaskId 78115))
+
+Caused by:
+    0: Looking up data for TaskId 78115 from database failed
+    1: Unable to open static sorted file referenced from 00000180.meta
+    2: Unable to open static sorted file 00000176.sst
+    3: Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+write operations is allowed at a time)
+m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
  [90m 5 |[39m
  [90m 6 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mSongPage[39m() {
  [90m 7 |[39m   [36mconst[39m params [33m=[39m useParams()[33m;[39m[0m
@@ -140,8 +149,8 @@ Caused by:
 Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
 Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
 Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
- { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
- [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
  [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
  [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
  [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m[0m
@@ -662,3 +671,7 @@ Persisting failed: Unable to open static sorted file referenced from 00000103.me
 Caused by:
     0: Unable to open static sorted file 00000102.sst
     1: No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
