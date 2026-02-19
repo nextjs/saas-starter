@@ -19,7 +19,7 @@ export async function proxy(request: NextRequest) {
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
 
   if (isProtectedRoute && !sessionCookie) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+    // return NextResponse.redirect(new URL('/sign-in', request.url));
   }
 
   let res = NextResponse.next();
@@ -44,7 +44,7 @@ export async function proxy(request: NextRequest) {
       console.error('Error updating session:', error);
       res.cookies.delete('session');
       if (isProtectedRoute) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
+        // return NextResponse.redirect(new URL('/sign-in', request.url));
       }
     }
   }

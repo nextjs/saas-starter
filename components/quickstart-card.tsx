@@ -2,16 +2,21 @@
 
 import { useState } from 'react';
 import {
-  Wand2, Zap, Sparkles, Music2, Mic2,
-  Palette, Piano, ChevronRight, RefreshCw,
-  LayoutGrid, History, Clock, ArrowRight,
-  ChevronDown, Sparkle
+  Zap,
+  Sparkles,
+  Wand2,
+  ChevronRight,
+  RefreshCw,
+  Sparkle,
+  Music2,
+  LayoutGrid,
+  Volume2,
+  Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SelectionModal } from './selection-modal';
 import { cn } from '@/lib/utils';
-
-// --- DATA ---
+import { SelectionModal } from './selection-modal';
+import { Waveform } from './waveform';
 
 const GENRE_CATEGORIES = {
   'ELECTRONIC': ['HOUSE', 'TECHNO', 'DRUM & BASS', 'DUBSTEP', 'SYNTHWAVE', 'TRANCE', 'AMBIENT', 'IDM', 'GARAGE'],
@@ -36,31 +41,24 @@ const THEME_CATEGORIES = {
 };
 
 const VOCAL_CATEGORIES = {
-  'TYPE': ['MALE', 'FEMALE', 'NON-BINARY', 'CHOIR', 'CHILDREN'],
-  'STYLE': ['CLEAN', 'GRITTY', 'BREATHY', 'OPERATIC', 'RAP', 'SPOKEN WORD'],
-  'EFFECTS': ['REVERB', 'DELAY', 'AUTOTUNE', 'VOCODER', 'HARMONY']
+  'GENDER': ['MALE', 'FEMALE', 'NON-BINARY', 'DUET'],
+  'STYLE': ['AIRY', 'GRITTY', 'CLEAN', 'AUTO-TUNED', 'WHISPERED', 'CHORAL'],
+  'RANGE': ['SOPRANO', 'ALTO', 'TENOR', 'BARITONE', 'BASS']
 };
 
 const PROJECT_CATEGORIES = {
-  'LENGTH & STRUCTURE': ['SHORT (1:30)', 'MEDIUM (3:00)', 'LONG (5:00)', 'VERSE-CHORUS', 'AABA', 'THROUGH-COMPOSED'],
-  'MASTERING': ['ANALOG WARMTH', 'DIGITAL CLARITY', 'LO-FI VIBE', 'VINYL CRACKLE'],
-  'CINEMATIC': ['SURROUND SOUND', 'IMAX STYLE', 'BINAURAL', 'WIDE STEREO'],
-  'SPECIAL': ['BASS DROPS', 'INSTRUMENTAL SOLOS', 'PROGRESSIVE BUILDS', 'KEY CHANGE']
+  'FORMAT': ['SINGLE', 'EP', 'ALBUM', 'BEAT TAPE'],
+  'TARGET': ['STREAMING', 'FILM/TV', 'SOCIAL MEDIA', 'LIVE PERFORMANCE'],
+  'QUALITY': ['BALANCED', 'HIGH FIDELITY', 'LO-FI', 'EXPERIMENTAL']
 };
 
 const INSPIRATIONS = [
-  { text: 'NEON NIGHTS', color: 'bg-indigo-900/20 text-indigo-400 border-indigo-900/50' },
-  { text: 'SUMMER ANTHEM', color: 'bg-amber-900/20 text-amber-500 border-amber-900/50' },
-  { text: 'CYBER CHASE', color: 'bg-rose-900/20 text-rose-400 border-rose-900/50' },
-  { text: 'DREAM STATE', color: 'bg-purple-900/20 text-purple-400 border-purple-900/50' },
-  { text: 'STREET STORIES', color: 'bg-emerald-900/20 text-emerald-400 border-emerald-900/50' },
-  { text: 'QUIET CONFESSION', color: 'bg-blue-900/20 text-blue-400 border-blue-900/50' },
-  { text: '808 CELLO', color: 'bg-cyan-900/20 text-cyan-400 border-cyan-900/50' },
-  { text: 'DESERT SUN', color: 'bg-orange-900/20 text-orange-400 border-orange-900/50' },
-  { text: 'VIOLIN SYNTH', color: 'bg-indigo-900/20 text-indigo-400 border-indigo-900/50' },
-  { text: 'DISTORTED FLUTE', color: 'bg-lime-900/20 text-lime-400 border-lime-900/50' },
-  { text: 'GLITCH PIANO', color: 'bg-amber-900/20 text-amber-500 border-amber-900/50' },
-  { text: 'CELESTE', color: 'bg-pink-900/20 text-pink-400 border-pink-900/50' },
+  { text: 'NEON NIGHTS', color: 'border-indigo-900 bg-indigo-500/10 text-indigo-400' },
+  { text: 'SUMMER ANTHEM', color: 'border-amber-900 bg-amber-500/10 text-amber-400' },
+  { text: 'CYBER CHASE', color: 'border-rose-900 bg-rose-500/10 text-rose-400' },
+  { text: 'DREAM STATE', color: 'border-violet-900 bg-violet-500/10 text-violet-400' },
+  { text: 'STREET STORIES', color: 'border-emerald-900 bg-emerald-500/10 text-emerald-400' },
+  { text: 'QUIET CONFESSION', color: 'border-blue-900 bg-blue-500/10 text-blue-400' }
 ];
 
 export function QuickstartCard() {
@@ -73,51 +71,71 @@ export function QuickstartCard() {
     VOCALS: [],
     PROJECT: []
   });
-
   const [isGenerating, setIsGenerating] = useState(false);
-  const [result, setResult] = useState<{ summary: string; lyrics: string } | null>(null);
+  const [generationStep, setGenerationStep] = useState('');
+  const [result, setResult] = useState<{ summary: string, lyrics: string, mastering: string } | null>(null);
 
   const handleConfirmSelection = (tags: string[]) => {
     if (activeModal) {
       setSelections(prev => ({ ...prev, [activeModal]: tags }));
-      setActiveModal(null);
     }
+    setActiveModal(null);
   };
 
   const handleSpark = () => {
     const ideas = [
-      "A cinematic synthwave track exploring the neon-drenched streets of a futuristic Tokyo after midnight.",
-      "An atmospheric lofi-jazz arrangement reflecting on the quiet solitude of a rainy Sunday afternoon.",
-      "A high-octane industrial techno anthem inspired by the chaotic energy of a digital uprising.",
-      "A melancholic indie-folk ballad about a long-lost letter discovered in a dusty attic trunk.",
-      "An ethereal dream-pop journey through the surreal landscapes of a lucid dream at sunrise."
+      "A high-octane synthwave track set in a rain-slicked futuristic city.",
+      "A melancholic acoustic ballad about a forgotten summer memory.",
+      "An aggressive industrial techno anthem inspired by mechanical rhythms.",
+      "A dreamy indie pop song exploring the feeling of weightlessness in space.",
+      "A gritty boom-bap hip hop track reflecting on street-level reality."
     ];
-    const idea = ideas[Math.floor(Math.random() * ideas.length)];
-    setInputText(idea.slice(0, 100));
+    setInputText(ideas[Math.floor(Math.random() * ideas.length)]);
   };
 
   const handleEnhance = () => {
-    if (!inputText) return;
-    setIsGenerating(true);
-    setTimeout(() => {
-      const enhanced = `${inputText} [ENHANCED]: Integrate driving 124BPM rhythmic structures with lush, side-chained analog pads and a deep, resonant 808 sub-bass profile. Establish a wide cinematic stereo field using subtle rhythmic delays and immersive spatial reverb to create a professional audio landscape.`;
-      setInputText(enhanced.slice(0, 250));
-      setIsGenerating(false);
-    }, 1000);
+    if (inputText) {
+      setInputText(prev => prev + " with layers of ethereal textures and complex rhythmic syncopation");
+    }
   };
 
   const handlePolish = () => {
-    if (!inputText) return;
-    setIsGenerating(true);
-    setTimeout(() => {
-      const polishedText = `MASTERPIECE CONFIGURATION: Orchestrate a sophisticated sonic blend of vintage Moog basslines and crystalline FM leads. Implement a dynamic 4-stage track structure—Atmospheric Intro, Ethereal Verse, Explosive Chorus, and Cinematic Outro—using professional transition effects, automation sweeps, and 24-bit high-fidelity mastering for a signature commercial sound profile.`;
-      const summary = `PROJECT AUDIT: 10/10 (Suno Optimized). This production blueprint outlines a high-fidelity 126 BPM arrangement with a focus on wide-stereo spatialization and frequency-specific side-chaining. Audio Context: High-resolution 48kHz/24-bit depth. Track Architecture: [Intro: 0:00-0:15] - Minimalist textures with slow-attack filters. [Verse: 0:15-1:00] - Rhythmic foundation with layered percussion. [Build: 1:00-1:15] - Progressive frequency opening. [Chorus: 1:15-2:00] - Full harmonic spectrum with centered lead vocals and wide backings. [Outro: 2:00-2:30] - Atmospheric decay with legacy reverb tails. Mastering Details: Analog warmth emulation with digital brick-wall limiting to -14 LUFS. Harmonic saturation applied to mid-range for presence. Cinematic binaural panning for immersive surround experience. Target Audience: High-end audio enthusiasts and commercial sync placements.`;
-      const lyrics = `[Verse 1]\nNeon glimmers on the wet pavement\nTracing shadows of a life we once knew\nSilicon pulse in the heart of the basement\nEverything's changed, but I'm still seeking you\n\n[Chorus]\nElectric heart, beating in the wire\nBurning with a cold, blue fire\nWe're digital ghosts in a physical cage\nWriting our love on a pixelated page\n\n[Bridge]\n(Wait for the drop)\nSYSTEM OVERLOAD\n[Instrumental Solo: Glitch Synth]\n\n[Outro]\nStatic remains...`;
+    if (inputText) {
+      setInputText(prev => "A professionally polished " + prev.charAt(0).toLowerCase() + prev.slice(1) + ", optimized for high-fidelity streaming platforms.");
+    }
+  };
 
-      setInputText(polishedText.slice(0, 300));
-      setResult({ summary, lyrics });
-      setIsGenerating(false);
-    }, 1500);
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setResult(null);
+
+    const steps = [
+      "ANALYSING PROJECT DATA...",
+      "SYNTHESIZING MELODIC HOOKS...",
+      "GENERATING LYRICAL NARRATIVE...",
+      "MASTERING AUDIO TEXTURES...",
+      "FINALIZING TRACK..."
+    ];
+
+    let stepIdx = 0;
+    const interval = setInterval(() => {
+      if (stepIdx < steps.length) {
+        setGenerationStep(steps[stepIdx]);
+        stepIdx++;
+      } else {
+        clearInterval(interval);
+
+        const summary = `Generated a ${selections.GENRE.join(' ')} inspired track. \n\nKey characteristics: \n- Genre: ${selections.GENRE.length > 0 ? selections.GENRE.join(', ') : 'Hybrid'} \n- Instruments: ${selections.INSTRUMENT.join(', ')} \n- Theme: ${selections.THEME.join(', ')} \n- Vocals: ${selections.VOCALS.join(', ')} \n- Description: ${inputText}`;
+
+        const lyrics = `[Verse 1]\nBeyond the neon rain, the shadows start to play\nLost within the circuits of another digital day\nI hear your voice in every hum, in every frequency\nLocked inside the logic of this electric memory\n\n[Chorus]\nOh, we're building bridges out of starlight and code\nFollowing the rhythms on this high-speed road\nNo more silence, just the echo of the beat\nWhere the future and the ancient finally meet`;
+
+        const mastering = `Loudness: -14 LUFS\nDynamic Range: 8.5 dB\nStereo Width: 120%\nEQ Profile: High-Fidelity Modern`;
+
+        setResult({ summary, lyrics, mastering });
+        setIsGenerating(false);
+        setGenerationStep('');
+      }
+    }, 800);
   };
 
   return (
@@ -244,33 +262,74 @@ export function QuickstartCard() {
         {/* Generate Button */}
         <div className="mt-10 sm:mt-12">
           <Button
-            onClick={() => setIsGenerating(true)}
+            onClick={handleGenerate}
             disabled={!inputText || isGenerating}
             className="w-full py-12 sm:py-14 rounded-[2.5rem] bg-indigo hover:bg-indigo/90 text-zinc-300 font-black tracking-[0.5em] text-sm sm:text-2xl uppercase transition-all shadow-2xl shadow-indigo/20 active:scale-[0.99] disabled:opacity-50"
           >
-            {isGenerating ? 'ANALYSING PROJECT...' : 'GENERATE TRACK'}
+            {isGenerating ? generationStep : 'GENERATE TRACK'}
           </Button>
         </div>
 
          {/* Results Area */}
          {result && (
-          <div className="mt-10 p-8 bg-zinc-950 rounded-[3rem] border border-zinc-900 animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <h3 className="text-gold font-black tracking-widest text-xs mb-4 flex items-center gap-2 uppercase italic">
-              <Music2 className="size-5" />
-              TRACK SUMMARY
-            </h3>
-            <div className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-8 font-medium bg-zinc-900/30 p-6 rounded-2xl border border-zinc-900 whitespace-pre-wrap italic">
-              {result.summary}
+          <div className="mt-10 p-4 sm:p-10 bg-zinc-950 rounded-[3rem] border border-zinc-900 animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+              <div className="space-y-6">
+                <h3 className="text-gold font-black tracking-widest text-xs flex items-center gap-2 uppercase italic">
+                  <Music2 className="size-5" />
+                  TRACK SUMMARY
+                </h3>
+                <div className="text-zinc-400 text-sm sm:text-base leading-relaxed font-medium bg-zinc-900/30 p-6 rounded-2xl border border-zinc-900 whitespace-pre-wrap italic">
+                  {result.summary}
+                </div>
+
+                <h3 className="text-rose font-black tracking-widest text-xs flex items-center gap-2 uppercase italic">
+                  <Activity className="size-5" />
+                  AUDIO PREVIEW
+                </h3>
+                <div className="bg-zinc-900/30 p-8 rounded-2xl border border-zinc-900">
+                  <Waveform active className="mb-6" />
+                  <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-zinc-600">
+                    <span>0:00</span>
+                    <span className="text-rose">PLAYING MOCK PREVIEW</span>
+                    <span>3:42</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                <h3 className="text-cyan font-black tracking-widest text-xs flex items-center gap-2 uppercase italic">
+                  <Volume2 className="size-5" />
+                  MASTERING DETAILS
+                </h3>
+                <div className="bg-zinc-900/30 p-6 rounded-2xl border border-zinc-900 font-mono text-[10px] sm:text-xs text-cyan space-y-2">
+                  {result.mastering.split('\n').map((line, i) => (
+                    <div key={i} className="flex justify-between border-b border-cyan/10 pb-2 last:border-0 last:pb-0">
+                      <span className="text-zinc-500 uppercase">{line.split(':')[0]}</span>
+                      <span className="font-bold">{line.split(':')[1]}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <h3 className="text-gold font-black tracking-widest text-xs flex items-center gap-2 uppercase italic">
+                  <LayoutGrid className="size-5" />
+                  LYRIC SHEET
+                </h3>
+                <div className="bg-zinc-900/30 p-8 rounded-2xl border border-zinc-900">
+                  <pre className="text-zinc-500 font-mono text-xs sm:text-base whitespace-pre-wrap leading-relaxed italic">
+                    {result.lyrics}
+                  </pre>
+                </div>
+              </div>
             </div>
 
-            <h3 className="text-gold font-black tracking-widest text-xs mb-4 flex items-center gap-2 uppercase italic">
-              <LayoutGrid className="size-5" />
-              LYRIC SHEET
-            </h3>
-            <div className="bg-zinc-900/30 p-8 rounded-2xl border border-zinc-900">
-              <pre className="text-zinc-500 font-mono text-xs sm:text-base whitespace-pre-wrap leading-relaxed italic">
-                {result.lyrics}
-              </pre>
+            <div className="flex gap-4">
+              <Button className="flex-1 h-16 rounded-2xl bg-gold text-black hover:bg-gold/90 font-black uppercase tracking-widest">
+                Save Project
+              </Button>
+              <Button variant="outline" className="flex-1 h-16 rounded-2xl border-zinc-800 text-zinc-400 hover:bg-zinc-900 font-black uppercase tracking-widest">
+                Download Stems
+              </Button>
             </div>
           </div>
         )}
