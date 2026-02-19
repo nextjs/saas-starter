@@ -1,150 +1,100 @@
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Sparkles, Music2, Mic2, Wand2, Zap } from 'lucide-react';
+import { ArrowRight, Zap, Music2, Mic2, Wand2, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
-    <main className="bg-black">
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-12 lg:gap-8 lg:items-center">
-            <div className="sm:text-center md:max-w-2xl md:mx-auto lg:col-span-6 lg:text-left">
-              <h1 className="text-4xl font-black text-white tracking-tight sm:text-5xl md:text-6xl uppercase italic">
-                Write Your Next
-                <span className="block text-gold">Chart-Topping Hit</span>
-              </h1>
-              <p className="mt-3 text-base text-zinc-400 sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
-                The ultimate AI-powered companion for songwriters. Break through writer's block,
-                explore new genres, and craft perfect lyrics with the power of LyricFlow.
-              </p>
-              <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <Link href="/dashboard">
-                  <Button
-                    size="lg"
-                    className="text-lg rounded-full bg-gold text-black hover:bg-yellow-500 font-bold px-8"
-                  >
-                    Start Writing Now
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </Link>
-              </div>
+    <main className="bg-[#050508] min-h-screen text-white">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-gradient-to-b from-[#5850ec]/10 to-transparent blur-[120px] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-zinc-800 bg-zinc-900/50 mb-8 animate-in fade-in slide-in-from-top-4 duration-1000">
+              <Sparkles className="size-4 text-[#fbbf24]" />
+              <span className="text-[10px] font-black tracking-[0.3em] text-zinc-400 uppercase">AI-POWERED SONGWRITING</span>
             </div>
 
-            <div className="mt-12 relative sm:max-w-lg sm:mx-auto lg:mt-0 lg:max-w-none lg:mx-0 lg:col-span-6 lg:flex lg:items-center">
-              {/* Simplified Quick Start Preview */}
-              <div className="w-full border-2 border-zinc-800 rounded-3xl p-6 bg-zinc-950/50 shadow-2xl relative overflow-hidden transform lg:rotate-2 hover:rotate-0 transition-transform duration-500">
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="p-1.5 border border-gold rounded-md">
-                    <Wand2 className="size-4 text-gold" />
-                  </div>
-                  <span className="text-xs font-black tracking-widest text-white uppercase">QUICK START</span>
-                </div>
+            <h1 className="text-5xl md:text-8xl font-black tracking-tighter mb-8 uppercase italic leading-[0.9]">
+              Write Your Next <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#fbbf24] via-[#5850ec] to-[#fbbf24] animate-gradient">Chart-Topping Hit</span>
+            </h1>
 
-                <div className="flex gap-2 mb-4">
-                  <div className="h-8 w-24 rounded-full bg-zinc-900 border border-zinc-800" />
-                  <div className="h-8 w-24 rounded-full bg-zinc-900 border border-zinc-800" />
-                  <div className="flex-1" />
-                  <div className="h-8 w-20 rounded-full bg-gradient-to-r from-rose-500/50 to-orange-500/50" />
-                </div>
+            <p className="text-lg md:text-2xl text-zinc-500 mb-12 max-w-2xl mx-auto font-medium leading-relaxed italic">
+              The ultimate AI companion for songwriters. Break through writer's block and craft perfect lyrics with LyricFlow.
+            </p>
 
-                <div className="h-32 w-full bg-zinc-900/30 rounded-xl mb-4 border border-zinc-900 flex flex-col p-4">
-                   <div className="h-2 w-3/4 bg-zinc-800 rounded-full mb-2" />
-                   <div className="h-2 w-1/2 bg-zinc-800 rounded-full mb-2" />
-                   <div className="h-2 w-2/3 bg-zinc-800 rounded-full" />
-                </div>
-
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <div className="h-6 w-16 rounded-md bg-indigo-500/20" />
-                  <div className="h-6 w-20 rounded-md bg-emerald-500/20" />
-                  <div className="h-6 w-14 rounded-md bg-amber-500/20" />
-                </div>
-
-                <div className="h-12 w-full rounded-full border border-zinc-800 bg-zinc-900/50 flex items-center justify-center">
-                  <span className="text-[10px] font-black tracking-widest text-zinc-600 uppercase">GENERATE TRACK</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-zinc-950 w-full border-y border-zinc-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-3 lg:gap-12">
-            <div>
-              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gold/10 text-gold border border-gold/20">
-                <Zap className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-xl font-bold text-white uppercase tracking-tight">
-                  AI Lyric Spark
-                </h2>
-                <p className="mt-2 text-base text-zinc-400">
-                  Generate instant inspiration with genre-aware prompt templates that
-                  kickstart your creative process in seconds.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-12 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gold/10 text-gold border border-gold/20">
-                <Music2 className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-xl font-bold text-white uppercase tracking-tight">
-                  Genre Mastery
-                </h2>
-                <p className="mt-2 text-base text-zinc-400">
-                  From Synthpop to Death Metal, our AI understands the nuances of
-                  every style, instrumentation, and vocal delivery.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-12 lg:mt-0">
-              <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-gold/10 text-gold border border-gold/20">
-                <Mic2 className="h-6 w-6" />
-              </div>
-              <div className="mt-5">
-                <h2 className="text-xl font-bold text-white uppercase tracking-tight">
-                  Vocal Synthesis
-                </h2>
-                <p className="mt-2 text-base text-zinc-400">
-                  Define exactly how your lyrics should be delivered. Airy sopranos,
-                  gritty tenors, or digital whispers—you control the voice.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 bg-black">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
-            <div>
-              <h2 className="text-3xl font-black text-white sm:text-4xl uppercase italic">
-                Ready to find your <span className="text-gold">signature sound?</span>
-              </h2>
-              <p className="mt-3 max-w-3xl text-lg text-zinc-400">
-                Stop staring at a blank page. Join thousands of songwriters
-                using LyricFlow to turn their ideas into masterpieces.
-              </p>
-            </div>
-            <div className="mt-8 lg:mt-0 flex justify-center lg:justify-end">
-              <Link href="/sign-up">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link href="/dashboard" className="w-full sm:w-auto">
                 <Button
                   size="lg"
-                  className="text-lg rounded-full bg-white text-black hover:bg-zinc-200 font-bold px-10"
+                  className="w-full sm:w-auto h-20 px-12 rounded-[2rem] bg-[#5850ec] hover:bg-[#5850ec]/90 text-white font-black tracking-[0.2em] text-lg uppercase transition-all shadow-2xl shadow-[#5850ec]/20 active:scale-95"
                 >
-                  Join LyricFlow
-                  <ArrowRight className="ml-3 h-6 w-6" />
+                  Start Writing Now
+                  <ArrowRight className="ml-3 size-6" />
                 </Button>
               </Link>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Features Grid */}
+      <section className="py-24 border-y border-zinc-900 bg-[#08080c]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <FeatureCard
+              icon={<Zap className="size-8 text-[#fbbf24]" />}
+              title="AI Lyric Spark"
+              description="Generate instant inspiration with genre-aware templates that kickstart your creative process."
+              color="hover:border-[#fbbf24]/30"
+            />
+            <FeatureCard
+              icon={<Music2 className="size-8 text-[#06b6d4]" />}
+              title="Genre Mastery"
+              description="From Synthpop to Metal, our AI understands the nuances of every style and instrumentation."
+              color="hover:border-[#06b6d4]/30"
+            />
+            <FeatureCard
+              icon={<Mic2 className="size-8 text-[#e11d48]" />}
+              title="Vocal Delivery"
+              description="Define exactly how your lyrics should be delivered. Airy, gritty, or digital—you control the voice."
+              color="hover:border-[#e11d48]/30"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof */}
+      <section className="py-24 bg-[#050508]">
+        <div className="max-w-7xl mx-auto px-6 text-center">
+          <h2 className="text-3xl md:text-5xl font-black uppercase italic mb-16 tracking-tight">
+            Loved by <span className="text-[#5850ec]">Thousands</span> of Creators
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 opacity-40">
+            {['SONY', 'WARNER', 'UNIVERSAL', 'SPOTIFY'].map(brand => (
+              <div key={brand} className="flex items-center justify-center h-20 border border-zinc-800 rounded-2xl font-black tracking-[0.4em] text-xl">
+                {brand}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </main>
+  );
+}
+
+function FeatureCard({ icon, title, description, color }: { icon: React.ReactNode, title: string, description: string, color: string }) {
+  return (
+    <div className={cn(
+      "p-10 rounded-[2.5rem] border-2 border-zinc-900 bg-zinc-950/50 transition-all duration-500",
+      color
+    )}>
+      <div className="mb-6">{icon}</div>
+      <h3 className="text-2xl font-black uppercase italic mb-4 tracking-tight">{title}</h3>
+      <p className="text-zinc-500 leading-relaxed font-medium italic">{description}</p>
+    </div>
   );
 }

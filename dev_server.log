@@ -1,0 +1,20 @@
+
+> @ dev /app
+> next dev --turbopack
+
+▲ Next.js 16.1.5 (Turbopack, Cache Components)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.2:3000
+
+✓ Starting...
+⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
+✓ Ready in 3.6s
+○ Compiling / ...
+ GET / 200 in 12.3s (compile: 11.0s, proxy.ts: 232ms, render: 1041ms)
+ HEAD / 200 in 222ms (compile: 10ms, proxy.ts: 10ms, render: 202ms)
+Route / is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+ GET / 200 in 517ms (compile: 9ms, proxy.ts: 12ms, render: 495ms)
+Route /dashboard is rendering with server caches disabled. For this navigation, Component Metadata in React DevTools will not accurately reflect what is statically prerenderable and runtime prefetchable. See more info here: https://nextjs.org/docs/messages/cache-bypass-in-dev
+ GET /dashboard 200 in 1688ms (compile: 1433ms, proxy.ts: 5ms, render: 250ms)
+ GET /dashboard 200 in 880ms (compile: 10ms, proxy.ts: 9ms, render: 861ms)
+ GET /api/user 200 in 675ms (compile: 639ms, proxy.ts: 8ms, render: 28ms)
