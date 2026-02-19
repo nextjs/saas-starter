@@ -1,0 +1,15 @@
+
+> @ dev /app
+> next dev --turbopack
+
+⚠ Port 3000 is in use by an unknown process, using available port 3003 instead.
+▲ Next.js 16.1.5 (Turbopack, Cache Components)
+- Local:         http://localhost:3003
+- Network:       http://192.168.0.2:3003
+
+✓ Starting...
+⚠ Turbopack's filesystem cache has been deleted because we previously detected an internal error in Turbopack. Builds or page loads may be slower as a result.
+✓ Ready in 1613ms
+○ Compiling /dashboard ...
+ GET /dashboard 200 in 9.2s (compile: 7.5s, proxy.ts: 286ms, render: 1432ms)
+ GET /api/user 200 in 840ms (compile: 807ms, proxy.ts: 10ms, render: 23ms)

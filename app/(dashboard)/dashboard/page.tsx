@@ -1,6 +1,6 @@
 'use client';
 
-import { QuickstartCard } from '@/components/quickstart-card';
+import { QuickStart } from '@/components/QuickStart';
 import { History, Music2, Clock, ArrowRight, LayoutGrid } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -32,7 +32,9 @@ export default function DashboardPage() {
       </div>
 
       {/* QUICK START Section */}
-      <QuickstartCard />
+      <div className="w-full max-w-5xl mx-auto px-6">
+        <QuickStart />
+      </div>
 
       {/* Recent Works Section */}
       <div className="w-full max-w-5xl mx-auto px-6 mt-20">

@@ -18,3 +18,606 @@ Route /dashboard is rendering with server caches disabled. For this navigation, 
  GET /dashboard 200 in 1688ms (compile: 1433ms, proxy.ts: 5ms, render: 250ms)
  GET /dashboard 200 in 880ms (compile: 10ms, proxy.ts: 9ms, render: 861ms)
  GET /api/user 200 in 675ms (compile: 639ms, proxy.ts: 8ms, render: 28ms)
+⨯ ./components/QuickStart.tsx:6:1
+Module not found: Can't resolve '@/components/QuickStartProcessing'
+[0m [90m 4 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m {
+ [90m 9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartProcessing' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:6:1
+Module not found: Can't resolve '@/components/QuickStartProcessing'
+[0m [90m 4 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m {
+ [90m 9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartProcessing' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:6:1
+Module not found: Can't resolve '@/components/QuickStartProcessing'
+[0m [90m 4 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m {
+ [90m 9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartProcessing' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:6:1
+Module not found: Can't resolve '@/components/QuickStartProcessing'
+[0m [90m 4 |[39m [36mimport[39m { [33mButton[39m } [36mfrom[39m [32m'@/components/ui/button'[39m[33m;[39m
+ [90m 5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m 8 |[39m [36mimport[39m {
+ [90m 9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartProcessing' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:7:1
+Module not found: Can't resolve '@/components/QuickStartResults'
+[0m [90m  5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m {
+ [90m  9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m
+ [90m 10 |[39m   [33mINSTRUMENT_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartResults' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:7:1
+Module not found: Can't resolve '@/components/QuickStartResults'
+[0m [90m  5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m {
+ [90m  9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m
+ [90m 10 |[39m   [33mINSTRUMENT_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartResults' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:7:1
+Module not found: Can't resolve '@/components/QuickStartResults'
+[0m [90m  5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m {
+ [90m  9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m
+ [90m 10 |[39m   [33mINSTRUMENT_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartResults' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/QuickStart.tsx:7:1
+Module not found: Can't resolve '@/components/QuickStartResults'
+[0m [90m  5 |[39m [36mimport[39m { [33mSelectionModal[39m } [36mfrom[39m [32m'@/components/selection-modal'[39m[33m;[39m
+ [90m  6 |[39m [36mimport[39m { [33mQuickStartProcessing[39m } [36mfrom[39m [32m'@/components/QuickStartProcessing'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  7 |[39m [36mimport[39m { [33mQuickStartResults[39m } [36mfrom[39m [32m'@/components/QuickStartResults'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m  8 |[39m [36mimport[39m {
+ [90m  9 |[39m   [33mGENRE_CATEGORIES[39m[33m,[39m
+ [90m 10 |[39m   [33mINSTRUMENT_CATEGORIES[39m[33m,[39m [0m
+
+Import map: aliased to relative './components/QuickStartResults' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./components/QuickStart.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/QuickStart.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled in 253ms
+Persisting failed: Failed to compact database
+
+Caused by:
+    0: Failed to deserialize used key hashes AMQF from 00000162.meta
+    1: incompatible version
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptBrowserChunk as OutputAsset>::path (TaskId 199850))
+
+Caused by:
+    0: Looking up data for TaskId 199850 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for ChunkItemBatchWithAsyncModuleInfo::from_module_batch (TaskId 199851))
+
+Caused by:
+    0: Looking up data for TaskId 199851 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptBrowserChunk as OutputAssetsReference>::references (TaskId 199852))
+
+Caused by:
+    0: Looking up data for TaskId 199852 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptChunk as Chunk>::ident (TaskId 199853))
+
+Caused by:
+    0: Looking up data for TaskId 199853 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptBrowserChunk as OutputAssetsReference>::references (TaskId 199854))
+
+Caused by:
+    0: Looking up data for TaskId 199854 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptBrowserChunk as OutputAsset>::path (TaskId 199855))
+
+Caused by:
+    0: Looking up data for TaskId 199855 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptChunk as Chunk>::ident (TaskId 199856))
+
+Caused by:
+    0: Looking up data for TaskId 199856 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for EcmascriptChunkContent::included_chunk_items (TaskId 199857))
+
+Caused by:
+    0: Looking up data for TaskId 199857 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptChunk as OutputAssetsReference>::references (TaskId 199858))
+
+Caused by:
+    0: Looking up data for TaskId 199858 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for OutputAssetsReference::references (TaskId 199859))
+
+Caused by:
+    0: Looking up data for TaskId 199859 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for ChunkingContext::chunk_item_id_from_module (TaskId 199860))
+
+Caused by:
+    0: Looking up data for TaskId 199860 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <NodeJsChunkingContext as ChunkingContext>::chunk_item_id_from_ident (TaskId 199861))
+
+Caused by:
+    0: Looking up data for TaskId 199861 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for EcmascriptChunkContent::included_chunk_items (TaskId 199862))
+
+Caused by:
+    0: Looking up data for TaskId 199862 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <FileSystemPath as ValueToString>::to_string (TaskId 199863))
+
+Caused by:
+    0: Looking up data for TaskId 199863 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <FileSystemPath as ValueToString>::to_string (TaskId 199864))
+
+Caused by:
+    0: Looking up data for TaskId 199864 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123279) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EcmascriptChunk as OutputAssetsReference>::references (TaskId 199865))
+
+Caused by:
+    0: Looking up data for TaskId 199865 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123279) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for OutputAssetsReference::references (TaskId 199866))
+
+Caused by:
+    0: Looking up data for TaskId 199866 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to /tmp/next-panic-cf5744431bde1873e29ee969d5c87e32.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28dashboard%29%2Fdashboard%2Fpage&body=Turbopack%20version%3A%20%6047471522%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28dashboard%29%2Fdashboard%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_written_endpoint_with_issues_operation (TaskId 199867))
+
+Caused by:
+    0: Looking up data for TaskId 199867 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread '<unnamed>' (109039) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_source_map_rope_operation (TaskId 199868))
+
+Caused by:
+    0: Looking up data for TaskId 199868 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+⨯ Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for get_written_endpoint_with_issues_operation (TaskId 199867))
+
+Debug info:
+- Failed to restore task data (corrupted database or bug): Meta for get_written_endpoint_with_issues_operation (TaskId 199867))
+
+  Caused by:
+      0: Looking up data for TaskId 199867 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for get_written_endpoint_with_issues_operation (TaskId 199867))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Caused by:
+    0: Looking up data for TaskId 199869 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk (TaskId 199870))
+
+Caused by:
+    0: Looking up data for TaskId 199870 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (123282) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for output_assets_operation (TaskId 199871))
+
+Caused by:
+    0: Looking up data for TaskId 199871 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <PageEndpoint as Endpoint>::output (TaskId 199872))
+
+Caused by:
+    0: Looking up data for TaskId 199872 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for PageEndpoint::output (TaskId 199873))
+
+Caused by:
+    0: Looking up data for TaskId 199873 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for PageEndpoint::client_chunk_group (TaskId 199874))
+
+Caused by:
+    0: Looking up data for TaskId 199874 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for PagesProject::project (TaskId 199875))
+
+Caused by:
+    0: Looking up data for TaskId 199875 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+
+thread '<unnamed>' (109039) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_source_map_rope_operation (TaskId 199876))
+
+Caused by:
+    0: Looking up data for TaskId 199876 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+Error [TurbopackInternalError]: Failed to write app endpoint /(dashboard)/dashboard/page
+
+Caused by:
+- Failed to restore task data (corrupted database or bug): Meta for ChunkItemBatchWithAsyncModuleInfo::from_module_batch (TaskId 199851))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Execution of endpoint_write_to_disk failed
+- Execution of <AppEndpoint as Endpoint>::output failed
+- Failed to write app endpoint /(dashboard)/dashboard/page
+- Execution of AppEndpoint::output failed
+- Execution of get_app_client_references_chunks failed
+- Execution of *ChunkGroupResult::concatenate failed
+- Execution of <NodeJsChunkingContext as ChunkingContext>::chunk_group failed
+- Failed to restore task data (corrupted database or bug): Meta for ChunkItemBatchWithAsyncModuleInfo::from_module_batch (TaskId 199851))
+
+  Caused by:
+      0: Looking up data for TaskId 199851 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to write app endpoint /(dashboard)/dashboard/page) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+
+thread '<unnamed>' (109039) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_source_map_rope_operation (TaskId 199877))
+
+Caused by:
+    0: Looking up data for TaskId 199877 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+⨯ Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+  Caused by:
+      0: Looking up data for TaskId 199869 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+
+thread 'tokio-runtime-worker' (115919) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_source_map_rope (TaskId 199878))
+
+Caused by:
+    0: Looking up data for TaskId 199878 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+  Caused by:
+      0: Looking up data for TaskId 199869 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+
+-----
+[1m[31mFATAL[39m[0m: An unexpected Turbopack error occurred. A panic log has been written to /tmp/next-panic-cf5744431bde1873e29ee969d5c87e32.log.
+
+To help make Turbopack better, report this error by clicking here: https://github.com/vercel/next.js/discussions/new?category=turbopack-error-report&title=Turbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28dashboard%29%2Fdashboard%2Fpage&body=Turbopack%20version%3A%20%6047471522%60%0ANext.js%20version%3A%20%600.0.0%60%0A%0AError%20message%3A%0A%60%60%60%0ATurbopack%20Error%3A%20Failed%20to%20write%20app%20endpoint%20%2F%28dashboard%29%2Fdashboard%2Fpage%0A%60%60%60&labels=Turbopack,Turbopack%20Panic%20Backtrace
+-----
+
+⨯ Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+  Caused by:
+      0: Looking up data for TaskId 199869 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+
+thread 'tokio-runtime-worker' (123220) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for get_source_map_rope (TaskId 199879))
+
+Caused by:
+    0: Looking up data for TaskId 199879 from database failed
+    1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+    2: ArrayLengthMismatch { required: 312, found: 1190 }
+Error [TurbopackInternalError]: Failed to write app endpoint /(dashboard)/dashboard/page
+
+Caused by:
+- Failed to restore task data (corrupted database or bug): Meta for ChunkItemBatchWithAsyncModuleInfo::from_module_batch (TaskId 199851))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Execution of endpoint_write_to_disk failed
+- Execution of <AppEndpoint as Endpoint>::output failed
+- Failed to write app endpoint /(dashboard)/dashboard/page
+- Execution of AppEndpoint::output failed
+- Execution of get_app_client_references_chunks failed
+- Execution of *ChunkGroupResult::concatenate failed
+- Execution of <NodeJsChunkingContext as ChunkingContext>::chunk_group failed
+- Failed to restore task data (corrupted database or bug): Meta for ChunkItemBatchWithAsyncModuleInfo::from_module_batch (TaskId 199851))
+
+  Caused by:
+      0: Looking up data for TaskId 199851 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to write app endpoint /(dashboard)/dashboard/page) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+⨯ Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+  Caused by:
+      0: Looking up data for TaskId 199869 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+Error [TurbopackInternalError]: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+Debug info:
+- Execution of get_written_endpoint_with_issues_operation failed
+- Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))
+
+  Caused by:
+      0: Looking up data for TaskId 199869 from database failed
+      1: Failed to deserialize AMQF from 00000162.meta for 00000159.sst
+      2: ArrayLengthMismatch { required: 312, found: 1190 }
+    at <unknown> (TurbopackInternalError: Failed to restore task data (corrupted database or bug): Meta for endpoint_write_to_disk_operation (TaskId 199869))) {
+  location: '/build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17'
+}
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
