@@ -1,0 +1,677 @@
+
+> @ dev /app
+> next dev --turbopack
+
+⚠ Port 3000 is in use by an unknown process, using available port 3004 instead.
+▲ Next.js 16.1.5 (Turbopack, Cache Components)
+- Local:         http://localhost:3004
+- Network:       http://192.168.0.2:3004
+
+✓ Starting...
+⚠ Turbopack's filePersisting failed: Unable to open static sorted file referenced from 00000179.meta
+
+Caused by:
+    0: Unable to open static sorted file 00000178.sst
+    1: No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a siPersisting failed: Another write batch or coPersisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+
+thread 'tokio-runtime-worker' (124782) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Data for read_dir (TaskId 78115))
+
+Caused by:
+    0: Looking up data for TaskId 78115 from database failed
+    1: Unable to open static sorted file referenced from 00000180.meta
+    2: Unable to open static sorted file 00000176.sst
+    3: No such file or directory (os error 2)
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'tokio-runtime-worker' (124782) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Data for read_dir (TaskId 78115))
+
+Caused by:
+    0: Looking up data for TaskId 78115 from database failed
+    1: Unable to open static sorted file referenced from 00000180.meta
+    2: Unable to open static sorted file 00000176.sst
+    3: Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+write operations is allowed at a time)
+m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m
+ [90m 6 |[39m [36mexport[39m [36mdefault[39m [36mfunction[39m [33mSongPage[39m() {
+ [90m 7 |[39m   [36mconst[39m params [33m=[39m useParams()[33m;[39m[0m
+
+Import map: aliased to relative './components/LyricEditor' inside of [project]/
+
+
+Import traces:
+  Client Component Browser:
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./app/(dashboard)/dashboard/song/[id]/page.tsx:4:1
+Module not found: Can't resolve '@/components/LyricEditor'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useParams } [36mfrom[39m [32m'next/navigation'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { [33mLyricEditor[39m } [36mfrom[39m [32m'@/components/LyricEditor'[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[2
+thread 'tokio-runtime-worker' (147189) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:411:46:
+range start index 14845440 out of range for slice of length 13565
+
+thread 'tokio-runtime-worker' (150685) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for resolve_internal (TaskId 195322))
+
+Caused by:
+    0: Looking up data for TaskId 195322 from database failed
+    1: Unable to open static sorted file referenced from 00000091.meta
+    2: Unable to open static sorted file 00000086.sst
+    3: No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+
+thread 'tokio-runtime-worker' (147189) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for Pattern::new_internal (TaskId 195401))
+
+Caused by:
+    0: Looking up data for TaskId 195401 from database failed
+    1: Unable to open static sorted file referenced from 00000099.meta
+    2: Unable to open static sorted file 00000095.sst
+    3: No such file or directory (os error 2)
+
+thread 'tokio-runtime-worker' (147190) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for analyze_ecmascript_module (TaskId 195409))
+
+Caused by:
+    0: Looking up data for TaskId 195409 from database failed
+    1: Unable to open static sorted file referenced from 00000053.meta
+    2: Unable to open static sorted file 00000047.sst
+    3: No such file or directory (os error 2)
+
+thread 'tokio-runtime-worker' (147190) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 13190333 out of range for slice of length 13190289
+
+thread 'tokio-runtime-worker' (157460) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for analyze_ecmascript_module (TaskId 195483))
+
+Caused by:
+    0: Looking up data for TaskId 195483 from database failed
+    1: Unable to open static sorted file referenced from 00000091.meta
+    2: Unable to open static sorted file 00000086.sst
+    3: No such file or directory (os error 2)
+
+thread 'tokio-runtime-worker' (147190) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <EsmAssetReference as ModuleReference>::resolve_reference (TaskId 195507))
+
+Caused by:
+    0: Looking up data for TaskId 195507 from database failed
+    1: Unable to open static sorted file referenced from 00000111.meta
+    2: Unable to open static sorted file 00000107.sst
+    3: No such file or directory (os error 2)
+
+thread 'tokio-runtime-worker' (147189) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:411:46:
+range start index 14845440 out of range for slice of length 13565
+
+thread 'tokio-runtime-worker' (147190) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 2114881 out of range for slice of length 2114689
+
+thread 'tokio-runtime-worker' (147189) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 2114881 out of range for slice of length 2114689
+
+thread 'tokio-runtime-worker' (147190) panicked at turbopack/crates/turbo-persistence/src/static_sorted_file.rs:387:51:
+range start index 19378879 out of range for slice of length 19378867
+
+thread 'tokio-runtime-worker' (157460) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for FileContent::lines (TaskId 195592))
+
+Caused by:
+    0: Looking up data for TaskId 195592 from database failed
+    1: Unable to open static sorted file referenced from 00000099.meta
+    2: Unable to open static sorted file 00000095.sst
+    3: No such file or directory (os error 2)
+
+thread 'tokio-runtime-worker' (147190) panicked at /build/turbopack/crates/turbo-tasks-backend/src/backend/operation/mod.rs:156:17:
+Failed to restore task data (corrupted database or bug): Meta for <ResolvingIssue as Issue>::source (TaskId 195617))
+
+Caused by:
+    0: Looking up data for TaskId 195617 from database failed
+    1: Unable to open static sorted file referenced from 00000111.meta
+    2: Unable to open static sorted file 00000107.sst
+    3: No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:22:1
+Module not found: Can't resolve './editor/BuildTrack'
+[0m [90m 20 |[39m
+ [90m 21 |[39m [90m// Modular components[39m
+[31m[1m>[22m[39m[90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:22:1
+Module not found: Can't resolve './editor/BuildTrack'
+[0m [90m 20 |[39m
+ [90m 21 |[39m [90m// Modular components[39m
+[31m[1m>[22m[39m[90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:22:1
+Module not found: Can't resolve './editor/BuildTrack'
+[0m [90m 20 |[39m
+ [90m 21 |[39m [90m// Modular components[39m
+[31m[1m>[22m[39m[90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:26:1
+Module not found: Can't resolve './editor/EnhanceTrack'
+[0m [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:26:1
+Module not found: Can't resolve './editor/EnhanceTrack'
+[0m [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:26:1
+Module not found: Can't resolve './editor/EnhanceTrack'
+[0m [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:26:1
+Module not found: Can't resolve './editor/EnhanceTrack'
+[0m [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:27:1
+Module not found: Can't resolve './editor/ExportTrack'
+[0m [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m
+ [90m 30 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:27:1
+Module not found: Can't resolve './editor/ExportTrack'
+[0m [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m
+ [90m 30 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:27:1
+Module not found: Can't resolve './editor/ExportTrack'
+[0m [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m
+ [90m 30 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:27:1
+Module not found: Can't resolve './editor/ExportTrack'
+[0m [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 28 |[39m
+ [90m 29 |[39m type [33mTab[39m [33m=[39m [32m'BUILD'[39m [33m|[39m [32m'EDIT'[39m [33m|[39m [32m'REFINE'[39m [33m|[39m [32m'REVIEW'[39m [33m|[39m [32m'ENHANCE'[39m [33m|[39m [32m'EXPORT'[39m[33m;[39m
+ [90m 30 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:24:1
+Module not found: Can't resolve './editor/RefineTrack'
+[0m [90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:24:1
+Module not found: Can't resolve './editor/RefineTrack'
+[0m [90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:24:1
+Module not found: Can't resolve './editor/RefineTrack'
+[0m [90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:24:1
+Module not found: Can't resolve './editor/RefineTrack'
+[0m [90m 22 |[39m [36mimport[39m { [33mBuildTrack[39m } [36mfrom[39m [32m'./editor/BuildTrack'[39m[33m;[39m
+ [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:25:1
+Module not found: Can't resolve './editor/ReviewTrack'
+[0m [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:25:1
+Module not found: Can't resolve './editor/ReviewTrack'
+[0m [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:25:1
+Module not found: Can't resolve './editor/ReviewTrack'
+[0m [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./components/editor/index.tsx:25:1
+Module not found: Can't resolve './editor/ReviewTrack'
+[0m [90m 23 |[39m [36mimport[39m { [33mEditTrack[39m } [36mfrom[39m [32m'./editor/EditTrack'[39m[33m;[39m
+ [90m 24 |[39m [36mimport[39m { [33mRefineTrack[39m } [36mfrom[39m [32m'./editor/RefineTrack'[39m[33m;[39m
+[31m[1m>[22m[39m[90m 25 |[39m [36mimport[39m { [33mReviewTrack[39m } [36mfrom[39m [32m'./editor/ReviewTrack'[39m[33m;[39m
+ [90m    |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 26 |[39m [36mimport[39m { [33mEnhanceTrack[39m } [36mfrom[39m [32m'./editor/EnhanceTrack'[39m[33m;[39m
+ [90m 27 |[39m [36mimport[39m { [33mExportTrack[39m } [36mfrom[39m [32m'./editor/ExportTrack'[39m[33m;[39m
+ [90m 28 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./components/editor/index.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component Browser]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./components/editor/index.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Client Component SSR]
+    ./app/(dashboard)/dashboard/song/[id]/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled in 232ms
+Persisting failed: Unable to open static sorted file referenced from 00000103.meta
+
+Caused by:
+    0: Unable to open static sorted file 00000102.sst
+    1: No such file or directory (os error 2)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
+Persisting failed: Another write batch or compaction is already active (Only a single write operations is allowed at a time)
