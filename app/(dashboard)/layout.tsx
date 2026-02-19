@@ -107,10 +107,15 @@ function NavLinks() {
 
 function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const isSongPage = pathname?.startsWith('/dashboard/song/') || false;
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-900 bg-[#050508]/80 backdrop-blur-xl">
-      <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center">
+    <header className={cn(
+      "sticky top-0 z-50 border-b border-zinc-900 bg-[#050508]/80 backdrop-blur-xl transition-all",
+      isSongPage && "hidden lg:flex"
+    )}>
+      <div className="max-w-7xl mx-auto px-6 py-5 flex justify-between items-center w-full">
         <div className="flex items-center gap-10">
           <Link href="/" className="flex items-center group">
             <div className="p-1.5 bg-[#5850ec] rounded-lg group-hover:rotate-12 transition-transform">
@@ -119,15 +124,11 @@ function Header() {
             <span className="ml-3 text-xl font-black tracking-[-0.05em] text-white uppercase italic">LyricFlow</span>
           </Link>
 
-          <Suspense fallback={<div className="h-10 w-40 bg-zinc-900 rounded-xl animate-pulse hidden lg:block" />}>
-            <NavLinks />
-          </Suspense>
+          <NavLinks />
         </div>
 
         <div className="flex items-center gap-6">
-          <Suspense fallback={<div className="h-10 w-10 bg-zinc-900 rounded-full animate-pulse" />}>
-            <UserMenu />
-          </Suspense>
+          <UserMenu />
           <button
             className="lg:hidden p-2 text-zinc-400 hover:text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -170,6 +171,10 @@ function Header() {
 
 function MobileTabBar() {
   const pathname = usePathname();
+  const isSongPage = pathname?.startsWith('/dashboard/song/') || false;
+
+  if (isSongPage) return null;
+
   return (
     <footer className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#050508]/80 backdrop-blur-xl border-t border-zinc-900 px-6 py-4">
        <div className="flex items-center justify-around">
@@ -193,12 +198,15 @@ function MobileTabBar() {
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <section className="flex flex-col min-h-screen bg-[#050508] text-white selection:bg-[#5850ec] selection:text-white">
-      <Header />
       <Suspense fallback={null}>
-        <main className="flex-1">
-          {children}
-        </main>
+        <Header />
       </Suspense>
+
+      <main className="flex-1">
+        <Suspense fallback={null}>
+          {children}
+        </Suspense>
+      </main>
 
       <Suspense fallback={null}>
         <MobileTabBar />

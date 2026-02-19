@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Users, Settings, Shield, Activity, Menu, X, LayoutDashboard, Library } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({
   children
@@ -13,6 +14,7 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isSongPage = pathname?.startsWith('/dashboard/song/') || false;
 
   const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Overview' },
@@ -30,6 +32,10 @@ export default function DashboardLayout({
     { href: '/dashboard/general', icon: Settings, label: 'Settings' }
   ];
 
+  if (isSongPage) {
+    return <div className="flex-1 flex flex-col">{children}</div>;
+  }
+
   return (
     <div className="flex flex-col min-h-[calc(100dvh-68px)] max-w-7xl mx-auto w-full pb-16 lg:pb-0">
       {/* Mobile header */}
@@ -38,9 +44,6 @@ export default function DashboardLayout({
           <span className="font-black text-white uppercase italic tracking-tight">
             {navItems.find((item) => item.href === pathname)?.label || 'Dashboard'}
           </span>
-        </div>
-        <div className="flex items-center gap-2">
-           {/* Add a notification or search icon here if needed */}
         </div>
       </div>
 
@@ -98,7 +101,6 @@ export default function DashboardLayout({
             </span>
           </Link>
         ))}
-        {/* Toggle button for full menu */}
         <button
           onClick={() => setIsSidebarOpen(true)}
           className="flex flex-col items-center gap-1 group"

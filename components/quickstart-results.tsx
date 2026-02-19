@@ -9,14 +9,15 @@ import {
   Share2,
   RotateCcw,
   Music2,
-  Mic2,
   ListMusic,
   Activity,
-  ChevronDown
+  ChevronDown,
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Waveform } from './waveform';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 interface QuickStartResultsProps {
   onReset: () => void;
@@ -128,7 +129,7 @@ export function QuickStartResults({ onReset, selections, prompt }: QuickStartRes
             </div>
           </div>
 
-          {/* Technical Specs */}
+          {/* Technical Specs & Actions */}
           <div className="space-y-8">
             <div className="bg-[#050508]/50 border-2 border-zinc-900 rounded-[2rem] p-8">
                <div className="flex items-center gap-3 mb-8">
@@ -143,15 +144,23 @@ export function QuickStartResults({ onReset, selections, prompt }: QuickStartRes
                </div>
             </div>
 
-            <div className="flex gap-4">
-               <Button className="flex-1 h-20 rounded-2xl bg-[#fbbf24] hover:bg-[#fbbf24]/90 text-black font-black tracking-[0.2em] uppercase transition-all active:scale-[0.98]">
-                  <Save className="size-4 mr-2" />
-                  SAVE PROJECT
-               </Button>
-               <Button variant="outline" className="flex-1 h-20 rounded-2xl border-zinc-800 text-zinc-400 hover:bg-zinc-900 font-black tracking-[0.2em] uppercase transition-all active:scale-[0.98]">
-                  <Download className="size-4 mr-2" />
-                  STEMS (.WAV)
-               </Button>
+            <div className="grid grid-cols-1 gap-4">
+               <Link href="/dashboard/song/1">
+                 <Button className="w-full h-24 rounded-2xl bg-[#5850ec] hover:bg-[#5850ec]/90 text-white font-black tracking-[0.4em] uppercase transition-all active:scale-[0.98] shadow-2xl shadow-[#5850ec]/20 text-sm">
+                    OPEN IN STUDIO
+                    <ArrowRight className="size-5 ml-3" />
+                 </Button>
+               </Link>
+               <div className="flex gap-4">
+                  <Button variant="outline" className="flex-1 h-20 rounded-2xl border-2 border-zinc-900 text-zinc-500 hover:text-white hover:bg-zinc-900 font-black tracking-[0.2em] uppercase transition-all active:scale-[0.98]">
+                    <Save className="size-4 mr-2" />
+                    SAVE DRAFT
+                  </Button>
+                  <Button variant="outline" className="flex-1 h-20 rounded-2xl border-2 border-zinc-900 text-zinc-500 hover:text-white hover:bg-zinc-900 font-black tracking-[0.2em] uppercase transition-all active:scale-[0.98]">
+                    <Download className="size-4 mr-2" />
+                    STEMS
+                  </Button>
+               </div>
             </div>
           </div>
         </div>
