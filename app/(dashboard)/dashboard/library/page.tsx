@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Music2,
   Library,
@@ -59,42 +60,44 @@ export default function LibraryPage() {
         {/* Drafts List */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {DRAFTS.map((draft) => (
-            <Card key={draft.id} className="bg-zinc-950 border-2 border-zinc-900 rounded-3xl overflow-hidden hover:border-gold/50 transition-all group cursor-pointer shadow-xl shadow-black">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="p-3 bg-zinc-900 rounded-2xl group-hover:bg-gold/10 transition-colors">
-                    <Music2 className="size-6 text-zinc-400 group-hover:text-gold transition-colors" />
-                  </div>
-                  <button className="text-zinc-600 hover:text-white transition-colors">
-                    <MoreVertical className="size-5" />
-                  </button>
-                </div>
-
-                <h3 className="text-xl font-black text-white uppercase italic tracking-tight mb-1 truncate">
-                  {draft.title}
-                </h3>
-                <div className="flex items-center gap-2 text-zinc-500 text-[10px] font-bold tracking-widest uppercase mb-6">
-                  <span className="text-gold">{draft.genre}</span>
-                  <span className="size-1 bg-zinc-800 rounded-full" />
-                  <span>{draft.date}</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                    draft.status === 'Completed' ? 'border-emerald-900 text-emerald-500 bg-emerald-500/5' :
-                    draft.status === 'In Progress' ? 'border-blue-900 text-blue-500 bg-blue-500/5' :
-                    'border-zinc-800 text-zinc-500 bg-zinc-500/5'
-                  }`}>
-                    {draft.status}
+            <Link href={`/dashboard/song/${draft.id}`} key={draft.id} className="block group">
+              <Card className="bg-zinc-950 border-2 border-zinc-900 rounded-3xl overflow-hidden hover:border-gold/50 transition-all cursor-pointer shadow-xl shadow-black">
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="p-3 bg-zinc-900 rounded-2xl group-hover:bg-gold/10 transition-colors">
+                      <Music2 className="size-6 text-zinc-400 group-hover:text-gold transition-colors" />
+                    </div>
+                    <button className="text-zinc-600 hover:text-white transition-colors">
+                      <MoreVertical className="size-5" />
+                    </button>
                   </div>
 
-                  <div className="flex items-center gap-2 text-gold font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
-                    Edit Lyrics
-                    <ArrowRight className="size-3" />
+                  <h3 className="text-xl font-black text-white uppercase italic tracking-tight mb-1 truncate">
+                    {draft.title}
+                  </h3>
+                  <div className="flex items-center gap-2 text-zinc-500 text-[10px] font-bold tracking-widest uppercase mb-6">
+                    <span className="text-gold">{draft.genre}</span>
+                    <span className="size-1 bg-zinc-800 rounded-full" />
+                    <span>{draft.date}</span>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+
+                  <div className="flex items-center justify-between">
+                    <div className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                      draft.status === 'Completed' ? 'border-emerald-900 text-emerald-500 bg-emerald-500/5' :
+                      draft.status === 'In Progress' ? 'border-blue-900 text-blue-500 bg-blue-500/5' :
+                      'border-zinc-800 text-zinc-500 bg-zinc-500/5'
+                    }`}>
+                      {draft.status}
+                    </div>
+
+                    <div className="flex items-center gap-2 text-gold font-black text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">
+                      Edit Lyrics
+                      <ArrowRight className="size-3" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>

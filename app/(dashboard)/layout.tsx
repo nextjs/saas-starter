@@ -62,14 +62,14 @@ function UserMenu() {
         <DropdownMenuItem className="cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800">
           <Link href="/dashboard" className="flex w-full items-center">
             <Home className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
+            <span>Studio Dashboard</span>
           </Link>
         </DropdownMenuItem>
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
             <DropdownMenuItem className="w-full flex-1 cursor-pointer hover:bg-zinc-800 focus:bg-zinc-800">
               <LogOut className="mr-2 h-4 w-4" />
-              <span>Sign out</span>
+              <span>End Session</span>
             </DropdownMenuItem>
           </button>
         </form>

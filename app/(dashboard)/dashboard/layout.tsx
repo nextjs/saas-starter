@@ -76,7 +76,7 @@ export default function DashboardLayout({
                   onClick={() => setIsSidebarOpen(false)}
                 >
                   <item.icon className={`h-4 w-4 mr-3 ${pathname === item.href ? 'text-gold' : 'text-zinc-500'}`} />
-                  {item.label}
+                  {item.label}{item.href === '/dashboard/library' && <span className="ml-auto bg-gold text-black text-[8px] px-1.5 py-0.5 rounded-full">PRO</span>}
                 </Button>
               </Link>
             ))}

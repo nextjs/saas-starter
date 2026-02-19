@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import {
   PlusCircle,
   Sparkles,
@@ -254,15 +255,17 @@ export default function DashboardPage() {
             <History className="size-5 text-zinc-500" />
             <h2 className="text-lg font-black text-white uppercase italic tracking-widest">Recent Works</h2>
           </div>
-          <Button variant="link" className="text-gold text-xs font-bold uppercase tracking-widest p-0 h-auto">
-            View Library
-            <ArrowRight className="size-3 ml-2" />
-          </Button>
+          <Link href="/dashboard/library">
+            <Button variant="link" className="text-gold text-xs font-bold uppercase tracking-widest p-0 h-auto">
+              View Library
+              <ArrowRight className="size-3 ml-2" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {RECENT_WORKS.map((work) => (
-            <div key={work.id} className="bg-zinc-950 border border-zinc-900 p-4 rounded-2xl hover:border-zinc-700 transition-colors cursor-pointer group">
+            <Link href={`/dashboard/song/${work.id}`} key={work.id} className="bg-zinc-950 border border-zinc-900 p-4 rounded-2xl hover:border-zinc-700 transition-colors cursor-pointer group">
               <div className="flex items-center gap-3 mb-3">
                 <div className="p-2 bg-zinc-900 rounded-lg group-hover:bg-gold/10 transition-colors">
                   <Music2 className="size-4 text-zinc-500 group-hover:text-gold transition-colors" />
@@ -276,7 +279,7 @@ export default function DashboardPage() {
                 <Clock className="size-3" />
                 {work.date}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
