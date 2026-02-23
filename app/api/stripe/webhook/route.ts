@@ -15,12 +15,12 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 // Credit pack mappings (priceId -> credits)
 const CREDIT_PACK_MAP: Record<string, { credits: number; name: string }> = {
-  [process.env.STRIPE_PRICE_CREDITS_S || 'price_credits_s']: { credits: 50, name: 'Pack S' },
-  [process.env.STRIPE_PRICE_CREDITS_M || 'price_credits_m']: { credits: 200, name: 'Pack M' },
-  [process.env.STRIPE_PRICE_CREDITS_L || 'price_credits_l']: { credits: 500, name: 'Pack L' },
+  [process.env.STRIPE_PRICE_CREDITS_S || 'price_credits_s']: { credits: 500, name: 'Pack S' },
+  [process.env.STRIPE_PRICE_CREDITS_M || 'price_credits_m']: { credits: 2000, name: 'Pack M' },
+  [process.env.STRIPE_PRICE_CREDITS_L || 'price_credits_l']: { credits: 5000, name: 'Pack L' },
 };
 
-const MONTHLY_CREDITS_GRANT = 100; // Credits given per subscription period
+const MONTHLY_CREDITS_GRANT = 1000; // Credits given per subscription period
 
 export async function POST(request: NextRequest) {
   const payload = await request.text();

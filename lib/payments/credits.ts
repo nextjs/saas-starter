@@ -1,27 +1,27 @@
 export const CREDIT_PACKS = {
   small: {
     name: 'Pack S',
-    credits: 50,
+    credits: 500,
     priceEnvKey: 'STRIPE_PRICE_CREDITS_S',
-    description: '50 credits',
+    description: '500 credits',
   },
   medium: {
     name: 'Pack M',
-    credits: 200,
+    credits: 2000,
     priceEnvKey: 'STRIPE_PRICE_CREDITS_M',
-    description: '200 credits',
+    description: '2000 credits',
   },
   large: {
     name: 'Pack L',
-    credits: 500,
+    credits: 5000,
     priceEnvKey: 'STRIPE_PRICE_CREDITS_L',
-    description: '500 credits',
+    description: '5000 credits',
   },
 } as const;
 
 export type PackSize = keyof typeof CREDIT_PACKS;
 
-export const MONTHLY_CREDIT_GRANT = 100; // credits granted per invoice.paid for Pro
+export const MONTHLY_CREDIT_GRANT = 1000; // credits granted per invoice.paid for Pro
 
 export function getPackByPriceId(priceId: string): { size: PackSize; credits: number } | null {
   for (const [size, pack] of Object.entries(CREDIT_PACKS)) {
