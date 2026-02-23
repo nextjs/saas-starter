@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getWorkflowRun, updateWorkflowRun } from '@/lib/db/queries';
+import { getWorkflowRun, updateWorkflowRun, createCreditTransaction } from '@/lib/db/queries';
 
 export async function POST(request: NextRequest) {
   try {
@@ -49,6 +49,17 @@ async function handleCallback(body: any) {
     output: output || null,
     error: error || null,
   });
+
+  // Refund credits if workflow failed via n8n callback
+  if (status === 'failed') {
+    await createCreditTransaction({
+      userId: run.userId,
+      type: 'refund',
+      amount: run.creditCost || 0,
+      reason: `Refund: workflow run #${runId} failed via n8n callback`,
+      relatedRunId: runId,
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }

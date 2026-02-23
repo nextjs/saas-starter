@@ -80,9 +80,25 @@ export async function POST(request: NextRequest) {
           await updateWorkflowRun(run.id, { status: 'running' });
         } else {
           await updateWorkflowRun(run.id, { status: 'failed', error: `n8n returned ${n8nResponse.status}` });
+          // Refund credits on failure
+          await createCreditTransaction({
+            userId: user.id,
+            type: 'refund',
+            amount: workflow.creditCost,
+            reason: `Refund: workflow ${workflow.name} failed (n8n ${n8nResponse.status})`,
+            relatedRunId: run.id,
+          });
         }
       } catch (err: any) {
         await updateWorkflowRun(run.id, { status: 'failed', error: err.message || 'n8n call failed' });
+        // Refund credits on failure
+        await createCreditTransaction({
+          userId: user.id,
+          type: 'refund',
+          amount: workflow.creditCost,
+          reason: `Refund: workflow ${workflow.name} failed (${err.message || 'n8n call failed'})`,
+          relatedRunId: run.id,
+        });
       }
     } else {
       await updateWorkflowRun(run.id, { status: 'running' });

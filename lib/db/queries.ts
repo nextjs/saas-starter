@@ -269,8 +269,22 @@ export async function getUserWorkflowRuns(userId: number, limit = 20) {
 
 export async function getWorkflowRun(runId: number) {
   const result = await db
-    .select()
+    .select({
+      id: workflowRuns.id,
+      userId: workflowRuns.userId,
+      workflowId: workflowRuns.workflowId,
+      status: workflowRuns.status,
+      model: workflowRuns.model,
+      input: workflowRuns.input,
+      output: workflowRuns.output,
+      n8nExecutionId: workflowRuns.n8nExecutionId,
+      error: workflowRuns.error,
+      createdAt: workflowRuns.createdAt,
+      updatedAt: workflowRuns.updatedAt,
+      creditCost: workflows.creditCost,
+    })
     .from(workflowRuns)
+    .innerJoin(workflows, eq(workflowRuns.workflowId, workflows.id))
     .where(eq(workflowRuns.id, runId))
     .limit(1);
 
