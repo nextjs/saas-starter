@@ -25,7 +25,7 @@ export async function createCheckoutSession({
   const session = await auth();
 
   if (!workspace || !session?.user?.id) {
-    redirect(`/auth/login`);
+    redirect(`/login`);
   }
 
   const checkoutSession = await getStripe().checkout.sessions.create({

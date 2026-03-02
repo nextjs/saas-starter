@@ -18,7 +18,7 @@ function UserMenu() {
 
   async function handleSignOut() {
     await fetch("/api/auth/signout", { method: "POST" });
-    router.push("/auth/login");
+    router.push("/login");
     router.refresh();
   }
 

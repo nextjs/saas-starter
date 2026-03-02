@@ -44,7 +44,7 @@ export default async function AuthErrorPage(props: {
         </h1>
         <p className="text-sm text-[#8a93b0]">{message}</p>
         <Link
-          href="/auth/login"
+          href="/login"
           className="mt-2 inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-medium bg-orange-500 text-white hover:bg-orange-600 transition-colors"
         >
           Back to Sign In

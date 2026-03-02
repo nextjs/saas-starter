@@ -15,7 +15,8 @@ export default auth((req) => {
 
   // Public routes — always allow
   const isPublic =
-    url.pathname.startsWith("/auth/") ||
+    url.pathname === "/login" ||
+    url.pathname === "/error" ||
     url.pathname.startsWith("/api/auth/") ||
     url.pathname.startsWith("/api/stripe/") ||
     url.pathname.startsWith("/api/cron/") ||
@@ -25,7 +26,7 @@ export default auth((req) => {
 
   // Auth guard
   if (!req.auth?.user?.id) {
-    const loginUrl = new URL("/auth/login", req.url);
+    const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", url.pathname);
     return NextResponse.redirect(loginUrl);
   }

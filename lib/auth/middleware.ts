@@ -37,7 +37,7 @@ export function withWorkspace<T>(action: ActionWithWorkspaceFunction<T>) {
   return async (formData: FormData): Promise<T> => {
     const session = await auth();
     if (!session?.user?.id) {
-      redirect("/auth/login");
+      redirect("/login");
     }
 
     // Use the first workspace the user belongs to
