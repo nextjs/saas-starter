@@ -106,6 +106,32 @@ async function main() {
   }
   console.log(`Tags: ${DEFAULT_TAGS.length} default tags created`);
 
+  // Create a dev admin user for local testing (email: admin@orangeleaf.com, password: admin)
+  const adminUser = await prisma.user.upsert({
+    where: { email: "admin@orangeleaf.com" },
+    update: {},
+    create: {
+      name: "Admin User",
+      email: "admin@orangeleaf.com",
+      emailVerified: new Date(),
+    },
+  });
+  await prisma.workspaceMember.upsert({
+    where: {
+      workspaceId_userId: {
+        workspaceId: workspace.id,
+        userId: adminUser.id,
+      },
+    },
+    update: {},
+    create: {
+      workspaceId: workspace.id,
+      userId: adminUser.id,
+      role: "OWNER",
+    },
+  });
+  console.log(`Dev admin: admin@orangeleaf.com / admin (OWNER)`);
+
   // Create allowed domains for Orangeleaf
   await prisma.allowedDomain.upsert({
     where: {

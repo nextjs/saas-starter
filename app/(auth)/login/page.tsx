@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth, signIn } from "@/auth";
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default async function LoginPage(props: {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
 }) {
@@ -39,7 +41,9 @@ export default async function LoginPage(props: {
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3.5 py-2.5 text-sm text-red-400">
             {error === "OAuthAccountNotLinked"
               ? "This email is already linked to a different provider."
-              : "Authentication failed. Please try again."}
+              : error === "CredentialsSignin"
+                ? "Invalid email or password."
+                : "Authentication failed. Please try again."}
           </div>
         )}
 
@@ -66,8 +70,53 @@ export default async function LoginPage(props: {
           </button>
         </form>
 
+        {/* Dev-only credentials login */}
+        {isDev && (
+          <>
+            <div className="flex items-center gap-3 my-1">
+              <div className="h-px flex-1 bg-[#252c3e]" />
+              <span className="text-[11px] text-[#4e5770] uppercase tracking-wider">Dev Login</span>
+              <div className="h-px flex-1 bg-[#252c3e]" />
+            </div>
+            <form
+              action={async (formData: FormData) => {
+                "use server";
+                await signIn("credentials", {
+                  email: formData.get("email") as string,
+                  password: formData.get("password") as string,
+                  redirectTo: searchParams.callbackUrl ?? "/",
+                });
+              }}
+              className="flex flex-col gap-3"
+            >
+              <input
+                name="email"
+                type="email"
+                placeholder="admin@orangeleaf.com"
+                defaultValue="admin@orangeleaf.com"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#0f1117] border border-[#252c3e] text-sm text-[#eef0f7] placeholder:text-[#4e5770] focus:outline-none focus:border-orange-500/50"
+              />
+              <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                defaultValue="admin"
+                className="w-full px-3 py-2.5 rounded-lg bg-[#0f1117] border border-[#252c3e] text-sm text-[#eef0f7] placeholder:text-[#4e5770] focus:outline-none focus:border-orange-500/50"
+              />
+              <button
+                type="submit"
+                className="w-full px-4 py-2.5 rounded-lg text-sm font-medium cursor-pointer bg-orange-500/20 border border-orange-500/30 text-orange-400 hover:bg-orange-500/30 transition-colors"
+              >
+                Dev Sign In
+              </button>
+            </form>
+          </>
+        )}
+
         <p className="text-[11.5px] text-[#4e5770] text-center mt-1">
-          Single sign-on only. Contact your admin if you need access.
+          {isDev
+            ? "Dev mode: use admin@orangeleaf.com / admin"
+            : "Single sign-on only. Contact your admin if you need access."}
         </p>
       </div>
     </div>

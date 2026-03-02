@@ -3,8 +3,11 @@
 
 import NextAuth from "next-auth";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
+import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+
+const isDev = process.env.NODE_ENV === "development";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -21,16 +24,48 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         },
       },
     }),
+    // Dev-only credentials provider for local testing without SSO
+    ...(isDev
+      ? [
+          Credentials({
+            name: "Dev Login",
+            credentials: {
+              email: { label: "Email", type: "email" },
+              password: { label: "Password", type: "password" },
+            },
+            async authorize(credentials) {
+              if (!credentials?.email || !credentials?.password) return null;
+              // Accept any password matching the dev secret (default: "admin")
+              const devPassword =
+                process.env.DEV_ADMIN_PASSWORD ?? "admin";
+              if (credentials.password !== devPassword) return null;
+
+              const user = await prisma.user.findUnique({
+                where: { email: credentials.email as string },
+              });
+              return user;
+            },
+          }),
+        ]
+      : []),
   ],
 
   session: {
-    strategy: "database",
+    // Credentials provider requires JWT strategy
+    strategy: isDev ? "jwt" : "database",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   callbacks: {
-    async session({ session, user }) {
-      session.user.id = user.id;
+    async jwt({ token, user }) {
+      if (user) token.sub = user.id;
+      return token;
+    },
+    async session({ session, user, token }) {
+      // database sessions pass `user`, JWT sessions pass `token`
+      const userId = user?.id ?? token?.sub;
+      if (!userId) return session;
+      session.user.id = userId;
 
       const memberships = await prisma.workspaceMember.findMany({
         where: { userId: user.id },
