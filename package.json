@@ -41,5 +41,15 @@
   "devDependencies": {
     "prisma": "^6.5.0",
     "tsx": "^4.19.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "@tailwindcss/oxide",
+      "sharp"
+    ]
   }
 }
