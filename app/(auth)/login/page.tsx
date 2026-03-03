@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth, signIn } from "@/auth";
 
-const isDev = process.env.NODE_ENV === "development";
+const isDev =
+  process.env.NODE_ENV === "development" ||
+  process.env.VERCEL_ENV === "preview";
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
