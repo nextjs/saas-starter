@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { auth, signIn } from "@/auth";
 
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.VERCEL_ENV === "preview";
+// Dev credentials: local only (NODE_ENV=development).
+// Vercel preview uses Microsoft SSO like production.
+const isDev = process.env.NODE_ENV === "development";
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;

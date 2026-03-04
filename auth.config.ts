@@ -4,13 +4,11 @@
 
 import type { NextAuthConfig } from "next-auth";
 
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.VERCEL_ENV === "preview";
-
 export const authConfig = {
+  // JWT strategy: sessions stored in cookies, decodable in Edge middleware
+  // without a database query. PrismaAdapter still handles user/account storage.
   session: {
-    strategy: isDev ? "jwt" : "database",
+    strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 

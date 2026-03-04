@@ -11,9 +11,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { authConfig } from "@/auth.config";
 
-const isDev =
-  process.env.NODE_ENV === "development" ||
-  process.env.VERCEL_ENV === "preview";
+// Dev credentials login: local only (NODE_ENV=development).
+// Vercel preview uses Microsoft SSO like production.
+const isDev = process.env.NODE_ENV === "development";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
