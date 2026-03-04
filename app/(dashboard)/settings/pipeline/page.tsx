@@ -1,22 +1,142 @@
 "use client";
 
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Kanban } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { GripVertical, Trash2 } from "lucide-react";
+
+interface Stage {
+  id: string;
+  name: string;
+  position: number;
+  probability: number;
+  color: string;
+  isWon: boolean;
+  isLost: boolean;
+  rottenDays: number | null;
+  pipeline: { id: string; name: string };
+  _count: { opportunities: number };
+}
 
 export default function PipelineSettingsPage() {
+  const [stages, setStages] = useState<Stage[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const loadData = useCallback(async () => {
+    const res = await fetch("/api/workspace/pipeline/stages");
+    const data = await res.json();
+    setStages((data.stages ?? []).sort((a: Stage, b: Stage) => a.position - b.position));
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleUpdateStage = async (id: string, field: string, value: string | number | null) => {
+    await fetch(`/api/workspace/pipeline/stages/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ [field]: value }),
+    });
+    loadData();
+  };
+
+  const handleDeleteStage = async (id: string) => {
+    if (!confirm("Delete this stage?")) return;
+    const res = await fetch(`/api/workspace/pipeline/stages/${id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.error ?? "Failed to delete");
+      return;
+    }
+    loadData();
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-6">Pipeline Settings</h1>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-semibold">Pipeline Settings</h1>
+
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Kanban className="h-5 w-5" /> Pipeline & Stage Configuration
-          </CardTitle>
+          <CardTitle className="text-base">Stages</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">
-            Create/rename/delete pipelines. Manage stages: add, rename, reorder, colour, probability, rotten threshold, isWon/isLost. Coming in Phase 6.
-          </p>
+          {loading ? (
+            <div className="animate-pulse space-y-3">
+              {[1, 2, 3].map((i) => <div key={i} className="h-12 bg-gray-100 rounded" />)}
+            </div>
+          ) : stages.length === 0 ? (
+            <p className="text-muted-foreground">No stages configured.</p>
+          ) : (
+            <div className="space-y-2">
+              {stages.map((stage) => (
+                <div key={stage.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                  <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
+                  <div
+                    className="w-4 h-4 rounded-full border"
+                    style={{ backgroundColor: stage.color }}
+                  />
+                  <Input
+                    defaultValue={stage.name}
+                    className="w-40"
+                    onBlur={(e) => {
+                      if (e.target.value !== stage.name) {
+                        handleUpdateStage(stage.id, "name", e.target.value);
+                      }
+                    }}
+                  />
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-muted-foreground">Prob:</span>
+                    <Input
+                      type="number"
+                      defaultValue={stage.probability}
+                      className="w-16"
+                      onBlur={(e) => {
+                        const val = Number(e.target.value);
+                        if (val !== stage.probability) {
+                          handleUpdateStage(stage.id, "probability", val);
+                        }
+                      }}
+                    />
+                    <span className="text-muted-foreground">%</span>
+                  </div>
+                  <div className="flex items-center gap-1 text-sm">
+                    <span className="text-muted-foreground">Rotten:</span>
+                    <Input
+                      type="number"
+                      defaultValue={stage.rottenDays ?? ""}
+                      placeholder="—"
+                      className="w-16"
+                      onBlur={(e) => {
+                        const val = e.target.value ? Number(e.target.value) : null;
+                        if (val !== stage.rottenDays) {
+                          handleUpdateStage(stage.id, "rottenDays", val);
+                        }
+                      }}
+                    />
+                    <span className="text-muted-foreground">days</span>
+                  </div>
+                  <div className="flex items-center gap-1 ml-auto">
+                    {stage.isWon && <Badge className="bg-green-100 text-green-800 text-xs">Won</Badge>}
+                    {stage.isLost && <Badge className="bg-red-100 text-red-800 text-xs">Lost</Badge>}
+                    <Badge variant="secondary" className="text-xs">{stage._count.opportunities} deals</Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteStage(stage.id)}
+                      disabled={stage._count.opportunities > 0}
+                      title={stage._count.opportunities > 0 ? "Cannot delete: has active deals" : "Delete stage"}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

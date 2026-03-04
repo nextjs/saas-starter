@@ -54,6 +54,9 @@ const navGroups = [
       { href: "/settings/pipeline", icon: Settings, label: "Pipeline" },
       { href: "/settings/products", icon: Settings, label: "Products" },
       { href: "/settings/members", icon: Settings, label: "Members" },
+      { href: "/settings/targets", icon: Settings, label: "Sales Targets" },
+      { href: "/settings/integrations", icon: Settings, label: "Integrations" },
+      { href: "/settings/webhooks", icon: Settings, label: "Webhooks" },
     ],
   },
 ];
