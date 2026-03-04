@@ -5,6 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+const CURRENCIES = ["USD", "EUR", "GBP", "MYR", "SGD", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "NZD"];
 
 interface Target {
   id: string;
@@ -22,8 +31,8 @@ interface Member {
   user: { name: string | null; email: string };
 }
 
-function formatCurrency(value: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 0 }).format(value);
+function formatCurrency(value: number, currency = "USD") {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 0 }).format(value);
 }
 
 export default function SalesTargetsPage() {
@@ -39,6 +48,7 @@ export default function SalesTargetsPage() {
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   });
   const [periodType, setPeriodType] = useState("MONTHLY");
+  const [targetCurrency, setTargetCurrency] = useState("USD");
   const [revenueTarget, setRevenueTarget] = useState("0");
   const [oppTarget, setOppTarget] = useState("0");
   const [actTarget, setActTarget] = useState("0");
@@ -69,7 +79,7 @@ export default function SalesTargetsPage() {
           revenueTarget: Number(revenueTarget),
           opportunityTarget: Number(oppTarget),
           activityTarget: Number(actTarget),
-          currency: "USD",
+          currency: targetCurrency,
         }),
       });
       if (res.ok) {
@@ -123,38 +133,68 @@ export default function SalesTargetsPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-sm font-medium">Member</label>
-                <select
-                  className="w-full border rounded px-3 py-2 text-sm mt-1"
-                  value={memberId}
-                  onChange={(e) => setMemberId(e.target.value)}
-                >
-                  <option value="">Select member...</option>
-                  {members.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {m.user.name ?? m.user.email}
-                    </option>
-                  ))}
-                </select>
+                <Select value={memberId} onValueChange={setMemberId}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select member..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {members.map((m) => (
+                      <SelectItem key={m.id} value={m.id}>
+                        {m.user.name ?? m.user.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm font-medium">Period</label>
-                <input
-                  type="month"
-                  className="w-full border rounded px-3 py-2 text-sm mt-1"
-                  value={period}
-                  onChange={(e) => setPeriod(e.target.value)}
-                />
+                {periodType === "ANNUAL" ? (
+                  <input
+                    type="number"
+                    min="2020"
+                    max="2040"
+                    className="w-full border rounded px-3 py-2 text-sm mt-1"
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
+                    placeholder="2026"
+                  />
+                ) : (
+                  <input
+                    type="month"
+                    className="w-full border rounded px-3 py-2 text-sm mt-1"
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
+                  />
+                )}
               </div>
               <div>
                 <label className="text-sm font-medium">Type</label>
-                <select
-                  className="w-full border rounded px-3 py-2 text-sm mt-1"
-                  value={periodType}
-                  onChange={(e) => setPeriodType(e.target.value)}
-                >
-                  <option value="MONTHLY">Monthly</option>
-                  <option value="QUARTERLY">Quarterly</option>
-                </select>
+                <Select value={periodType} onValueChange={(v) => {
+                  setPeriodType(v);
+                  if (v === "ANNUAL") setPeriod(String(new Date().getFullYear()));
+                }}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="MONTHLY">Monthly</SelectItem>
+                    <SelectItem value="QUARTERLY">Quarterly</SelectItem>
+                    <SelectItem value="ANNUAL">Annual</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium">Currency</label>
+                <Select value={targetCurrency} onValueChange={setTargetCurrency}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-sm font-medium">Revenue Target</label>
@@ -219,7 +259,7 @@ export default function SalesTargetsPage() {
                     <TableCell>
                       <Badge variant="secondary" className="text-xs">{t.periodType}</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{formatCurrency(Number(t.revenueTarget))}</TableCell>
+                    <TableCell className="text-right">{formatCurrency(Number(t.revenueTarget), t.currency)}</TableCell>
                     <TableCell className="text-right">{t.opportunityTarget}</TableCell>
                     <TableCell className="text-right">{t.activityTarget}</TableCell>
                     <TableCell className="text-right">

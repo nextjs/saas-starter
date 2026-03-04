@@ -16,6 +16,14 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Plus, GripVertical } from "lucide-react";
+import { CurrencySelector, useDisplayCurrency } from "@/components/currency-selector";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Stage {
   id: string;
@@ -128,10 +136,12 @@ function KanbanColumn({
 export default function PipelineBoardPage() {
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
   const [stages, setStages] = useState<Stage[]>([]);
+  const [members, setMembers] = useState<Array<{ id: string; user: { name: string | null; email: string } }>>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [newDeal, setNewDeal] = useState({ name: "", value: "" });
+  const [newDeal, setNewDeal] = useState({ name: "", value: "", currency: "USD", ownerId: "" });
   const [draggedOpp, setDraggedOpp] = useState<Opportunity | null>(null);
+  const { currency: displayCurrency, setCurrency: setDisplayCurrency } = useDisplayCurrency();
 
   // Lost reason dialog state
   const [showLostReason, setShowLostReason] = useState(false);
@@ -143,16 +153,19 @@ export default function PipelineBoardPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const [oppsRes, stagesRes] = await Promise.all([
+      const [oppsRes, stagesRes, membersRes] = await Promise.all([
         fetch("/api/workspace/opportunities"),
         fetch("/api/workspace/pipeline/stages"),
+        fetch("/api/workspace/members"),
       ]);
       const oppsData = await oppsRes.json();
       const stagesData = await stagesRes.json();
+      const membersData = await membersRes.json();
       setOpportunities(oppsData.opportunities ?? []);
       setStages(
         (stagesData.stages ?? []).sort((a: Stage, b: Stage) => a.position - b.position)
       );
+      setMembers(membersData.members ?? []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -185,7 +198,7 @@ export default function PipelineBoardPage() {
       if (reason) body.lostReason = reason;
 
       await fetch(`/api/workspace/opportunities/${oppId}/stage`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
@@ -256,6 +269,8 @@ export default function PipelineBoardPage() {
         body: JSON.stringify({
           name: newDeal.name,
           value: Number(newDeal.value) || 0,
+          currency: newDeal.currency || "USD",
+          ...(newDeal.ownerId && { ownerId: newDeal.ownerId }),
           pipelineId,
           stageId: firstStage.id,
         }),
@@ -267,7 +282,7 @@ export default function PipelineBoardPage() {
       }
 
       setShowCreate(false);
-      setNewDeal({ name: "", value: "" });
+      setNewDeal({ name: "", value: "", currency: "USD", ownerId: "" });
       loadData();
     } catch {
       setCreateError("Network error -- please try again");
@@ -293,9 +308,12 @@ export default function PipelineBoardPage() {
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Pipeline Board</h1>
-        <Button onClick={() => setShowCreate(true)}>
-          <Plus className="h-4 w-4 mr-1" /> New Deal
-        </Button>
+        <div className="flex items-center gap-2">
+          <CurrencySelector value={displayCurrency} onChange={setDisplayCurrency} />
+          <Button onClick={() => setShowCreate(true)}>
+            <Plus className="h-4 w-4 mr-1" /> New Deal
+          </Button>
+        </div>
       </div>
 
       <div className="flex gap-4 overflow-x-auto pb-4">
@@ -327,14 +345,50 @@ export default function PipelineBoardPage() {
                 placeholder="e.g. Acme Corp - Mendix License"
               />
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-sm font-medium">Value</label>
+                <Input
+                  type="number"
+                  value={newDeal.value}
+                  onChange={(e) => setNewDeal({ ...newDeal, value: e.target.value })}
+                  placeholder="0"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Currency</label>
+                <Select
+                  value={newDeal.currency}
+                  onValueChange={(v) => setNewDeal({ ...newDeal, currency: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {["USD", "EUR", "GBP", "MYR", "SGD", "JPY", "AUD", "CAD", "CHF"].map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <div>
-              <label className="text-sm font-medium">Value</label>
-              <Input
-                type="number"
-                value={newDeal.value}
-                onChange={(e) => setNewDeal({ ...newDeal, value: e.target.value })}
-                placeholder="0"
-              />
+              <label className="text-sm font-medium">Owner</label>
+              <Select
+                value={newDeal.ownerId || ""}
+                onValueChange={(v) => setNewDeal({ ...newDeal, ownerId: v })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Current user (default)" />
+                </SelectTrigger>
+                <SelectContent>
+                  {members.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.user.name ?? m.user.email}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
 import { fireTrigger } from "@/lib/automation/triggers";
+import { convertCurrency } from "@/lib/currency";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
@@ -9,6 +10,7 @@ const CreateSchema = z.object({
   pipelineId: z.string(),
   stageId: z.string(),
   accountId: z.string().optional(),
+  ownerId: z.string().optional(), // defaults to current member
   name: z.string().min(1),
   value: z.number().default(0),
   currency: z.string().default("USD"),
@@ -83,16 +85,24 @@ export async function POST(req: NextRequest) {
 
   const data = parsed.data;
 
+  // Convert to reporting currency for aggregation
+  const reportingCcy = workspace.reportingCurrency ?? "USD";
+  const valueInReportingCcy =
+    data.currency === reportingCcy
+      ? data.value
+      : await convertCurrency(workspace.id, data.value, data.currency, reportingCcy);
+
   const opportunity = await prisma.opportunity.create({
     data: {
       workspaceId: workspace.id,
       pipelineId: data.pipelineId,
       stageId: data.stageId,
       accountId: data.accountId,
-      ownerId: member.id,
+      ownerId: data.ownerId ?? member.id,
       name: data.name,
       value: new Prisma.Decimal(data.value),
       currency: data.currency,
+      valueInReportingCcy: new Prisma.Decimal(valueInReportingCcy),
       probability: data.probability,
       expectedCloseDate: data.expectedCloseDate ? new Date(data.expectedCloseDate) : undefined,
       source: data.source,

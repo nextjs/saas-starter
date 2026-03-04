@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
+import { getDisplayCurrency, convertCurrency } from "@/lib/currency";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireWorkspaceMember();
   if ("error" in ctx) return ctx.error;
   const { workspace, member } = ctx;
+
+  // Display currency from query param or user preference
+  const { searchParams } = req.nextUrl;
+  const displayCurrency =
+    searchParams.get("displayCurrency") ??
+    (await getDisplayCurrency(workspace.id, member.id));
+
+  const reportingCcy = workspace.reportingCurrency ?? "USD";
 
   // Role-based visibility filter for opportunities
   let ownerFilter: object = {};
@@ -24,10 +33,8 @@ export async function GET(req: NextRequest) {
       ownerFilter = { ownerId: member.id };
     }
   }
-  // ADMIN and OWNER see all — no filter
 
   // Date range from query params (optional)
-  const { searchParams } = req.nextUrl;
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const wonDateFilter = startDate || endDate
@@ -51,22 +58,20 @@ export async function GET(req: NextRequest) {
     topOpportunities,
     overdueTaskCount,
   ] = await Promise.all([
-    // Open deals count + value
-    prisma.opportunity.aggregate({
+    // Open deals — fetch individual values for currency conversion
+    prisma.opportunity.findMany({
       where: { workspaceId: workspace.id, status: "OPEN", ...ownerFilter },
-      _count: true,
-      _sum: { value: true },
+      select: { value: true, currency: true, valueInReportingCcy: true },
     }),
     // Won deals this period
-    prisma.opportunity.aggregate({
+    prisma.opportunity.findMany({
       where: {
         workspaceId: workspace.id,
         status: "WON",
         ...ownerFilter,
         ...wonDateFilter,
       },
-      _count: true,
-      _sum: { value: true },
+      select: { value: true, currency: true, valueInReportingCcy: true },
     }),
     // Pipeline by stage
     prisma.stage.findMany({
@@ -80,7 +85,7 @@ export async function GET(req: NextRequest) {
         _count: { select: { opportunities: true } },
         opportunities: {
           where: { status: "OPEN", ...ownerFilter },
-          select: { value: true },
+          select: { value: true, currency: true, valueInReportingCcy: true },
         },
       },
     }),
@@ -121,28 +126,49 @@ export async function GET(req: NextRequest) {
     }),
   ]);
 
-  // Calculate weighted forecast
-  const weightedForecast = pipelineByStage.reduce((acc, stage) => {
-    const stageValue = stage.opportunities.reduce(
-      (sum, opp) => sum + Number(opp.value),
-      0
-    );
-    return acc + (stageValue * stage.probability) / 100;
-  }, 0);
+  // Helper: sum values converted to display currency
+  async function sumConverted(
+    items: Array<{ value: unknown; currency: string; valueInReportingCcy: unknown }>
+  ): Promise<number> {
+    let total = 0;
+    for (const item of items) {
+      const val = Number(item.value);
+      if (item.currency === displayCurrency) {
+        total += val;
+      } else if (displayCurrency === reportingCcy && item.valueInReportingCcy) {
+        total += Number(item.valueInReportingCcy);
+      } else {
+        total += await convertCurrency(workspace.id, val, item.currency, displayCurrency);
+      }
+    }
+    return total;
+  }
 
-  const stageData = pipelineByStage.map((s) => ({
-    name: s.name,
-    color: s.color,
-    count: s._count.opportunities,
-    value: s.opportunities.reduce((sum, opp) => sum + Number(opp.value), 0),
-  }));
+  const pipelineValue = await sumConverted(openOpps);
+  const wonRevenue = await sumConverted(wonOpps);
+
+  // Calculate weighted forecast with currency conversion
+  let weightedForecast = 0;
+  const stageData = await Promise.all(
+    pipelineByStage.map(async (s) => {
+      const stageValue = await sumConverted(s.opportunities);
+      weightedForecast += (stageValue * s.probability) / 100;
+      return {
+        name: s.name,
+        color: s.color,
+        count: s._count.opportunities,
+        value: Math.round(stageValue),
+      };
+    })
+  );
 
   return NextResponse.json({
+    displayCurrency,
     kpis: {
-      pipelineValue: Number(openOpps._sum.value ?? 0),
-      openDeals: openOpps._count,
-      wonRevenue: Number(wonOpps._sum.value ?? 0),
-      wonDeals: wonOpps._count,
+      pipelineValue: Math.round(pipelineValue),
+      openDeals: openOpps.length,
+      wonRevenue: Math.round(wonRevenue),
+      wonDeals: wonOpps.length,
       weightedForecast: Math.round(weightedForecast),
       overdueTaskCount,
     },

@@ -40,22 +40,49 @@ export async function PATCH(
   const newStage = await prisma.stage.findUnique({ where: { id: parsed.data.stageId } });
   if (!newStage) return NextResponse.json({ error: "Stage not found" }, { status: 404 });
 
+  // Determine status change based on stage type
+  const statusUpdate: Record<string, unknown> = { stageId: newStage.id };
+  if (newStage.isWon) {
+    statusUpdate.status = "WON";
+    statusUpdate.actualCloseDate = new Date();
+  } else if (newStage.isLost) {
+    statusUpdate.status = "LOST";
+    statusUpdate.actualCloseDate = new Date();
+    if (parsed.data.lostReason) statusUpdate.lostReason = parsed.data.lostReason;
+  } else if (opportunity.status !== "OPEN") {
+    // Moving back to a normal stage reopens the deal
+    statusUpdate.status = "OPEN";
+    statusUpdate.actualCloseDate = null;
+  }
+
   // Update opportunity
   const updated = await prisma.opportunity.update({
     where: { id },
-    data: { stageId: newStage.id },
+    data: statusUpdate,
     include: { stage: true },
   });
 
-  // Record stage history
-  await prisma.stageHistory.create({
-    data: {
-      opportunityId: id,
-      fromStageId: opportunity.stageId,
-      toStageId: newStage.id,
-      movedById: member.id,
-    },
-  });
+  // Record stage history + activity in parallel
+  await Promise.all([
+    prisma.stageHistory.create({
+      data: {
+        opportunityId: id,
+        fromStageId: opportunity.stageId,
+        toStageId: newStage.id,
+        movedById: member.id,
+      },
+    }),
+    prisma.activity.create({
+      data: {
+        workspaceId: workspace.id,
+        type: "STAGE_CHANGE",
+        title: `Moved from ${opportunity.stage.name} to ${newStage.name}`,
+        opportunityId: id,
+        createdById: member.id,
+        isAutomated: false,
+      },
+    }),
+  ]);
 
   // Fire stage change trigger
   await fireTrigger({
@@ -70,7 +97,7 @@ export async function PATCH(
     triggeredBy: member.id,
   });
 
-  // Handle Won/Lost
+  // Handle Won/Lost triggers
   if (newStage.isWon) {
     await fireTrigger({
       workspaceId: workspace.id,

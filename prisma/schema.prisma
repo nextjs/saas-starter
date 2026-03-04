@@ -103,6 +103,8 @@ model Workspace {
   webhooks          Webhook[]
   auditLogs         AuditLog[]
   salesTeams        SalesTeam[]
+  linkedDocuments   LinkedDocument[]
+  xeroIntegration   XeroIntegration?
 }
 
 // ─── WorkspaceMember ─────────────────────────────────────────────────────
@@ -114,12 +116,15 @@ model WorkspaceMember {
   role        Role     @default(MEMBER)
   joinedAt    DateTime @default(now())
 
-  workspace      Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  user           User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  salesTeams     SalesTeamMember[]
-  ownedOpps      Opportunity[]     @relation("OpportunityOwner")
-  assignedActs   Activity[]        @relation("ActivityAssignee")
-  createdActs    Activity[]        @relation("ActivityCreator")
+  displayCurrency String?  // null = use workspace.reportingCurrency
+
+  workspace       Workspace         @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salesTeams      SalesTeamMember[]
+  ownedOpps       Opportunity[]     @relation("OpportunityOwner")
+  assignedActs    Activity[]        @relation("ActivityAssignee")
+  createdActs     Activity[]        @relation("ActivityCreator")
+  linkedDocuments LinkedDocument[]
 
   @@unique([workspaceId, userId])
 }
@@ -293,6 +298,11 @@ model Opportunity {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
 
+  xeroQuoteId   String?        // Xero quote ID
+  xeroQuoteUrl  String?        // Deep link to quote in Xero
+  xeroQuoteStatus String?      // DRAFT, SENT, ACCEPTED, DECLINED
+  xeroContactId String?        // Mapped Xero contact ID
+
   workspace    Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   pipeline     Pipeline               @relation(fields: [pipelineId], references: [id])
   stage        Stage                  @relation(fields: [stageId], references: [id])
@@ -304,6 +314,7 @@ model Opportunity {
   stageHistory StageHistory[]
   tags         TagOnOpportunity[]
   customValues CustomFieldValue[]
+  documents    LinkedDocument[]
 }
 
 enum Priority {
@@ -517,6 +528,7 @@ model SalesTarget {
 enum PeriodType {
   MONTHLY
   QUARTERLY
+  ANNUAL
 }
 
 model Notification {
@@ -630,6 +642,59 @@ model CustomFieldValue {
   contact     Contact?     @relation(fields: [contactId], references: [id], onDelete: Cascade)
   crmAccount  CrmAccount?  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   opportunity Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+}
+
+// ─── Linked Documents (SharePoint/Teams) ────────────────────────────────
+
+model LinkedDocument {
+  id              String    @id @default(cuid())
+  workspaceId     String
+  opportunityId   String
+  title           String
+  url             String         // SharePoint/Teams file URL
+  driveItemId     String?        // Microsoft Graph driveItem ID
+  siteId          String?        // SharePoint site ID
+  fileType        String?        // e.g. "docx", "pptx", "pdf"
+  fileSize        Int?           // bytes
+  lastModifiedAt  DateTime?
+  lastModifiedBy  String?        // display name from Graph
+  linkedById      String         // WorkspaceMember who linked it
+  createdAt       DateTime @default(now())
+
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  opportunity Opportunity     @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  linkedBy    WorkspaceMember @relation(fields: [linkedById], references: [id])
+
+  @@index([workspaceId, opportunityId])
+}
+
+// ─── Xero Integration ───────────────────────────────────────────────────
+
+model XeroIntegration {
+  id            String    @id @default(cuid())
+  workspaceId   String    @unique
+  tenantId      String         // Xero organization ID
+  tenantName    String?
+  accessToken   String    @db.Text
+  refreshToken  String    @db.Text
+  expiresAt     DateTime
+  scope         String?
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+}
+
+// ─── Currency Cache ─────────────────────────────────────────────────────
+
+model CurrencyCache {
+  id          String   @id @default(cuid())
+  baseCurrency String
+  rates       Json          // { "EUR": 0.92, "MYR": 4.47, ... }
+  fetchedAt   DateTime @default(now())
+
+  @@unique([baseCurrency])
 }
 
 // ─── Webhooks ────────────────────────────────────────────────────────────

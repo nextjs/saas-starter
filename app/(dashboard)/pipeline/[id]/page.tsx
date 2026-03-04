@@ -32,6 +32,9 @@ import {
   Pencil,
   Plus,
   X,
+  FileText,
+  ExternalLink,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { TagManager } from "@/components/tags/TagManager";
@@ -127,7 +130,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "", value: "", currency: "", probability: "", expectedCloseDate: "",
-    source: "", description: "", priority: "", accountId: "", lostReason: "",
+    source: "", description: "", priority: "", accountId: "", lostReason: "", ownerId: "",
   });
 
   // Account options for dropdown
@@ -150,10 +153,42 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
   // Quick log activity
   const [quickLog, setQuickLog] = useState({ type: "NOTE", title: "", body: "" });
 
+  // Documents (SharePoint)
+  const [documents, setDocuments] = useState<Array<{
+    id: string; title: string; url: string; fileType: string | null;
+    fileSize: number | null; lastModifiedAt: string | null; lastModifiedBy: string | null;
+    linkedBy: { user: { name: string | null } };
+    createdAt: string;
+  }>>([]);
+  const [showLinkDoc, setShowLinkDoc] = useState(false);
+  const [docUrl, setDocUrl] = useState("");
+  const [docTitle, setDocTitle] = useState("");
+  const [linkingDoc, setLinkingDoc] = useState(false);
+
+  // Xero quote
+  const [xeroQuote, setXeroQuote] = useState<{
+    hasQuote: boolean; quoteId: string | null; quoteUrl: string | null; quoteStatus: string | null;
+  } | null>(null);
+  const [creatingQuote, setCreatingQuote] = useState(false);
+
+  // Members for owner reassignment
+  const [allMembers, setAllMembers] = useState<Array<{ id: string; user: { name: string | null; email: string } }>>([]);
+
   const loadData = useCallback(async () => {
-    const res = await fetch(`/api/workspace/opportunities/${id}`);
-    const data = await res.json();
-    setOpportunity(data.opportunity ?? null);
+    const [oppRes, docsRes, xeroRes, membersRes] = await Promise.all([
+      fetch(`/api/workspace/opportunities/${id}`),
+      fetch(`/api/workspace/opportunities/${id}/documents`),
+      fetch(`/api/workspace/opportunities/${id}/xero-quote`),
+      fetch("/api/workspace/members"),
+    ]);
+    const oppData = await oppRes.json();
+    setOpportunity(oppData.opportunity ?? null);
+    const docsData = await docsRes.json();
+    setDocuments(docsData.documents ?? []);
+    const xeroData = await xeroRes.json();
+    setXeroQuote(xeroData);
+    const membersData = await membersRes.json();
+    setAllMembers(membersData.members ?? []);
     setLoading(false);
   }, [id]);
 
@@ -173,6 +208,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
         priority: opportunity.priority,
         accountId: opportunity.account?.id ?? "",
         lostReason: opportunity.lostReason ?? "",
+        ownerId: opportunity.owner.id,
       });
     }
   }, [opportunity]);
@@ -217,6 +253,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
       priority: editForm.priority,
       accountId: editForm.accountId || null,
       lostReason: editForm.lostReason || null,
+      ownerId: editForm.ownerId || undefined,
     };
     await patchOpportunity(payload);
     setEditDialogOpen(false);
@@ -450,6 +487,8 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
               <TabsTrigger value="contacts">Contacts ({opportunity.contacts.length})</TabsTrigger>
               <TabsTrigger value="products">Products ({opportunity.products.length})</TabsTrigger>
               <TabsTrigger value="activity">Activity ({opportunity.activities.length})</TabsTrigger>
+              <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
+              <TabsTrigger value="quote">Quote</TabsTrigger>
               <TabsTrigger value="history">Stage History</TabsTrigger>
             </TabsList>
 
@@ -598,6 +637,135 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
               </div>
             </TabsContent>
 
+            {/* Documents Tab (SharePoint/Teams) */}
+            <TabsContent value="documents">
+              <div className="space-y-3">
+                <div className="flex justify-end">
+                  <Button variant="outline" size="sm" onClick={() => setShowLinkDoc(true)}>
+                    <Plus className="h-4 w-4 mr-1" /> Link Document
+                  </Button>
+                </div>
+                {documents.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-4">
+                    No documents linked. Paste a SharePoint or OneDrive URL to link a proposal or contract.
+                  </p>
+                ) : (
+                  documents.map((doc) => (
+                    <Card key={doc.id}>
+                      <CardContent className="pt-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <FileText className="h-8 w-8 text-muted-foreground shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm truncate">{doc.title}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {doc.fileType ? doc.fileType.toUpperCase() : "File"}
+                              {doc.fileSize ? ` \u00B7 ${(doc.fileSize / 1024).toFixed(0)} KB` : ""}
+                              {doc.lastModifiedBy ? ` \u00B7 Modified by ${doc.lastModifiedBy}` : ""}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              Linked by {doc.linkedBy.user.name ?? "Unknown"} on {formatDate(doc.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <a href={doc.url} target="_blank" rel="noopener noreferrer">
+                            <Button variant="outline" size="sm">
+                              <ExternalLink className="h-3 w-3 mr-1" /> Open
+                            </Button>
+                          </a>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={async () => {
+                              await fetch(`/api/workspace/opportunities/${id}/documents?docId=${doc.id}`, { method: "DELETE" });
+                              loadData();
+                            }}
+                          >
+                            <X className="h-3.5 w-3.5 text-red-500" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
+              </div>
+            </TabsContent>
+
+            {/* Xero Quote Tab */}
+            <TabsContent value="quote">
+              <Card>
+                <CardContent className="pt-6">
+                  {xeroQuote?.hasQuote ? (
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Badge variant={
+                          xeroQuote.quoteStatus === "ACCEPTED" ? "default"
+                          : xeroQuote.quoteStatus === "DECLINED" ? "destructive"
+                          : "secondary"
+                        }>
+                          {xeroQuote.quoteStatus}
+                        </Badge>
+                        <span className="text-sm text-muted-foreground">Xero Quote</span>
+                      </div>
+                      {xeroQuote.quoteUrl && (
+                        <a href={xeroQuote.quoteUrl} target="_blank" rel="noopener noreferrer">
+                          <Button variant="outline">
+                            <ExternalLink className="h-4 w-4 mr-2" /> View in Xero
+                          </Button>
+                        </a>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={async () => {
+                          const res = await fetch(`/api/workspace/opportunities/${id}/xero-quote`);
+                          const data = await res.json();
+                          setXeroQuote(data);
+                        }}
+                      >
+                        Refresh Status
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Create a quote in Xero pre-populated with this deal&apos;s products, contact, and value.
+                      </p>
+                      <Button
+                        onClick={async () => {
+                          setCreatingQuote(true);
+                          try {
+                            const res = await fetch(`/api/workspace/opportunities/${id}/xero-quote`, { method: "POST" });
+                            const data = await res.json();
+                            if (res.ok) {
+                              setXeroQuote({
+                                hasQuote: true,
+                                quoteId: data.quoteId,
+                                quoteUrl: data.quoteUrl,
+                                quoteStatus: data.status,
+                              });
+                            } else {
+                              alert(data.error ?? "Failed to create quote");
+                            }
+                          } finally {
+                            setCreatingQuote(false);
+                          }
+                        }}
+                        disabled={creatingQuote}
+                      >
+                        {creatingQuote ? (
+                          <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creating...</>
+                        ) : (
+                          "Create Xero Quote"
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             {/* Stage History Tab */}
             <TabsContent value="history">
               <div className="space-y-2">
@@ -651,7 +819,14 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
               </div>
               <div>
                 <label className="text-sm font-medium">Currency</label>
-                <Input value={editForm.currency} onChange={(e) => setEditForm({ ...editForm, currency: e.target.value })} />
+                <Select value={editForm.currency} onValueChange={(v) => setEditForm({ ...editForm, currency: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {["USD", "EUR", "GBP", "MYR", "SGD", "JPY", "AUD", "CAD", "CHF", "CNY", "INR", "NZD"].map((c) => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -691,6 +866,17 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
                   <SelectItem value="none">No account</SelectItem>
                   {accounts.map((a) => (
                     <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Owner</label>
+              <Select value={editForm.ownerId} onValueChange={(val) => setEditForm({ ...editForm, ownerId: val })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {allMembers.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>{m.user.name ?? m.user.email}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -755,6 +941,61 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowLinkContact(false)}>Cancel</Button>
             <Button onClick={handleLinkContact} disabled={!linkContactId}>Link Contact</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Link Document Dialog */}
+      <Dialog open={showLinkDoc} onOpenChange={setShowLinkDoc}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Link Document</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="text-sm font-medium">SharePoint / OneDrive URL</label>
+              <Input
+                value={docUrl}
+                onChange={(e) => setDocUrl(e.target.value)}
+                placeholder="https://yourorg.sharepoint.com/..."
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Paste a link to a document in SharePoint or OneDrive. Metadata will be resolved automatically.
+              </p>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Title (optional)</label>
+              <Input
+                value={docTitle}
+                onChange={(e) => setDocTitle(e.target.value)}
+                placeholder="Auto-detected from URL"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLinkDoc(false)}>Cancel</Button>
+            <Button
+              onClick={async () => {
+                if (!docUrl) return;
+                setLinkingDoc(true);
+                try {
+                  await fetch(`/api/workspace/opportunities/${id}/documents`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ url: docUrl, ...(docTitle && { title: docTitle }) }),
+                  });
+                  setShowLinkDoc(false);
+                  setDocUrl("");
+                  setDocTitle("");
+                  loadData();
+                } finally {
+                  setLinkingDoc(false);
+                }
+              }}
+              disabled={!docUrl || linkingDoc}
+            >
+              {linkingDoc ? "Linking..." : "Link Document"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

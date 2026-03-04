@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
 import { fireTrigger } from "@/lib/automation/triggers";
+import { convertCurrency } from "@/lib/currency";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
 
@@ -15,6 +16,7 @@ const UpdateSchema = z.object({
   description: z.string().optional().nullable(),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]).optional(),
   accountId: z.string().optional().nullable(),
+  ownerId: z.string().optional(),
   lostReason: z.string().optional().nullable(),
 });
 
@@ -83,14 +85,43 @@ export async function PATCH(
   if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
 
   const data = parsed.data;
+
+  // Recalculate reporting currency value if value or currency changed
+  let valueInReportingCcy: Prisma.Decimal | undefined;
+  const newValue = data.value ?? Number(existing.value);
+  const newCurrency = data.currency ?? existing.currency;
+  if (data.value !== undefined || data.currency !== undefined) {
+    const reportingCcy = workspace.reportingCurrency ?? "USD";
+    const converted =
+      newCurrency === reportingCcy
+        ? newValue
+        : await convertCurrency(workspace.id, newValue, newCurrency, reportingCcy);
+    valueInReportingCcy = new Prisma.Decimal(converted);
+  }
+
+  // Only admin/owner/manager can reassign ownership
+  const ownerId =
+    data.ownerId && ["ADMIN", "OWNER", "MANAGER"].includes(member.role)
+      ? data.ownerId
+      : undefined;
+
   const opportunity = await prisma.opportunity.update({
     where: { id },
     data: {
-      ...data,
+      name: data.name,
       value: data.value !== undefined ? new Prisma.Decimal(data.value) : undefined,
+      currency: data.currency,
+      valueInReportingCcy,
+      probability: data.probability,
       expectedCloseDate: data.expectedCloseDate !== undefined
         ? data.expectedCloseDate ? new Date(data.expectedCloseDate) : null
         : undefined,
+      source: data.source,
+      description: data.description,
+      priority: data.priority,
+      accountId: data.accountId,
+      lostReason: data.lostReason,
+      ownerId,
     },
     include: { stage: true, account: true },
   });

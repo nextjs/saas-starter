@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
+import { getDisplayCurrency, convertCurrency } from "@/lib/currency";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireWorkspaceMember();
   if ("error" in ctx) return ctx.error;
-  const { workspace } = ctx;
+  const { workspace, member } = ctx;
 
   const { searchParams } = req.nextUrl;
   const from = searchParams.get("from");
   const to = searchParams.get("to");
+  const displayCurrency =
+    searchParams.get("displayCurrency") ??
+    (await getDisplayCurrency(workspace.id, member.id));
 
   const dateFilter = {
     ...(from && { gte: new Date(from) }),
@@ -62,16 +66,26 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const funnel = stages.map((s) => {
-    const times = stageTimeMap[s.id] ?? [];
-    return {
-      name: s.name,
-      color: s.color,
-      count: s.opportunities.length,
-      value: s.opportunities.reduce((sum, o) => sum + Number(o.value), 0),
-      avgDaysInStage: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0,
-    };
-  });
+  const funnel = await Promise.all(
+    stages.map(async (s) => {
+      const times = stageTimeMap[s.id] ?? [];
+      let value = 0;
+      for (const opp of s.opportunities) {
+        const val = Number(opp.value);
+        value +=
+          opp.currency === displayCurrency
+            ? val
+            : await convertCurrency(workspace.id, val, opp.currency, displayCurrency);
+      }
+      return {
+        name: s.name,
+        color: s.color,
+        count: s.opportunities.length,
+        value: Math.round(value),
+        avgDaysInStage: times.length ? Math.round(times.reduce((a, b) => a + b, 0) / times.length) : 0,
+      };
+    })
+  );
 
-  return NextResponse.json({ funnel });
+  return NextResponse.json({ funnel, displayCurrency });
 }

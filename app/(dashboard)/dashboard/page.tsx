@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DollarSign, TrendingUp, Target, Briefcase, AlertTriangle } from "lucide-react";
 import Link from "next/link";
+import { CurrencySelector, useDisplayCurrency } from "@/components/currency-selector";
 
 interface DashboardData {
+  displayCurrency: string;
   kpis: {
     pipelineValue: number;
     openDeals: number;
@@ -58,11 +60,13 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const { currency: displayCurrency, setCurrency: setDisplayCurrency } = useDisplayCurrency();
 
   const loadData = useCallback(async () => {
     const params = new URLSearchParams();
     if (startDate) params.set("startDate", startDate);
     if (endDate) params.set("endDate", endDate);
+    if (displayCurrency) params.set("displayCurrency", displayCurrency);
     const qs = params.toString();
     try {
       const r = await fetch(`/api/workspace/dashboard${qs ? `?${qs}` : ""}`);
@@ -73,7 +77,7 @@ export default function DashboardPage() {
       console.error(e);
     }
     setLoading(false);
-  }, [startDate, endDate]);
+  }, [startDate, endDate, displayCurrency]);
 
   useEffect(() => {
     loadData();
@@ -113,10 +117,11 @@ export default function DashboardPage() {
     );
   }
 
+  const ccy = data.displayCurrency ?? displayCurrency;
   const kpis = [
-    { label: "Pipeline Value", value: formatCurrency(data.kpis.pipelineValue), icon: DollarSign, sub: `${data.kpis.openDeals} open deals` },
-    { label: "Won This Month", value: formatCurrency(data.kpis.wonRevenue), icon: TrendingUp, sub: `${data.kpis.wonDeals} deals closed` },
-    { label: "Weighted Forecast", value: formatCurrency(data.kpis.weightedForecast), icon: Target, sub: "probability-weighted" },
+    { label: "Pipeline Value", value: formatCurrency(data.kpis.pipelineValue, ccy), icon: DollarSign, sub: `${data.kpis.openDeals} open deals` },
+    { label: "Won This Month", value: formatCurrency(data.kpis.wonRevenue, ccy), icon: TrendingUp, sub: `${data.kpis.wonDeals} deals closed` },
+    { label: "Weighted Forecast", value: formatCurrency(data.kpis.weightedForecast, ccy), icon: Target, sub: "probability-weighted" },
     { label: "Open Deals", value: String(data.kpis.openDeals), icon: Briefcase, sub: "in pipeline" },
   ];
 
@@ -135,6 +140,10 @@ export default function DashboardPage() {
           )}
         </div>
         <div className="flex items-center gap-2">
+          <CurrencySelector
+            value={displayCurrency}
+            onChange={(c) => { setDisplayCurrency(c); }}
+          />
           <Input
             type="date"
             value={startDate}
@@ -196,7 +205,7 @@ export default function DashboardPage() {
                           <span className="font-medium">{stage.name}</span>
                           <span className="text-muted-foreground">({stage.count})</span>
                         </div>
-                        <span className="font-medium">{formatCurrency(stage.value)}</span>
+                        <span className="font-medium">{formatCurrency(stage.value, ccy)}</span>
                       </div>
                       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div

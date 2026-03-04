@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
+import { getDisplayCurrency, convertCurrency } from "@/lib/currency";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireWorkspaceMember();
   if ("error" in ctx) return ctx.error;
   const { workspace, member } = ctx;
+
+  const displayCurrency =
+    req.nextUrl.searchParams.get("displayCurrency") ??
+    (await getDisplayCurrency(workspace.id, member.id));
 
   const { searchParams } = req.nextUrl;
   const from = searchParams.get("from");
@@ -34,17 +39,29 @@ export async function GET(req: NextRequest) {
     include: { user: { select: { name: true, email: true, image: true } } },
   });
 
+  // Helper to sum values with currency conversion
+  async function sumConverted(opps: Array<{ value: unknown; currency: string }>) {
+    let total = 0;
+    for (const opp of opps) {
+      const val = Number(opp.value);
+      total +=
+        opp.currency === displayCurrency
+          ? val
+          : await convertCurrency(workspace.id, val, opp.currency, displayCurrency);
+    }
+    return Math.round(total);
+  }
+
   const reps = await Promise.all(
     members.map(async (m) => {
-      const [won, created, activities, openPipeline] = await Promise.all([
-        prisma.opportunity.aggregate({
+      const [wonOpps, created, activities, openOpps, lostCount] = await Promise.all([
+        prisma.opportunity.findMany({
           where: {
             ownerId: m.id,
             status: "WON",
             ...(hasDateFilter ? { actualCloseDate: dateFilter } : {}),
           },
-          _count: true,
-          _sum: { value: true },
+          select: { value: true, currency: true },
         }),
         prisma.opportunity.count({
           where: {
@@ -59,38 +76,40 @@ export async function GET(req: NextRequest) {
             ...(hasDateFilter ? { createdAt: dateFilter } : {}),
           },
         }),
-        prisma.opportunity.aggregate({
+        prisma.opportunity.findMany({
           where: { ownerId: m.id, status: "OPEN" },
-          _sum: { value: true },
+          select: { value: true, currency: true },
+        }),
+        prisma.opportunity.count({
+          where: {
+            ownerId: m.id,
+            status: "LOST",
+            ...(hasDateFilter ? { actualCloseDate: dateFilter } : {}),
+          },
         }),
       ]);
 
-      const lost = await prisma.opportunity.count({
-        where: {
-          ownerId: m.id,
-          status: "LOST",
-          ...(hasDateFilter ? { actualCloseDate: dateFilter } : {}),
-        },
-      });
-
-      const winRate = won._count + lost > 0 ? Math.round((won._count / (won._count + lost)) * 100) : 0;
+      const winRate = wonOpps.length + lostCount > 0
+        ? Math.round((wonOpps.length / (wonOpps.length + lostCount)) * 100)
+        : 0;
 
       return {
         memberId: m.id,
         name: m.user.name,
         email: m.user.email,
         role: m.role,
-        dealsWon: won._count,
-        revenueClosed: Number(won._sum.value ?? 0),
+        dealsWon: wonOpps.length,
+        revenueClosed: await sumConverted(wonOpps),
         oppsCreated: created,
         activitiesLogged: activities,
-        openPipeline: Number(openPipeline._sum.value ?? 0),
+        openPipeline: await sumConverted(openOpps),
         winRate,
       };
     })
   );
 
   return NextResponse.json({
+    displayCurrency,
     reps,
     totals: {
       dealsWon: reps.reduce((s, r) => s + r.dealsWon, 0),

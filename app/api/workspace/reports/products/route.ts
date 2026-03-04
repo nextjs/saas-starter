@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
+import { getDisplayCurrency, convertCurrency } from "@/lib/currency";
 
 export async function GET(req: NextRequest) {
   try {
     const ctx = await requireWorkspaceMember();
     if ("error" in ctx) return ctx.error;
-    const { workspace } = ctx;
+    const { workspace, member } = ctx;
+
+    const displayCurrency =
+      req.nextUrl.searchParams.get("displayCurrency") ??
+      (await getDisplayCurrency(workspace.id, member.id));
 
     const { searchParams } = req.nextUrl;
     const startDate = searchParams.get("startDate");
@@ -43,6 +48,7 @@ export async function GET(req: NextRequest) {
           select: {
             id: true,
             value: true,
+            currency: true,
           },
         },
       },
@@ -63,7 +69,11 @@ export async function GET(req: NextRequest) {
 
     for (const link of productLinks) {
       const existing = productMap.get(link.product.id);
-      const oppValue = Number(link.opportunity.value);
+      const rawValue = Number(link.opportunity.value);
+      const oppValue =
+        link.opportunity.currency === displayCurrency
+          ? rawValue
+          : await convertCurrency(workspace.id, rawValue, link.opportunity.currency, displayCurrency);
 
       if (existing) {
         existing.dealCount += 1;
@@ -88,7 +98,7 @@ export async function GET(req: NextRequest) {
     // Sort by total value descending
     products.sort((a, b) => b.totalValue - a.totalValue);
 
-    return NextResponse.json({ products });
+    return NextResponse.json({ products, displayCurrency });
   } catch (error) {
     console.error("GET /api/workspace/reports/products error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

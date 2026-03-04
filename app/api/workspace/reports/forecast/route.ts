@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
+import { getDisplayCurrency, convertCurrency } from "@/lib/currency";
 
 export async function GET(req: NextRequest) {
   const ctx = await requireWorkspaceMember();
   if ("error" in ctx) return ctx.error;
-  const { workspace } = ctx;
+  const { workspace, member } = ctx;
+
+  const { searchParams } = req.nextUrl;
+  const displayCurrency =
+    searchParams.get("displayCurrency") ??
+    (await getDisplayCurrency(workspace.id, member.id));
 
   // Get all open opportunities with their stages
   const opps = await prisma.opportunity.findMany({
@@ -19,6 +25,13 @@ export async function GET(req: NextRequest) {
     },
   });
 
+  // Helper to convert value
+  async function toDisplay(val: number, currency: string) {
+    return currency === displayCurrency
+      ? val
+      : await convertCurrency(workspace.id, val, currency, displayCurrency);
+  }
+
   // Group by stage
   const byStage: Record<string, { name: string; color: string; totalValue: number; weightedValue: number; count: number }> = {};
   for (const opp of opps) {
@@ -26,7 +39,7 @@ export async function GET(req: NextRequest) {
     if (!byStage[key]) {
       byStage[key] = { name: key, color: opp.stage.color, totalValue: 0, weightedValue: 0, count: 0 };
     }
-    const val = Number(opp.value);
+    const val = await toDisplay(Number(opp.value), opp.currency);
     const prob = opp.probability ?? opp.stage.probability;
     byStage[key].totalValue += val;
     byStage[key].weightedValue += (val * prob) / 100;
@@ -41,7 +54,7 @@ export async function GET(req: NextRequest) {
     if (!byMonth[month]) {
       byMonth[month] = { month, totalValue: 0, weightedValue: 0, count: 0 };
     }
-    const val = Number(opp.value);
+    const val = await toDisplay(Number(opp.value), opp.currency);
     const prob = opp.probability ?? opp.stage.probability;
     byMonth[month].totalValue += val;
     byMonth[month].weightedValue += (val * prob) / 100;
@@ -51,24 +64,28 @@ export async function GET(req: NextRequest) {
   // Won this month for comparison
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const wonThisMonth = await prisma.opportunity.aggregate({
+  const wonOpps = await prisma.opportunity.findMany({
     where: {
       workspaceId: workspace.id,
       status: "WON",
       actualCloseDate: { gte: monthStart },
     },
-    _sum: { value: true },
-    _count: true,
+    select: { value: true, currency: true },
   });
+  let wonValue = 0;
+  for (const w of wonOpps) {
+    wonValue += await toDisplay(Number(w.value), w.currency);
+  }
 
   return NextResponse.json({
+    displayCurrency,
     byStage: Object.values(byStage),
     byMonth: Object.values(byMonth).sort((a, b) => a.month.localeCompare(b.month)),
     wonThisMonth: {
-      value: Number(wonThisMonth._sum.value ?? 0),
-      count: wonThisMonth._count,
+      value: Math.round(wonValue),
+      count: wonOpps.length,
     },
-    totalForecast: Object.values(byStage).reduce((s, v) => s + v.weightedValue, 0),
-    totalPipeline: Object.values(byStage).reduce((s, v) => s + v.totalValue, 0),
+    totalForecast: Math.round(Object.values(byStage).reduce((s, v) => s + v.weightedValue, 0)),
+    totalPipeline: Math.round(Object.values(byStage).reduce((s, v) => s + v.totalValue, 0)),
   });
 }

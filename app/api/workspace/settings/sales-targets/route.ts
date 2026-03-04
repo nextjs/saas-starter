@@ -6,7 +6,7 @@ import { z } from "zod";
 const CreateSchema = z.object({
   memberId: z.string(),
   period: z.string().min(1),
-  periodType: z.enum(["MONTHLY", "QUARTERLY"]),
+  periodType: z.enum(["MONTHLY", "QUARTERLY", "ANNUAL"]),
   revenueTarget: z.number().min(0),
   opportunityTarget: z.number().int().min(0),
   activityTarget: z.number().int().min(0),
