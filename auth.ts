@@ -11,9 +11,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { authConfig } from "@/auth.config";
 
-// Dev credentials login: local only (NODE_ENV=development).
-// Vercel preview uses Microsoft SSO like production.
-const isDev = process.env.NODE_ENV === "development";
+const isDev =
+  process.env.NODE_ENV === "development" ||
+  process.env.VERCEL_ENV === "preview";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -47,17 +47,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 process.env.DEV_ADMIN_PASSWORD ?? "admin";
               if (credentials.password !== devPassword) return null;
 
-              // Upsert so dev login works even before seed runs
-              const user = await prisma.user.upsert({
-                where: { email: credentials.email as string },
-                update: {},
-                create: {
-                  name: "Dev User",
-                  email: credentials.email as string,
-                  emailVerified: new Date(),
-                },
-              });
-              return user;
+              try {
+                // Upsert so dev login works even before seed runs
+                const user = await prisma.user.upsert({
+                  where: { email: credentials.email as string },
+                  update: {},
+                  create: {
+                    name: "Dev User",
+                    email: credentials.email as string,
+                    emailVerified: new Date(),
+                  },
+                });
+                return user;
+              } catch (e) {
+                console.error("[auth] Dev login DB error:", e);
+                return null;
+              }
             },
           }),
         ]
