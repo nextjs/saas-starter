@@ -325,7 +325,7 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                     <Card key={opp.id}>
                       <CardContent className="pt-4 flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-sm">{opp.name}</p>
+                          <Link href={`/pipeline/${opp.id}`} className="font-medium text-sm hover:underline text-orange-600">{opp.name}</Link>
                           <p className="text-xs text-muted-foreground">{opp.owner.user.name}</p>
                         </div>
                         <div className="text-right">

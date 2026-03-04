@@ -66,7 +66,9 @@ function OpportunityCard({
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-sm truncate">{opp.name}</p>
+          <a href={`/pipeline/${opp.id}`} className="font-medium text-sm truncate block hover:text-orange-600" onClick={(e) => e.stopPropagation()}>
+            {opp.name}
+          </a>
           {opp.account && (
             <p className="text-xs text-muted-foreground truncate">{opp.account.name}</p>
           )}

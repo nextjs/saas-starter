@@ -214,7 +214,11 @@ export default function PipelineListPage() {
             ) : (
               filtered.map((opp) => (
                 <TableRow key={opp.id}>
-                  <TableCell className="font-medium">{opp.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <Link href={`/pipeline/${opp.id}`} className="hover:underline text-orange-600">
+                      {opp.name}
+                    </Link>
+                  </TableCell>
                   <TableCell className="text-muted-foreground">
                     {opp.account ? (
                       <Link href={`/accounts/${opp.account.id}`} className="hover:underline">

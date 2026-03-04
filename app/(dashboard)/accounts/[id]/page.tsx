@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ArrowLeft, Globe, MapPin, Building2, Pencil } from "lucide-react";
+import { ArrowLeft, Globe, MapPin, Building2, Pencil, Plus, X } from "lucide-react";
 import Link from "next/link";
 
 interface AccountDetail {
@@ -71,10 +71,17 @@ const activityIcons: Record<string, string> = {
 
 const ACCOUNT_SIZES = ["MICRO", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"] as const;
 
+interface ContactOption { id: string; firstName: string; lastName: string; email: string | null }
+
 export default function AccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [account, setAccount] = useState<AccountDetail | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Link contact state
+  const [showLinkContact, setShowLinkContact] = useState(false);
+  const [availableContacts, setAvailableContacts] = useState<ContactOption[]>([]);
+  const [linkContactId, setLinkContactId] = useState("");
 
   // Edit dialog state
   const [showEdit, setShowEdit] = useState(false);
@@ -150,6 +157,38 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
     }
   };
 
+  const openLinkContact = async () => {
+    try {
+      const res = await fetch("/api/workspace/contacts");
+      const data = await res.json();
+      // Show contacts NOT already on this account
+      const accountContactIds = new Set(account?.contacts.map((c) => c.id) ?? []);
+      setAvailableContacts((data.contacts ?? []).filter((c: ContactOption) => !accountContactIds.has(c.id)));
+    } catch { setAvailableContacts([]); }
+    setLinkContactId("");
+    setShowLinkContact(true);
+  };
+
+  const handleLinkContact = async () => {
+    if (!linkContactId) return;
+    await fetch(`/api/workspace/contacts/${linkContactId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accountId: id }),
+    });
+    setShowLinkContact(false);
+    loadData();
+  };
+
+  const handleUnlinkContact = async (contactId: string) => {
+    await fetch(`/api/workspace/contacts/${contactId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ accountId: null }),
+    });
+    loadData();
+  };
+
   if (loading) return <div className="p-6 animate-pulse"><div className="h-8 w-48 bg-gray-200 rounded" /></div>;
   if (!account) return <div className="p-6"><p>Account not found.</p></div>;
 
@@ -219,19 +258,29 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
 
             <TabsContent value="contacts">
               <div className="space-y-2">
+                <div className="flex justify-end mb-2">
+                  <Button variant="outline" size="sm" onClick={openLinkContact}>
+                    <Plus className="h-4 w-4 mr-1" /> Link Contact
+                  </Button>
+                </div>
                 {account.contacts.length === 0 ? (
-                  <p className="text-sm text-muted-foreground py-4">No contacts linked to this account.</p>
+                  <p className="text-sm text-muted-foreground py-4">No contacts linked. Click &ldquo;Link Contact&rdquo; to add one.</p>
                 ) : (
                   account.contacts.map((c) => (
                     <Card key={c.id}>
                       <CardContent className="pt-4 flex items-center justify-between">
                         <div>
-                          <Link href={`/contacts/${c.id}`} className="font-medium text-sm hover:underline">
+                          <Link href={`/contacts/${c.id}`} className="font-medium text-sm hover:underline text-orange-600">
                             {c.firstName} {c.lastName}
                           </Link>
                           <p className="text-xs text-muted-foreground">{c.jobTitle ?? ""} {c.email ? `\u00B7 ${c.email}` : ""}</p>
                         </div>
-                        <Badge variant="secondary" className="text-xs">{c.status}</Badge>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">{c.status}</Badge>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleUnlinkContact(c.id)} title="Unlink contact">
+                            <X className="h-3.5 w-3.5 text-red-500" />
+                          </Button>
+                        </div>
                       </CardContent>
                     </Card>
                   ))
@@ -248,7 +297,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                     <Card key={opp.id}>
                       <CardContent className="pt-4 flex items-center justify-between">
                         <div>
-                          <p className="font-medium text-sm">{opp.name}</p>
+                          <Link href={`/pipeline/${opp.id}`} className="font-medium text-sm hover:underline text-orange-600">{opp.name}</Link>
                           <p className="text-xs text-muted-foreground">{opp.owner.user.name}</p>
                         </div>
                         <div className="text-right">
@@ -393,6 +442,38 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
             <Button onClick={handleEditSave} disabled={editSaving}>
               {editSaving ? "Saving..." : "Save"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Link Contact Dialog */}
+      <Dialog open={showLinkContact} onOpenChange={setShowLinkContact}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Link Contact to Account</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Contact</Label>
+              <Select value={linkContactId} onValueChange={setLinkContactId}>
+                <SelectTrigger><SelectValue placeholder="Select a contact" /></SelectTrigger>
+                <SelectContent>
+                  {availableContacts.length === 0 ? (
+                    <SelectItem value="__empty">No unlinked contacts available</SelectItem>
+                  ) : (
+                    availableContacts.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.firstName} {c.lastName}{c.email ? ` (${c.email})` : ""}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLinkContact(false)}>Cancel</Button>
+            <Button onClick={handleLinkContact} disabled={!linkContactId}>Link Contact</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
