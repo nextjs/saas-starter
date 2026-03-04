@@ -1,0 +1,17 @@
+{
+  "buildCommand": "prisma generate && next build",
+  "crons": [
+    {
+      "path": "/api/cron/sync-emails",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/daily-maintenance",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/task-digest",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
