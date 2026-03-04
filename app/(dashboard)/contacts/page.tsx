@@ -40,11 +40,24 @@ export default function ContactsPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", jobTitle: "" });
 
+  const [pageError, setPageError] = useState<string | null>(null);
+
   const loadData = useCallback(async () => {
-    const params = search ? `?search=${encodeURIComponent(search)}` : "";
-    const res = await fetch(`/api/workspace/contacts${params}`);
-    const data = await res.json();
-    setContacts(data.contacts ?? []);
+    try {
+      const params = search ? `?search=${encodeURIComponent(search)}` : "";
+      const res = await fetch(`/api/workspace/contacts${params}`);
+      if (!res.ok) {
+        const data = await res.json();
+        setPageError(typeof data.error === "string" ? data.error : `API error (${res.status})`);
+        setLoading(false);
+        return;
+      }
+      const data = await res.json();
+      setContacts(data.contacts ?? []);
+      setPageError(null);
+    } catch {
+      setPageError("Failed to load contacts — check your connection");
+    }
     setLoading(false);
   }, [search]);
 
@@ -53,16 +66,33 @@ export default function ContactsPage() {
     return () => clearTimeout(timer);
   }, [loadData]);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleCreate = async () => {
     if (!form.firstName || !form.lastName) return;
-    await fetch("/api/workspace/contacts", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
-    setShowCreate(false);
-    setForm({ firstName: "", lastName: "", email: "", jobTitle: "" });
-    loadData();
+    setError(null);
+    try {
+      const res = await fetch("/api/workspace/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email || null,
+          jobTitle: form.jobTitle || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error?.fieldErrors ? "Validation error — check required fields" : (typeof data.error === "string" ? data.error : "Failed to create contact"));
+        return;
+      }
+      setShowCreate(false);
+      setForm({ firstName: "", lastName: "", email: "", jobTitle: "" });
+      loadData();
+    } catch {
+      setError("Network error — please try again");
+    }
   };
 
   return (
@@ -84,6 +114,15 @@ export default function ContactsPage() {
           </Button>
         </div>
       </div>
+
+      {pageError && (
+        <div className="rounded-md bg-red-50 border border-red-200 p-4 mb-4">
+          <p className="text-sm font-medium text-red-800">{pageError}</p>
+          {pageError.includes("Workspace") && (
+            <p className="text-sm text-red-600 mt-1">Visit <code className="bg-red-100 px-1 rounded">/api/setup/seed</code> to initialize the database, then refresh this page.</p>
+          )}
+        </div>
+      )}
 
       <div className="border rounded-lg bg-white">
         <Table>
@@ -145,11 +184,12 @@ export default function ContactsPage() {
         </Table>
       </div>
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+      <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setError(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add Contact</DialogTitle>
           </DialogHeader>
+          {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div>

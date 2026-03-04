@@ -27,6 +27,7 @@ export default auth((req) => {
     url.pathname.startsWith("/api/stripe/") ||
     url.pathname.startsWith("/api/cron/") ||
     url.pathname.startsWith("/api/setup/") ||
+    url.pathname.startsWith("/api/workspace/email/webhook/") ||
     url.pathname === "/favicon.ico";
 
   if (isPublic) return NextResponse.next();

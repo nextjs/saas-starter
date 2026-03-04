@@ -44,22 +44,34 @@ export default function ProductsSettingsPage() {
     loadData();
   }, [loadData]);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleCreate = async () => {
     if (!form.name) return;
-    await fetch("/api/workspace/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name,
-        sku: form.sku || null,
-        category: form.category || null,
-        unitPrice: Number(form.unitPrice) || 0,
-        currency: form.currency,
-      }),
-    });
-    setShowCreate(false);
-    setForm({ name: "", sku: "", category: "", unitPrice: "", currency: "USD" });
-    loadData();
+    setError(null);
+    try {
+      const res = await fetch("/api/workspace/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          sku: form.sku || null,
+          category: form.category || null,
+          unitPrice: Number(form.unitPrice) || 0,
+          currency: form.currency,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(typeof data.error === "string" ? data.error : "Failed to create product");
+        return;
+      }
+      setShowCreate(false);
+      setForm({ name: "", sku: "", category: "", unitPrice: "", currency: "USD" });
+      loadData();
+    } catch {
+      setError("Network error — please try again");
+    }
   };
 
   return (
@@ -106,9 +118,10 @@ export default function ProductsSettingsPage() {
         </Table>
       </div>
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+      <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setError(null); }}>
         <DialogContent>
           <DialogHeader><DialogTitle>Add Product</DialogTitle></DialogHeader>
+          {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
           <div className="space-y-4 py-4">
             <div>
               <label className="text-sm font-medium">Product Name</label>

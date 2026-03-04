@@ -32,12 +32,20 @@ const DEFAULT_TAGS = [
   { name: "Blocker",        color: "#ef4444" },
 ];
 
-export async function POST(req: Request) {
-  // Protect with CRON_SECRET or AUTH_SECRET
-  const authHeader = req.headers.get("authorization");
-  const secret = process.env.CRON_SECRET || process.env.AUTH_SECRET;
-  if (!secret || authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+// GET for easy browser access
+export async function GET() {
+  return seed();
+}
+
+export async function POST() {
+  return seed();
+}
+
+async function seed() {
+  // Only allow in non-production environments
+  const env = process.env.VERCEL_ENV ?? process.env.NODE_ENV;
+  if (env === "production") {
+    return NextResponse.json({ error: "Seed is disabled in production" }, { status: 403 });
   }
 
   try {

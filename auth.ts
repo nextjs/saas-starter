@@ -58,6 +58,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                     emailVerified: new Date(),
                   },
                 });
+
+                // Auto-provision workspace membership for dev login
+                const workspace = await prisma.workspace.findFirst();
+                if (workspace) {
+                  await prisma.workspaceMember.upsert({
+                    where: {
+                      workspaceId_userId: {
+                        workspaceId: workspace.id,
+                        userId: user.id,
+                      },
+                    },
+                    update: {},
+                    create: {
+                      workspaceId: workspace.id,
+                      userId: user.id,
+                      role: "OWNER",
+                    },
+                  });
+                }
+
                 return user;
               } catch (e) {
                 console.error("[auth] Dev login DB error:", e);

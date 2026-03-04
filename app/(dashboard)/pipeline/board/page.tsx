@@ -183,31 +183,45 @@ export default function PipelineBoardPage() {
     }
   };
 
+  const [createError, setCreateError] = useState<string | null>(null);
+
   const handleCreateDeal = async () => {
     if (!newDeal.name || !stages.length) return;
-    const firstStage = stages.find((s) => !s.isWon && !s.isLost) ?? stages[0];
-    const pipeline = opportunities[0]?.pipeline;
+    setCreateError(null);
+    try {
+      const firstStage = stages.find((s) => !s.isWon && !s.isLost) ?? stages[0];
 
-    // We need a pipelineId — get it from stages
-    const stagesRes = await fetch("/api/workspace/pipeline/stages");
-    const stagesData = await stagesRes.json();
-    const pipelineId = stagesData.stages?.[0]?.pipeline?.id;
-    if (!pipelineId) return;
+      // We need a pipelineId — get it from stages
+      const stagesRes = await fetch("/api/workspace/pipeline/stages");
+      const stagesData = await stagesRes.json();
+      const pipelineId = stagesData.stages?.[0]?.pipeline?.id;
+      if (!pipelineId) {
+        setCreateError("No pipeline found — run database seed first");
+        return;
+      }
 
-    await fetch("/api/workspace/opportunities", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: newDeal.name,
-        value: Number(newDeal.value) || 0,
-        pipelineId,
-        stageId: firstStage.id,
-      }),
-    });
+      const res = await fetch("/api/workspace/opportunities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newDeal.name,
+          value: Number(newDeal.value) || 0,
+          pipelineId,
+          stageId: firstStage.id,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setCreateError(typeof data.error === "string" ? data.error : "Failed to create deal");
+        return;
+      }
 
-    setShowCreate(false);
-    setNewDeal({ name: "", value: "" });
-    loadData();
+      setShowCreate(false);
+      setNewDeal({ name: "", value: "" });
+      loadData();
+    } catch {
+      setCreateError("Network error — please try again");
+    }
   };
 
   if (loading) {
@@ -247,11 +261,12 @@ export default function PipelineBoardPage() {
         ))}
       </div>
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+      <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setCreateError(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Deal</DialogTitle>
           </DialogHeader>
+          {createError && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{createError}</div>}
           <div className="space-y-4 py-4">
             <div>
               <label className="text-sm font-medium">Deal Name</label>

@@ -84,10 +84,19 @@ export default function DashboardPage() {
 
   if (!data) {
     return (
-      <div className="p-6">
-        <p className="text-muted-foreground">
-          Failed to load dashboard data. Make sure you have run the database seed.
-        </p>
+      <div className="p-6 space-y-4">
+        <h1 className="text-2xl font-semibold">Dashboard</h1>
+        <div className="rounded-md bg-amber-50 border border-amber-200 p-4">
+          <p className="font-medium text-amber-800">Database not initialized</p>
+          <p className="text-sm text-amber-700 mt-1">
+            The workspace hasn&apos;t been set up yet. To initialize the database with seed data:
+          </p>
+          <ol className="text-sm text-amber-700 mt-2 ml-4 list-decimal space-y-1">
+            <li>Visit <a href="/api/setup/seed" className="font-mono underline">/api/setup/seed</a> to create the workspace, pipeline stages, and products</li>
+            <li>Sign out and sign back in to refresh your session</li>
+            <li>Return to the dashboard</li>
+          </ol>
+        </div>
       </div>
     );
   }

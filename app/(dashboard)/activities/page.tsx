@@ -59,21 +59,33 @@ export default function ActivitiesPage() {
     loadData();
   }, [loadData]);
 
+  const [error, setError] = useState<string | null>(null);
+
   const handleCreate = async () => {
     if (!form.title) return;
-    await fetch("/api/workspace/activities", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: form.type,
-        title: form.title,
-        body: form.body || null,
-        dueAt: form.dueAt || null,
-      }),
-    });
-    setShowCreate(false);
-    setForm({ type: "NOTE", title: "", body: "", dueAt: "" });
-    loadData();
+    setError(null);
+    try {
+      const res = await fetch("/api/workspace/activities", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: form.type,
+          title: form.title,
+          body: form.body || null,
+          dueAt: form.dueAt || null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(typeof data.error === "string" ? data.error : "Failed to create activity");
+        return;
+      }
+      setShowCreate(false);
+      setForm({ type: "NOTE", title: "", body: "", dueAt: "" });
+      loadData();
+    } catch {
+      setError("Network error — please try again");
+    }
   };
 
   const handleComplete = async (id: string) => {
@@ -179,11 +191,12 @@ export default function ActivitiesPage() {
         </div>
       )}
 
-      <Dialog open={showCreate} onOpenChange={setShowCreate}>
+      <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setError(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Log Activity</DialogTitle>
           </DialogHeader>
+          {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
           <div className="space-y-4 py-4">
             <div className="flex gap-2 flex-wrap">
               {activityTypes.map((t) => (
