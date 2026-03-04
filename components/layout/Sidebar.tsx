@@ -45,6 +45,7 @@ const navGroups = [
       { href: "/reports/pipeline", icon: BarChart3, label: "Pipeline" },
       { href: "/reports/forecast", icon: BarChart3, label: "Forecast" },
       { href: "/reports/performance", icon: BarChart3, label: "Performance" },
+      { href: "/reports/products", icon: BarChart3, label: "Products" },
     ],
   },
   {
@@ -54,7 +55,10 @@ const navGroups = [
       { href: "/settings/pipeline", icon: Settings, label: "Pipeline" },
       { href: "/settings/products", icon: Settings, label: "Products" },
       { href: "/settings/members", icon: Settings, label: "Members" },
+      { href: "/settings/teams", icon: Settings, label: "Teams" },
       { href: "/settings/targets", icon: Settings, label: "Sales Targets" },
+      { href: "/settings/custom-fields", icon: Settings, label: "Custom Fields" },
+      { href: "/settings/exchange-rates", icon: Settings, label: "Exchange Rates" },
       { href: "/settings/integrations", icon: Settings, label: "Integrations" },
       { href: "/settings/webhooks", icon: Settings, label: "Webhooks" },
     ],

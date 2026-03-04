@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { DollarSign, TrendingUp, Target, Briefcase } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DollarSign, TrendingUp, Target, Briefcase, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 interface DashboardData {
@@ -13,6 +15,7 @@ interface DashboardData {
     wonRevenue: number;
     wonDeals: number;
     weightedForecast: number;
+    overdueTaskCount: number;
   };
   stageData: Array<{ name: string; color: string; count: number; value: number }>;
   recentActivities: Array<{
@@ -53,19 +56,28 @@ const activityIcons: Record<string, string> = {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
+  const loadData = useCallback(async () => {
+    const params = new URLSearchParams();
+    if (startDate) params.set("startDate", startDate);
+    if (endDate) params.set("endDate", endDate);
+    const qs = params.toString();
+    try {
+      const r = await fetch(`/api/workspace/dashboard${qs ? `?${qs}` : ""}`);
+      if (!r.ok) throw new Error(`API ${r.status}`);
+      const d = await r.json();
+      if (d.kpis) setData(d);
+    } catch (e) {
+      console.error(e);
+    }
+    setLoading(false);
+  }, [startDate, endDate]);
 
   useEffect(() => {
-    fetch("/api/workspace/dashboard")
-      .then((r) => {
-        if (!r.ok) throw new Error(`API ${r.status}`);
-        return r.json();
-      })
-      .then((d) => {
-        if (d.kpis) setData(d);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+    loadData();
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -110,7 +122,41 @@ export default function DashboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-semibold">Dashboard</h1>
+          {data.kpis.overdueTaskCount > 0 && (
+            <Link href="/activities">
+              <Badge variant="destructive" className="flex items-center gap-1">
+                <AlertTriangle className="h-3 w-3" />
+                {data.kpis.overdueTaskCount} overdue
+              </Badge>
+            </Link>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <Input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-36"
+            placeholder="Start date"
+          />
+          <span className="text-muted-foreground text-sm">to</span>
+          <Input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-36"
+            placeholder="End date"
+          />
+          {(startDate || endDate) && (
+            <Button variant="ghost" size="sm" onClick={() => { setStartDate(""); setEndDate(""); }}>
+              Clear
+            </Button>
+          )}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi) => (
@@ -211,7 +257,7 @@ export default function DashboardPage() {
           ) : (
             <div className="space-y-3">
               {data.topOpportunities.map((opp) => (
-                <div key={opp.id} className="flex items-center justify-between">
+                <Link key={opp.id} href={`/pipeline/${opp.id}`} className="flex items-center justify-between hover:bg-gray-50 rounded-md p-2 -m-2 transition-colors">
                   <div>
                     <p className="font-medium text-sm">{opp.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -226,7 +272,7 @@ export default function DashboardPage() {
                       {opp.stage.name}
                     </Badge>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

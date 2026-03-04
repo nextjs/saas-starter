@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Trash2, Plus } from "lucide-react";
 
 interface WorkspaceData {
   id: string;
@@ -23,7 +24,13 @@ export default function WorkspaceSettingsPage() {
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ name: "", reportingCurrency: "", timezone: "" });
 
-  useEffect(() => {
+  // Domain management
+  const [showDomainForm, setShowDomainForm] = useState(false);
+  const [domainInput, setDomainInput] = useState("");
+  const [domainIsInternal, setDomainIsInternal] = useState(false);
+  const [domainSaving, setDomainSaving] = useState(false);
+
+  const loadWorkspace = () => {
     fetch("/api/workspace/settings/workspace")
       .then((r) => r.json())
       .then((d) => {
@@ -37,6 +44,10 @@ export default function WorkspaceSettingsPage() {
         }
       })
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    loadWorkspace();
   }, []);
 
   const handleSave = async () => {
@@ -47,6 +58,36 @@ export default function WorkspaceSettingsPage() {
       body: JSON.stringify(form),
     });
     setSaving(false);
+  };
+
+  const handleAddDomain = async () => {
+    if (!domainInput.trim()) return;
+    setDomainSaving(true);
+    try {
+      const res = await fetch("/api/workspace/settings/domains", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          domain: domainInput.trim().toLowerCase(),
+          isInternal: domainIsInternal,
+        }),
+      });
+      if (res.ok) {
+        setDomainInput("");
+        setDomainIsInternal(false);
+        setShowDomainForm(false);
+        loadWorkspace();
+      }
+    } finally {
+      setDomainSaving(false);
+    }
+  };
+
+  const handleDeleteDomain = async (domainId: string) => {
+    const res = await fetch(`/api/workspace/settings/domains?domainId=${domainId}`, {
+      method: "DELETE",
+    });
+    if (res.ok) loadWorkspace();
   };
 
   if (loading) return <div className="p-6"><div className="animate-pulse h-8 w-48 bg-gray-200 rounded" /></div>;
@@ -108,18 +149,68 @@ export default function WorkspaceSettingsPage() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Domains</CardTitle></CardHeader>
-        <CardContent>
-          {ws.allowedDomains.length === 0 ? (
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base">Domains</CardTitle>
+          {!showDomainForm && (
+            <Button variant="outline" size="sm" onClick={() => setShowDomainForm(true)}>
+              <Plus className="h-4 w-4 mr-1" /> Add Domain
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="space-y-3">
+          {showDomainForm && (
+            <div className="flex items-center gap-2 p-3 border rounded-lg bg-gray-50">
+              <Input
+                value={domainInput}
+                onChange={(e) => setDomainInput(e.target.value)}
+                placeholder="example.com"
+                className="flex-1 font-mono text-sm"
+                onKeyDown={(e) => { if (e.key === "Enter") handleAddDomain(); }}
+              />
+              <div className="flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  id="domain-internal"
+                  checked={domainIsInternal}
+                  onChange={(e) => setDomainIsInternal(e.target.checked)}
+                  className="rounded border-gray-300"
+                />
+                <label htmlFor="domain-internal" className="text-xs whitespace-nowrap">Internal</label>
+              </div>
+              <Button size="sm" onClick={handleAddDomain} disabled={domainSaving}>
+                Add
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => { setShowDomainForm(false); setDomainInput(""); setDomainIsInternal(false); }}
+              >
+                Cancel
+              </Button>
+            </div>
+          )}
+
+          {ws.allowedDomains.length === 0 && !showDomainForm ? (
             <p className="text-sm text-muted-foreground">No domains configured.</p>
           ) : (
             <div className="space-y-2">
               {ws.allowedDomains.map((d) => (
-                <div key={d.id} className="flex items-center gap-2">
-                  <span className="text-sm font-mono">{d.domain}</span>
-                  <Badge variant={d.isInternal ? "secondary" : "outline"} className="text-xs">
-                    {d.isInternal ? "Internal" : "SSO"}
-                  </Badge>
+                <div key={d.id} className="flex items-center justify-between gap-2 py-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-mono">{d.domain}</span>
+                    <Badge variant={d.isInternal ? "secondary" : "outline"} className="text-xs">
+                      {d.isInternal ? "Internal" : "SSO"}
+                    </Badge>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7"
+                    onClick={() => handleDeleteDomain(d.id)}
+                    title="Remove domain"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 text-red-500" />
+                  </Button>
                 </div>
               ))}
             </div>

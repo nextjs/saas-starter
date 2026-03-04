@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { GripVertical, Trash2 } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
 
 interface Stage {
   id: string;
@@ -23,6 +26,14 @@ interface Stage {
 export default function PipelineSettingsPage() {
   const [stages, setStages] = useState<Stage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showCreate, setShowCreate] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [stageForm, setStageForm] = useState({
+    name: "",
+    probability: "50",
+    color: "#6366f1",
+    rottenDays: "",
+  });
 
   const loadData = useCallback(async () => {
     const res = await fetch("/api/workspace/pipeline/stages");
@@ -55,9 +66,49 @@ export default function PipelineSettingsPage() {
     loadData();
   };
 
+  const handleCreateStage = async () => {
+    if (!stageForm.name) return;
+    setCreateError(null);
+
+    const pipelineId = stages.length > 0 ? stages[0].pipeline.id : null;
+    if (!pipelineId) {
+      setCreateError("No pipeline found. Please create a pipeline first.");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/workspace/pipeline/stages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pipelineId,
+          name: stageForm.name,
+          probability: Number(stageForm.probability) || 0,
+          color: stageForm.color,
+          rottenDays: stageForm.rottenDays ? Number(stageForm.rottenDays) : null,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setCreateError(typeof data.error === "string" ? data.error : "Failed to create stage");
+        return;
+      }
+      setShowCreate(false);
+      setStageForm({ name: "", probability: "50", color: "#6366f1", rottenDays: "" });
+      loadData();
+    } catch {
+      setCreateError("Network error — please try again");
+    }
+  };
+
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Pipeline Settings</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Pipeline Settings</h1>
+        <Button onClick={() => setShowCreate(true)}>
+          <Plus className="h-4 w-4 mr-1" /> Add Stage
+        </Button>
+      </div>
 
       <Card>
         <CardHeader>
@@ -139,6 +190,74 @@ export default function PipelineSettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setCreateError(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Stage</DialogTitle>
+          </DialogHeader>
+          {createError && (
+            <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+              {createError}
+            </div>
+          )}
+          <div className="space-y-4 py-4">
+            <div>
+              <label className="text-sm font-medium">Stage Name</label>
+              <Input
+                value={stageForm.name}
+                onChange={(e) => setStageForm({ ...stageForm, name: e.target.value })}
+                placeholder="e.g. Qualification"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium">Probability (%)</label>
+                <Input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={stageForm.probability}
+                  onChange={(e) => setStageForm({ ...stageForm, probability: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium">Color</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={stageForm.color}
+                    onChange={(e) => setStageForm({ ...stageForm, color: e.target.value })}
+                    className="h-9 w-12 rounded border cursor-pointer"
+                  />
+                  <Input
+                    value={stageForm.color}
+                    onChange={(e) => setStageForm({ ...stageForm, color: e.target.value })}
+                    placeholder="#6366f1"
+                    className="font-mono text-sm"
+                  />
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium">Rotten Days (optional)</label>
+              <Input
+                type="number"
+                value={stageForm.rottenDays}
+                onChange={(e) => setStageForm({ ...stageForm, rottenDays: e.target.value })}
+                placeholder="Leave blank for no limit"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                Deals in this stage for longer than this will be flagged as stale.
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
+            <Button onClick={handleCreateStage}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

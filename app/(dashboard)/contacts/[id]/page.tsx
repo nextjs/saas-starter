@@ -6,8 +6,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, Mail, Phone, Briefcase, Building2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowLeft, Mail, Phone, Briefcase, Building2, Pencil } from "lucide-react";
 import Link from "next/link";
 
 interface Contact {
@@ -43,17 +58,41 @@ interface Contact {
   }>;
 }
 
+interface AccountOption {
+  id: string;
+  name: string;
+}
+
 const activityIcons: Record<string, string> = {
-  NOTE: "📝", CALL: "📞", EMAIL: "✉️", MEETING: "🤝", TASK: "✅",
-  DEMO: "🖥️", PROPOSAL_SENT: "📄", CONTRACT_SENT: "📋",
-  STAGE_CHANGE: "↕️", SYSTEM: "⚙️",
+  NOTE: "\u{1F4DD}", CALL: "\u{1F4DE}", EMAIL: "\u2709\uFE0F", MEETING: "\u{1F91D}", TASK: "\u2705",
+  DEMO: "\u{1F5A5}\uFE0F", PROPOSAL_SENT: "\u{1F4C4}", CONTRACT_SENT: "\u{1F4CB}",
+  STAGE_CHANGE: "\u2195\uFE0F", SYSTEM: "\u2699\uFE0F",
 };
+
+const CONTACT_STATUSES = ["ACTIVE", "INACTIVE", "LEAD", "CUSTOMER", "CHURNED"] as const;
 
 export default function ContactDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [contact, setContact] = useState<Contact | null>(null);
   const [loading, setLoading] = useState(true);
-  const [quickLog, setQuickLog] = useState({ type: "NOTE", title: "", body: "" });
+  const [quickLog, setQuickLog] = useState({ type: "NOTE", title: "", body: "", dueAt: "" });
+
+  // Edit dialog state
+  const [showEdit, setShowEdit] = useState(false);
+  const [editForm, setEditForm] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    jobTitle: "",
+    department: "",
+    notes: "",
+    status: "ACTIVE",
+    leadSource: "",
+    accountId: "",
+  });
+  const [editSaving, setEditSaving] = useState(false);
+  const [accounts, setAccounts] = useState<AccountOption[]>([]);
 
   const loadData = useCallback(async () => {
     const res = await fetch(`/api/workspace/contacts/${id}`);
@@ -66,14 +105,75 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
     loadData();
   }, [loadData]);
 
+  const openEditDialog = async () => {
+    if (!contact) return;
+    setEditForm({
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email ?? "",
+      phone: contact.phone ?? "",
+      jobTitle: contact.jobTitle ?? "",
+      department: contact.department ?? "",
+      notes: contact.notes ?? "",
+      status: contact.status,
+      leadSource: contact.leadSource ?? "",
+      accountId: contact.account?.id ?? "",
+    });
+    // Load accounts for the dropdown
+    try {
+      const res = await fetch("/api/workspace/accounts");
+      const data = await res.json();
+      setAccounts(data.accounts ?? []);
+    } catch {
+      setAccounts([]);
+    }
+    setShowEdit(true);
+  };
+
+  const handleEditSave = async () => {
+    setEditSaving(true);
+    try {
+      const payload: Record<string, unknown> = { ...editForm };
+      // Send null for empty optional strings
+      if (!payload.email) payload.email = null;
+      if (!payload.phone) payload.phone = null;
+      if (!payload.jobTitle) payload.jobTitle = null;
+      if (!payload.department) payload.department = null;
+      if (!payload.notes) payload.notes = null;
+      if (!payload.leadSource) payload.leadSource = null;
+      if (!payload.accountId) payload.accountId = null;
+
+      const res = await fetch(`/api/workspace/contacts/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setShowEdit(false);
+        loadData();
+      }
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   const handleQuickLog = async () => {
     if (!quickLog.title) return;
+    const payload: Record<string, unknown> = {
+      type: quickLog.type,
+      title: quickLog.title,
+      body: quickLog.body || undefined,
+      contactId: id,
+    };
+    if (quickLog.type === "TASK" && quickLog.dueAt) {
+      payload.dueAt = new Date(quickLog.dueAt).toISOString();
+    }
     await fetch("/api/workspace/activities", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...quickLog, contactId: id }),
+      body: JSON.stringify(payload),
     });
-    setQuickLog({ type: "NOTE", title: "", body: "" });
+    setQuickLog({ type: "NOTE", title: "", body: "", dueAt: "" });
     loadData();
   };
 
@@ -86,8 +186,13 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
         <Link href="/contacts">
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-semibold">{contact.firstName} {contact.lastName}</h1>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold">{contact.firstName} {contact.lastName}</h1>
+            <Button variant="ghost" size="icon" onClick={openEditDialog}>
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </div>
           <p className="text-sm text-muted-foreground">{contact.jobTitle ?? ""} {contact.account ? `at ${contact.account.name}` : ""}</p>
         </div>
       </div>
@@ -140,6 +245,7 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
             <TabsList>
               <TabsTrigger value="timeline">Timeline</TabsTrigger>
               <TabsTrigger value="opportunities">Opportunities ({contact.opportunities.length})</TabsTrigger>
+              <TabsTrigger value="tags">Tags</TabsTrigger>
             </TabsList>
 
             <TabsContent value="timeline">
@@ -163,6 +269,16 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                     placeholder="Activity title..."
                     className="mb-2"
                   />
+                  {quickLog.type === "TASK" && (
+                    <div className="mb-2">
+                      <Label className="text-xs text-muted-foreground">Due Date</Label>
+                      <Input
+                        type="datetime-local"
+                        value={quickLog.dueAt}
+                        onChange={(e) => setQuickLog({ ...quickLog, dueAt: e.target.value })}
+                      />
+                    </div>
+                  )}
                   <div className="flex gap-2">
                     <Textarea
                       value={quickLog.body}
@@ -184,7 +300,7 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                     <Card key={act.id}>
                       <CardContent className="pt-4">
                         <div className="flex items-start gap-2">
-                          <span>{activityIcons[act.type] ?? "📌"}</span>
+                          <span>{activityIcons[act.type] ?? "\u{1F4CC}"}</span>
                           <div className="flex-1">
                             <p className="font-medium text-sm">{act.title}</p>
                             {act.body && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{act.body}</p>}
@@ -226,9 +342,127 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                 )}
               </div>
             </TabsContent>
+
+            <TabsContent value="tags">
+              <div className="py-8 text-center text-sm text-muted-foreground">
+                Tags coming soon
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
       </div>
+
+      {/* Edit Contact Dialog */}
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Contact</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>First Name</Label>
+                <Input
+                  value={editForm.firstName}
+                  onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Last Name</Label>
+                <Input
+                  value={editForm.lastName}
+                  onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                value={editForm.email}
+                onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input
+                value={editForm.phone}
+                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Job Title</Label>
+                <Input
+                  value={editForm.jobTitle}
+                  onChange={(e) => setEditForm({ ...editForm, jobTitle: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Department</Label>
+                <Input
+                  value={editForm.department}
+                  onChange={(e) => setEditForm({ ...editForm, department: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Status</Label>
+              <Select
+                value={editForm.status}
+                onValueChange={(val) => setEditForm({ ...editForm, status: val })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CONTACT_STATUSES.map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Lead Source</Label>
+              <Input
+                value={editForm.leadSource}
+                onChange={(e) => setEditForm({ ...editForm, leadSource: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Account</Label>
+              <Select
+                value={editForm.accountId || "none"}
+                onValueChange={(val) => setEditForm({ ...editForm, accountId: val === "none" ? "" : val })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="No account" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No account</SelectItem>
+                  {accounts.map((a) => (
+                    <SelectItem key={a.id} value={a.id}>{a.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Notes</Label>
+              <Textarea
+                value={editForm.notes}
+                onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEdit(false)}>Cancel</Button>
+            <Button onClick={handleEditSave} disabled={editSaving}>
+              {editSaving ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -4,8 +4,25 @@ import { useEffect, useState, useCallback, use } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, Globe, MapPin, Building2, Users } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowLeft, Globe, MapPin, Building2, Pencil } from "lucide-react";
 import Link from "next/link";
 
 interface AccountDetail {
@@ -47,15 +64,33 @@ interface AccountDetail {
 }
 
 const activityIcons: Record<string, string> = {
-  NOTE: "📝", CALL: "📞", EMAIL: "✉️", MEETING: "🤝", TASK: "✅",
-  DEMO: "🖥️", PROPOSAL_SENT: "📄", CONTRACT_SENT: "📋",
-  STAGE_CHANGE: "↕️", SYSTEM: "⚙️",
+  NOTE: "\u{1F4DD}", CALL: "\u{1F4DE}", EMAIL: "\u2709\uFE0F", MEETING: "\u{1F91D}", TASK: "\u2705",
+  DEMO: "\u{1F5A5}\uFE0F", PROPOSAL_SENT: "\u{1F4C4}", CONTRACT_SENT: "\u{1F4CB}",
+  STAGE_CHANGE: "\u2195\uFE0F", SYSTEM: "\u2699\uFE0F",
 };
+
+const ACCOUNT_SIZES = ["MICRO", "SMALL", "MEDIUM", "LARGE", "ENTERPRISE"] as const;
 
 export default function AccountDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [account, setAccount] = useState<AccountDetail | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Edit dialog state
+  const [showEdit, setShowEdit] = useState(false);
+  const [editSaving, setEditSaving] = useState(false);
+  const [editForm, setEditForm] = useState({
+    name: "",
+    domain: "",
+    industry: "",
+    size: "",
+    website: "",
+    phone: "",
+    city: "",
+    country: "",
+    annualRevenue: "",
+    description: "",
+  });
 
   const loadData = useCallback(async () => {
     const res = await fetch(`/api/workspace/accounts/${id}`);
@@ -68,6 +103,53 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
     loadData();
   }, [loadData]);
 
+  const openEditDialog = () => {
+    if (!account) return;
+    setEditForm({
+      name: account.name,
+      domain: account.domain ?? "",
+      industry: account.industry ?? "",
+      size: account.size ?? "",
+      website: account.website ?? "",
+      phone: account.phone ?? "",
+      city: account.city ?? "",
+      country: account.country ?? "",
+      annualRevenue: account.annualRevenue != null ? String(account.annualRevenue) : "",
+      description: account.description ?? "",
+    });
+    setShowEdit(true);
+  };
+
+  const handleEditSave = async () => {
+    setEditSaving(true);
+    try {
+      const payload: Record<string, unknown> = {
+        name: editForm.name,
+        domain: editForm.domain || null,
+        industry: editForm.industry || null,
+        size: editForm.size || null,
+        website: editForm.website || null,
+        phone: editForm.phone || null,
+        city: editForm.city || null,
+        country: editForm.country || null,
+        annualRevenue: editForm.annualRevenue ? Number(editForm.annualRevenue) : null,
+        description: editForm.description || null,
+      };
+
+      const res = await fetch(`/api/workspace/accounts/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (res.ok) {
+        setShowEdit(false);
+        loadData();
+      }
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
   if (loading) return <div className="p-6 animate-pulse"><div className="h-8 w-48 bg-gray-200 rounded" /></div>;
   if (!account) return <div className="p-6"><p>Account not found.</p></div>;
 
@@ -77,10 +159,15 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
         <Link href="/accounts">
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
-        <div>
-          <h1 className="text-2xl font-semibold">{account.name}</h1>
+        <div className="flex-1">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-semibold">{account.name}</h1>
+            <Button variant="ghost" size="icon" onClick={openEditDialog}>
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </div>
           <p className="text-sm text-muted-foreground">
-            {[account.industry, account.city, account.country].filter(Boolean).join(" · ")}
+            {[account.industry, account.city, account.country].filter(Boolean).join(" \u00B7 ")}
           </p>
         </div>
       </div>
@@ -142,7 +229,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                           <Link href={`/contacts/${c.id}`} className="font-medium text-sm hover:underline">
                             {c.firstName} {c.lastName}
                           </Link>
-                          <p className="text-xs text-muted-foreground">{c.jobTitle ?? ""} {c.email ? `· ${c.email}` : ""}</p>
+                          <p className="text-xs text-muted-foreground">{c.jobTitle ?? ""} {c.email ? `\u00B7 ${c.email}` : ""}</p>
                         </div>
                         <Badge variant="secondary" className="text-xs">{c.status}</Badge>
                       </CardContent>
@@ -187,7 +274,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                   account.activities.map((act) => (
                     <Card key={act.id}>
                       <CardContent className="pt-4 flex items-start gap-2">
-                        <span>{activityIcons[act.type] ?? "📌"}</span>
+                        <span>{activityIcons[act.type] ?? "\u{1F4CC}"}</span>
                         <div>
                           <p className="font-medium text-sm">{act.title}</p>
                           <p className="text-xs text-muted-foreground">
@@ -203,6 +290,112 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
           </Tabs>
         </div>
       </div>
+
+      {/* Edit Account Dialog */}
+      <Dialog open={showEdit} onOpenChange={setShowEdit}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Account</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Name</Label>
+              <Input
+                value={editForm.name}
+                onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Domain</Label>
+                <Input
+                  value={editForm.domain}
+                  onChange={(e) => setEditForm({ ...editForm, domain: e.target.value })}
+                  placeholder="example.com"
+                />
+              </div>
+              <div>
+                <Label>Industry</Label>
+                <Input
+                  value={editForm.industry}
+                  onChange={(e) => setEditForm({ ...editForm, industry: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Size</Label>
+              <Select
+                value={editForm.size || "none"}
+                onValueChange={(val) => setEditForm({ ...editForm, size: val === "none" ? "" : val })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select size" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Not set</SelectItem>
+                  {ACCOUNT_SIZES.map((s) => (
+                    <SelectItem key={s} value={s}>{s}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Website</Label>
+              <Input
+                value={editForm.website}
+                onChange={(e) => setEditForm({ ...editForm, website: e.target.value })}
+                placeholder="https://example.com"
+              />
+            </div>
+            <div>
+              <Label>Phone</Label>
+              <Input
+                value={editForm.phone}
+                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>City</Label>
+                <Input
+                  value={editForm.city}
+                  onChange={(e) => setEditForm({ ...editForm, city: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Country</Label>
+                <Input
+                  value={editForm.country}
+                  onChange={(e) => setEditForm({ ...editForm, country: e.target.value })}
+                />
+              </div>
+            </div>
+            <div>
+              <Label>Annual Revenue</Label>
+              <Input
+                type="number"
+                value={editForm.annualRevenue}
+                onChange={(e) => setEditForm({ ...editForm, annualRevenue: e.target.value })}
+                placeholder="0"
+              />
+            </div>
+            <div>
+              <Label>Description</Label>
+              <Textarea
+                value={editForm.description}
+                onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEdit(false)}>Cancel</Button>
+            <Button onClick={handleEditSave} disabled={editSaving}>
+              {editSaving ? "Saving..." : "Save"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

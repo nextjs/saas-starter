@@ -57,3 +57,45 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ product }, { status: 201 });
 }
+
+const UpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1).optional(),
+  sku: z.string().optional().nullable(),
+  description: z.string().optional().nullable(),
+  category: z.string().optional().nullable(),
+  unitPrice: z.number().optional(),
+  currency: z.string().optional(),
+  isActive: z.boolean().optional(),
+});
+
+export async function PATCH(req: NextRequest) {
+  const ctx = await requireWorkspaceMember();
+  if ("error" in ctx) return ctx.error;
+  const { workspace, member } = ctx;
+
+  if (!["ADMIN", "OWNER"].includes(member.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const body = await req.json();
+  const parsed = UpdateSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 422 });
+
+  const { id, ...data } = parsed.data;
+
+  const existing = await prisma.product.findFirst({
+    where: { id, workspaceId: workspace.id },
+  });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  const product = await prisma.product.update({
+    where: { id },
+    data: {
+      ...data,
+      unitPrice: data.unitPrice !== undefined ? new Prisma.Decimal(data.unitPrice) : undefined,
+    },
+  });
+
+  return NextResponse.json({ product });
+}

@@ -5,12 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Plus, GripVertical } from "lucide-react";
 
@@ -128,6 +131,14 @@ export default function PipelineBoardPage() {
   const [newDeal, setNewDeal] = useState({ name: "", value: "" });
   const [draggedOpp, setDraggedOpp] = useState<Opportunity | null>(null);
 
+  // Lost reason dialog state
+  const [showLostReason, setShowLostReason] = useState(false);
+  const [lostReason, setLostReason] = useState("");
+  const [pendingLostMove, setPendingLostMove] = useState<{
+    oppId: string;
+    stageId: string;
+  } | null>(null);
+
   const loadData = useCallback(async () => {
     try {
       const [oppsRes, stagesRes] = await Promise.all([
@@ -161,26 +172,63 @@ export default function PipelineBoardPage() {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = async (e: React.DragEvent, stageId: string) => {
-    e.preventDefault();
-    if (!draggedOpp || draggedOpp.stageId === stageId) return;
-
+  const moveToStage = async (oppId: string, stageId: string, reason?: string) => {
     // Optimistic update
     setOpportunities((prev) =>
-      prev.map((o) => (o.id === draggedOpp.id ? { ...o, stageId } : o))
+      prev.map((o) => (o.id === oppId ? { ...o, stageId } : o))
     );
-    setDraggedOpp(null);
 
     try {
-      await fetch(`/api/workspace/opportunities/${draggedOpp.id}/stage`, {
-        method: "PATCH",
+      const body: Record<string, string> = { stageId };
+      if (reason) body.lostReason = reason;
+
+      await fetch(`/api/workspace/opportunities/${oppId}/stage`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stageId }),
+        body: JSON.stringify(body),
       });
       loadData();
     } catch {
       loadData(); // revert on error
     }
+  };
+
+  const handleDrop = async (e: React.DragEvent, stageId: string) => {
+    e.preventDefault();
+    if (!draggedOpp || draggedOpp.stageId === stageId) {
+      setDraggedOpp(null);
+      return;
+    }
+
+    const targetStage = stages.find((s) => s.id === stageId);
+
+    // If dropping onto a Lost stage, prompt for lost reason
+    if (targetStage?.isLost) {
+      setPendingLostMove({ oppId: draggedOpp.id, stageId });
+      setLostReason("");
+      setShowLostReason(true);
+      setDraggedOpp(null);
+      return;
+    }
+
+    const oppId = draggedOpp.id;
+    setDraggedOpp(null);
+    await moveToStage(oppId, stageId);
+  };
+
+  const handleLostReasonConfirm = async () => {
+    if (!pendingLostMove) return;
+    setShowLostReason(false);
+    await moveToStage(pendingLostMove.oppId, pendingLostMove.stageId, lostReason || undefined);
+    setPendingLostMove(null);
+    setLostReason("");
+  };
+
+  const handleLostReasonCancel = () => {
+    setShowLostReason(false);
+    setPendingLostMove(null);
+    setLostReason("");
+    // No optimistic update was applied for lost moves, so no revert needed
   };
 
   const [createError, setCreateError] = useState<string | null>(null);
@@ -191,12 +239,12 @@ export default function PipelineBoardPage() {
     try {
       const firstStage = stages.find((s) => !s.isWon && !s.isLost) ?? stages[0];
 
-      // We need a pipelineId — get it from stages
+      // We need a pipelineId -- get it from stages
       const stagesRes = await fetch("/api/workspace/pipeline/stages");
       const stagesData = await stagesRes.json();
       const pipelineId = stagesData.stages?.[0]?.pipeline?.id;
       if (!pipelineId) {
-        setCreateError("No pipeline found — run database seed first");
+        setCreateError("No pipeline found -- run database seed first");
         return;
       }
 
@@ -220,7 +268,7 @@ export default function PipelineBoardPage() {
       setNewDeal({ name: "", value: "" });
       loadData();
     } catch {
-      setCreateError("Network error — please try again");
+      setCreateError("Network error -- please try again");
     }
   };
 
@@ -261,6 +309,7 @@ export default function PipelineBoardPage() {
         ))}
       </div>
 
+      {/* Create Deal Dialog */}
       <Dialog open={showCreate} onOpenChange={(open) => { setShowCreate(open); if (!open) setCreateError(null); }}>
         <DialogContent>
           <DialogHeader>
@@ -289,6 +338,32 @@ export default function PipelineBoardPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreate(false)}>Cancel</Button>
             <Button onClick={handleCreateDeal}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Lost Reason Dialog */}
+      <Dialog open={showLostReason} onOpenChange={(open) => { if (!open) handleLostReasonCancel(); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Mark Deal as Lost</DialogTitle>
+            <DialogDescription>
+              Please provide a reason for losing this deal. This helps the team learn and improve.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Label>Lost Reason</Label>
+            <Textarea
+              value={lostReason}
+              onChange={(e) => setLostReason(e.target.value)}
+              placeholder="e.g. Budget constraints, went with competitor, project cancelled..."
+              rows={4}
+              className="mt-1"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleLostReasonCancel}>Cancel</Button>
+            <Button variant="destructive" onClick={handleLostReasonConfirm}>Confirm Lost</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
