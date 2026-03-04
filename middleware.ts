@@ -16,7 +16,8 @@ export default auth((req) => {
   // Subdomain extraction
   const isLocalhost =
     host.includes("localhost") || host.includes("127.0.0.1");
-  const subdomain = isLocalhost ? null : host.split(".")[0];
+  const isVercelPreview = host.endsWith(".vercel.app");
+  const subdomain = isLocalhost || isVercelPreview ? null : host.split(".")[0];
 
   // Public routes — always allow
   const isPublic =
