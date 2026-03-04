@@ -39,6 +39,7 @@ export async function GET(
         take: 20,
         include: { createdBy: { include: { user: true } } },
       },
+      tags: { include: { tag: true } },
     },
   });
 

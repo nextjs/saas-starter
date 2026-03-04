@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Mail, Phone, Briefcase, Building2, Pencil } from "lucide-react";
 import Link from "next/link";
+import { TagManager } from "@/components/tags/TagManager";
+import { MarkdownEditor, MarkdownPreview } from "@/components/ui/markdown-editor";
 
 interface Contact {
   id: string;
@@ -56,6 +58,7 @@ interface Contact {
     createdAt: string;
     createdBy: { user: { name: string | null } };
   }>;
+  tags: Array<{ tag: { id: string; name: string; color: string } }>;
 }
 
 interface AccountOption {
@@ -279,15 +282,14 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                       />
                     </div>
                   )}
-                  <div className="flex gap-2">
-                    <Textarea
-                      value={quickLog.body}
-                      onChange={(e) => setQuickLog({ ...quickLog, body: e.target.value })}
-                      placeholder="Details (optional, supports Markdown)"
-                      className="flex-1"
-                      rows={2}
-                    />
-                    <Button onClick={handleQuickLog} className="self-end">Log</Button>
+                  <MarkdownEditor
+                    value={quickLog.body}
+                    onChange={(val) => setQuickLog({ ...quickLog, body: val })}
+                    placeholder="Details (optional, supports Markdown)"
+                    height={100}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button onClick={handleQuickLog}>Log</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -303,7 +305,7 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
                           <span>{activityIcons[act.type] ?? "\u{1F4CC}"}</span>
                           <div className="flex-1">
                             <p className="font-medium text-sm">{act.title}</p>
-                            {act.body && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{act.body}</p>}
+                            {act.body && <MarkdownPreview source={act.body} className="text-sm text-muted-foreground mt-1" />}
                             <p className="text-xs text-muted-foreground mt-1">
                               {act.createdBy.user.name} &middot; {new Date(act.createdAt).toLocaleString()}
                             </p>
@@ -344,9 +346,16 @@ export default function ContactDetailPage({ params }: { params: Promise<{ id: st
             </TabsContent>
 
             <TabsContent value="tags">
-              <div className="py-8 text-center text-sm text-muted-foreground">
-                Tags coming soon
-              </div>
+              <Card>
+                <CardContent className="pt-4">
+                  <TagManager
+                    entityId={id}
+                    entityType="CONTACT"
+                    assignedTags={contact.tags ?? []}
+                    onUpdate={loadData}
+                  />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>

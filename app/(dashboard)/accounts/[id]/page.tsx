@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { ArrowLeft, Globe, MapPin, Building2, Pencil, Plus, X } from "lucide-react";
 import Link from "next/link";
+import { TagManager } from "@/components/tags/TagManager";
 
 interface AccountDetail {
   id: string;
@@ -61,6 +62,7 @@ interface AccountDetail {
     createdAt: string;
     createdBy: { user: { name: string | null } };
   }>;
+  tags: Array<{ tag: { id: string; name: string; color: string } }>;
 }
 
 const activityIcons: Record<string, string> = {
@@ -245,6 +247,15 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
                 <p className="whitespace-pre-wrap">{account.description}</p>
               </div>
             )}
+            <div className="pt-2 border-t">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Tags</p>
+              <TagManager
+                entityId={id}
+                entityType="CRM_ACCOUNT"
+                assignedTags={account.tags ?? []}
+                onUpdate={loadData}
+              />
+            </div>
           </CardContent>
         </Card>
 

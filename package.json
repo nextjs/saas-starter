@@ -22,6 +22,7 @@
     "@types/node": "^22.15.18",
     "@types/react": "19.1.4",
     "@types/react-dom": "19.1.5",
+    "@uiw/react-md-editor": "^4.0.11",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -35,6 +36,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "recharts": "^3.7.0",
+    "resend": "^6.9.3",
     "server-only": "^0.0.1",
     "stripe": "^18.1.0",
     "swr": "^2.3.3",
@@ -42,7 +44,8 @@
     "tailwindcss": "4.1.7",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5.8.3",
-    "zod": "^3.24.4"
+    "zod": "^3.24.4",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "prisma": "^6.5.0",

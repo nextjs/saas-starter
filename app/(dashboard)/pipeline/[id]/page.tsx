@@ -34,6 +34,8 @@ import {
   X,
 } from "lucide-react";
 import Link from "next/link";
+import { TagManager } from "@/components/tags/TagManager";
+import { MarkdownEditor, MarkdownPreview } from "@/components/ui/markdown-editor";
 
 interface Opportunity {
   id: string;
@@ -89,6 +91,7 @@ interface Opportunity {
     movedAt: string;
     toStage: { name: string; color: string };
   }>;
+  tags: Array<{ tag: { id: string; name: string; color: string } }>;
 }
 
 interface AccountOption { id: string; name: string }
@@ -427,6 +430,15 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
                 <p className="text-sm">{opportunity.lostReason}</p>
               </div>
             )}
+            <div className="pt-2 border-t">
+              <p className="text-xs font-medium text-muted-foreground mb-2">Tags</p>
+              <TagManager
+                entityId={id}
+                entityType="OPPORTUNITY"
+                assignedTags={opportunity.tags ?? []}
+                onUpdate={loadData}
+              />
+            </div>
           </CardContent>
         </Card>
 
@@ -553,15 +565,14 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
                     placeholder="Activity title..."
                     className="mb-2"
                   />
-                  <div className="flex gap-2">
-                    <Textarea
-                      value={quickLog.body}
-                      onChange={(e) => setQuickLog({ ...quickLog, body: e.target.value })}
-                      placeholder="Details (optional)"
-                      className="flex-1"
-                      rows={2}
-                    />
-                    <Button onClick={handleQuickLog} className="self-end">Log</Button>
+                  <MarkdownEditor
+                    value={quickLog.body}
+                    onChange={(val) => setQuickLog({ ...quickLog, body: val })}
+                    placeholder="Details (optional, supports Markdown)"
+                    height={100}
+                  />
+                  <div className="flex justify-end mt-2">
+                    <Button onClick={handleQuickLog}>Log</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -576,7 +587,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
                           <span>{activityIcons[act.type] ?? "\u{1F4CC}"}</span>
                           <div className="flex-1">
                             <p className="font-medium text-sm">{act.title}</p>
-                            {act.body && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{act.body}</p>}
+                            {act.body && <MarkdownPreview source={act.body} className="text-sm text-muted-foreground mt-1" />}
                             <p className="text-xs text-muted-foreground mt-1">{act.createdBy.user.name} &middot; {formatDateTime(act.createdAt)}</p>
                           </div>
                         </div>

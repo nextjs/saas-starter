@@ -45,6 +45,7 @@ export async function GET(
         orderBy: { movedAt: "desc" },
         include: { toStage: true },
       },
+      tags: { include: { tag: true } },
     },
   });
 
