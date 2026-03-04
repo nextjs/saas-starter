@@ -1,17 +1,22 @@
 // Auth.js v5 configuration — Microsoft Entra ID only
 // See spec §5.6
+//
+// This is the FULL config (Node.js runtime only).
+// Middleware uses the edge-safe auth.config.ts instead.
 
 import NextAuth from "next-auth";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
+import { authConfig } from "@/auth.config";
 
 const isDev =
   process.env.NODE_ENV === "development" ||
   process.env.VERCEL_ENV === "preview";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
 
   providers: [
@@ -59,12 +64,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       : []),
   ],
 
-  session: {
-    // Credentials provider requires JWT strategy
-    strategy: isDev ? "jwt" : "database",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
-  },
-
   callbacks: {
     async jwt({ token, user }) {
       if (user) token.sub = user.id;
@@ -76,28 +75,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (!userId) return session;
       session.user.id = userId;
 
-      const memberships = await prisma.workspaceMember.findMany({
-        where: { userId },
-        include: {
-          workspace: {
-            select: {
-              id: true,
-              slug: true,
-              subdomain: true,
-              plan: true,
-            },
-          },
-        },
-      });
-
-      session.user.workspaces = memberships.map((m) => ({
-        id: m.workspace.id,
-        slug: m.workspace.slug,
-        subdomain: m.workspace.subdomain,
-        plan: m.workspace.plan,
-        role: m.role,
-        memberId: m.id,
-      }));
+      // Workspace memberships are loaded separately via getSessionWithWorkspaces()
+      // to avoid Prisma queries in edge runtime (middleware).
+      session.user.workspaces = [];
 
       return session;
     },
@@ -146,11 +126,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
       }
     },
-  },
-
-  pages: {
-    signIn: "/login",
-    error: "/error",
   },
 });
 
