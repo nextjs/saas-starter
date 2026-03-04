@@ -42,8 +42,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 process.env.DEV_ADMIN_PASSWORD ?? "admin";
               if (credentials.password !== devPassword) return null;
 
-              const user = await prisma.user.findUnique({
+              // Upsert so dev login works even before seed runs
+              const user = await prisma.user.upsert({
                 where: { email: credentials.email as string },
+                update: {},
+                create: {
+                  name: "Dev User",
+                  email: credentials.email as string,
+                  emailVerified: new Date(),
+                },
               });
               return user;
             },
