@@ -65,19 +65,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
 
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) token.sub = user.id;
-      return token;
-    },
+    ...authConfig.callbacks,
     async session({ session, user, token }) {
-      // database sessions pass `user`, JWT sessions pass `token`
-      const userId = user?.id ?? token?.sub;
-      if (!userId) return session;
-      session.user.id = userId;
+      // Inherit base callback (sets session.user.id)
+      const base = authConfig.callbacks?.session;
+      if (base) session = await base({ session, user, token } as Parameters<typeof base>[0]);
 
-      // Workspace memberships are loaded separately via getSessionWithWorkspaces()
-      // to avoid Prisma queries in edge runtime (middleware).
-      session.user.workspaces = [];
+      // Initialize workspaces — loaded on demand via getSessionWithWorkspaces()
+      session.user.workspaces = session.user.workspaces ?? [];
 
       return session;
     },

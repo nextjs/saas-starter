@@ -11,7 +11,7 @@ export default async function LoginPage(props: {
   const session = await auth();
   const searchParams = await props.searchParams;
 
-  if (session?.user) redirect(searchParams.callbackUrl ?? "/");
+  if (session?.user) redirect(searchParams.callbackUrl ?? "/dashboard");
 
   const error = searchParams.error;
 
@@ -54,7 +54,7 @@ export default async function LoginPage(props: {
           action={async () => {
             "use server";
             await signIn("microsoft-entra-id", {
-              redirectTo: searchParams.callbackUrl ?? "/",
+              redirectTo: searchParams.callbackUrl ?? "/dashboard",
             });
           }}
         >
@@ -86,7 +86,7 @@ export default async function LoginPage(props: {
                 await signIn("credentials", {
                   email: formData.get("email") as string,
                   password: formData.get("password") as string,
-                  redirectTo: searchParams.callbackUrl ?? "/",
+                  redirectTo: searchParams.callbackUrl ?? "/dashboard",
                 });
               }}
               className="flex flex-col gap-3"

@@ -19,6 +19,19 @@ export const authConfig = {
     error: "/error",
   },
 
+  callbacks: {
+    // These callbacks run in edge (middleware) — no Prisma allowed.
+    jwt({ token, user }) {
+      if (user) token.sub = user.id;
+      return token;
+    },
+    session({ session, user, token }) {
+      const userId = user?.id ?? token?.sub;
+      if (userId) session.user.id = userId;
+      return session;
+    },
+  },
+
   // Providers are added in auth.ts — empty here so middleware
   // doesn't pull in Prisma or other Node.js-only dependencies.
   providers: [],

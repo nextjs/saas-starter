@@ -11,17 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
+import { signOutAction } from "@/app/(dashboard)/actions";
 
 function UserMenu() {
-  const router = useRouter();
-
-  async function handleSignOut() {
-    await fetch("/api/auth/signout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
-  }
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -36,12 +28,13 @@ function UserMenu() {
             <span>Dashboard</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="w-full flex-1 cursor-pointer"
-          onClick={handleSignOut}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          <span>Sign out</span>
+        <DropdownMenuItem asChild>
+          <form action={signOutAction}>
+            <button type="submit" className="flex w-full items-center cursor-pointer">
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Sign out</span>
+            </button>
+          </form>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
