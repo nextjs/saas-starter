@@ -70,7 +70,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = userId;
 
       const memberships = await prisma.workspaceMember.findMany({
-        where: { userId: user.id },
+        where: { userId },
         include: {
           workspace: {
             select: {

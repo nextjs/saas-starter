@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "prisma db push && npx tsx prisma/seed.ts && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
