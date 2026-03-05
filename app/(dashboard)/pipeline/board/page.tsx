@@ -157,6 +157,7 @@ export default function PipelineBoardPage() {
     oppId: string;
     stageId: string;
     stageName: string;
+    canOverride: boolean;
     unmet: Array<{ type: string; label: string; met: boolean }>;
     all: Array<{ type: string; label: string; met: boolean }>;
   } | null>(null);
@@ -226,6 +227,7 @@ export default function PipelineBoardPage() {
           oppId,
           stageId,
           stageName: targetStage?.name ?? "this stage",
+          canOverride: data.canOverride ?? false,
           unmet: data.unmetRequirements ?? [],
           all: data.allRequirements ?? [],
         });
@@ -475,7 +477,9 @@ export default function PipelineBoardPage() {
             </DialogTitle>
             <DialogDescription>
               To move this deal to &ldquo;{reqInfo?.stageName}&rdquo;, the following requirements must be satisfied.
-              You can request manager/admin approval to proceed anyway.
+              {reqInfo?.canOverride
+                ? " As an admin, you can override and proceed anyway."
+                : " You can request manager/admin approval to proceed."}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4 space-y-2">
@@ -509,7 +513,9 @@ export default function PipelineBoardPage() {
                 setRequestingApproval(false);
               }}
             >
-              {requestingApproval ? "Requesting..." : "Request Approval"}
+              {requestingApproval
+                ? (reqInfo?.canOverride ? "Proceeding..." : "Requesting...")
+                : (reqInfo?.canOverride ? "Proceed Anyway" : "Request Approval")}
             </Button>
           </DialogFooter>
         </DialogContent>

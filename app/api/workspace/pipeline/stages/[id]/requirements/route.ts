@@ -11,8 +11,9 @@ const CreateSchema = z.object({
 
 const UpdateSchema = z.object({
   id: z.string(),
+  type: z.enum(["DOCUMENT", "CUSTOM_FIELD", "PRODUCT", "QUOTE"]).optional(),
   label: z.string().min(1).optional(),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.unknown()).optional().nullable(),
   isActive: z.boolean().optional(),
   position: z.number().optional(),
 });

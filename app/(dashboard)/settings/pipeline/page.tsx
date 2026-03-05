@@ -11,7 +11,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { GripVertical, Plus, Trash2, ShieldCheck, X } from "lucide-react";
+import { GripVertical, Plus, Trash2, ShieldCheck, X, Pencil } from "lucide-react";
 
 interface Requirement {
   id: string;
@@ -36,15 +36,41 @@ interface Stage {
   _count: { opportunities: number };
 }
 
+interface CustomField {
+  id: string;
+  name: string;
+  key: string;
+  entity: string;
+  type: string;
+}
+
 const REQUIREMENT_TYPES = [
-  { value: "DOCUMENT", label: "Document linked", description: "Requires at least one document (e.g. proposal from SharePoint)" },
+  { value: "DOCUMENT", label: "Document linked", description: "Requires a document to be linked (e.g. proposal from SharePoint)" },
   { value: "CUSTOM_FIELD", label: "Custom field filled", description: "Requires a specific custom field to have a value" },
   { value: "PRODUCT", label: "Product attached", description: "Requires at least one product on the opportunity" },
   { value: "QUOTE", label: "Xero quote created", description: "Requires a Xero quote to be linked" },
 ];
 
+const FILE_TYPE_OPTIONS = [
+  { value: "", label: "Any file type" },
+  { value: "docx", label: "Word (.docx)" },
+  { value: "pptx", label: "PowerPoint (.pptx)" },
+  { value: "pdf", label: "PDF (.pdf)" },
+  { value: "xlsx", label: "Excel (.xlsx)" },
+];
+
+interface ReqForm {
+  type: string;
+  label: string;
+  fieldId: string;
+  fileType: string;
+}
+
+const defaultReqForm: ReqForm = { type: "DOCUMENT", label: "", fieldId: "", fileType: "" };
+
 export default function PipelineSettingsPage() {
   const [stages, setStages] = useState<Stage[]>([]);
+  const [customFields, setCustomFields] = useState<CustomField[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
@@ -57,13 +83,19 @@ export default function PipelineSettingsPage() {
 
   // Requirements config state
   const [reqStageId, setReqStageId] = useState<string | null>(null);
-  const [showAddReq, setShowAddReq] = useState(false);
-  const [newReq, setNewReq] = useState({ type: "DOCUMENT", label: "" });
+  const [showReqDialog, setShowReqDialog] = useState(false);
+  const [editingReqId, setEditingReqId] = useState<string | null>(null); // null = creating new
+  const [reqForm, setReqForm] = useState<ReqForm>(defaultReqForm);
 
   const loadData = useCallback(async () => {
-    const res = await fetch("/api/workspace/pipeline/stages");
-    const data = await res.json();
-    setStages((data.stages ?? []).sort((a: Stage, b: Stage) => a.position - b.position));
+    const [stagesRes, fieldsRes] = await Promise.all([
+      fetch("/api/workspace/pipeline/stages"),
+      fetch("/api/workspace/custom-fields"),
+    ]);
+    const stagesData = await stagesRes.json();
+    const fieldsData = await fieldsRes.json();
+    setStages((stagesData.stages ?? []).sort((a: Stage, b: Stage) => a.position - b.position));
+    setCustomFields((fieldsData.fields ?? []).filter((f: CustomField) => f.entity === "OPPORTUNITY"));
     setLoading(false);
   }, []);
 
@@ -126,18 +158,66 @@ export default function PipelineSettingsPage() {
     }
   };
 
-  const handleAddRequirement = async () => {
-    if (!reqStageId || !newReq.label) return;
-    await fetch(`/api/workspace/pipeline/stages/${reqStageId}/requirements`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: newReq.type,
-        label: newReq.label,
-      }),
+  function buildConfig(form: ReqForm): Record<string, unknown> | undefined {
+    if (form.type === "CUSTOM_FIELD" && form.fieldId) {
+      return { fieldId: form.fieldId };
+    }
+    if (form.type === "DOCUMENT" && form.fileType && form.fileType !== "__any") {
+      return { fileTypes: [form.fileType] };
+    }
+    return undefined;
+  }
+
+  const openAddReq = () => {
+    setEditingReqId(null);
+    setReqForm(defaultReqForm);
+    setShowReqDialog(true);
+  };
+
+  const openEditReq = (req: Requirement) => {
+    setEditingReqId(req.id);
+    const config = req.config ?? {};
+    const fileTypes = config.fileTypes as string[] | undefined;
+    setReqForm({
+      type: req.type,
+      label: req.label,
+      fieldId: (config.fieldId as string) ?? "",
+      fileType: fileTypes?.[0] ?? "",
     });
-    setShowAddReq(false);
-    setNewReq({ type: "DOCUMENT", label: "" });
+    setShowReqDialog(true);
+  };
+
+  const handleSaveRequirement = async () => {
+    if (!reqStageId || !reqForm.label) return;
+    const config = buildConfig(reqForm);
+
+    if (editingReqId) {
+      // Update existing
+      await fetch(`/api/workspace/pipeline/stages/${reqStageId}/requirements`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingReqId,
+          type: reqForm.type,
+          label: reqForm.label,
+          ...(config && { config }),
+        }),
+      });
+    } else {
+      // Create new
+      await fetch(`/api/workspace/pipeline/stages/${reqStageId}/requirements`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: reqForm.type,
+          label: reqForm.label,
+          ...(config && { config }),
+        }),
+      });
+    }
+    setShowReqDialog(false);
+    setReqForm(defaultReqForm);
+    setEditingReqId(null);
     loadData();
   };
 
@@ -147,6 +227,10 @@ export default function PipelineSettingsPage() {
     });
     loadData();
   };
+
+  // Validation: CUSTOM_FIELD requires a field selected
+  const reqFormValid = reqForm.label.trim().length > 0 &&
+    (reqForm.type !== "CUSTOM_FIELD" || reqForm.fieldId.length > 0);
 
   return (
     <div className="p-6 space-y-6">
@@ -255,14 +339,7 @@ export default function PipelineSettingsPage() {
                         <h4 className="text-sm font-medium text-muted-foreground">
                           Requirements to enter &ldquo;{stage.name}&rdquo;
                         </h4>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setShowAddReq(true);
-                            setNewReq({ type: "DOCUMENT", label: "" });
-                          }}
-                        >
+                        <Button variant="outline" size="sm" onClick={openAddReq}>
                           <Plus className="h-3 w-3 mr-1" /> Add Requirement
                         </Button>
                       </div>
@@ -270,28 +347,53 @@ export default function PipelineSettingsPage() {
                         <p className="text-xs text-muted-foreground">No requirements — any member can move deals to this stage.</p>
                       ) : (
                         <div className="space-y-1">
-                          {stage.requirements.map((req) => (
-                            <div key={req.id} className="flex items-center justify-between bg-white rounded border px-3 py-2">
-                              <div className="flex items-center gap-2">
-                                <Badge variant="outline" className="text-xs font-mono">
-                                  {req.type}
-                                </Badge>
-                                <span className="text-sm">{req.label}</span>
+                          {stage.requirements.map((req) => {
+                            const config = req.config ?? {};
+                            const detail = req.type === "CUSTOM_FIELD"
+                              ? customFields.find((f) => f.id === (config.fieldId as string))?.name
+                              : req.type === "DOCUMENT" && (config.fileTypes as string[])?.length
+                                ? (config.fileTypes as string[]).join(", ").toUpperCase()
+                                : null;
+
+                            return (
+                              <div key={req.id} className="flex items-center justify-between bg-white rounded border px-3 py-2">
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline" className="text-xs font-mono">
+                                    {req.type}
+                                  </Badge>
+                                  <span className="text-sm">{req.label}</span>
+                                  {detail && (
+                                    <span className="text-xs text-muted-foreground">({detail})</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() => openEditReq(req)}
+                                    title="Edit requirement"
+                                  >
+                                    <Pencil className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() => handleDeleteRequirement(stage.id, req.id)}
+                                    title="Delete requirement"
+                                  >
+                                    <X className="h-3 w-3" />
+                                  </Button>
+                                </div>
                               </div>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-7 w-7"
-                                onClick={() => handleDeleteRequirement(stage.id, req.id)}
-                              >
-                                <X className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       )}
                       <p className="text-xs text-muted-foreground mt-2">
                         If requirements are not met, members must request manager/admin approval to advance.
+                        Admins/owners see a warning but can override.
                       </p>
                     </div>
                   )}
@@ -371,20 +473,23 @@ export default function PipelineSettingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Add Requirement Dialog */}
-      <Dialog open={showAddReq} onOpenChange={setShowAddReq}>
+      {/* Add/Edit Requirement Dialog */}
+      <Dialog open={showReqDialog} onOpenChange={(open) => { if (!open) { setShowReqDialog(false); setEditingReqId(null); } }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Stage Requirement</DialogTitle>
+            <DialogTitle>{editingReqId ? "Edit Requirement" : "Add Stage Requirement"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div>
               <label className="text-sm font-medium">Requirement Type</label>
-              <Select value={newReq.type} onValueChange={(v) => {
+              <Select value={reqForm.type} onValueChange={(v) => {
                 const typeInfo = REQUIREMENT_TYPES.find((t) => t.value === v);
-                setNewReq({
+                setReqForm({
+                  ...reqForm,
                   type: v,
-                  label: newReq.label || typeInfo?.description || "",
+                  label: reqForm.label || typeInfo?.description || "",
+                  fieldId: "",
+                  fileType: "",
                 });
               }}>
                 <SelectTrigger>
@@ -399,24 +504,74 @@ export default function PipelineSettingsPage() {
                 </SelectContent>
               </Select>
               <p className="text-xs text-muted-foreground mt-1">
-                {REQUIREMENT_TYPES.find((t) => t.value === newReq.type)?.description}
+                {REQUIREMENT_TYPES.find((t) => t.value === reqForm.type)?.description}
               </p>
             </div>
+
+            {/* DOCUMENT — file type filter */}
+            {reqForm.type === "DOCUMENT" && (
+              <div>
+                <label className="text-sm font-medium">Required File Type</label>
+                <Select value={reqForm.fileType} onValueChange={(v) => setReqForm({ ...reqForm, fileType: v })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Any file type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FILE_TYPE_OPTIONS.map((ft) => (
+                      <SelectItem key={ft.value || "__any"} value={ft.value || "__any"}>
+                        {ft.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Optionally restrict to a specific file type. &ldquo;Any&rdquo; accepts any linked document.
+                </p>
+              </div>
+            )}
+
+            {/* CUSTOM_FIELD — field selector */}
+            {reqForm.type === "CUSTOM_FIELD" && (
+              <div>
+                <label className="text-sm font-medium">Custom Field</label>
+                {customFields.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-2 border rounded bg-amber-50">
+                    No opportunity custom fields found. Create one in Settings &gt; Custom Fields first.
+                  </p>
+                ) : (
+                  <Select value={reqForm.fieldId} onValueChange={(v) => setReqForm({ ...reqForm, fieldId: v })}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a custom field" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {customFields.map((f) => (
+                        <SelectItem key={f.id} value={f.id}>
+                          {f.name} ({f.type})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <p className="text-xs text-muted-foreground mt-1">
+                  The selected field must have a non-empty value on the opportunity.
+                </p>
+              </div>
+            )}
+
             <div>
-              <label className="text-sm font-medium">Requirement Description</label>
+              <label className="text-sm font-medium">Description (shown to users)</label>
               <Input
-                value={newReq.label}
-                onChange={(e) => setNewReq({ ...newReq, label: e.target.value })}
+                value={reqForm.label}
+                onChange={(e) => setReqForm({ ...reqForm, label: e.target.value })}
                 placeholder="e.g. Proposal document must be attached from SharePoint"
               />
-              <p className="text-xs text-muted-foreground mt-1">
-                This message is shown to the user when the requirement is not met.
-              </p>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddReq(false)}>Cancel</Button>
-            <Button onClick={handleAddRequirement} disabled={!newReq.label}>Add Requirement</Button>
+            <Button variant="outline" onClick={() => { setShowReqDialog(false); setEditingReqId(null); }}>Cancel</Button>
+            <Button onClick={handleSaveRequirement} disabled={!reqFormValid}>
+              {editingReqId ? "Save Changes" : "Add Requirement"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

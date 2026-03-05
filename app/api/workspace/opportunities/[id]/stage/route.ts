@@ -46,57 +46,60 @@ export async function PATCH(
   const checks = await checkStageRequirements(id, newStage.id);
   const unmet = checks.filter((c) => !c.met);
 
-  if (unmet.length > 0) {
-    // Admins and Owners can bypass requirements
-    const canBypass = ["ADMIN", "OWNER"].includes(member.role);
+  if (unmet.length > 0 && !parsed.data.forceWithApproval) {
+    // Always show unmet requirements on first attempt for all roles
+    const canOverride = ["ADMIN", "OWNER", "MANAGER"].includes(member.role);
 
-    if (!canBypass) {
-      if (parsed.data.forceWithApproval) {
-        // Create an approval request
-        const existing = await prisma.stageApproval.findFirst({
-          where: {
-            opportunityId: id,
-            targetStageId: newStage.id,
-            status: "PENDING",
-          },
-        });
+    return NextResponse.json({
+      blocked: true,
+      canOverride,
+      unmetRequirements: unmet,
+      allRequirements: checks,
+      message: "Cannot advance to this stage — requirements not met.",
+    }, { status: 422 });
+  }
 
-        if (existing) {
-          return NextResponse.json({
-            requiresApproval: true,
-            approvalId: existing.id,
-            unmetRequirements: unmet,
-            message: "An approval request is already pending for this stage move.",
-          }, { status: 202 });
-        }
+  if (unmet.length > 0 && parsed.data.forceWithApproval) {
+    const canOverride = ["ADMIN", "OWNER", "MANAGER"].includes(member.role);
 
-        const approval = await prisma.stageApproval.create({
-          data: {
-            workspaceId: workspace.id,
-            opportunityId: id,
-            targetStageId: newStage.id,
-            requestedById: member.id,
-            unmetRequirements: JSON.parse(JSON.stringify(unmet)),
-          },
-        });
+    if (canOverride) {
+      // Admin/Owner/Manager: proceed with override (falls through to stage move below)
+    } else {
+      // Member: create an approval request
+      const existing = await prisma.stageApproval.findFirst({
+        where: {
+          opportunityId: id,
+          targetStageId: newStage.id,
+          status: "PENDING",
+        },
+      });
 
+      if (existing) {
         return NextResponse.json({
           requiresApproval: true,
-          approvalId: approval.id,
+          approvalId: existing.id,
           unmetRequirements: unmet,
-          message: "Stage move requires approval. A request has been submitted to your manager or admin.",
+          message: "An approval request is already pending for this stage move.",
         }, { status: 202 });
       }
 
-      // Return unmet requirements so UI can show them
+      const approval = await prisma.stageApproval.create({
+        data: {
+          workspaceId: workspace.id,
+          opportunityId: id,
+          targetStageId: newStage.id,
+          requestedById: member.id,
+          unmetRequirements: JSON.parse(JSON.stringify(unmet)),
+        },
+      });
+
       return NextResponse.json({
-        blocked: true,
+        requiresApproval: true,
+        approvalId: approval.id,
         unmetRequirements: unmet,
-        allRequirements: checks,
-        message: "Cannot advance to this stage — requirements not met.",
-      }, { status: 422 });
+        message: "Stage move requires approval. A request has been submitted to your manager or admin.",
+      }, { status: 202 });
     }
-    // Admin/Owner: proceed despite unmet requirements (they are the approvers)
   }
 
   // ─── Proceed with stage move ──────────────────────────────────────────
