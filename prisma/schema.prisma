@@ -475,9 +475,18 @@ model Product {
   currency    String   @default("USD")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Xero sync fields — null means locally created
+  xeroItemId   String?
+  xeroItemCode String?
+  source       String   @default("local") // "local" | "xero"
+  lastSyncedAt DateTime?
 
   workspace     Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   opportunities ProductOnOpportunity[]
+
+  @@unique([workspaceId, xeroItemId])
 }
 
 model ProductOnOpportunity {

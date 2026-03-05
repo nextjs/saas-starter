@@ -76,7 +76,7 @@ export async function POST(
         take: 1,
       },
       products: {
-        include: { product: { select: { name: true, unitPrice: true } } },
+        include: { product: { select: { name: true, unitPrice: true, xeroItemCode: true } } },
       },
     },
   });
@@ -126,20 +126,43 @@ export async function POST(
     });
   }
 
-  // Build line items from products, or a single line item from deal value
-  const lineItems = opp.products.length > 0
-    ? opp.products.map((po) => ({
-        description: po.product.name,
-        quantity: po.quantity ?? 1,
-        unitAmount: Number(po.product.unitPrice ?? opp.value),
-      }))
-    : [
-        {
-          description: opp.name,
-          quantity: 1,
-          unitAmount: Number(opp.value),
-        },
-      ];
+  // Parse optional custom line items from request body
+  let customLineItems: Array<{ description: string; quantity: number; unitAmount: number }> = [];
+  try {
+    const body = await _req.json();
+    if (Array.isArray(body?.customLineItems)) {
+      customLineItems = body.customLineItems;
+    }
+  } catch {
+    // No body or invalid JSON — that's fine
+  }
+
+  // Build line items: synced products use Xero ItemCode, local products use description
+  const productLineItems = opp.products.map((po) => ({
+    description: po.product.name,
+    quantity: po.quantity ?? 1,
+    unitAmount: Number(po.product.unitPrice ?? opp.value),
+    itemCode: po.product.xeroItemCode ?? undefined,
+  }));
+
+  // Merge product line items + any custom ad-hoc line items
+  const lineItems = [
+    ...productLineItems,
+    ...customLineItems.map((li) => ({
+      description: li.description,
+      quantity: li.quantity,
+      unitAmount: li.unitAmount,
+    })),
+  ];
+
+  // Fallback: if no line items at all, create one from the deal value
+  if (lineItems.length === 0) {
+    lineItems.push({
+      description: opp.name,
+      quantity: 1,
+      unitAmount: Number(opp.value),
+    });
+  }
 
   // Create the quote
   const quote = await createXeroQuote(token.accessToken, token.tenantId, {

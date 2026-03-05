@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { exchangeXeroCode, getXeroTenants } from "@/lib/integrations/xero";
+import { exchangeXeroCode, getXeroTenants, syncXeroProducts } from "@/lib/integrations/xero";
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
@@ -48,6 +48,14 @@ export async function GET(req: NextRequest) {
       expiresAt: new Date(Date.now() + tokens.expiresIn * 1000),
     },
   });
+
+  // Sync products from Xero on initial connect
+  try {
+    const result = await syncXeroProducts(state, tokens.accessToken, tenant.tenantId);
+    console.log(`[xero] Initial product sync: ${result.created} created, ${result.updated} updated`);
+  } catch (err) {
+    console.error("[xero] Initial product sync failed:", err);
+  }
 
   const baseUrl = process.env.BASE_URL ?? process.env.NEXTAUTH_URL ?? "";
   return NextResponse.redirect(`${baseUrl}/settings/integrations?xero=connected`);

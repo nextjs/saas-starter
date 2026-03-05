@@ -89,12 +89,20 @@ export async function PATCH(req: NextRequest) {
   });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Xero-synced products: only allow isActive and category changes locally
+  const updateData = existing.source === "xero"
+    ? {
+        isActive: data.isActive,
+        category: data.category,
+      }
+    : {
+        ...data,
+        unitPrice: data.unitPrice !== undefined ? new Prisma.Decimal(data.unitPrice) : undefined,
+      };
+
   const product = await prisma.product.update({
     where: { id },
-    data: {
-      ...data,
-      unitPrice: data.unitPrice !== undefined ? new Prisma.Decimal(data.unitPrice) : undefined,
-    },
+    data: updateData,
   });
 
   return NextResponse.json({ product });

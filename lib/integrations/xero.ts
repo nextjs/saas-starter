@@ -236,6 +236,7 @@ export async function createXeroQuote(
       quantity: number;
       unitAmount: number;
       accountCode?: string;
+      itemCode?: string;
     }>;
     expiryDate?: string; // YYYY-MM-DD
   }
@@ -265,6 +266,7 @@ export async function createXeroQuote(
               Quantity: li.quantity,
               UnitAmount: li.unitAmount,
               ...(li.accountCode && { AccountCode: li.accountCode }),
+              ...(li.itemCode && { ItemCode: li.itemCode }),
             })),
             ...(params.expiryDate && { ExpiryDate: params.expiryDate }),
           },
@@ -322,4 +324,109 @@ export async function getXeroQuoteStatus(
   } catch {
     return null;
   }
+}
+
+// ─── Items / Products ────────────────────────────────────────────────────
+
+export interface XeroItem {
+  ItemID: string;
+  Code: string;
+  Name: string;
+  Description?: string;
+  IsSold: boolean;
+  IsPurchased: boolean;
+  SalesDetails?: {
+    UnitPrice?: number;
+    AccountCode?: string;
+  };
+}
+
+/**
+ * Fetch all items (products) from Xero.
+ */
+export async function fetchXeroItems(
+  accessToken: string,
+  tenantId: string
+): Promise<XeroItem[]> {
+  try {
+    const res = await fetch(`${XERO_API_URL}/Items`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Xero-Tenant-Id": tenantId,
+        Accept: "application/json",
+      },
+    });
+    if (!res.ok) {
+      console.error("Xero fetch items failed:", res.status);
+      return [];
+    }
+    const data = await res.json();
+    return data.Items ?? [];
+  } catch (err) {
+    console.error("Xero fetch items error:", err);
+    return [];
+  }
+}
+
+/**
+ * Sync Xero items into the local Product table for a workspace.
+ * Creates new products for new Xero items, updates existing ones.
+ * Does NOT delete local products that no longer exist in Xero.
+ */
+export async function syncXeroProducts(
+  workspaceId: string,
+  accessToken: string,
+  tenantId: string
+): Promise<{ created: number; updated: number }> {
+  const items = await fetchXeroItems(accessToken, tenantId);
+  let created = 0;
+  let updated = 0;
+
+  for (const item of items) {
+    if (!item.IsSold) continue;
+
+    const unitPrice = item.SalesDetails?.UnitPrice ?? 0;
+
+    const existing = await prisma.product.findUnique({
+      where: {
+        workspaceId_xeroItemId: {
+          workspaceId,
+          xeroItemId: item.ItemID,
+        },
+      },
+    });
+
+    if (existing) {
+      await prisma.product.update({
+        where: { id: existing.id },
+        data: {
+          name: item.Name,
+          sku: item.Code || null,
+          description: item.Description || null,
+          unitPrice,
+          xeroItemCode: item.Code || null,
+          lastSyncedAt: new Date(),
+        },
+      });
+      updated++;
+    } else {
+      await prisma.product.create({
+        data: {
+          workspaceId,
+          name: item.Name,
+          sku: item.Code || null,
+          description: item.Description || null,
+          unitPrice,
+          currency: "USD",
+          source: "xero",
+          xeroItemId: item.ItemID,
+          xeroItemCode: item.Code || null,
+          lastSyncedAt: new Date(),
+        },
+      });
+      created++;
+    }
+  }
+
+  return { created, updated };
 }
