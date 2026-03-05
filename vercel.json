@@ -1,5 +1,5 @@
 {
-  "buildCommand": "prisma generate && next build",
+  "buildCommand": "prisma generate && prisma db push --skip-generate && next build",
   "crons": [
     {
       "path": "/api/cron/sync-emails",
