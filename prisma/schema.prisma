@@ -105,6 +105,7 @@ model Workspace {
   salesTeams        SalesTeam[]
   linkedDocuments   LinkedDocument[]
   xeroIntegration   XeroIntegration?
+  stageApprovals    StageApproval[]
 }
 
 // ─── WorkspaceMember ─────────────────────────────────────────────────────
@@ -124,7 +125,9 @@ model WorkspaceMember {
   ownedOpps       Opportunity[]     @relation("OpportunityOwner")
   assignedActs    Activity[]        @relation("ActivityAssignee")
   createdActs     Activity[]        @relation("ActivityCreator")
-  linkedDocuments LinkedDocument[]
+  linkedDocuments     LinkedDocument[]
+  requestedApprovals  StageApproval[]  @relation("ApprovalRequester")
+  reviewedApprovals   StageApproval[]  @relation("ApprovalReviewer")
 
   @@unique([workspaceId, userId])
 }
@@ -198,9 +201,51 @@ model Stage {
   isLost      Boolean @default(false)
   rottenDays  Int?
 
-  pipeline      Pipeline       @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  pipeline      Pipeline           @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
   opportunities Opportunity[]
   stageHistory  StageHistory[]
+  requirements  StageRequirement[]
+  approvals     StageApproval[]    @relation("ApprovalTargetStage")
+}
+
+// ─── Stage Requirements & Approvals ──────────────────────────────────────
+
+model StageRequirement {
+  id          String  @id @default(cuid())
+  stageId     String
+  type        String  // "DOCUMENT" | "CUSTOM_FIELD" | "PRODUCT" | "QUOTE"
+  label       String  // Human-readable description, e.g. "Proposal document must be linked"
+  config      Json?   // Type-specific config, e.g. {"fileTypes": ["docx","pptx"]} or {"fieldId": "xxx"}
+  position    Int     @default(0)
+  isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  stage Stage @relation(fields: [stageId], references: [id], onDelete: Cascade)
+
+  @@index([stageId])
+}
+
+model StageApproval {
+  id              String    @id @default(cuid())
+  workspaceId     String
+  opportunityId   String
+  targetStageId   String
+  requestedById   String
+  requestedAt     DateTime  @default(now())
+  status          String    @default("PENDING") // "PENDING" | "APPROVED" | "REJECTED"
+  reviewedById    String?
+  reviewedAt      DateTime?
+  reviewNote      String?
+  unmetRequirements Json?   // Snapshot of what was missing at request time
+
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  opportunity Opportunity     @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  targetStage Stage           @relation("ApprovalTargetStage", fields: [targetStageId], references: [id])
+  requestedBy WorkspaceMember @relation("ApprovalRequester", fields: [requestedById], references: [id])
+  reviewedBy  WorkspaceMember? @relation("ApprovalReviewer", fields: [reviewedById], references: [id])
+
+  @@index([workspaceId, status])
+  @@index([opportunityId])
 }
 
 // ─── CrmAccount / Contact ────────────────────────────────────────────────
@@ -315,6 +360,7 @@ model Opportunity {
   tags         TagOnOpportunity[]
   customValues CustomFieldValue[]
   documents    LinkedDocument[]
+  approvals    StageApproval[]
 }
 
 enum Priority {

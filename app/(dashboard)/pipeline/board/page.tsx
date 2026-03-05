@@ -15,7 +15,7 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Plus, GripVertical } from "lucide-react";
+import { Plus, GripVertical, ShieldAlert, CheckCircle2, XCircle } from "lucide-react";
 import { CurrencySelector, useDisplayCurrency } from "@/components/currency-selector";
 import {
   Select,
@@ -151,6 +151,17 @@ export default function PipelineBoardPage() {
     stageId: string;
   } | null>(null);
 
+  // Stage requirements dialog state
+  const [showRequirements, setShowRequirements] = useState(false);
+  const [reqInfo, setReqInfo] = useState<{
+    oppId: string;
+    stageId: string;
+    stageName: string;
+    unmet: Array<{ type: string; label: string; met: boolean }>;
+    all: Array<{ type: string; label: string; met: boolean }>;
+  } | null>(null);
+  const [requestingApproval, setRequestingApproval] = useState(false);
+
   const loadData = useCallback(async () => {
     try {
       const [oppsRes, stagesRes, membersRes] = await Promise.all([
@@ -187,21 +198,51 @@ export default function PipelineBoardPage() {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const moveToStage = async (oppId: string, stageId: string, reason?: string) => {
-    // Optimistic update
-    setOpportunities((prev) =>
-      prev.map((o) => (o.id === oppId ? { ...o, stageId } : o))
-    );
+  const moveToStage = async (oppId: string, stageId: string, reason?: string, forceWithApproval?: boolean) => {
+    // Optimistic update (only if not requesting approval)
+    if (!forceWithApproval) {
+      setOpportunities((prev) =>
+        prev.map((o) => (o.id === oppId ? { ...o, stageId } : o))
+      );
+    }
 
     try {
-      const body: Record<string, string> = { stageId };
+      const body: Record<string, unknown> = { stageId };
       if (reason) body.lostReason = reason;
+      if (forceWithApproval) body.forceWithApproval = true;
 
-      await fetch(`/api/workspace/opportunities/${oppId}/stage`, {
+      const res = await fetch(`/api/workspace/opportunities/${oppId}/stage`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
+
+      const data = await res.json();
+
+      if (res.status === 422 && data.blocked) {
+        // Requirements not met — show dialog
+        const targetStage = stages.find((s) => s.id === stageId);
+        setReqInfo({
+          oppId,
+          stageId,
+          stageName: targetStage?.name ?? "this stage",
+          unmet: data.unmetRequirements ?? [],
+          all: data.allRequirements ?? [],
+        });
+        setShowRequirements(true);
+        loadData(); // revert optimistic update
+        return;
+      }
+
+      if (res.status === 202 && data.requiresApproval) {
+        // Approval created or already pending
+        setShowRequirements(false);
+        setReqInfo(null);
+        alert(data.message);
+        loadData();
+        return;
+      }
+
       loadData();
     } catch {
       loadData(); // revert on error
@@ -420,6 +461,56 @@ export default function PipelineBoardPage() {
           <DialogFooter>
             <Button variant="outline" onClick={handleLostReasonCancel}>Cancel</Button>
             <Button variant="destructive" onClick={handleLostReasonConfirm}>Confirm Lost</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Stage Requirements Dialog */}
+      <Dialog open={showRequirements} onOpenChange={(open) => { if (!open) { setShowRequirements(false); setReqInfo(null); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldAlert className="h-5 w-5 text-amber-500" />
+              Requirements Not Met
+            </DialogTitle>
+            <DialogDescription>
+              To move this deal to &ldquo;{reqInfo?.stageName}&rdquo;, the following requirements must be satisfied.
+              You can request manager/admin approval to proceed anyway.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-2">
+            {reqInfo?.all.map((req, i) => (
+              <div key={i} className="flex items-center gap-2 p-2 rounded border bg-gray-50">
+                {req.met ? (
+                  <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+                )}
+                <div className="flex-1">
+                  <span className="text-sm">{req.label}</span>
+                  <Badge variant="outline" className="ml-2 text-xs font-mono">
+                    {req.type}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setShowRequirements(false); setReqInfo(null); }}>
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              disabled={requestingApproval}
+              onClick={async () => {
+                if (!reqInfo) return;
+                setRequestingApproval(true);
+                await moveToStage(reqInfo.oppId, reqInfo.stageId, undefined, true);
+                setRequestingApproval(false);
+              }}
+            >
+              {requestingApproval ? "Requesting..." : "Request Approval"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

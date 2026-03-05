@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireWorkspaceMember } from "@/lib/db/workspace";
 import { fireTrigger } from "@/lib/automation/triggers";
+import { checkStageRequirements } from "@/lib/stage-requirements";
 import { z } from "zod";
 
 const MoveSchema = z.object({
   stageId: z.string(),
   lostReason: z.string().optional(),
+  forceWithApproval: z.boolean().optional(),
 });
 
 export async function PATCH(
@@ -40,6 +42,64 @@ export async function PATCH(
   const newStage = await prisma.stage.findUnique({ where: { id: parsed.data.stageId } });
   if (!newStage) return NextResponse.json({ error: "Stage not found" }, { status: 404 });
 
+  // ─── Check stage requirements ──────────────────────────────────────────
+  const checks = await checkStageRequirements(id, newStage.id);
+  const unmet = checks.filter((c) => !c.met);
+
+  if (unmet.length > 0) {
+    // Admins and Owners can bypass requirements
+    const canBypass = ["ADMIN", "OWNER"].includes(member.role);
+
+    if (!canBypass) {
+      if (parsed.data.forceWithApproval) {
+        // Create an approval request
+        const existing = await prisma.stageApproval.findFirst({
+          where: {
+            opportunityId: id,
+            targetStageId: newStage.id,
+            status: "PENDING",
+          },
+        });
+
+        if (existing) {
+          return NextResponse.json({
+            requiresApproval: true,
+            approvalId: existing.id,
+            unmetRequirements: unmet,
+            message: "An approval request is already pending for this stage move.",
+          }, { status: 202 });
+        }
+
+        const approval = await prisma.stageApproval.create({
+          data: {
+            workspaceId: workspace.id,
+            opportunityId: id,
+            targetStageId: newStage.id,
+            requestedById: member.id,
+            unmetRequirements: JSON.parse(JSON.stringify(unmet)),
+          },
+        });
+
+        return NextResponse.json({
+          requiresApproval: true,
+          approvalId: approval.id,
+          unmetRequirements: unmet,
+          message: "Stage move requires approval. A request has been submitted to your manager or admin.",
+        }, { status: 202 });
+      }
+
+      // Return unmet requirements so UI can show them
+      return NextResponse.json({
+        blocked: true,
+        unmetRequirements: unmet,
+        allRequirements: checks,
+        message: "Cannot advance to this stage — requirements not met.",
+      }, { status: 422 });
+    }
+    // Admin/Owner: proceed despite unmet requirements (they are the approvers)
+  }
+
+  // ─── Proceed with stage move ──────────────────────────────────────────
   // Determine status change based on stage type
   const statusUpdate: Record<string, unknown> = { stageId: newStage.id };
   if (newStage.isWon) {
@@ -50,7 +110,6 @@ export async function PATCH(
     statusUpdate.actualCloseDate = new Date();
     if (parsed.data.lostReason) statusUpdate.lostReason = parsed.data.lostReason;
   } else if (opportunity.status !== "OPEN") {
-    // Moving back to a normal stage reopens the deal
     statusUpdate.status = "OPEN";
     statusUpdate.actualCloseDate = null;
   }
@@ -62,7 +121,7 @@ export async function PATCH(
     include: { stage: true },
   });
 
-  // Record stage history + activity in parallel
+  // Record stage history + activity + resolve pending approvals in parallel
   await Promise.all([
     prisma.stageHistory.create({
       data: {
@@ -82,6 +141,19 @@ export async function PATCH(
         isAutomated: false,
       },
     }),
+    prisma.stageApproval.updateMany({
+      where: {
+        opportunityId: id,
+        targetStageId: newStage.id,
+        status: "PENDING",
+      },
+      data: {
+        status: "APPROVED",
+        reviewedById: member.id,
+        reviewedAt: new Date(),
+        reviewNote: "Auto-resolved: stage move completed",
+      },
+    }),
   ]);
 
   // Fire stage change trigger
@@ -97,13 +169,12 @@ export async function PATCH(
     triggeredBy: member.id,
   });
 
-  // Handle Won/Lost triggers
   if (newStage.isWon) {
     await fireTrigger({
       workspaceId: workspace.id,
       event: "opportunity.won",
       entityId: id,
-      data: { name: opportunity.name, value: opportunity.value.toString() },
+      data: { name: opportunity.name, value: String(opportunity.value) },
       triggeredBy: member.id,
     });
   } else if (newStage.isLost) {

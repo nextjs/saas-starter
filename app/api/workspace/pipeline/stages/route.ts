@@ -31,7 +31,11 @@ export async function GET(req: NextRequest) {
   const stages = await prisma.stage.findMany({
     where,
     orderBy: { position: "asc" },
-    include: { _count: { select: { opportunities: true } }, pipeline: { select: { id: true, name: true } } },
+    include: {
+      _count: { select: { opportunities: true } },
+      pipeline: { select: { id: true, name: true } },
+      requirements: { where: { isActive: true }, orderBy: { position: "asc" } },
+    },
   });
 
   return NextResponse.json({ stages });
