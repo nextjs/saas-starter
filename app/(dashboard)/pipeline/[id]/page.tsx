@@ -353,15 +353,15 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
   const filteredProducts = availableProducts.filter((p) => !linkedProductIds.has(p.id));
 
   return (
-    <div className="p-4 sm:p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6 overflow-x-hidden">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link href="/pipeline/list">
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
         </Link>
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           {editingName ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <Input
                 value={nameValue}
                 onChange={(e) => setNameValue(e.target.value)}
@@ -376,11 +376,11 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
               <Button size="sm" variant="ghost" onClick={() => { setNameValue(opportunity.name); setEditingName(false); }}>Cancel</Button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-semibold cursor-pointer hover:text-orange-600" onClick={() => setEditingName(true)}>
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-semibold cursor-pointer hover:text-orange-600 truncate" onClick={() => setEditingName(true)}>
                 {opportunity.name}
               </h1>
-              <button onClick={() => setEditingName(true)} className="text-muted-foreground hover:text-foreground">
+              <button onClick={() => setEditingName(true)} className="text-muted-foreground hover:text-foreground shrink-0">
                 <Pencil className="h-4 w-4" />
               </button>
             </div>
@@ -482,15 +482,17 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
         {/* Main Content */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="details">
-            <TabsList>
-              <TabsTrigger value="details">Details</TabsTrigger>
-              <TabsTrigger value="contacts">Contacts ({opportunity.contacts.length})</TabsTrigger>
-              <TabsTrigger value="products">Products ({opportunity.products.length})</TabsTrigger>
-              <TabsTrigger value="activity">Activity ({opportunity.activities.length})</TabsTrigger>
-              <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
-              <TabsTrigger value="quote">Quote</TabsTrigger>
-              <TabsTrigger value="history">Stage History</TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto -mx-4 px-4 sm:-mx-0 sm:px-0">
+              <TabsList className="w-max sm:w-auto">
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="contacts">Contacts ({opportunity.contacts.length})</TabsTrigger>
+                <TabsTrigger value="products">Products ({opportunity.products.length})</TabsTrigger>
+                <TabsTrigger value="activity">Activity ({opportunity.activities.length})</TabsTrigger>
+                <TabsTrigger value="documents">Documents ({documents.length})</TabsTrigger>
+                <TabsTrigger value="quote">Quote</TabsTrigger>
+                <TabsTrigger value="history">Stage History</TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Details Tab */}
             <TabsContent value="details">
