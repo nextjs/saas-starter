@@ -475,7 +475,7 @@ model Product {
   currency    String   @default("USD")
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime @default(now()) @updatedAt
 
   // Xero sync fields — null means locally created
   xeroItemId   String?
