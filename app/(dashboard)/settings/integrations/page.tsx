@@ -170,6 +170,10 @@ export default function IntegrationsPage() {
                 onClick={async () => {
                   const res = await fetch("/api/workspace/settings/integrations/xero/connect");
                   const data = await res.json();
+                  if (data.error) {
+                    alert(data.error);
+                    return;
+                  }
                   if (data.url) window.location.href = data.url;
                 }}
               >

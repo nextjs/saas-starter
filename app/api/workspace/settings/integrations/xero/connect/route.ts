@@ -11,6 +11,13 @@ export async function GET() {
     return NextResponse.json({ error: "Only admins can connect integrations" }, { status: 403 });
   }
 
+  if (!process.env.XERO_CLIENT_ID || !process.env.XERO_CLIENT_SECRET) {
+    return NextResponse.json(
+      { error: "Xero integration is not configured. Set XERO_CLIENT_ID and XERO_CLIENT_SECRET environment variables." },
+      { status: 501 }
+    );
+  }
+
   const url = getXeroAuthUrl(workspace.id);
   return NextResponse.json({ url });
 }
