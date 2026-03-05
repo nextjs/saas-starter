@@ -61,26 +61,26 @@ export default function PipelineReportPage() {
             <p className="text-muted-foreground">No pipeline data yet.</p>
           ) : (
             <div className="space-y-3">
-              {funnel.map((stage, i) => {
+              {funnel.map((stage) => {
                 const maxCount = Math.max(...funnel.map((f) => f.count), 1);
                 const width = Math.max((stage.count / maxCount) * 100, 8);
                 return (
-                  <div key={stage.name} className="flex items-center gap-4">
-                    <div className="w-28 text-sm font-medium flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: stage.color }} />
-                      {stage.name}
-                    </div>
-                    <div className="flex-1">
-                      <div
-                        className="h-8 rounded-md flex items-center px-3 text-sm text-white font-medium"
-                        style={{ width: `${width}%`, backgroundColor: stage.color, minWidth: "60px" }}
-                      >
-                        {stage.count} deals
+                  <div key={stage.name} className="space-y-1">
+                    <div className="flex items-center justify-between gap-2 text-sm">
+                      <div className="font-medium flex items-center gap-2 min-w-0">
+                        <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: stage.color }} />
+                        <span className="truncate">{stage.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3 shrink-0 text-right">
+                        <span className="font-medium">{formatCurrency(stage.value)}</span>
+                        <span className="text-xs text-muted-foreground">{stage.avgDaysInStage}d avg</span>
                       </div>
                     </div>
-                    <div className="w-24 text-right text-sm font-medium">{formatCurrency(stage.value)}</div>
-                    <div className="w-16 text-right text-xs text-muted-foreground">
-                      {stage.avgDaysInStage}d avg
+                    <div
+                      className="h-7 rounded-md flex items-center px-3 text-xs text-white font-medium"
+                      style={{ width: `${width}%`, backgroundColor: stage.color, minWidth: "60px" }}
+                    >
+                      {stage.count} deal{stage.count !== 1 ? "s" : ""}
                     </div>
                   </div>
                 );
@@ -93,7 +93,7 @@ export default function PipelineReportPage() {
       {/* Detail table */}
       <Card>
         <CardHeader><CardTitle className="text-base">Stage Details</CardTitle></CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow>
