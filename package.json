@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "prisma generate && next build",
+    "vercel-build": "prisma generate && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "db:generate": "prisma generate",
