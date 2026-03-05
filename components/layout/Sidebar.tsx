@@ -12,6 +12,7 @@ import {
   Activity,
   BarChart3,
   Settings,
+  ShieldCheck,
   ChevronDown,
   ChevronRight,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const navGroups = [
     items: [
       { href: "/pipeline/board", icon: Kanban, label: "Board" },
       { href: "/pipeline/list", icon: List, label: "List View" },
+      { href: "/approvals", icon: ShieldCheck, label: "Approvals" },
     ],
   },
   {

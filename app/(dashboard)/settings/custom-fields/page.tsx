@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/select";
 import { Plus, Trash2, Pencil } from "lucide-react";
 
-const ENTITY_TYPES = ["CONTACT", "ACCOUNT", "OPPORTUNITY"] as const;
+// Must match the Prisma CustomFieldEntity enum
+const ENTITY_TYPES = ["CONTACT", "CRM_ACCOUNT", "OPPORTUNITY"] as const;
 type EntityType = (typeof ENTITY_TYPES)[number];
 
 const FIELD_TYPES = [
@@ -25,10 +26,10 @@ const FIELD_TYPES = [
 
 interface CustomField {
   id: string;
-  entityType: EntityType;
+  entity: EntityType;
   name: string;
   key: string;
-  fieldType: string;
+  type: string;
   options: string[];
   required: boolean;
   position: number;
@@ -39,6 +40,14 @@ function slugify(name: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_|_$/g, "");
+}
+
+function entityLabel(et: EntityType) {
+  switch (et) {
+    case "CONTACT": return "Contacts";
+    case "CRM_ACCOUNT": return "Accounts";
+    case "OPPORTUNITY": return "Opportunities";
+  }
 }
 
 export default function CustomFieldsPage() {
@@ -52,7 +61,7 @@ export default function CustomFieldsPage() {
   const [form, setForm] = useState({
     name: "",
     key: "",
-    fieldType: "TEXT" as string,
+    type: "TEXT" as string,
     options: "",
     required: false,
   });
@@ -60,7 +69,7 @@ export default function CustomFieldsPage() {
   const loadData = useCallback(async () => {
     const res = await fetch("/api/workspace/custom-fields");
     const data = await res.json();
-    setFields(data.fields ?? []);
+    setFields(data.customFields ?? []);
     setLoading(false);
   }, []);
 
@@ -69,7 +78,7 @@ export default function CustomFieldsPage() {
   }, [loadData]);
 
   const filteredFields = fields
-    .filter((f) => f.entityType === activeTab)
+    .filter((f) => f.entity === activeTab)
     .sort((a, b) => a.position - b.position);
 
   const handleCreate = async () => {
@@ -80,12 +89,12 @@ export default function CustomFieldsPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          entityType: activeTab,
+          entity: activeTab,
           name: form.name,
           key: form.key || slugify(form.name),
-          fieldType: form.fieldType,
+          type: form.type,
           options:
-            form.fieldType === "SELECT" || form.fieldType === "MULTI_SELECT"
+            form.type === "SELECT" || form.type === "MULTI_SELECT"
               ? form.options.split(",").map((o) => o.trim()).filter(Boolean)
               : [],
           required: form.required,
@@ -97,7 +106,7 @@ export default function CustomFieldsPage() {
         return;
       }
       setShowCreate(false);
-      setForm({ name: "", key: "", fieldType: "TEXT", options: "", required: false });
+      setForm({ name: "", key: "", type: "TEXT", options: "", required: false });
       loadData();
     } catch {
       setError("Network error — please try again");
@@ -106,7 +115,7 @@ export default function CustomFieldsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this custom field? Data stored in this field will be lost.")) return;
-    const res = await fetch(`/api/workspace/custom-fields?fieldId=${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/workspace/custom-fields?id=${id}`, { method: "DELETE" });
     if (res.ok) loadData();
   };
 
@@ -124,14 +133,6 @@ export default function CustomFieldsPage() {
     setEditingField(null);
   };
 
-  const tabLabel = (et: EntityType) => {
-    switch (et) {
-      case "CONTACT": return "Contacts";
-      case "ACCOUNT": return "Accounts";
-      case "OPPORTUNITY": return "Opportunities";
-    }
-  };
-
   return (
     <div className="p-4 sm:p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -145,9 +146,9 @@ export default function CustomFieldsPage() {
         <TabsList>
           {ENTITY_TYPES.map((et) => (
             <TabsTrigger key={et} value={et}>
-              {tabLabel(et)}
+              {entityLabel(et)}
               <Badge variant="secondary" className="ml-2 text-xs">
-                {fields.filter((f) => f.entityType === et).length}
+                {fields.filter((f) => f.entity === et).length}
               </Badge>
             </TabsTrigger>
           ))}
@@ -157,7 +158,7 @@ export default function CustomFieldsPage() {
           <TabsContent key={et} value={et}>
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">{tabLabel(et)} Fields</CardTitle>
+                <CardTitle className="text-base">{entityLabel(et)} Fields</CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
@@ -168,7 +169,7 @@ export default function CustomFieldsPage() {
                   </div>
                 ) : filteredFields.length === 0 ? (
                   <p className="text-muted-foreground text-sm">
-                    No custom fields for {tabLabel(et).toLowerCase()}. Add one to get started.
+                    No custom fields for {entityLabel(et).toLowerCase()}. Add one to get started.
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -211,7 +212,7 @@ export default function CustomFieldsPage() {
                           </p>
                         </div>
                         <Badge variant="outline" className="text-xs">
-                          {field.fieldType}
+                          {field.type}
                         </Badge>
                         {field.required && (
                           <Badge className="bg-amber-100 text-amber-800 text-xs">
@@ -278,8 +279,8 @@ export default function CustomFieldsPage() {
             <div>
               <label className="text-sm font-medium">Type</label>
               <Select
-                value={form.fieldType}
-                onValueChange={(v) => setForm({ ...form, fieldType: v })}
+                value={form.type}
+                onValueChange={(v) => setForm({ ...form, type: v })}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -293,7 +294,7 @@ export default function CustomFieldsPage() {
                 </SelectContent>
               </Select>
             </div>
-            {(form.fieldType === "SELECT" || form.fieldType === "MULTI_SELECT") && (
+            {(form.type === "SELECT" || form.type === "MULTI_SELECT") && (
               <div>
                 <label className="text-sm font-medium">Options</label>
                 <Input
