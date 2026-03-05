@@ -126,8 +126,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <h1 className="text-2xl font-semibold">Dashboard</h1>
           {data.kpis.overdueTaskCount > 0 && (
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             </Link>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <CurrencySelector
             value={displayCurrency}
             onChange={(c) => { setDisplayCurrency(c); }}
@@ -148,7 +148,7 @@ export default function DashboardPage() {
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="w-36"
+            className="w-32 sm:w-36"
             placeholder="Start date"
           />
           <span className="text-muted-foreground text-sm">to</span>
@@ -156,7 +156,7 @@ export default function DashboardPage() {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="w-36"
+            className="w-32 sm:w-36"
             placeholder="End date"
           />
           {(startDate || endDate) && (

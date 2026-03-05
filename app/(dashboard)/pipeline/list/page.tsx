@@ -156,23 +156,23 @@ export default function PipelineListPage() {
   }
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-semibold">Pipeline</h1>
         <div className="flex items-center gap-3">
           <Input
             placeholder="Search deals..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-64"
+            className="w-full sm:w-64"
           />
-          <Button onClick={() => setShowCreate(true)}>
+          <Button className="shrink-0" onClick={() => setShowCreate(true)}>
             <Plus className="h-4 w-4 mr-1" /> New Deal
           </Button>
         </div>
       </div>
 
-      <div className="border rounded-lg bg-white">
+      <div className="border rounded-lg bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

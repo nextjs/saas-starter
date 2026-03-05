@@ -65,9 +65,9 @@ const navGroups = [
   },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({ Settings: true });
 
   const toggle = (label: string) =>
     setCollapsed((prev) => ({ ...prev, [label]: !prev[label] }));
@@ -105,6 +105,7 @@ export function Sidebar({ className }: { className?: string }) {
                       <Link
                         key={item.href}
                         href={item.href}
+                        onClick={onNavigate}
                         className={cn(
                           "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
                           isActive

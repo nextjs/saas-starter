@@ -353,7 +353,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
   const filteredProducts = availableProducts.filter((p) => !linkedProductIds.has(p.id));
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Link href="/pipeline/list">
@@ -385,7 +385,7 @@ export default function OpportunityDetailPage({ params }: { params: Promise<{ id
               </button>
             </div>
           )}
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
             <Badge variant={(statusColors[opportunity.status] as "secondary" | "default" | "destructive") ?? "secondary"}>{opportunity.status}</Badge>
             <Badge variant={(priorityColors[opportunity.priority] as "outline" | "secondary" | "default" | "destructive") ?? "secondary"}>{opportunity.priority}</Badge>
             <Badge variant="outline" style={{ borderLeft: `3px solid ${opportunity.stage.color}` }}>{opportunity.stage.name}</Badge>

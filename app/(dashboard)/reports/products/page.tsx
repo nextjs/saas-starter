@@ -84,7 +84,7 @@ export default function ProductMixReportPage() {
       : null;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Product Mix Report</h1>
 
       {/* Date range filter */}

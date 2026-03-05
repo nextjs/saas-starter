@@ -195,7 +195,7 @@ export default function AccountDetailPage({ params }: { params: Promise<{ id: st
   if (!account) return <div className="p-6"><p>Account not found.</p></div>;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/accounts">
           <Button variant="ghost" size="icon"><ArrowLeft className="h-4 w-4" /></Button>

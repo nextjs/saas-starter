@@ -90,8 +90,8 @@ export default function WorkspaceSettingsPage() {
     if (res.ok) loadWorkspace();
   };
 
-  if (loading) return <div className="p-6"><div className="animate-pulse h-8 w-48 bg-gray-200 rounded" /></div>;
-  if (!ws) return <div className="p-6"><p className="text-muted-foreground">Workspace not found.</p></div>;
+  if (loading) return <div className="p-4 sm:p-6"><div className="animate-pulse h-8 w-48 bg-gray-200 rounded" /></div>;
+  if (!ws) return <div className="p-4 sm:p-6"><p className="text-muted-foreground">Workspace not found.</p></div>;
 
   return (
     <div className="p-6 space-y-6">

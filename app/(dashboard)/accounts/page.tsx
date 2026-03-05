@@ -87,20 +87,20 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-semibold">Accounts</h1>
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search accounts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 w-64"
+              className="pl-9 w-full sm:w-64"
             />
           </div>
-          <Button onClick={() => setShowCreate(true)}>
+          <Button className="shrink-0" onClick={() => setShowCreate(true)}>
             <Plus className="h-4 w-4 mr-1" /> Add Account
           </Button>
         </div>
@@ -115,7 +115,7 @@ export default function AccountsPage() {
         </div>
       )}
 
-      <div className="border rounded-lg bg-white">
+      <div className="border rounded-lg bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -175,7 +175,7 @@ export default function AccountsPage() {
               <label className="text-sm font-medium">Domain</label>
               <Input value={form.domain} onChange={(e) => setForm({ ...form, domain: e.target.value })} placeholder="example.com" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">Industry</label>
                 <Input value={form.industry} onChange={(e) => setForm({ ...form, industry: e.target.value })} />

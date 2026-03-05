@@ -48,7 +48,7 @@ export default function PerformanceReportPage() {
   if (!data) return <div className="p-6"><p className="text-muted-foreground">Failed to load performance data.</p></div>;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-6">
       <h1 className="text-2xl font-semibold">Rep Performance</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

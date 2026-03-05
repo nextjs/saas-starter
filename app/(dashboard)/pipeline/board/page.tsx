@@ -110,7 +110,7 @@ function KanbanColumn({
 
   return (
     <div
-      className="flex flex-col w-72 shrink-0"
+      className="flex flex-col w-64 sm:w-72 shrink-0"
       onDragOver={onDragOver}
       onDrop={(e) => onDrop(e, stage.id)}
     >
@@ -348,12 +348,12 @@ export default function PipelineBoardPage() {
   const openOpps = opportunities.filter((o) => o.status === "OPEN");
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-semibold">Pipeline Board</h1>
         <div className="flex items-center gap-2">
           <CurrencySelector value={displayCurrency} onChange={setDisplayCurrency} />
-          <Button onClick={() => setShowCreate(true)}>
+          <Button className="shrink-0" onClick={() => setShowCreate(true)}>
             <Plus className="h-4 w-4 mr-1" /> New Deal
           </Button>
         </div>
@@ -388,7 +388,7 @@ export default function PipelineBoardPage() {
                 placeholder="e.g. Acme Corp - Mendix License"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium">Value</label>
                 <Input

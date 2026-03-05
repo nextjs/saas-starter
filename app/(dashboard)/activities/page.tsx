@@ -101,10 +101,10 @@ export default function ActivitiesPage() {
     act.type === "TASK" && act.dueAt && !act.completedAt && new Date(act.dueAt) < new Date();
 
   return (
-    <div className="p-6">
+    <div className="p-4 sm:p-6">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-semibold">Activities</h1>
-        <Button onClick={() => setShowCreate(true)}>
+        <Button className="shrink-0" onClick={() => setShowCreate(true)}>
           <Plus className="h-4 w-4 mr-1" /> Log Activity
         </Button>
       </div>

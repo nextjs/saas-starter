@@ -212,7 +212,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <X className="h-5 w-5" />
                 </Button>
               </div>
-              <Sidebar />
+              <Sidebar onNavigate={() => setSidebarOpen(false)} />
             </div>
           </div>
         )}

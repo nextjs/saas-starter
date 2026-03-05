@@ -10,8 +10,9 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Camera } from "lucide-react";
 import Link from "next/link";
+import { BusinessCardScanner } from "@/components/contacts/BusinessCardScanner";
 
 interface Contact {
   id: string;
@@ -38,6 +39,7 @@ export default function ContactsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", jobTitle: "" });
 
   const [pageError, setPageError] = useState<string | null>(null);
@@ -96,20 +98,23 @@ export default function ContactsPage() {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
+    <div className="p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <h1 className="text-2xl font-semibold">Contacts</h1>
         <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search contacts..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 w-64"
+              className="pl-9 w-full sm:w-64"
             />
           </div>
-          <Button onClick={() => setShowCreate(true)}>
+          <Button variant="outline" className="shrink-0" onClick={() => setShowScanner(true)}>
+            <Camera className="h-4 w-4 mr-1" /> <span className="hidden sm:inline">Scan Card</span>
+          </Button>
+          <Button className="shrink-0" onClick={() => setShowCreate(true)}>
             <Plus className="h-4 w-4 mr-1" /> Add Contact
           </Button>
         </div>
@@ -124,7 +129,7 @@ export default function ContactsPage() {
         </div>
       )}
 
-      <div className="border rounded-lg bg-white">
+      <div className="border rounded-lg bg-white overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -191,7 +196,7 @@ export default function ContactsPage() {
           </DialogHeader>
           {error && <div className="rounded-md bg-red-50 border border-red-200 p-3 text-sm text-red-700">{error}</div>}
           <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-sm font-medium">First Name</label>
                 <Input value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} />
@@ -216,6 +221,21 @@ export default function ContactsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <BusinessCardScanner
+        open={showScanner}
+        onOpenChange={setShowScanner}
+        onCreated={loadData}
+      />
+
+      {/* Mobile FAB for quick card scan */}
+      <button
+        onClick={() => setShowScanner(true)}
+        className="fixed bottom-6 right-6 z-30 sm:hidden w-14 h-14 rounded-full bg-orange-500 text-white shadow-lg hover:bg-orange-600 active:bg-orange-700 flex items-center justify-center"
+        aria-label="Scan business card"
+      >
+        <Camera className="h-6 w-6" />
+      </button>
     </div>
   );
 }
