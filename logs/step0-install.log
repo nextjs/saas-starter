@@ -1,0 +1,60 @@
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +194
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+   ╭──────────────────────────────────────────╮
+   │                                          │
+   │   Update available! 10.12.1 → 10.30.3.   │
+   │   Changelog: https://pnpm.io/v/10.30.3   │
+   │     To update, run: pnpm add -g pnpm     │
+   │                                          │
+   ╰──────────────────────────────────────────╯
+
+Progress: resolved 194, reused 112, downloaded 0, added 112
+Progress: resolved 194, reused 112, downloaded 26, added 138
+Progress: resolved 194, reused 112, downloaded 48, added 160
+Progress: resolved 194, reused 112, downloaded 70, added 182
+Progress: resolved 194, reused 112, downloaded 80, added 192
+Progress: resolved 194, reused 112, downloaded 81, added 192
+Progress: resolved 194, reused 112, downloaded 82, added 193
+Progress: resolved 194, reused 112, downloaded 82, added 194, done
+
+dependencies:
++ @tailwindcss/postcss 4.1.7
++ @types/node 22.15.18
++ @types/react 19.1.4
++ @types/react-dom 19.1.5
++ autoprefixer 10.4.21
++ bcryptjs 3.0.2
++ class-variance-authority 0.7.1
++ clsx 2.1.1
++ dotenv 16.5.0
++ drizzle-kit 0.31.1
++ drizzle-orm 0.43.1
++ jose 6.0.11
++ lucide-react 0.511.0
++ next 15.6.0-canary.59
++ postcss 8.5.3
++ postgres 3.4.5
++ radix-ui 1.4.2
++ react 19.1.0
++ react-dom 19.1.0
++ server-only 0.0.1
++ stripe 18.1.0
++ swr 2.3.3
++ tailwind-merge 3.3.0
++ tailwindcss 4.1.7
++ tw-animate-css 1.3.0
++ typescript 5.8.3
++ zod 3.24.4
+
+╭ Warning ─────────────────────────────────────────────────────────────────────╮
+│                                                                              │
+│   Ignored build scripts: @tailwindcss/oxide, esbuild, sharp.                 │
+│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+│   to run scripts.                                                            │
+│                                                                              │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+Done in 11.8s using pnpm v10.12.1

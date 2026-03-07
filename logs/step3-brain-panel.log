@@ -1,0 +1,14 @@
+All done. Here's what was built:
+
+**Files created:**
+- `components/brain/goals-list.tsx` — Goals section with progress bars (green/amber/blue color coding), pace badges, deadlines, and Edit Goals toggle
+- `components/brain/content-pillars.tsx` — Content pillar percentage bars with colored fills + platform cadence list (X/week progress)
+- `components/brain/playbook-card.tsx` — Active playbook mini card with day X/Y progress bar and task completion count
+- `components/brain/strategy-panel.tsx` — Main panel combining all sections with auto-reply toggle; desktop = fixed w-80 sidebar, mobile = collapsible section
+
+**File updated:**
+- `app/(dashboard)/brain/page.tsx` — Two-column layout: left Strategy Panel + right chat placeholder
+
+**shadcn components installed:** `progress`, `badge`, `switch`
+
+**Build:** TypeScript compiles cleanly. The `pnpm build` failure is pre-existing (missing `POSTGRES_URL` env var) — unrelated to these changes.

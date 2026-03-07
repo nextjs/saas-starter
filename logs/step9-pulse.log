@@ -1,0 +1,19 @@
+Build passes TypeScript compilation. The `POSTGRES_URL` error is pre-existing (unrelated to Pulse).
+
+Here's what was built:
+
+**Page:** `app/(dashboard)/pulse/page.tsx` — 2-column dashboard with `[7d] [30d] [90d]` toggle
+
+**Components:**
+
+1. **`strategy-health.tsx`** — Large overall score (color-coded green/yellow/red), 5 dimension progress bars with amber warnings + suggestions for dimensions <70%, "Ask Brain" link
+
+2. **`goal-progress.tsx`** — Each goal with icon, title, colored progress bar, current/target values, and pace badge (On Track/Behind/Ahead) matching Brain's color scheme
+
+3. **`ai-insights.tsx`** — Cards with typed icons (lightbulb/warning/book/trophy), finding + bold suggestion, metric badge, and "Ask Brain for deeper analysis" link
+
+4. **`numbers-overview.tsx`** — 3 headline metric cards (Followers, Impressions, Engagement Rate) with big numbers + colored deltas (green ↑ / red ↓), recharts LineChart for trends, per-platform breakdown rows
+
+5. **`top-content.tsx`** — Ranked cards for "best" and "worst" content with platform icon, content preview, metrics, AI analysis in italic, and "Open Post Chat" button
+
+6. **`ai-learning.tsx`** — Brand Voice Accuracy + One-tap Approve Rate trend lines (recharts), stats grid (Total Interactions, Learned Patterns, Active Rules), recent learnings list with Correct/One-time buttons, and links to view patterns or reset AI memory

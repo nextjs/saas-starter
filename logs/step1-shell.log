@@ -1,0 +1,32 @@
+All done. Here's a summary of what was built:
+
+### Files created/modified
+
+**New files:**
+- `components/identity-switcher.tsx` — Identity switcher dropdown with mock data, avatar + name + "Add Identity" button
+- `app/(dashboard)/brain/page.tsx` — Brain placeholder
+- `app/(dashboard)/flow/page.tsx` — Flow placeholder
+- `app/(dashboard)/calendar/page.tsx` — Calendar placeholder
+- `app/(dashboard)/monitor/page.tsx` — Monitor placeholder
+- `app/(dashboard)/pulse/page.tsx` — Pulse placeholder
+- `app/(dashboard)/settings/page.tsx` — Settings placeholder
+- `components/ui/tooltip.tsx`, `sheet.tsx`, `separator.tsx` — shadcn components
+
+**Modified files:**
+- `app/(dashboard)/layout.tsx` — Complete rewrite with sidebar navigation (w-60 desktop, Sheet on mobile), Identity Switcher at top, UserMenu at bottom, 6 nav items with Lucide icons, active route highlighting via `usePathname`
+- `app/(dashboard)/page.tsx` — Now redirects to `/brain`
+- `app/layout.tsx` — Updated metadata to "Deely"
+
+**Deleted files:**
+- `app/(dashboard)/terminal.tsx` — Old SaaS starter component
+
+### Design details
+- **Sidebar:** `bg-muted/40` with `border-r`, clean minimal aesthetic
+- **Icons:** All Lucide with `strokeWidth={1.75}`, `h-4 w-4` in sidebar
+- **Mobile:** Sheet slides from left, `sticky` header with PanelLeft/PanelLeftClose toggle, `h-[18px] w-[18px]` icons
+- **Active state:** `bg-accent text-accent-foreground`
+- **All conditional classes:** Use `cn()` from `lib/utils`
+
+### Build status
+- TypeScript: **0 errors**
+- Build fails only due to pre-existing missing `POSTGRES_URL` and Stripe API keys (not related to these changes)

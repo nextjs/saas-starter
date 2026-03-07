@@ -1,0 +1,30 @@
+Done. Here's what was built:
+
+**Monitor page** (`app/(dashboard)/monitor/page.tsx`) — command-center layout with 4 stacked sections:
+
+1. **Active Monitors** (`components/monitor/active-monitors.tsx`)
+   - 2-column card grid, each platform with colored left border (orange/sky/blue/amber)
+   - Shows keywords as tags, subreddits/accounts as outline badges
+   - 7-day match count + last checked time
+   - Edit keywords button, + Add Monitor, Ask Brain link
+
+2. **Alerts** (`components/monitor/alerts-section.tsx`)
+   - Red/amber/blue cards with colored left borders + tinted backgrounds
+   - Severity badges: COMPLAINT DETECTED (red), NEGATIVE MENTION (amber), INFO (blue)
+   - Quoted content in styled blockquote
+   - Actions: Reply, Chat, Escalate, Skip
+   - "In Flow" badge for pushed alerts
+
+3. **Feed** (`components/monitor/monitor-feed.tsx`)
+   - Filter bar: All, Reddit, Twitter, LinkedIn, Mentions, Keywords
+   - Timeline with color dots: green (MATCH), yellow (MENTION), blue (INFO), red (ALERT)
+   - Author + time + content preview + relevance score badge
+   - Hover actions: Push to Flow, Note for Brain, Ignore
+   - Load more button
+
+4. **Reply Tracker** (`components/monitor/reply-tracker.tsx`)
+   - Auto-check toggle + frequency + Check now button
+   - Compact list with platform icon, post title, reply count
+   - Color-coded badges (red for >5, amber for >0)
+
+TypeScript compiles cleanly. Build fails only on pre-existing `POSTGRES_URL` env var issue.

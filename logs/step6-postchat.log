@@ -1,0 +1,19 @@
+All done. Here's a summary of what was built:
+
+### Files created
+- **`components/flow/post-version.tsx`** — Single version card with version badge, full draft text, colored Brand Match score (green ≥85%, yellow ≥70%, red <70%), and star rating for predicted engagement.
+- **`components/flow/post-chat.tsx`** — Full Post Chat panel with:
+  - **Header**: platform badge, type label, post title, and "Back to Flow" button
+  - **Version timeline**: V1 → user feedback bubble → V2 → feedback → V3, interleaved naturally as a conversation
+  - **Chat input**: text area at the bottom to send feedback; AI generates a new version in response
+  - **Action bar**: "Approve VX → Schedule" primary button + "Write my own" secondary button
+  - **Write my own**: expands an editable textarea pre-filled with the latest version, with a live Brand Match score that updates as the user types
+  - **Learning Note**: amber-styled card showing what AI learned, with "Remember this" / "One-time" dismiss buttons and brief confirmation text
+
+### Files modified
+- **`lib/mock-data.ts`** — Enriched `fi-1` (Claude 4.5 trending) with 3 versions + learning note, and `fi-4` (LinkedIn startup metrics) with 2 versions + learning note. Added full content strings to all versions.
+- **`app/(dashboard)/flow/page.tsx`** — Integrated Post Chat: clicking "Chat" on any flow card opens the Post Chat panel (full-viewport height), back button returns to the feed.
+
+### Build
+- TypeScript compiles cleanly (`tsc --noEmit` passes with 0 errors)
+- Next.js compilation succeeds; the build failure is a pre-existing env var issue with the Stripe webhook route (unrelated to this change)

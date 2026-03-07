@@ -1,0 +1,24 @@
+Done. Here's a summary of what was built:
+
+**Files created:**
+
+| File | Purpose |
+|------|---------|
+| `app/onboarding/layout.tsx` | Clean centered layout, no sidebar |
+| `app/onboarding/page.tsx` | Renders the wizard |
+| `components/onboarding/onboarding-wizard.tsx` | Step state management, progress dots, slide transitions |
+| `components/onboarding/step-welcome.tsx` | Platform connect (Twitter/LinkedIn/Instagram), multi-select, Skip option |
+| `components/onboarding/step-analyzing.tsx` | Staggered checklist animation with Check/Loader2 icons, auto-advances |
+| `components/onboarding/step-bootstrap.tsx` | Chat-like conversational Q&A (6 questions, text + multiple choice) |
+| `components/onboarding/step-confirm.tsx` | Shows AI understanding: identity tags, voice description, content pillars, signature phrases; editable |
+| `components/onboarding/step-goals.tsx` | Goal chips (multi-select), platform focus (single-select), AI recommendation card |
+| `components/onboarding/step-first-post.tsx` | Draft card with Brand Match score, "Approve & Schedule" / "Edit with AI" / "Skip" |
+| `components/onboarding/step-done.tsx` | Success screen with setup checklist, "Go to Flow" CTA |
+
+**Key design decisions:**
+- Used `app/onboarding/` (named route) instead of `app/(onboarding)/` route group to avoid conflict with the dashboard root page
+- Progress indicator uses expanding dot for active step (w-6 vs w-2)
+- Transitions use `animate-in fade-in slide-in-from-right/left` based on direction
+- Skip on Welcome goes to bootstrap (step-bootstrap) since there's no history to analyze
+- All buttons are `rounded-xl h-12` for inviting, mobile-friendly touch targets
+- Mock data matches the existing brand voice profile from `lib/mock-data.ts`

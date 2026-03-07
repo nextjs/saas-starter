@@ -1,0 +1,16 @@
+All done. Here's what was built:
+
+**`components/brain/session-list.tsx`** — Horizontal scrollable pill tabs. Pinned sessions show a pin icon, active session gets inverted colors. "+ New" button on the left. Each pill shows title + relative time.
+
+**`components/brain/chat-message.tsx`** — AI messages: left-aligned with Brain icon avatar, muted background, rounded bubble. User messages: right-aligned with User icon avatar, dark foreground bubble. Supports inline action buttons (rendered as rounded pills below the message). Basic markdown rendering (bold, inline code, bullet/numbered lists). Timestamps below each message.
+
+**`components/brain/chat-panel.tsx`** — Full chat interface:
+- Top: session list tabs
+- Middle: scrollable message area with auto-scroll to bottom, empty state prompt
+- Bottom: auto-resizing textarea with send button, Enter to send / Shift+Enter for newline
+- Typing indicator (bouncing dots) while AI "responds"
+- On send: adds user message, then mock AI response after 500ms with action buttons
+
+**`app/(dashboard)/brain/page.tsx`** — Updated to render `StrategyPanel` (w-80 sidebar on desktop, collapsible on mobile) alongside `ChatPanel` (flex-1, takes remaining space).
+
+The `pnpm build` TypeScript compilation passed. The runtime build error (`POSTGRES_URL not set`) is a pre-existing env issue unrelated to these changes.

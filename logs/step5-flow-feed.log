@@ -1,0 +1,26 @@
+Flow page is built. Here's what was created:
+
+**Files created:**
+
+1. **`components/flow/flow-actions.tsx`** — Three action buttons per card. Primary label changes per type (Approve/Reply/Send/Repost). Secondary "Chat" button. Ghost "Skip" button.
+
+2. **`components/flow/flow-card.tsx`** — Renders each `FlowItem` with:
+   - Color-coded type badge with icon (red=Trending, blue=Daily Post, purple=Reply, green=Repost, teal=Outreach, amber=Monitor Alert)
+   - Platform badge (Twitter/LinkedIn/Reddit)
+   - Time remaining for trending items (`~4hr left`)
+   - 1-5 star predicted engagement rating
+   - Content preview in a muted container (6-line clamp)
+   - Brand match score
+   - Action buttons at bottom
+
+3. **`components/flow/write-your-own.tsx`** — Bottom section with textarea for seed ideas, row of toggleable platform chips, and "Generate Draft" button.
+
+4. **`app/(dashboard)/flow/page.tsx`** — Full page with:
+   - Filter bar: All / Posts / Replies / DMs / Alerts toggle chips
+   - "Today · X items to review" counter
+   - Feed of FlowCard components sorted by priority
+   - Approve/Skip removes cards from the list
+   - "All done for now" empty state with checkmark
+   - WriteYourOwn section at the bottom
+
+**Build status:** TypeScript compiles cleanly. The `pnpm build` fails on a pre-existing `POSTGRES_URL` env var issue in API routes — unrelated to this change.

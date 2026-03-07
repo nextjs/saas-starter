@@ -30,6 +30,7 @@
     "radix-ui": "^1.4.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "recharts": "^3.8.0",
     "server-only": "^0.0.1",
     "stripe": "^18.1.0",
     "swr": "^2.3.3",

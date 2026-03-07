@@ -1,0 +1,26 @@
+All done. Here's what was built:
+
+**`app/(dashboard)/calendar/page.tsx`** — Main page with Week/Month toggle (Week default), renders all 4 sections
+
+**`components/calendar/week-view.tsx`** — 7-column time grid (8am–6pm)
+- Posts as compact cards with status dot + platform icon + truncated content
+- Green/blue/gray tinting by status (published/scheduled/draft)
+- Today's column highlighted with blue tint + circled date number
+- Red current-time indicator line with dot
+- Mobile: switches to single-day view showing only today
+
+**`components/calendar/today-timeline.tsx`** — Chronological list of today's posts
+- Published: green checkmark + time + platform + content + impressions/engagement/clicks
+- Scheduled: blue clock + time + platform + content + Preview/Edit/Reschedule buttons
+- Draft: gray circle + time + platform + muted content + "Draft" badge
+
+**`components/calendar/cadence-overview.tsx`** — Platform cadence cards grid
+- Each card: platform icon + name + "X/Y posts this week" + thin progress bar + status text (on track/need X more)
+- "Auto-fill gaps with AI drafts" button + "Adjust cadence → Brain" link
+
+**`components/calendar/playbook-timeline.tsx`** — Active playbook display
+- Playbook name + "Day X of Y"
+- Horizontal step indicator: green checkmarks (completed), blue dots (current), gray circles (upcoming), connected by lines
+- Today's tasks checklist (when applicable)
+
+The build failure (`POSTGRES_URL not set`) is pre-existing and unrelated to these changes — TypeScript compilation passes cleanly with zero errors.

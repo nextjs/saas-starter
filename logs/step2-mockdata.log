@@ -1,0 +1,29 @@
+All done. Here's what was created:
+
+**`lib/types.ts`** — 30+ types/interfaces/enums covering all 6 pages:
+- Identity & multi-brand: `Identity`, `BrandVoiceProfile`, `VoiceParams`, `ContentPillar`
+- Goals & Strategy: `Goal`, `Strategy`, `Playbook`, `PlaybookTask`, `CadenceTarget`
+- Brain: `ChatSession`, `ChatMessage`, `ActionButton`
+- Flow: `FlowItem` (with `FlowItemType` enum for all 6 types), `PostVersion`, `LearningNote`
+- Calendar: `ScheduledPost`, `CalendarSlot`, `PostStatus`
+- Monitor: `MonitorConfig`, `MonitorAlert`, `MonitorFeedItem`, `ReplyTrackerItem`, `AlertSeverity`
+- Pulse: `StrategyHealth`, `GoalProgress`, `AIInsight`, `TopContent`, `PlatformStats`, `PerformanceData`, `AILearningProgress`
+- Settings: `AutoReplyRule`, `NotificationPreference`
+- Team: `TeamMember`, `TeamRole`, `ApprovalRequest`
+- AI Architecture: `EpisodicMemoryEntry`, `LearnedPattern`
+
+**`lib/mock-data.ts`** — Realistic data with actual AI/startup content:
+- 2 identities (@lekro personal + @deely_ai company)
+- 3 goals with on_track/behind/ahead paces
+- Strategy with 4 content pillars + cadence targets
+- Active PH Launch playbook with 5 tasks
+- 5 chat sessions (Brand Setup pinned) + 10 messages in active session with action buttons
+- 8 flow items covering all 6 types (trending, daily_post, reply_needed, repost, outreach, monitor_alert)
+- 7-day calendar with published/scheduled/draft posts
+- 4 monitors (Reddit, Twitter, LinkedIn, PH) + 3 alerts + 8 feed items
+- Pulse: strategy health scores, 4 insights, top/worst content, 7-day performance data, learning progress
+- 3 learned patterns with confidence scores
+
+**`lib/mock-data-helpers.ts`** — 20+ accessor functions with filtering, sorting, and identity scoping (`getCurrentIdentity()`, `getFlowItems()`, `getCalendarSlots()`, `getMonitorFeed()`, etc.)
+
+The `pnpm build` compilation and TypeScript check both pass cleanly. The build failure is a pre-existing `POSTGRES_URL` env var issue unrelated to these changes.

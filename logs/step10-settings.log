@@ -1,0 +1,16 @@
+All done. Here's what was built:
+
+**Settings page** (`app/(dashboard)/settings/page.tsx`):
+- 8 tabs with vertical layout on desktop, horizontal scrollable on mobile
+- Line-variant tab triggers with icons
+
+**Tab components** (in `components/settings/`):
+
+1. **Account** — 6 platform connection cards (Twitter, LinkedIn, Instagram, Reddit, PH, TikTok) with connection status badges, handles, permission indicators, and Connect/Disconnect buttons
+2. **Brand Profile** — Identity fields (name, handle, type, domain, positioning), 5 voice parameter sliders (formality, technicality, humor, assertiveness, emoji usage) with descriptive endpoints, editable content pillars with weights, rules textarea, anchor phrases tag input
+3. **Schedule** — Per-platform frequency inputs, preferred time slot badges, timezone selector
+4. **Auto-Reply** — Per-platform Switch toggles + tone selector (friendly/professional/casual), escalation conditions textarea, last 5 auto-reply log preview
+5. **Monitor** — Tag-style inputs for keywords, subreddits, competitor accounts; check frequency slider (15-120min); notification toggles per monitor type
+6. **Notifications** — Grid table with 9 notification types x 3 channels (In-app, Push, Email), each cell a Switch toggle, pre-populated from mock data
+7. **Team** — Member list with avatars, role badges, role change selectors, remove buttons; Invite member button; Simple vs Strict approval workflow radio selector with descriptions
+8. **Billing** — Current plan card (Growth $29/mo), feature list, usage stats (identities, posts, AI calls) with progress bars, Upgrade/Manage buttons
