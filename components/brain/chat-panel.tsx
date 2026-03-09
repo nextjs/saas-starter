@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, type ReactNode } from 'react';
 import { Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -20,12 +20,14 @@ interface ChatPanelProps {
   sessions: ChatSession[];
   initialMessages: ChatMessage[];
   initialSessionId: string;
+  illustration?: ReactNode;
 }
 
 export function ChatPanel({
   sessions,
   initialMessages,
   initialSessionId,
+  illustration,
 }: ChatPanelProps) {
   const [activeSessionId, setActiveSessionId] = useState(initialSessionId);
   const [messagesBySession, setMessagesBySession] = useState<
@@ -88,12 +90,10 @@ export function ChatPanel({
     setInputValue('');
     setIsTyping(true);
 
-    // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
 
-    // Mock AI response after delay
     setTimeout(() => {
       const aiContent =
         mockAIResponses[Math.floor(Math.random() * mockAIResponses.length)];
@@ -125,7 +125,6 @@ export function ChatPanel({
 
   function handleTextareaInput(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setInputValue(e.target.value);
-    // Auto-resize
     const ta = e.target;
     ta.style.height = 'auto';
     ta.style.height = Math.min(ta.scrollHeight, 160) + 'px';
@@ -141,11 +140,12 @@ export function ChatPanel({
         onNewSession={handleNewSession}
       />
 
-      {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      {/* Messages area — lined paper background */}
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 lined-paper bg-[#faf8f5]">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground gap-1">
-            <p className="text-sm">Start a conversation with Brain</p>
+          <div className="flex flex-col items-center justify-center h-full text-[#5c4b3a]/50 gap-2">
+            {illustration}
+            <p className="text-sm font-semibold text-[#5c4b3a]">Start a conversation with Brain</p>
             <p className="text-xs">
               Ask about strategy, content ideas, or analytics
             </p>
@@ -158,11 +158,11 @@ export function ChatPanel({
 
         {isTyping && (
           <div className="flex gap-2.5 mr-auto max-w-[85%]">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted mt-0.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f5f0e8] border-2 border-dashed border-[#d4c9b8] mt-0.5">
               <div className="flex gap-1">
-                <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
-                <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
-                <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5c4b3a]/40 animate-bounce [animation-delay:0ms]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5c4b3a]/40 animate-bounce [animation-delay:150ms]" />
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5c4b3a]/40 animate-bounce [animation-delay:300ms]" />
               </div>
             </div>
           </div>
@@ -172,8 +172,8 @@ export function ChatPanel({
       </div>
 
       {/* Input area */}
-      <div className="border-t p-3">
-        <div className="flex items-end gap-2 rounded-xl border bg-background px-3 py-2 focus-within:ring-1 focus-within:ring-ring">
+      <div className="border-t-2 border-dashed border-[#d4c9b8] p-3 bg-[#f5f0e8]">
+        <div className="flex items-end gap-2 rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] px-3 py-2 focus-within:ring-1 focus-within:ring-[#e07a5f]">
           <textarea
             ref={textareaRef}
             value={inputValue}
@@ -182,21 +182,21 @@ export function ChatPanel({
             placeholder="Ask Brain anything..."
             rows={1}
             className={cn(
-              'flex-1 resize-none bg-transparent text-sm outline-none',
-              'placeholder:text-muted-foreground',
+              'flex-1 resize-none bg-transparent text-sm outline-none text-[#5c4b3a]',
+              'placeholder:text-[#5c4b3a]/40',
               'max-h-[160px]'
             )}
           />
           <Button
             size="icon"
-            className="h-9 w-9 md:h-7 md:w-7 shrink-0 rounded-lg"
+            className="h-9 w-9 md:h-7 md:w-7 shrink-0 rounded-lg bg-[#e07a5f] hover:bg-[#c4654a]"
             onClick={handleSend}
             disabled={!inputValue.trim() || isTyping}
           >
             <Send className="h-3.5 w-3.5" strokeWidth={1.75} />
           </Button>
         </div>
-        <p className="mt-1.5 text-center text-[10px] text-muted-foreground">
+        <p className="mt-1.5 text-center text-[10px] text-[#5c4b3a]/50">
           Brain learns your preferences over time. Press Enter to send, Shift+Enter for new line.
         </p>
       </div>

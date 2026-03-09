@@ -1,7 +1,5 @@
 @import "tailwindcss";
-/*
-  ---break---
-*/
+
 @custom-variant dark (&:is(.dark *));
 
 @import "tw-animate-css";
@@ -61,9 +59,6 @@
   The default border color has changed to `currentColor` in Tailwind CSS v4,
   so we've added these compatibility styles to make sure everything still
   looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
 */
 @layer base {
   *,
@@ -77,80 +72,81 @@
 
 @layer utilities {
   body {
-    font-family: "Manrope", Arial, Helvetica, sans-serif;
+    font-family: "Nunito", "Manrope", Arial, Helvetica, sans-serif;
   }
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Sketchbook warm cream palette */
+    --background: 36 33% 97%;
+    --foreground: 28 22% 25%;
+    --card: 36 30% 93%;
+    --card-foreground: 28 22% 25%;
+    --popover: 36 33% 97%;
+    --popover-foreground: 28 22% 25%;
+    --primary: 15 58% 53%;
+    --primary-foreground: 36 33% 97%;
+    --secondary: 36 22% 89%;
+    --secondary-foreground: 28 22% 25%;
+    --muted: 36 22% 89%;
+    --muted-foreground: 28 15% 48%;
+    --accent: 36 22% 89%;
+    --accent-foreground: 28 22% 25%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 36 33% 97%;
+    --border: 33 22% 78%;
+    --input: 33 22% 78%;
+    --ring: 15 58% 53%;
+    --chart-1: 15 58% 53%;
+    --chart-2: 105 20% 52%;
+    --chart-3: 210 22% 55%;
+    --chart-4: 43 83% 75%;
+    --chart-5: 28 22% 25%;
+    --radius: 0.75rem;
+    --sidebar-background: 36 30% 93%;
+    --sidebar-foreground: 28 22% 25%;
+    --sidebar-primary: 15 58% 53%;
+    --sidebar-primary-foreground: 36 33% 97%;
+    --sidebar-accent: 36 22% 89%;
+    --sidebar-accent-foreground: 28 22% 25%;
+    --sidebar-border: 33 22% 78%;
+    --sidebar-ring: 15 58% 53%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 28 15% 12%;
+    --foreground: 36 33% 93%;
+    --card: 28 15% 16%;
+    --card-foreground: 36 33% 93%;
+    --popover: 28 15% 12%;
+    --popover-foreground: 36 33% 93%;
+    --primary: 15 58% 58%;
+    --primary-foreground: 28 15% 12%;
+    --secondary: 28 12% 22%;
+    --secondary-foreground: 36 33% 93%;
+    --muted: 28 12% 22%;
+    --muted-foreground: 33 15% 60%;
+    --accent: 28 12% 22%;
+    --accent-foreground: 36 33% 93%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
+    --destructive-foreground: 36 33% 93%;
+    --border: 28 12% 22%;
+    --input: 28 12% 22%;
+    --ring: 15 58% 58%;
+    --chart-1: 15 58% 58%;
+    --chart-2: 105 20% 52%;
+    --chart-3: 210 22% 60%;
+    --chart-4: 43 83% 75%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 28 15% 14%;
+    --sidebar-foreground: 36 33% 93%;
+    --sidebar-primary: 15 58% 58%;
+    --sidebar-primary-foreground: 36 33% 97%;
+    --sidebar-accent: 28 12% 20%;
+    --sidebar-accent-foreground: 36 33% 93%;
+    --sidebar-border: 28 12% 22%;
+    --sidebar-ring: 15 58% 58%;
   }
 }
 
@@ -168,31 +164,42 @@
 */
 
 :root {
-  --background: hsl(0 0% 100%);
-  --foreground: hsl(240 10% 3.9%);
-  --card: hsl(0 0% 100%);
-  --card-foreground: hsl(240 10% 3.9%);
-  --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(240 10% 3.9%);
-  --primary: hsl(240 5.9% 10%);
-  --primary-foreground: hsl(0 0% 98%);
-  --secondary: hsl(240 4.8% 95.9%);
-  --secondary-foreground: hsl(240 5.9% 10%);
-  --muted: hsl(240 4.8% 95.9%);
-  --muted-foreground: hsl(240 3.8% 46.1%);
-  --accent: hsl(240 4.8% 95.9%);
-  --accent-foreground: hsl(240 5.9% 10%);
+  --background: hsl(36 33% 97%);
+  --foreground: hsl(28 22% 25%);
+  --card: hsl(36 30% 93%);
+  --card-foreground: hsl(28 22% 25%);
+  --popover: hsl(36 33% 97%);
+  --popover-foreground: hsl(28 22% 25%);
+  --primary: hsl(15 58% 53%);
+  --primary-foreground: hsl(36 33% 97%);
+  --secondary: hsl(36 22% 89%);
+  --secondary-foreground: hsl(28 22% 25%);
+  --muted: hsl(36 22% 89%);
+  --muted-foreground: hsl(28 15% 48%);
+  --accent: hsl(36 22% 89%);
+  --accent-foreground: hsl(28 22% 25%);
   --destructive: hsl(0 84.2% 60.2%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 5.9% 90%);
-  --input: hsl(240 5.9% 90%);
-  --ring: hsl(240 10% 3.9%);
-  --chart-1: hsl(12 76% 61%);
-  --chart-2: hsl(173 58% 39%);
-  --chart-3: hsl(197 37% 24%);
-  --chart-4: hsl(43 74% 66%);
-  --chart-5: hsl(27 87% 67%);
-  --radius: 0.6rem;
+  --destructive-foreground: hsl(36 33% 97%);
+  --border: hsl(33 22% 78%);
+  --input: hsl(33 22% 78%);
+  --ring: hsl(15 58% 53%);
+  --chart-1: hsl(15 58% 53%);
+  --chart-2: hsl(105 20% 52%);
+  --chart-3: hsl(210 22% 55%);
+  --chart-4: hsl(43 83% 75%);
+  --chart-5: hsl(28 22% 25%);
+  --radius: 0.75rem;
+
+  /* Sketchbook tokens */
+  --sketch-cream: #faf8f5;
+  --sketch-card: #f5f0e8;
+  --sketch-accent-bg: #ebe5d9;
+  --sketch-text: #5c4b3a;
+  --sketch-sage: #7c9a6e;
+  --sketch-coral: #e07a5f;
+  --sketch-blue: #6b8cae;
+  --sketch-yellow: #f2d98b;
+  --sketch-border: #d4c9b8;
 }
 
 /*
@@ -200,29 +207,29 @@
 */
 
 .dark {
-  --background: hsl(240 10% 3.9%);
-  --foreground: hsl(0 0% 98%);
-  --card: hsl(240 10% 3.9%);
-  --card-foreground: hsl(0 0% 98%);
-  --popover: hsl(240 10% 3.9%);
-  --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(0 0% 98%);
-  --primary-foreground: hsl(240 5.9% 10%);
-  --secondary: hsl(240 3.7% 15.9%);
-  --secondary-foreground: hsl(0 0% 98%);
-  --muted: hsl(240 3.7% 15.9%);
-  --muted-foreground: hsl(240 5% 64.9%);
-  --accent: hsl(240 3.7% 15.9%);
-  --accent-foreground: hsl(0 0% 98%);
+  --background: hsl(28 15% 12%);
+  --foreground: hsl(36 33% 93%);
+  --card: hsl(28 15% 16%);
+  --card-foreground: hsl(36 33% 93%);
+  --popover: hsl(28 15% 12%);
+  --popover-foreground: hsl(36 33% 93%);
+  --primary: hsl(15 58% 58%);
+  --primary-foreground: hsl(28 15% 12%);
+  --secondary: hsl(28 12% 22%);
+  --secondary-foreground: hsl(36 33% 93%);
+  --muted: hsl(28 12% 22%);
+  --muted-foreground: hsl(33 15% 60%);
+  --accent: hsl(28 12% 22%);
+  --accent-foreground: hsl(36 33% 93%);
   --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(0 0% 98%);
-  --border: hsl(240 3.7% 15.9%);
-  --input: hsl(240 3.7% 15.9%);
-  --ring: hsl(240 4.9% 83.9%);
-  --chart-1: hsl(220 70% 50%);
-  --chart-2: hsl(160 60% 45%);
-  --chart-3: hsl(30 80% 55%);
-  --chart-4: hsl(280 65% 60%);
+  --destructive-foreground: hsl(36 33% 93%);
+  --border: hsl(28 12% 22%);
+  --input: hsl(28 12% 22%);
+  --ring: hsl(15 58% 58%);
+  --chart-1: hsl(15 58% 58%);
+  --chart-2: hsl(105 20% 52%);
+  --chart-3: hsl(210 22% 60%);
+  --chart-4: hsl(43 83% 75%);
   --chart-5: hsl(340 75% 55%);
 }
 
@@ -272,4 +279,106 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* ============================================
+   Sketchbook Custom Styles
+   ============================================ */
+
+.paper-texture {
+  background-color: #faf8f5;
+  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c9b8' fill-opacity='0.08'%3E%3Cpath d='M5 0h1L0 5V4zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.lined-paper {
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 31px,
+    #e8dfd3 31px,
+    #e8dfd3 32px
+  );
+}
+
+.dotted-grid {
+  background-image: radial-gradient(circle, #d4c9b8 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.sketch-card {
+  background-color: #f5f0e8;
+  border: 2px dashed #d4c9b8;
+  border-radius: 0.75rem;
+}
+
+.sketch-shadow {
+  box-shadow: 2px 3px 6px rgba(92, 75, 58, 0.15);
+}
+
+/* Notebook tab active state */
+.notebook-tab-active {
+  transform: translateX(4px);
+  background-color: #f5f0e8;
+  border-right: 3px solid #e07a5f;
+  border-radius: 0.75rem 0 0 0.75rem;
+}
+
+/* Post-it note rotation classes */
+.postit-rotate-1 { transform: rotate(-1deg); }
+.postit-rotate-2 { transform: rotate(0.5deg); }
+.postit-rotate-3 { transform: rotate(1deg); }
+.postit-rotate-4 { transform: rotate(-0.5deg); }
+.postit-rotate-5 { transform: rotate(1.5deg); }
+.postit-rotate-6 { transform: rotate(-1.5deg); }
+
+/* Sketchy progress bar with imperfect look */
+.sketchy-bar {
+  border-radius: 10px 6px 12px 8px;
+}
+
+/* Cork board texture for Monitor */
+.cork-texture {
+  background-color: #f5f0e8;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c9b8' fill-opacity='0.06'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3Ccircle cx='9' cy='9' r='1'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Scrollbar styling for warmth */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Push pin for pinboard */
+.push-pin::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e07a5f;
+  border: 2px solid #c4654a;
+  box-shadow: 0 2px 4px rgba(92, 75, 58, 0.25);
+  z-index: 1;
+}
+
+/* Post-it pin circle */
+.postit-pin::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e07a5f;
+  border: 2px solid #c4654a;
+  box-shadow: 0 1px 3px rgba(92, 75, 58, 0.2);
+  z-index: 1;
 }

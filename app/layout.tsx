@@ -1,6 +1,6 @@
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
+import { Nunito } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import { getUser, getTeamForUser } from '@/lib/db/queries';
 import { SWRConfig } from 'swr';
@@ -14,7 +14,7 @@ export const viewport: Viewport = {
   maximumScale: 1
 };
 
-const manrope = Manrope({ subsets: ['latin'] });
+const nunito = Nunito({ subsets: ['latin'] });
 
 export default function RootLayout({
   children
@@ -24,9 +24,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn('bg-background text-foreground', manrope.className)}
+      className={cn('bg-background text-foreground', nunito.className)}
     >
-      <body className="min-h-[100dvh] bg-muted/50">
+      <body className="min-h-[100dvh] paper-texture">
         <SWRConfig
           value={{
             fallback: {

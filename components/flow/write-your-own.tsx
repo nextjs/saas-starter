@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 const platforms = [
@@ -28,42 +27,40 @@ export function WriteYourOwn() {
   }
 
   return (
-    <Card className="gap-0 py-0">
-      <CardContent className="p-4 space-y-3">
-        <h3 className="text-sm font-semibold">Write your own</h3>
-        <textarea
-          className="w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[80px] resize-y"
-          placeholder="Drop a seed idea and let AI expand it..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-        <div className="flex flex-wrap items-center gap-1.5">
-          {platforms.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              title={p.title}
-              onClick={() => togglePlatform(p.id)}
-              className={cn(
-                'inline-flex h-8 w-8 items-center justify-center rounded-md text-xs font-medium transition-colors border cursor-pointer',
-                selectedPlatforms.includes(p.id)
-                  ? 'bg-primary text-primary-foreground border-primary'
-                  : 'bg-background text-muted-foreground border-border hover:bg-accent'
-              )}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-        <Button
-          size="sm"
-          className="gap-1.5"
-          disabled={!content.trim() || selectedPlatforms.length === 0}
-        >
-          <Sparkles className="h-3.5 w-3.5" strokeWidth={1.75} />
-          Generate Draft
-        </Button>
-      </CardContent>
-    </Card>
+    <div className="sketch-card sketch-shadow p-4 space-y-3">
+      <h3 className="text-sm font-bold text-[#5c4b3a]">Write your own</h3>
+      <textarea
+        className="w-full rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] px-3 py-2 text-sm text-[#5c4b3a] placeholder:text-[#5c4b3a]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e07a5f] min-h-[80px] resize-y"
+        placeholder="Drop a seed idea and let AI expand it..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+      />
+      <div className="flex flex-wrap items-center gap-1.5">
+        {platforms.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            title={p.title}
+            onClick={() => togglePlatform(p.id)}
+            className={cn(
+              'inline-flex h-8 w-8 items-center justify-center rounded-lg text-xs font-semibold transition-colors border-2 border-dashed cursor-pointer',
+              selectedPlatforms.includes(p.id)
+                ? 'bg-[#e07a5f] text-white border-[#e07a5f]'
+                : 'bg-[#faf8f5] text-[#5c4b3a]/60 border-[#d4c9b8] hover:bg-[#ebe5d9]'
+            )}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+      <Button
+        size="sm"
+        className="gap-1.5 bg-[#7c9a6e] hover:bg-[#6a8a5e] text-white rounded-xl"
+        disabled={!content.trim() || selectedPlatforms.length === 0}
+      >
+        <Sparkles className="h-3.5 w-3.5" strokeWidth={1.75} />
+        Generate Draft
+      </Button>
+    </div>
   );
 }

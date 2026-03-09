@@ -3,50 +3,46 @@
 import { Lightbulb, AlertTriangle, BookOpen, Trophy, Brain } from 'lucide-react';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import type { AIInsight } from '@/lib/types';
 
 const typeConfig = {
-  opportunity: { icon: Lightbulb, color: 'text-amber-500', bg: 'bg-amber-500/10' },
-  warning: { icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-500/10' },
-  learning: { icon: BookOpen, color: 'text-blue-500', bg: 'bg-blue-500/10' },
-  milestone: { icon: Trophy, color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+  opportunity: { icon: Lightbulb, color: 'text-[#f2d98b]', bg: 'bg-[#f2d98b]/15' },
+  warning: { icon: AlertTriangle, color: 'text-[#e07a5f]', bg: 'bg-[#e07a5f]/10' },
+  learning: { icon: BookOpen, color: 'text-[#6b8cae]', bg: 'bg-[#6b8cae]/15' },
+  milestone: { icon: Trophy, color: 'text-[#7c9a6e]', bg: 'bg-[#7c9a6e]/15' },
 } as const;
 
 export function AIInsightsCard({ data }: { data: AIInsight[] }) {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm">AI Insights</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {data.map((insight) => {
-          const config = typeConfig[insight.type];
-          const Icon = config.icon;
-          return (
-            <div key={insight.id} className="flex gap-3 rounded-lg border p-3">
-              <div className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', config.bg)}>
-                <Icon className={cn('h-4 w-4', config.color)} strokeWidth={1.75} />
-              </div>
-              <div className="min-w-0 space-y-1">
-                <p className="text-sm">{insight.finding}</p>
-                <p className="text-sm font-medium">{insight.suggestion}</p>
-                {insight.metric && (
-                  <span className="text-xs text-muted-foreground">{insight.metric}</span>
-                )}
-              </div>
-            </div>
-          );
-        })}
+    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-3">
+      <h3 className="text-sm font-bold text-[#5c4b3a]">AI Insights</h3>
 
-        <Button variant="ghost" size="sm" className="gap-1.5 text-xs" asChild>
-          <Link href="/brain">
-            <Brain className="h-3.5 w-3.5" strokeWidth={1.75} />
-            Ask Brain for deeper analysis
-          </Link>
-        </Button>
-      </CardContent>
-    </Card>
+      {data.map((insight) => {
+        const config = typeConfig[insight.type];
+        const Icon = config.icon;
+        return (
+          <div key={insight.id} className="flex gap-3 rounded-xl border-2 border-dashed border-[#d4c9b8] p-3">
+            <div className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', config.bg)}>
+              <Icon className={cn('h-4 w-4', config.color)} strokeWidth={1.75} />
+            </div>
+            <div className="min-w-0 space-y-1">
+              <p className="text-sm text-[#5c4b3a]">{insight.finding}</p>
+              <p className="text-sm font-medium text-[#5c4b3a]">{insight.suggestion}</p>
+              {insight.metric && (
+                <span className="text-xs text-[#5c4b3a]/60">{insight.metric}</span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-[#5c4b3a]/60" asChild>
+        <Link href="/brain">
+          <Brain className="h-3.5 w-3.5" strokeWidth={1.75} />
+          Ask Brain for deeper analysis
+        </Link>
+      </Button>
+    </div>
   );
 }

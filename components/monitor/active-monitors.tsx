@@ -3,31 +3,18 @@
 import { Plus, Pencil, Brain, Twitter, Linkedin } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import type { MonitorConfig } from '@/lib/types';
 
 function PlatformIcon({ platform }: { platform: string }) {
   switch (platform) {
-    case 'twitter':
-      return <Twitter className="h-4 w-4" strokeWidth={1.75} />;
-    case 'linkedin':
-      return <Linkedin className="h-4 w-4" strokeWidth={1.75} />;
-    case 'reddit':
-      return <span className="text-sm font-bold leading-none">r/</span>;
-    case 'producthunt':
-      return <span className="text-sm font-bold leading-none">PH</span>;
-    default:
-      return null;
+    case 'twitter': return <Twitter className="h-4 w-4" strokeWidth={1.75} />;
+    case 'linkedin': return <Linkedin className="h-4 w-4" strokeWidth={1.75} />;
+    case 'reddit': return <span className="text-sm font-bold leading-none">r/</span>;
+    case 'producthunt': return <span className="text-sm font-bold leading-none">PH</span>;
+    default: return null;
   }
 }
-
-const platformColors: Record<string, string> = {
-  reddit: 'border-l-orange-500',
-  twitter: 'border-l-sky-500',
-  linkedin: 'border-l-blue-600',
-  producthunt: 'border-l-amber-500',
-};
 
 function formatTimeAgo(date: Date): string {
   const now = new Date();
@@ -39,112 +26,55 @@ function formatTimeAgo(date: Date): string {
   return `${Math.round(diffHr / 24)}d ago`;
 }
 
-interface ActiveMonitorsProps {
-  monitors: MonitorConfig[];
-}
+interface ActiveMonitorsProps { monitors: MonitorConfig[]; }
 
 export function ActiveMonitors({ monitors }: ActiveMonitorsProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-          Active Monitors
-        </h2>
-        <span className="text-xs text-muted-foreground">
-          {monitors.filter((m) => m.enabled).length} active
-        </span>
+        <h2 className="text-sm font-bold uppercase tracking-wider text-[#5c4b3a]/60">Active Monitors</h2>
+        <span className="text-xs text-[#5c4b3a]/50">{monitors.filter((m) => m.enabled).length} active</span>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
         {monitors.map((monitor) => (
-          <Card
-            key={monitor.id}
-            className={cn(
-              'gap-0 border-l-4 py-0',
-              platformColors[monitor.platform] ?? 'border-l-muted'
-            )}
-          >
-            <CardContent className="p-4 space-y-3">
-              {/* Header */}
-              <div className="flex items-center gap-2">
-                <PlatformIcon platform={monitor.platform} />
-                <span className="text-sm font-medium flex-1 truncate">
-                  {monitor.name}
-                </span>
-                <span
-                  className={cn(
-                    'h-2 w-2 rounded-full',
-                    monitor.enabled ? 'bg-green-500' : 'bg-muted-foreground/30'
-                  )}
-                />
-              </div>
-
-              {/* Keywords / subreddits / accounts */}
-              <div className="flex flex-wrap gap-1">
-                {monitor.keywords.map((kw) => (
-                  <Badge
-                    key={kw}
-                    variant="secondary"
-                    className="text-[11px] font-normal"
-                  >
-                    {kw}
-                  </Badge>
-                ))}
-                {monitor.subreddits?.map((sub) => (
-                  <Badge
-                    key={sub}
-                    variant="outline"
-                    className="text-[11px] font-normal"
-                  >
-                    {sub}
-                  </Badge>
-                ))}
-                {monitor.accounts?.map((acc) => (
-                  <Badge
-                    key={acc}
-                    variant="outline"
-                    className="text-[11px] font-normal"
-                  >
-                    {acc}
-                  </Badge>
-                ))}
-              </div>
-
-              {/* Stats */}
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>
-                  <span className="font-medium text-foreground">
-                    {monitor.matchCount7d}
-                  </span>{' '}
-                  matches (7d)
-                </span>
-                <span>Checked {formatTimeAgo(monitor.lastChecked)}</span>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2">
-                <Button variant="ghost" size="sm" className="h-7 text-xs gap-1">
-                  <Pencil className="h-3 w-3" strokeWidth={1.75} />
-                  Edit keywords
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div key={monitor.id} className="relative sketch-card sketch-shadow p-4 space-y-3 postit-rotate-1">
+            <div className="absolute -top-2 left-4 w-3 h-3 rounded-full bg-[#e07a5f] border-2 border-[#c4654a] shadow-sm z-10" />
+            <div className="flex items-center gap-2 pt-1">
+              <PlatformIcon platform={monitor.platform} />
+              <span className="text-sm font-semibold flex-1 truncate text-[#5c4b3a]">{monitor.name}</span>
+              <span className={cn('h-2.5 w-2.5 rounded-full', monitor.enabled ? 'bg-[#7c9a6e]' : 'bg-[#d4c9b8]')} />
+            </div>
+            <div className="flex flex-wrap gap-1">
+              {monitor.keywords.map((kw) => (
+                <Badge key={kw} variant="secondary" className="text-[11px] font-normal bg-[#ebe5d9] text-[#5c4b3a] border-dashed border border-[#d4c9b8]">{kw}</Badge>
+              ))}
+              {monitor.subreddits?.map((sub) => (
+                <Badge key={sub} variant="outline" className="text-[11px] font-normal border-dashed border-[#d4c9b8] text-[#5c4b3a]/70">{sub}</Badge>
+              ))}
+              {monitor.accounts?.map((acc) => (
+                <Badge key={acc} variant="outline" className="text-[11px] font-normal border-dashed border-[#d4c9b8] text-[#5c4b3a]/70">{acc}</Badge>
+              ))}
+            </div>
+            <div className="flex items-center justify-between text-xs text-[#5c4b3a]/60">
+              <span><span className="font-semibold text-[#5c4b3a]">{monitor.matchCount7d}</span> matches (7d)</span>
+              <span>Checked {formatTimeAgo(monitor.lastChecked)}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="h-7 text-xs gap-1 text-[#5c4b3a]/60">
+                <Pencil className="h-3 w-3" strokeWidth={1.75} />Edit keywords
+              </Button>
+            </div>
+          </div>
         ))}
       </div>
 
-      {/* Bottom actions */}
       <div className="flex items-center gap-3">
-        <Button variant="outline" size="sm" className="gap-1.5">
-          <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />
-          Add Monitor
+        <Button variant="outline" size="sm" className="gap-1.5 border-2 border-dashed border-[#d4c9b8] text-[#5c4b3a] hover:bg-[#ebe5d9] rounded-xl">
+          <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />Add Monitor
         </Button>
-        <button
-          type="button"
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-        >
-          <Brain className="mr-1 inline h-3 w-3" strokeWidth={1.75} />
-          Ask Brain to set up
+        <button type="button" className="text-xs text-[#5c4b3a]/60 hover:text-[#5c4b3a] transition-colors cursor-pointer">
+          <Brain className="mr-1 inline h-3 w-3" strokeWidth={1.75} />Ask Brain to set up
         </button>
       </div>
     </section>

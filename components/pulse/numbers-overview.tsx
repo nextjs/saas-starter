@@ -2,7 +2,6 @@
 
 import { ArrowUp, ArrowDown, Twitter, Linkedin } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   LineChart,
   Line,
@@ -30,7 +29,7 @@ function PlatformIcon({ platform }: { platform: string }) {
 function Delta({ value }: { value: number }) {
   const positive = value >= 0;
   return (
-    <span className={cn('inline-flex items-center gap-0.5 text-xs font-medium', positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400')}>
+    <span className={cn('inline-flex items-center gap-0.5 text-xs font-medium', positive ? 'text-[#7c9a6e]' : 'text-[#e07a5f]')}>
       {positive ? <ArrowUp className="h-3 w-3" strokeWidth={2} /> : <ArrowDown className="h-3 w-3" strokeWidth={2} />}
       {Math.abs(value).toFixed(1)}%
     </span>
@@ -79,85 +78,82 @@ export function NumbersOverview({
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-sm">Numbers</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Headline Metrics */}
-        <div className="grid grid-cols-3 gap-3 md:gap-4">
-          {headlineMetrics.map((m) => (
-            <div key={m.label} className="space-y-1">
-              <p className="text-[11px] md:text-xs text-muted-foreground">{m.label}</p>
-              <p className="text-xl md:text-2xl font-bold tabular-nums">{m.value}</p>
-              <div className="flex items-center gap-1">
-                <Delta value={m.change} />
-                <span className="text-[10px] text-muted-foreground hidden sm:inline">({timeRange})</span>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-6">
+      <h3 className="text-sm font-bold text-[#5c4b3a]">Numbers</h3>
 
-        {/* Trend Chart */}
-        <div className="h-40 md:h-48">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={performanceData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-              <XAxis
-                dataKey="date"
-                tick={{ fontSize: 11 }}
-                tickFormatter={(v: string) => {
-                  const d = new Date(v);
-                  return `${d.getMonth() + 1}/${d.getDate()}`;
-                }}
-                className="text-muted-foreground"
-              />
-              <YAxis tick={{ fontSize: 11 }} className="text-muted-foreground" width={40} />
-              <Tooltip
-                contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                labelFormatter={(v) => new Date(String(v)).toLocaleDateString()}
-              />
-              <Line
-                type="monotone"
-                dataKey="impressions"
-                stroke="hsl(var(--chart-1, 220 70% 50%))"
-                strokeWidth={2}
-                dot={false}
-                name="Impressions"
-              />
-              <Line
-                type="monotone"
-                dataKey="engagement"
-                stroke="hsl(var(--chart-2, 150 60% 50%))"
-                strokeWidth={2}
-                dot={false}
-                name="Engagement"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Per-platform breakdown */}
-        <div className="space-y-2">
-          <p className="text-xs font-medium text-muted-foreground">By Platform</p>
-          {platformStats.map((stat) => (
-            <div key={stat.platform} className="space-y-1.5 rounded-lg border p-2.5 md:space-y-0 md:border-0 md:p-0 md:flex md:items-center md:gap-3 text-sm">
-              <div className="flex items-center gap-1.5 md:w-20">
-                <PlatformIcon platform={stat.platform} />
-                <span className="capitalize text-xs">{stat.platform}</span>
-              </div>
-              <div className="flex items-center gap-3 md:gap-3">
-                {metrics.map((m) => (
-                  <div key={m.key} className="flex items-center gap-1 min-w-0">
-                    <span className="tabular-nums text-xs">{formatNumber(stat[m.key])}</span>
-                    <Delta value={stat[m.changeKey]} />
-                  </div>
-                ))}
-              </div>
+      {/* Headline Metrics */}
+      <div className="grid grid-cols-3 gap-3 md:gap-4">
+        {headlineMetrics.map((m) => (
+          <div key={m.label} className="space-y-1">
+            <p className="text-[11px] md:text-xs text-[#5c4b3a]/60">{m.label}</p>
+            <p className="text-xl md:text-2xl font-bold tabular-nums text-[#5c4b3a]">{m.value}</p>
+            <div className="flex items-center gap-1">
+              <Delta value={m.change} />
+              <span className="text-[10px] text-[#5c4b3a]/40 hidden sm:inline">({timeRange})</span>
             </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
+          </div>
+        ))}
+      </div>
+
+      {/* Trend Chart */}
+      <div className="h-40 md:h-48">
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={performanceData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
+            <CartesianGrid strokeDasharray="6 4" stroke="#d4c9b8" strokeOpacity={0.5} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 11, fill: '#5c4b3a' }}
+              tickFormatter={(v: string) => {
+                const d = new Date(v);
+                return `${d.getMonth() + 1}/${d.getDate()}`;
+              }}
+              stroke="#d4c9b8"
+            />
+            <YAxis tick={{ fontSize: 11, fill: '#5c4b3a' }} stroke="#d4c9b8" width={40} />
+            <Tooltip
+              contentStyle={{ fontSize: 12, borderRadius: 12, border: '2px dashed #d4c9b8', backgroundColor: '#faf8f5' }}
+              labelFormatter={(v) => new Date(String(v)).toLocaleDateString()}
+            />
+            <Line
+              type="monotone"
+              dataKey="impressions"
+              stroke="#6b8cae"
+              strokeWidth={2}
+              dot={false}
+              name="Impressions"
+            />
+            <Line
+              type="monotone"
+              dataKey="engagement"
+              stroke="#7c9a6e"
+              strokeWidth={2}
+              dot={false}
+              name="Engagement"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Per-platform breakdown */}
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-[#5c4b3a]/60">By Platform</p>
+        {platformStats.map((stat) => (
+          <div key={stat.platform} className="space-y-1.5 rounded-xl border-2 border-dashed border-[#d4c9b8] p-2.5 md:space-y-0 md:border-0 md:p-0 md:flex md:items-center md:gap-3 text-sm">
+            <div className="flex items-center gap-1.5 md:w-20 text-[#5c4b3a]">
+              <PlatformIcon platform={stat.platform} />
+              <span className="capitalize text-xs">{stat.platform}</span>
+            </div>
+            <div className="flex items-center gap-3 md:gap-3">
+              {metrics.map((m) => (
+                <div key={m.key} className="flex items-center gap-1 min-w-0">
+                  <span className="tabular-nums text-xs text-[#5c4b3a]">{formatNumber(stat[m.key])}</span>
+                  <Delta value={stat[m.changeKey]} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }

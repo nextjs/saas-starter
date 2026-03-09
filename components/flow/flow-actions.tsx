@@ -34,16 +34,16 @@ export function FlowActions({ item, onApprove, onChat, onSkip }: FlowActionsProp
     <div className="flex items-center gap-2">
       <Button
         size="sm"
-        className="gap-1.5 min-h-[44px] md:min-h-0"
+        className="gap-1.5 min-h-[44px] md:min-h-0 bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl"
         onClick={() => onApprove(item.id)}
       >
         <PrimaryIcon className="h-3.5 w-3.5" strokeWidth={1.75} />
         {primary.label}
       </Button>
       <Button
-        variant="secondary"
+        variant="outline"
         size="sm"
-        className="gap-1.5 min-h-[44px] md:min-h-0"
+        className="gap-1.5 min-h-[44px] md:min-h-0 border-2 border-dashed border-[#d4c9b8] text-[#5c4b3a] hover:bg-[#ebe5d9] rounded-xl"
         onClick={() => onChat(item.id)}
       >
         <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -52,7 +52,7 @@ export function FlowActions({ item, onApprove, onChat, onSkip }: FlowActionsProp
       <Button
         variant="ghost"
         size="sm"
-        className="gap-1.5 text-muted-foreground min-h-[44px] md:min-h-0"
+        className="gap-1.5 text-[#5c4b3a]/50 min-h-[44px] md:min-h-0 rounded-xl"
         onClick={() => onSkip(item.id)}
       >
         <X className="h-3.5 w-3.5" strokeWidth={1.75} />

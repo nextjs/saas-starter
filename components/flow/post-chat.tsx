@@ -20,14 +20,13 @@ import type { FlowItem } from '@/lib/types';
 import { FlowItemType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 
-// Mock feedback messages between versions, keyed by flow item ID
 const mockFeedback: Record<string, { afterVersion: number; message: string }[]> = {
   'fi-1': [
-    { afterVersion: 1, message: 'Make it shorter and more punchy. Cut the benchmark numbers — focus on the agent builder angle.' },
+    { afterVersion: 1, message: 'Make it shorter and more punchy. Cut the benchmark numbers -- focus on the agent builder angle.' },
     { afterVersion: 2, message: 'Good, but add a stronger hook at the beginning and end with a question.' },
   ],
   'fi-4': [
-    { afterVersion: 1, message: 'Make it more personal — lead with a specific anecdote from our experience, not an abstract statement.' },
+    { afterVersion: 1, message: 'Make it more personal -- lead with a specific anecdote from our experience, not an abstract statement.' },
   ],
 };
 
@@ -53,10 +52,6 @@ const typeLabels: Record<FlowItemType, string> = {
   [FlowItemType.MonitorAlert]: 'Monitor',
 };
 
-// ------------------------------------------------------------------
-// Learning Note
-// ------------------------------------------------------------------
-
 function LearningNote({
   note,
   onConfirm,
@@ -69,7 +64,7 @@ function LearningNote({
 
   if (dismissed && confirmation) {
     return (
-      <div className="rounded-lg border border-dashed p-3 text-center text-xs text-muted-foreground">
+      <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] p-3 text-center text-xs text-[#5c4b3a]/60">
         {confirmation}
       </div>
     );
@@ -78,22 +73,22 @@ function LearningNote({
   if (dismissed) return null;
 
   return (
-    <div className="rounded-lg border bg-amber-50 dark:bg-amber-950/30 p-4 space-y-3">
+    <div className="rounded-xl border-2 border-dashed border-[#f2d98b] bg-[#f2d98b]/15 p-4 space-y-3">
       <div className="flex items-start gap-2">
-        <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" strokeWidth={1.75} />
+        <Lightbulb className="h-4 w-4 text-[#e07a5f] mt-0.5 shrink-0" strokeWidth={1.75} />
         <div className="space-y-1">
-          <p className="text-xs font-medium text-amber-800 dark:text-amber-300">AI learned from this interaction</p>
-          <p className="text-sm text-amber-900 dark:text-amber-200">{note}</p>
+          <p className="text-xs font-bold text-[#5c4b3a]">AI learned from this interaction</p>
+          <p className="text-sm text-[#5c4b3a]">{note}</p>
         </div>
       </div>
       <div className="flex items-center gap-2">
         <Button
           size="sm"
           variant="outline"
-          className="gap-1.5 text-xs"
+          className="gap-1.5 text-xs border-2 border-dashed border-[#7c9a6e] text-[#7c9a6e] hover:bg-[#7c9a6e]/10 rounded-xl"
           onClick={() => {
             onConfirm(true);
-            setConfirmation('Got it — I\'ll remember this for future drafts.');
+            setConfirmation('Got it -- I\'ll remember this for future drafts.');
             setDismissed(true);
           }}
         >
@@ -103,10 +98,10 @@ function LearningNote({
         <Button
           size="sm"
           variant="ghost"
-          className="gap-1.5 text-xs text-muted-foreground"
+          className="gap-1.5 text-xs text-[#5c4b3a]/50 rounded-xl"
           onClick={() => {
             onConfirm(false);
-            setConfirmation('Noted — treating this as a one-time preference.');
+            setConfirmation('Noted -- treating this as a one-time preference.');
             setDismissed(true);
           }}
         >
@@ -117,10 +112,6 @@ function LearningNote({
     </div>
   );
 }
-
-// ------------------------------------------------------------------
-// Write Your Own Final Version
-// ------------------------------------------------------------------
 
 function WriteOwnVersion({
   initialContent,
@@ -142,26 +133,24 @@ function WriteOwnVersion({
   }, [content]);
 
   const scoreColor =
-    mockScore >= 85
-      ? 'text-green-700 dark:text-green-400'
-      : 'text-yellow-700 dark:text-yellow-400';
+    mockScore >= 85 ? 'text-[#7c9a6e]' : 'text-[#f2d98b]';
 
   return (
-    <div className="space-y-3 rounded-lg border p-4">
-      <p className="text-xs font-medium">Write your final version</p>
+    <div className="space-y-3 sketch-card p-4">
+      <p className="text-xs font-bold text-[#5c4b3a]">Write your final version</p>
       <textarea
-        className="w-full rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[120px] resize-y"
+        className="w-full rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] px-3 py-2 text-sm text-[#5c4b3a] placeholder:text-[#5c4b3a]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e07a5f] min-h-[120px] resize-y"
         value={content}
         onChange={(e) => setContent(e.target.value)}
       />
       <div className="flex items-center justify-between">
-        <span className="text-xs text-muted-foreground">
+        <span className="text-xs text-[#5c4b3a]/60">
           Live Brand Match:{' '}
-          <span className={cn('font-medium', scoreColor)}>{mockScore}%</span>
+          <span className={cn('font-semibold', scoreColor)}>{mockScore}%</span>
         </span>
         <Button
           size="sm"
-          className="gap-1.5"
+          className="gap-1.5 bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl"
           disabled={!content.trim()}
           onClick={() => onSubmit(content)}
         >
@@ -172,10 +161,6 @@ function WriteOwnVersion({
     </div>
   );
 }
-
-// ------------------------------------------------------------------
-// Post Chat
-// ------------------------------------------------------------------
 
 interface PostChatProps {
   item: FlowItem;
@@ -210,7 +195,6 @@ export function PostChat({ item, onBack }: PostChatProps) {
       { afterVersion: currentVersion, message: feedbackInput },
     ]);
 
-    // Simulate AI generating a new version after a moment
     const newVersion = currentVersion + 1;
     const mockNewContent = `[AI-generated V${newVersion} based on your feedback]\n\n${latestVersion.content}`;
     const newVersionObj = {
@@ -229,80 +213,66 @@ export function PostChat({ item, onBack }: PostChatProps) {
     setFeedbackInput('');
   }
 
-  // Build the timeline: interleave versions and feedback
   const timeline: { type: 'version' | 'feedback'; data: unknown; key: string }[] = [];
   for (const v of localVersions) {
     timeline.push({ type: 'version', data: v, key: `v-${v.id}` });
     const fb = localFeedback.find((f) => f.afterVersion === v.version);
     if (fb) {
-      timeline.push({
-        type: 'feedback',
-        data: fb,
-        key: `fb-${v.version}`,
-      });
+      timeline.push({ type: 'feedback', data: fb, key: `fb-${v.version}` });
     }
   }
 
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="sticky top-0 z-10 border-b bg-background px-4 py-3">
+      <div className="sticky top-0 z-10 border-b-2 border-dashed border-[#d4c9b8] bg-[#f5f0e8] px-4 py-3">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
             size="sm"
-            className="gap-1.5 -ml-2 min-h-[44px] md:min-h-0"
+            className="gap-1.5 -ml-2 min-h-[44px] md:min-h-0 text-[#5c4b3a]"
             onClick={onBack}
           >
             <ArrowLeft className="h-4 w-4" strokeWidth={1.75} />
             <span className="hidden sm:inline">Back to Flow</span>
           </Button>
           <div className="flex items-center gap-2 ml-auto">
-            <Badge variant="outline" className="gap-1">
+            <Badge variant="outline" className="gap-1 border-dashed border-[#d4c9b8] text-[#5c4b3a]/70">
               <PlatformIcon platform={item.platform} />
               {item.platform}
             </Badge>
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs bg-[#ebe5d9] text-[#5c4b3a] border-dashed border border-[#d4c9b8]">
               {typeLabels[item.type]}
             </Badge>
           </div>
         </div>
-        <h2 className="text-sm font-semibold mt-2 line-clamp-1">{item.title}</h2>
+        <h2 className="text-sm font-bold mt-2 line-clamp-1 text-[#5c4b3a]">{item.title}</h2>
       </div>
 
       {/* Timeline */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 lined-paper bg-[#faf8f5]">
         {timeline.map((entry) => {
           if (entry.type === 'version') {
             const v = entry.data as (typeof localVersions)[number];
             return (
-              <PostVersionCard
-                key={entry.key}
-                version={v}
-                isLatest={v.id === latestVersion.id}
-              />
+              <PostVersionCard key={entry.key} version={v} isLatest={v.id === latestVersion.id} />
             );
           }
 
           const fb = entry.data as { afterVersion: number; message: string };
           return (
             <div key={entry.key} className="flex justify-end">
-              <div className="max-w-[85%] rounded-xl rounded-br-sm bg-primary px-3.5 py-2.5 text-sm text-primary-foreground">
+              <div className="max-w-[85%] rounded-xl rounded-br-sm bg-[#5c4b3a] px-3.5 py-2.5 text-sm text-[#faf8f5] sketch-shadow">
                 {fb.message}
               </div>
             </div>
           );
         })}
 
-        {/* Learning Note */}
         {item.learningNote && (
-          <LearningNote
-            note={item.learningNote.note}
-            onConfirm={() => {}}
-          />
+          <LearningNote note={item.learningNote.note} onConfirm={() => {}} />
         )}
 
-        {/* Write your own (expanded) */}
         {showWriteOwn && (
           <WriteOwnVersion
             initialContent={latestVersion.content}
@@ -317,12 +287,11 @@ export function PostChat({ item, onBack }: PostChatProps) {
       </div>
 
       {/* Bottom action bar */}
-      <div className="border-t bg-background px-4 py-3 space-y-3">
-        {/* Chat input */}
+      <div className="border-t-2 border-dashed border-[#d4c9b8] bg-[#f5f0e8] px-4 py-3 space-y-3">
         {!showWriteOwn && (
           <div className="flex items-end gap-2">
             <textarea
-              className="flex-1 rounded-md border bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[40px] max-h-[120px] resize-none"
+              className="flex-1 rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] px-3 py-2 text-sm text-[#5c4b3a] placeholder:text-[#5c4b3a]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e07a5f] min-h-[40px] max-h-[120px] resize-none"
               placeholder="Give feedback to refine this draft..."
               rows={1}
               value={feedbackInput}
@@ -338,17 +307,17 @@ export function PostChat({ item, onBack }: PostChatProps) {
               size="sm"
               disabled={!feedbackInput.trim()}
               onClick={handleSendFeedback}
+              className="bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl"
             >
               <Send className="h-4 w-4" strokeWidth={1.75} />
             </Button>
           </div>
         )}
 
-        {/* Action buttons */}
         <div className="flex flex-wrap items-center gap-2">
           <Button
             size="sm"
-            className="gap-1.5 min-h-[44px] md:min-h-0"
+            className="gap-1.5 min-h-[44px] md:min-h-0 bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl"
             onClick={onBack}
           >
             <CalendarPlus className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -358,7 +327,7 @@ export function PostChat({ item, onBack }: PostChatProps) {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 min-h-[44px] md:min-h-0"
+              className="gap-1.5 min-h-[44px] md:min-h-0 border-2 border-dashed border-[#d4c9b8] text-[#5c4b3a] hover:bg-[#ebe5d9] rounded-xl"
               onClick={() => setShowWriteOwn(true)}
             >
               <PenLine className="h-3.5 w-3.5" strokeWidth={1.75} />

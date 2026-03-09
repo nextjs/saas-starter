@@ -23,19 +23,19 @@ export function PlaybookCard({ playbook }: { playbook: Playbook }) {
 
   return (
     <div className="space-y-3">
-      <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+      <h4 className="text-xs font-bold text-[#5c4b3a]/60 uppercase tracking-wider">
         Active Playbook
       </h4>
-      <div className="rounded-lg border bg-card p-3 space-y-2.5">
+      <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-3 space-y-2.5">
         <div className="flex items-center gap-2">
-          <BookOpen className="h-4 w-4 text-muted-foreground" strokeWidth={1.75} />
-          <span className="text-sm font-medium flex-1 truncate">{playbook.title}</span>
-          <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0">
+          <BookOpen className="h-4 w-4 text-[#5c4b3a]/60" strokeWidth={1.75} />
+          <span className="text-sm font-semibold flex-1 truncate text-[#5c4b3a]">{playbook.title}</span>
+          <Badge variant="outline" className="text-[10px] px-1.5 py-0 shrink-0 border-dashed border-[#d4c9b8] text-[#5c4b3a]/70">
             Day {currentDay}/{totalDays}
           </Badge>
         </div>
-        <Progress value={progress} className="h-1.5" />
-        <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+        <Progress value={progress} className="h-2 sketchy-bar border border-[#d4c9b8] [&_[data-slot=progress-indicator]]:bg-[#7c9a6e]" />
+        <div className="flex items-center justify-between text-[11px] text-[#5c4b3a]/60">
           <span>
             {completed}/{total} tasks done
           </span>

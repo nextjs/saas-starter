@@ -32,11 +32,11 @@ export function SessionList({
   onNewSession,
 }: SessionListProps) {
   return (
-    <div className="flex items-center gap-1.5 overflow-x-auto px-3 py-2 border-b scrollbar-hide">
+    <div className="flex items-center gap-1.5 overflow-x-auto px-3 py-2 border-b-2 border-dashed border-[#d4c9b8] bg-[#f5f0e8] scrollbar-hide">
       <Button
         variant="outline"
         size="sm"
-        className="shrink-0 h-8 md:h-7 px-2.5 text-xs gap-1"
+        className="shrink-0 h-8 md:h-7 px-2.5 text-xs gap-1 border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] text-[#5c4b3a] hover:bg-[#ebe5d9]"
         onClick={onNewSession}
       >
         <Plus className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -48,11 +48,11 @@ export function SessionList({
           key={session.id}
           onClick={() => onSelectSession(session.id)}
           className={cn(
-            'shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1.5 md:py-1 text-xs font-medium transition-colors cursor-pointer',
-            'border hover:bg-accent',
+            'shrink-0 flex items-center gap-1.5 rounded-xl px-3 py-1.5 md:py-1 text-xs font-semibold transition-colors cursor-pointer',
+            'border-2 border-dashed hover:bg-[#ebe5d9]',
             session.id === activeSessionId
-              ? 'bg-foreground text-background border-foreground'
-              : 'bg-background text-muted-foreground border-border'
+              ? 'bg-[#e07a5f] text-white border-[#e07a5f]'
+              : 'bg-[#faf8f5] text-[#5c4b3a]/70 border-[#d4c9b8]'
           )}
         >
           {session.pinned && (

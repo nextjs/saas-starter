@@ -6,16 +6,16 @@ function PillarBar({ pillar }: { pillar: ContentPillar }) {
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
           <span
-            className="h-2 w-2 rounded-full shrink-0"
+            className="h-2.5 w-2.5 rounded-full shrink-0 border border-[#d4c9b8]"
             style={{ backgroundColor: pillar.color }}
           />
-          <span>{pillar.name}</span>
+          <span className="font-medium text-[#5c4b3a]">{pillar.name}</span>
         </div>
-        <span className="text-muted-foreground">{pillar.allocation}%</span>
+        <span className="text-[#5c4b3a]/60">{pillar.allocation}%</span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-muted">
+      <div className="h-2 w-full rounded-full bg-[#ebe5d9] border border-[#d4c9b8] sketchy-bar">
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-full transition-all sketchy-bar"
           style={{ width: `${pillar.allocation}%`, backgroundColor: pillar.color }}
         />
       </div>
@@ -24,7 +24,7 @@ function PillarBar({ pillar }: { pillar: ContentPillar }) {
 }
 
 const platformIcons: Record<string, string> = {
-  twitter: '𝕏',
+  twitter: '\ud835\udd4f',
   linkedin: 'in',
   reddit: 'r/',
   producthunt: 'PH',
@@ -36,12 +36,12 @@ function CadenceItem({ target }: { target: CadenceTarget }) {
   return (
     <div className="flex items-center justify-between text-xs">
       <div className="flex items-center gap-2">
-        <span className="w-5 text-center font-medium text-muted-foreground">
+        <span className="w-5 text-center font-bold text-[#5c4b3a]/60">
           {platformIcons[target.platform] ?? target.platform}
         </span>
-        <span className="capitalize">{target.platform}</span>
+        <span className="capitalize text-[#5c4b3a]">{target.platform}</span>
       </div>
-      <span className="text-muted-foreground">
+      <span className="text-[#5c4b3a]/60">
         {target.currentWeek}/{target.postsPerWeek} this week
       </span>
     </div>
@@ -58,7 +58,7 @@ export function ContentPillars({
   return (
     <div className="space-y-4">
       <div className="space-y-2.5">
-        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <h4 className="text-xs font-bold text-[#5c4b3a]/60 uppercase tracking-wider">
           Content Pillars
         </h4>
         {pillars.map((p) => (
@@ -67,7 +67,7 @@ export function ContentPillars({
       </div>
 
       <div className="space-y-2">
-        <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <h4 className="text-xs font-bold text-[#5c4b3a]/60 uppercase tracking-wider">
           Platform Cadence
         </h4>
         {cadence.map((c) => (
