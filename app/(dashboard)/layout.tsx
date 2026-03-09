@@ -114,10 +114,45 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
+function SpiralBinding() {
+  return (
+    <div className="flex justify-center gap-[18px] py-1.5 overflow-hidden" aria-hidden="true">
+      {Array.from({ length: 8 }, (_, i) => (
+        <svg key={i} width="16" height="20" viewBox="0 0 16 20" fill="none">
+          <ellipse cx="8" cy="10" rx="5" ry="8" stroke="#c4b9a8" strokeWidth="1.5" fill="none" />
+          <ellipse cx="8" cy="10" rx="3" ry="5.5" stroke="#d4c9b8" strokeWidth="0.8" fill="none" strokeDasharray="2,2" />
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+function PencilIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="text-[#5c4b3a]/40">
+      <path d="M2,14 L3,10 L11,2 L14,5 L6,13 Z" stroke="currentColor" strokeWidth="1.2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M3,10 L6,13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M2,14 L3,10" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <line x1="11" y1="2" x2="14" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function HolePunchDots() {
+  return (
+    <div className="absolute top-12 left-2 flex flex-col gap-[80px]" aria-hidden="true">
+      {Array.from({ length: 4 }, (_, i) => (
+        <div key={i} className="w-[10px] h-[10px] rounded-full bg-[#ebe5d9] border-[1.5px] border-[#d4c9b8]" />
+      ))}
+    </div>
+  );
+}
+
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   return (
-    <div className="flex h-full flex-col paper-texture">
-      <div className="px-2 py-3">
+    <div className="relative flex h-full flex-col paper-texture">
+      <SpiralBinding />
+      <div className="px-2 py-2">
         <IdentitySwitcher />
       </div>
       <SketchyDivider />
@@ -125,10 +160,13 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         <NavLinks onNavigate={onNavigate} />
       </div>
       <SketchyDivider />
-      <div className="px-2 py-2">
-        <Suspense fallback={<div className="h-9" />}>
-          <UserMenu />
-        </Suspense>
+      <div className="px-2 py-2 flex items-center gap-2">
+        <div className="flex-1">
+          <Suspense fallback={<div className="h-9" />}>
+            <UserMenu />
+          </Suspense>
+        </div>
+        <PencilIcon />
       </div>
     </div>
   );
@@ -138,15 +176,16 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-[#faf8f5]">
+    <div className="flex h-[100dvh] overflow-hidden bg-[#f3ece0]">
       {/* Desktop sidebar - notebook edge */}
-      <aside className="hidden md:flex w-60 shrink-0 flex-col border-r-2 border-dashed border-[#d4c9b8] bg-[#f5f0e8]">
+      <aside className="relative hidden md:flex w-60 shrink-0 flex-col border-r-2 border-dashed border-[#d4c9b8] bg-[#ede4d4]">
+        <HolePunchDots />
         <SidebarContent />
       </aside>
 
       {/* Mobile sheet sidebar */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-60 p-0 bg-[#f5f0e8] border-r-2 border-dashed border-[#d4c9b8]" showCloseButton={false}>
+        <SheetContent side="left" className="w-60 p-0 bg-[#ede4d4] border-r-2 border-dashed border-[#d4c9b8]" showCloseButton={false}>
           <SheetTitle className="sr-only">Navigation</SheetTitle>
           <SidebarContent onNavigate={() => setMobileOpen(false)} />
         </SheetContent>
@@ -155,7 +194,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       {/* Main area */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Mobile header */}
-        <header className="sticky top-0 z-30 flex items-center gap-2 border-b-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] px-4 py-3 md:hidden">
+        <header className="sticky top-0 z-30 flex items-center gap-2 border-b-2 border-dashed border-[#d4c9b8] bg-[#f3ece0] px-4 py-3 md:hidden">
           <Button
             variant="ghost"
             size="icon"

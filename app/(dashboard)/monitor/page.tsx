@@ -22,23 +22,37 @@ function SketchyDivider() {
 
 function MonitorIllustration() {
   return (
-    <svg width="130" height="75" viewBox="0 0 130 75" fill="none" className="mx-auto mb-3">
-      {/* Binoculars */}
-      <circle cx="45" cy="35" r="18" fill="#f5f0e8" stroke="#5c4b3a" strokeWidth="2" strokeDasharray="4,3"/>
-      <circle cx="85" cy="35" r="18" fill="#f5f0e8" stroke="#5c4b3a" strokeWidth="2" strokeDasharray="4,3"/>
-      <circle cx="45" cy="35" r="10" fill="#6b8cae" opacity="0.3" stroke="#6b8cae" strokeWidth="1.5"/>
-      <circle cx="85" cy="35" r="10" fill="#6b8cae" opacity="0.3" stroke="#6b8cae" strokeWidth="1.5"/>
-      <rect x="60" y="28" width="10" height="14" rx="3" fill="#d4c9b8" stroke="#5c4b3a" strokeWidth="1.5"/>
-      {/* Speech bubbles */}
-      <ellipse cx="20" cy="15" rx="12" ry="8" fill="#f2d98b" stroke="#e07a5f" strokeWidth="1" strokeDasharray="3,2"/>
-      <line x1="16" y1="13" x2="24" y2="13" stroke="#e07a5f" strokeWidth="1"/>
-      <line x1="16" y1="17" x2="22" y2="17" stroke="#e07a5f" strokeWidth="1"/>
-      <ellipse cx="110" cy="12" rx="14" ry="9" fill="#f2d98b" stroke="#7c9a6e" strokeWidth="1" strokeDasharray="3,2"/>
-      <line x1="104" y1="10" x2="116" y2="10" stroke="#7c9a6e" strokeWidth="1"/>
-      <line x1="104" y1="14" x2="113" y2="14" stroke="#7c9a6e" strokeWidth="1"/>
-      {/* Sparkle */}
-      <circle cx="35" cy="60" r="2" fill="#e07a5f"/>
-      <circle cx="100" cy="58" r="1.5" fill="#7c9a6e"/>
+    <svg width="155" height="90" viewBox="0 0 155 90" fill="none" className="mx-auto mb-3 sketch-float">
+      {/* Scribble corner doodles */}
+      <path d="M5,78 Q9,74 13,78" stroke="#d4c9b8" strokeWidth="0.8" fill="none" />
+      <path d="M142,74 Q145,71 149,75" stroke="#d4c9b8" strokeWidth="0.8" fill="none" />
+      {/* Binoculars - larger */}
+      <circle cx="50" cy="40" r="22" fill="#f5f0e8" stroke="#5c4b3a" strokeWidth="2" strokeDasharray="4,3"/>
+      <circle cx="100" cy="40" r="22" fill="#f5f0e8" stroke="#5c4b3a" strokeWidth="2" strokeDasharray="4,3"/>
+      <circle cx="50" cy="40" r="13" fill="#6b8cae" opacity="0.25" stroke="#6b8cae" strokeWidth="1.5"/>
+      <circle cx="100" cy="40" r="13" fill="#6b8cae" opacity="0.25" stroke="#6b8cae" strokeWidth="1.5"/>
+      {/* Lens glare */}
+      <ellipse cx="45" cy="35" rx="3" ry="5" fill="white" opacity="0.15" transform="rotate(-20 45 35)"/>
+      <ellipse cx="95" cy="35" rx="3" ry="5" fill="white" opacity="0.15" transform="rotate(-20 95 35)"/>
+      <rect x="68" y="32" width="14" height="16" rx="4" fill="#d4c9b8" stroke="#5c4b3a" strokeWidth="1.5"/>
+      {/* Speech bubbles - more detail */}
+      <ellipse cx="18" cy="15" rx="14" ry="10" fill="#f2d98b" stroke="#e07a5f" strokeWidth="1" strokeDasharray="3,2"/>
+      <line x1="12" y1="12" x2="24" y2="12" stroke="#e07a5f" strokeWidth="1"/>
+      <line x1="12" y1="17" x2="21" y2="17" stroke="#e07a5f" strokeWidth="1"/>
+      <path d="M22,24 L18,20 L26,22" fill="#f2d98b" stroke="#e07a5f" strokeWidth="0.8"/>
+      <ellipse cx="132" cy="12" rx="16" ry="10" fill="#f2d98b" stroke="#7c9a6e" strokeWidth="1" strokeDasharray="3,2"/>
+      <line x1="124" y1="10" x2="140" y2="10" stroke="#7c9a6e" strokeWidth="1"/>
+      <line x1="124" y1="15" x2="137" y2="15" stroke="#7c9a6e" strokeWidth="1"/>
+      <path d="M128,22 L132,18 L124,20" fill="#f2d98b" stroke="#7c9a6e" strokeWidth="0.8"/>
+      {/* Extra small bubble */}
+      <ellipse cx="140" cy="42" rx="8" ry="6" fill="#f2d98b" opacity="0.4" stroke="#6b8cae" strokeWidth="0.8" strokeDasharray="2,1.5"/>
+      <line x1="136" y1="41" x2="144" y2="41" stroke="#6b8cae" strokeWidth="0.6"/>
+      {/* Sparkles */}
+      <circle cx="35" cy="70" r="2.5" fill="#e07a5f" opacity="0.6"/>
+      <circle cx="115" cy="68" r="2" fill="#7c9a6e" opacity="0.6"/>
+      <circle cx="75" cy="8" r="1.5" fill="#f2d98b" opacity="0.5"/>
+      {/* Tiny star */}
+      <path d="M10,55 L11.5,51 L13,55 L9.5,53 L14.5,53 Z" fill="#6b8cae" opacity="0.4"/>
     </svg>
   );
 }
@@ -63,7 +77,7 @@ export default function MonitorPage() {
           </svg>
         </div>
         <div>
-          <h1 className="text-lg font-bold text-[#5c4b3a]">Monitor</h1>
+          <h1 className="text-lg font-bold text-[#5c4b3a] font-heading sketchy-underline">Monitor</h1>
           <p className="text-xs text-[#5c4b3a]/60">
             Surveillance radar -- tracking mentions, keywords, and competitors
           </p>
@@ -71,7 +85,7 @@ export default function MonitorPage() {
       </div>
 
       {/* Pinboard layout */}
-      <div className="cork-texture rounded-xl border-2 border-dashed border-[#d4c9b8] p-4 space-y-2">
+      <div className="cork-texture rounded-xl border-2 border-dashed border-[#d4c9b8] p-4 space-y-2 relative">
         <ActiveMonitors monitors={monitors} />
 
         <SketchyDivider />
@@ -85,6 +99,13 @@ export default function MonitorPage() {
         <SketchyDivider />
 
         <ReplyTracker items={replyItems} />
+
+        {/* Coffee stain ring decoration */}
+        <svg width="60" height="60" viewBox="0 0 60 60" className="absolute -bottom-4 -right-4 opacity-[0.12] pointer-events-none" aria-hidden="true">
+          <circle cx="30" cy="30" r="24" fill="none" stroke="#a0845c" strokeWidth="3"/>
+          <circle cx="30" cy="30" r="20" fill="none" stroke="#a0845c" strokeWidth="1.5" opacity="0.5"/>
+          <circle cx="30" cy="30" r="28" fill="none" stroke="#a0845c" strokeWidth="0.8" opacity="0.3"/>
+        </svg>
       </div>
     </div>
   );

@@ -139,7 +139,7 @@ export function FlowCard({ item, onApprove, onChat, onSkip }: FlowCardProps) {
         )}
       </div>
 
-      <h3 className="text-sm font-bold leading-snug text-[#5c4b3a]">{item.title}</h3>
+      <h3 className="text-sm font-bold leading-snug text-[#5c4b3a] font-heading">{item.title}</h3>
       <p className="text-xs text-[#5c4b3a]/60">{item.summary}</p>
 
       <div className="rounded-lg bg-[#faf8f5] p-3 border border-dashed border-[#d4c9b8]">

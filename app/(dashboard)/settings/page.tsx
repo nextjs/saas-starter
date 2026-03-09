@@ -35,7 +35,7 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col h-full">
       <div className="border-b px-4 md:px-6 py-4">
-        <h1 className="text-lg font-semibold">Settings</h1>
+        <h1 className="text-lg font-semibold font-heading sketchy-underline">Settings</h1>
         <p className="text-sm text-muted-foreground">
           Manage your account, brand, and preferences.
         </p>

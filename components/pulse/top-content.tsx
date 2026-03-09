@@ -64,8 +64,8 @@ export function TopContentCard({
   worstContent: TopContentType[];
 }) {
   return (
-    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-6">
-      <h3 className="text-sm font-bold text-[#5c4b3a]">Top Content</h3>
+    <div className="sketch-border border-2 border-dashed border-[#d4c9b8] bg-[#f3ece0] p-4 space-y-6">
+      <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">Top Content</h3>
 
       {/* Best */}
       <div className="space-y-3">

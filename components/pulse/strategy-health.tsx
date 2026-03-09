@@ -36,21 +36,15 @@ function barColor(score: number) {
 
 export function StrategyHealthCard({ data }: { data: StrategyHealth }) {
   return (
-    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-6">
-      <h3 className="text-sm font-bold text-[#5c4b3a]">Strategy Health</h3>
-
-      {/* Overall Score */}
+    <div className="sketch-card sketch-shadow p-5 space-y-6">
+      <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">Strategy Health</h3>
       <div className="flex items-center gap-4">
-        <div className={cn('text-5xl font-bold tabular-nums', scoreColor(data.overall))}>
-          {data.overall}
-        </div>
+        <div className={cn('text-5xl font-bold tabular-nums', scoreColor(data.overall))}>{data.overall}</div>
         <div className="text-sm text-[#5c4b3a]/60">
-          <div className="font-medium text-[#5c4b3a]">Overall Score</div>
+          <div className="font-semibold text-[#5c4b3a]">Overall Score</div>
           <div>Across 5 dimensions</div>
         </div>
       </div>
-
-      {/* Dimension Bars */}
       <div className="space-y-3">
         {dimensions.map(({ key, label }) => {
           const value = data[key];
@@ -59,34 +53,21 @@ export function StrategyHealthCard({ data }: { data: StrategyHealth }) {
             <div key={key} className="space-y-1">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-1.5">
-                  {isLow && (
-                    <AlertTriangle className="h-3.5 w-3.5 text-[#e07a5f]" strokeWidth={1.75} />
-                  )}
+                  {isLow && <AlertTriangle className="h-3.5 w-3.5 text-[#e07a5f]" strokeWidth={1.75} />}
                   <span className="text-[#5c4b3a]">{label}</span>
                 </div>
                 <span className="tabular-nums text-[#5c4b3a]/60">{value}%</span>
               </div>
-              <div className="h-2 w-full rounded-full bg-[#ebe5d9] border border-[#d4c9b8] sketchy-bar">
-                <div
-                  className={cn('h-full rounded-full transition-all sketchy-bar', barColor(value))}
-                  style={{ width: `${value}%` }}
-                />
+              <div className="h-3 w-full bg-[#ebe5d9] border border-[#d4c9b8] sketchy-bar sketch-chart">
+                <div className={cn('h-full transition-all sketch-bar-fill', barColor(value))} style={{ width: `${value}%` }} />
               </div>
-              {isLow && (
-                <p className="text-xs text-[#e07a5f]">
-                  {suggestions[key]}
-                </p>
-              )}
+              {isLow && <p className="text-xs text-[#e07a5f]">{suggestions[key]}</p>}
             </div>
           );
         })}
       </div>
-
       <Button variant="ghost" size="sm" className="gap-1.5 text-xs text-[#5c4b3a]/60" asChild>
-        <Link href="/brain">
-          <Brain className="h-3.5 w-3.5" strokeWidth={1.75} />
-          Ask Brain
-        </Link>
+        <Link href="/brain"><Brain className="h-3.5 w-3.5" strokeWidth={1.75} />Ask Brain</Link>
       </Button>
     </div>
   );

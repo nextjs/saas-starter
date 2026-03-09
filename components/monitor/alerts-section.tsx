@@ -56,7 +56,7 @@ export function AlertsSection({ alerts }: AlertsSectionProps) {
   return (
     <section className="space-y-3">
       <div className="flex items-center gap-2">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-[#e07a5f]">ALERTS</h2>
+        <h2 className="text-sm font-bold uppercase tracking-wider text-[#e07a5f] font-heading">ALERTS</h2>
         {urgentCount > 0 && (
           <Badge className="bg-[#e07a5f] text-white hover:bg-[#c4654a] text-[11px] h-5 px-1.5">{urgentCount}</Badge>
         )}
@@ -90,16 +90,16 @@ export function AlertsSection({ alerts }: AlertsSectionProps) {
                 <p className="text-sm leading-relaxed text-[#5c4b3a]/70 italic">{alert.summary}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <Button size="sm" className="h-9 md:h-7 text-xs gap-1 bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl">
+                <Button size="sm" className="h-9 md:h-7 text-xs gap-1 bg-[#e07a5f] hover:bg-[#c4654a] text-white sketch-btn">
                   <Check className="h-3 w-3" strokeWidth={1.75} />Reply
                 </Button>
-                <Button variant="outline" size="sm" className="h-9 md:h-7 text-xs gap-1 border-dashed border-[#d4c9b8] text-[#5c4b3a] rounded-xl">
+                <Button variant="outline" size="sm" className="h-9 md:h-7 text-xs gap-1 border-dashed border-[#d4c9b8] text-[#5c4b3a] sketch-btn">
                   <Pencil className="h-3 w-3" strokeWidth={1.75} />Chat
                 </Button>
-                <Button variant="outline" size="sm" className="h-9 md:h-7 text-xs gap-1 border-dashed border-[#d4c9b8] text-[#5c4b3a] rounded-xl">
+                <Button variant="outline" size="sm" className="h-9 md:h-7 text-xs gap-1 border-dashed border-[#d4c9b8] text-[#5c4b3a] sketch-btn">
                   <Users className="h-3 w-3" strokeWidth={1.75} />Escalate
                 </Button>
-                <Button variant="ghost" size="sm" className="h-9 md:h-7 text-xs gap-1 text-[#5c4b3a]/50 rounded-xl">
+                <Button variant="ghost" size="sm" className="h-9 md:h-7 text-xs gap-1 text-[#5c4b3a]/50 sketch-btn">
                   <X className="h-3 w-3" strokeWidth={1.75} />Skip
                 </Button>
               </div>

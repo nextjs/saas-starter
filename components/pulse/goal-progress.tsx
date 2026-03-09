@@ -20,9 +20,8 @@ const progressColor = {
 
 export function GoalProgressCard({ data }: { data: GoalProgressType[] }) {
   return (
-    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-4">
-      <h3 className="text-sm font-bold text-[#5c4b3a]">Goal Progress</h3>
-
+    <div className="sketch-card sketch-shadow p-5 space-y-4">
+      <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">Goal Progress</h3>
       {data.map((goal) => {
         const pace = paceConfig[goal.pace];
         const PaceIcon = pace.icon;
@@ -31,21 +30,15 @@ export function GoalProgressCard({ data }: { data: GoalProgressType[] }) {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0">
                 <Target className="h-4 w-4 shrink-0 text-[#5c4b3a]/60" strokeWidth={1.75} />
-                <span className="text-sm font-medium truncate text-[#5c4b3a]">{goal.title}</span>
+                <span className="text-sm font-semibold truncate text-[#5c4b3a]">{goal.title}</span>
               </div>
               <Badge variant="outline" className={cn('shrink-0 text-[10px] px-1.5 py-0 border-dashed', pace.className)}>
-                <PaceIcon className="h-3 w-3 mr-0.5" strokeWidth={1.75} />
-                {pace.label}
+                <PaceIcon className="h-3 w-3 mr-0.5" strokeWidth={1.75} />{pace.label}
               </Badge>
             </div>
-            <Progress
-              value={Math.min(goal.progress, 100)}
-              className={cn('h-2 sketchy-bar border border-[#d4c9b8]', progressColor[goal.pace])}
-            />
+            <Progress value={Math.min(goal.progress, 100)} className={cn('h-3 sketchy-bar border border-[#d4c9b8] sketch-chart [&_[data-slot=progress-indicator]]:sketch-bar-fill', progressColor[goal.pace])} />
             <div className="flex items-center justify-between text-xs text-[#5c4b3a]/60">
-              <span className="tabular-nums">
-                {goal.current}{goal.unit === '%' ? '%' : ` ${goal.unit}`} / {goal.target}{goal.unit === '%' ? '%' : ` ${goal.unit}`}
-              </span>
+              <span className="tabular-nums">{goal.current}{goal.unit === '%' ? '%' : ` ${goal.unit}`} / {goal.target}{goal.unit === '%' ? '%' : ` ${goal.unit}`}</span>
               <span>{goal.progress}% complete</span>
             </div>
           </div>

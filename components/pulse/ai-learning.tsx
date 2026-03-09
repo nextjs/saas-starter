@@ -38,7 +38,7 @@ function TrendChart({
           {currentValue}%
         </span>
       </div>
-      <div className="h-24">
+      <div className="h-24 sketch-chart">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
             <XAxis dataKey="week" tick={{ fontSize: 10, fill: '#5c4b3a' }} stroke="#d4c9b8" />
@@ -67,10 +67,10 @@ export function AILearningCard({
   patterns: LearnedPattern[];
 }) {
   return (
-    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-6">
+    <div className="sketch-border border-2 border-dashed border-[#d4c9b8] bg-[#f3ece0] p-4 space-y-6">
       <div className="flex items-center gap-2">
         <Sparkles className="h-4 w-4 text-[#f2d98b]" strokeWidth={1.75} />
-        <h3 className="text-sm font-bold text-[#5c4b3a]">AI Learning Progress</h3>
+        <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">AI Learning Progress</h3>
       </div>
 
       {/* Trend Charts */}

@@ -78,8 +78,8 @@ export function NumbersOverview({
   ];
 
   return (
-    <div className="rounded-xl border-2 border-dashed border-[#d4c9b8] bg-[#faf8f5] p-4 space-y-6">
-      <h3 className="text-sm font-bold text-[#5c4b3a]">Numbers</h3>
+    <div className="sketch-border border-2 border-dashed border-[#d4c9b8] bg-[#f3ece0] p-4 space-y-6">
+      <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">Numbers</h3>
 
       {/* Headline Metrics */}
       <div className="grid grid-cols-3 gap-3 md:gap-4">
@@ -95,8 +95,8 @@ export function NumbersOverview({
         ))}
       </div>
 
-      {/* Trend Chart */}
-      <div className="h-40 md:h-48">
+      {/* Trend Chart - with hand-drawn filter */}
+      <div className="h-40 md:h-48 sketch-chart">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={performanceData} margin={{ top: 5, right: 5, bottom: 5, left: 5 }}>
             <CartesianGrid strokeDasharray="6 4" stroke="#d4c9b8" strokeOpacity={0.5} />

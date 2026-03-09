@@ -37,7 +37,7 @@ function StrategyPanelContent({ goals, strategy, playbook }: StrategyPanelProps)
 
       {/* Chapter: Strategy */}
       <div className="sketch-card p-3 space-y-4">
-        <h3 className="text-sm font-bold text-[#5c4b3a]">Strategy</h3>
+        <h3 className="text-sm font-bold text-[#5c4b3a] font-heading sketchy-underline">Strategy</h3>
         <ContentPillars
           pillars={strategy.contentPillars}
           cadence={strategy.cadence}
@@ -87,7 +87,7 @@ export function StrategyPanel({ goals, strategy, playbook }: StrategyPanelProps)
           className="w-full flex items-center justify-between rounded-none px-4 py-3 h-auto"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <span className="text-sm font-bold text-[#5c4b3a]">Strategy Overview</span>
+          <span className="text-sm font-bold text-[#5c4b3a] font-heading">Strategy Overview</span>
           {mobileOpen ? (
             <ChevronUp className="h-4 w-4 text-[#5c4b3a]/60" strokeWidth={1.75} />
           ) : (

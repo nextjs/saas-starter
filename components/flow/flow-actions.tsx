@@ -34,7 +34,7 @@ export function FlowActions({ item, onApprove, onChat, onSkip }: FlowActionsProp
     <div className="flex items-center gap-2">
       <Button
         size="sm"
-        className="gap-1.5 min-h-[44px] md:min-h-0 bg-[#e07a5f] hover:bg-[#c4654a] text-white rounded-xl"
+        className="gap-1.5 min-h-[44px] md:min-h-0 bg-[#e07a5f] hover:bg-[#c4654a] text-white sketch-btn"
         onClick={() => onApprove(item.id)}
       >
         <PrimaryIcon className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -43,7 +43,7 @@ export function FlowActions({ item, onApprove, onChat, onSkip }: FlowActionsProp
       <Button
         variant="outline"
         size="sm"
-        className="gap-1.5 min-h-[44px] md:min-h-0 border-2 border-dashed border-[#d4c9b8] text-[#5c4b3a] hover:bg-[#ebe5d9] rounded-xl"
+        className="gap-1.5 min-h-[44px] md:min-h-0 border-2 border-dashed border-[#d4c9b8] text-[#5c4b3a] hover:bg-[#ebe5d9] sketch-btn"
         onClick={() => onChat(item.id)}
       >
         <Pencil className="h-3.5 w-3.5" strokeWidth={1.75} />
@@ -52,7 +52,7 @@ export function FlowActions({ item, onApprove, onChat, onSkip }: FlowActionsProp
       <Button
         variant="ghost"
         size="sm"
-        className="gap-1.5 text-[#5c4b3a]/50 min-h-[44px] md:min-h-0 rounded-xl"
+        className="gap-1.5 text-[#5c4b3a]/50 min-h-[44px] md:min-h-0 sketch-btn"
         onClick={() => onSkip(item.id)}
       >
         <X className="h-3.5 w-3.5" strokeWidth={1.75} />

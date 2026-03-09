@@ -72,8 +72,25 @@
 
 @layer utilities {
   body {
-    font-family: "Nunito", "Manrope", Arial, Helvetica, sans-serif;
+    font-family: var(--font-nunito), "Nunito", "Manrope", Arial, Helvetica, sans-serif;
   }
+}
+
+/* Varela Round for headings */
+h1, h2, .font-heading {
+  font-family: var(--font-varela), 'Varela Round', sans-serif;
+}
+
+/* Hand-drawn button style */
+.sketch-btn {
+  border-radius: 12px 14px 11px 13px;
+}
+
+/* Wavy SVG divider replacement for hr */
+hr, .sketch-divider {
+  border: none;
+  height: 12px;
+  background: none;
 }
 
 @layer base {
@@ -191,8 +208,8 @@
   --radius: 0.75rem;
 
   /* Sketchbook tokens */
-  --sketch-cream: #faf8f5;
-  --sketch-card: #f5f0e8;
+  --sketch-cream: #f3ece0;
+  --sketch-card: #f0e9dc;
   --sketch-accent-bg: #ebe5d9;
   --sketch-text: #5c4b3a;
   --sketch-sage: #7c9a6e;
@@ -286,8 +303,10 @@
    ============================================ */
 
 .paper-texture {
-  background-color: #faf8f5;
-  background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c9b8' fill-opacity='0.08'%3E%3Cpath d='M5 0h1L0 5V4zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E");
+  background-color: #f3ece0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c4b9a8' fill-opacity='0.18'%3E%3Cpath d='M5 0h1L0 5V4zM6 5v1H5z'/%3E%3C/g%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
 }
 
 .lined-paper {
@@ -307,19 +326,39 @@
 .sketch-card {
   background-color: #f5f0e8;
   border: 2px dashed #d4c9b8;
-  border-radius: 0.75rem;
+  border-radius: 14px 12px 13px 11px;
+  background-image:
+    repeating-linear-gradient(
+      transparent,
+      transparent 31px,
+      #ebe5d9 31px,
+      #ebe5d9 32px
+    );
+  background-size: 100% 32px;
 }
 
 .sketch-shadow {
   box-shadow: 2px 3px 6px rgba(92, 75, 58, 0.15);
 }
 
-/* Notebook tab active state */
+/* Notebook tab active state - looks like a real tab extending out */
 .notebook-tab-active {
   transform: translateX(4px);
-  background-color: #f5f0e8;
+  background-color: #f3ece0;
   border-right: 3px solid #e07a5f;
-  border-radius: 0.75rem 0 0 0.75rem;
+  border-radius: 12px 2px 2px 14px;
+  box-shadow: 2px 1px 4px rgba(92, 75, 58, 0.1);
+  position: relative;
+}
+.notebook-tab-active::before {
+  content: '';
+  position: absolute;
+  right: -3px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #e07a5f;
+  border-radius: 0 2px 2px 0;
 }
 
 /* Post-it note rotation classes */
@@ -381,4 +420,135 @@
   border: 2px solid #c4654a;
   box-shadow: 0 1px 3px rgba(92, 75, 58, 0.2);
   z-index: 1;
+}
+
+/* Notebook margin line */
+.notebook-margin {
+  border-left: 2px dashed #e07a5f40;
+  padding-left: 16px;
+  margin-left: 12px;
+}
+
+/* Spiral binding decoration */
+.spiral-binding {
+  position: relative;
+}
+.spiral-binding::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg width='28' height='24' viewBox='0 0 28 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cellipse cx='14' cy='12' rx='5' ry='8' fill='none' stroke='%23c4b9a8' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-size: 28px 24px;
+  background-position: center;
+  z-index: 2;
+}
+
+/* Hole punch dots */
+.hole-punch::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ebe5d9;
+  border: 1.5px solid #d4c9b8;
+  box-shadow: 0 100px 0 0 #ebe5d9, 0 100px 0 0 #d4c9b8;
+  z-index: 2;
+}
+
+/* Sticky note styling for alerts */
+.sticky-note {
+  background: linear-gradient(135deg, #f2d98b 0%, #efd07a 100%);
+  border-radius: 2px 2px 12px 2px;
+  box-shadow: 2px 3px 8px rgba(92, 75, 58, 0.15), inset 0 -2px 4px rgba(0,0,0,0.04);
+  transform: rotate(-0.5deg);
+  position: relative;
+}
+.sticky-note::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  background: linear-gradient(135deg, transparent 50%, rgba(92, 75, 58, 0.08) 50%);
+  border-radius: 0 0 12px 0;
+}
+
+/* Sketchy chart container */
+.sketch-chart {
+  filter: url(#sketchy);
+}
+
+/* Hand-drawn section header underline */
+.sketchy-underline {
+  position: relative;
+  display: inline-block;
+}
+.sketchy-underline::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='6' viewBox='0 0 100 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,3 Q10,0 20,3 Q30,6 40,3 Q50,0 60,3 Q70,6 80,3 Q90,0 100,3' fill='none' stroke='%23e07a5f' stroke-width='2' stroke-linecap='round' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Gentle float animation for illustrations */
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.sketch-float {
+  animation: gentle-float 4s ease-in-out infinite;
+}
+
+/* Gentle sway animation */
+@keyframes gentle-sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(0.5deg); }
+  75% { transform: rotate(-0.5deg); }
+}
+.sketch-sway {
+  animation: gentle-sway 5s ease-in-out infinite;
+}
+
+/* Coffee stain ring */
+.coffee-stain {
+  position: relative;
+}
+.coffee-stain::after {
+  content: '';
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(180, 140, 100, 0.12);
+  box-shadow: inset 0 0 6px rgba(180, 140, 100, 0.06);
+  pointer-events: none;
+}
+
+/* Hand-drawn imperfect border for various elements */
+.sketch-border {
+  border-radius: 12px 14px 11px 13px;
+}
+
+/* Sketchy progress bar wiggle */
+@keyframes bar-wiggle {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.003); }
+}
+.sketch-bar-fill {
+  border-radius: 10px 8px 12px 6px;
+  animation: bar-wiggle 3s ease-in-out infinite;
+  transform-origin: left;
 }
