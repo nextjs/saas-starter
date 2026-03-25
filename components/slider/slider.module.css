@@ -30,15 +30,195 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.cardLinkOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: block;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+}
+
+.modalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.modal {
+  width: min(1100px, 96vw);
+  height: min(720px, 86vh);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 245, 245, 0.95) 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+}
+
+.modalTitle {
+  color: rgba(0, 0, 0, 0.82);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modalActions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modalNavSide {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  background: rgba(255, 255, 255, 0.92);
+  color: rgba(0, 0, 0, 0.86);
+  font-size: 34px;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modalNavSide:hover {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.modalNavSide:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.modalNavSide:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.modalNavLeft {
+  left: 0;
+}
+
+.modalNavRight {
+  right: 0;
+}
+
+.modalLink {
+  color: rgba(0, 0, 0, 0.75);
+  font-size: 14px;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 640px) {
+  .modalTitle {
+    font-size: 18px;
+  }
+
+  .modalLink {
+    font-size: 15px;
+  }
+}
+
+.modalLink:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.modalClose {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.8);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modalClose:hover {
+  background: rgba(0, 0, 0, 0.07);
+}
+
+.modalIframe {
+  flex: 1;
+  width: 100%;
+  border: 0;
+  background: #fff;
+}
+
+.modalBody {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+@media (max-width: 640px) {
+  .modalNavSide {
+    width: 48px;
+    height: 48px;
+    font-size: 30px;
+  }
+
+  .modalNavLeft {
+    left: 0;
+  }
+
+  .modalNavRight {
+    right: 0;
+  }
 }
 
 .cardInfo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
   width: 100%;
-  padding: 0.5em 0.75em;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
-  background-color: #000;
-  border-bottom: 1px solid #202020;
+  background: rgba(34, 34, 34, 0.48);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
 }
 
 .cardItem {
@@ -46,8 +226,8 @@
 }
 
 .cardItem p {
-  font-size: 7px;
-  color: #6a6a6a;
+  font-size: 9px;
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .cardItem:nth-child(2) {
@@ -55,9 +235,9 @@
 }
 
 .cardItem:nth-child(2) p {
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
-  color: #fff;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .cardItem:nth-child(3) {
@@ -85,4 +265,12 @@
   object-fit: contain;
 }
 
+@media (min-width: 640px) {
+  .cardItem p {
+    font-size: 10px;
+  }
 
+  .cardItem:nth-child(2) p {
+    font-size: 14px;
+  }
+}

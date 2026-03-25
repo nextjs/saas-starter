@@ -7,6 +7,8 @@ import { ContainerTextFlip } from "@/components/ui/container-text-flip";
 import { DottedGlowBackground } from '@/components/ui/dotted-glow-background';
 import { DropdownButton } from "@/components/ui/dropdown";
 import NavbarDemo from '@/components/navbar-menu-demo';
+import PhotosGallerySection from "@/components/photos-gallery/PhotosGallerySection";
+import { websiteProjectsGalleryPhotos } from "@/lib/website-projects-gallery";
 
 
 export default function HomePage() {
@@ -29,17 +31,28 @@ export default function HomePage() {
                 👥 İnsanlar tarafından yapıldı, yapay zeka değil
               </p>
               <div className="mt-8 sm:max-w-lg sm:mx-auto sm:text-center lg:text-left lg:mx-0">
-                <a
-                  href="/bir-gorusme-planla"
-                >
-                  <Button
-                    size="lg"
-                    className="text-lg rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0"
-                  >
-                    Ücretsiz demo görüşmesi ayarla
-                    <ArrowRight className="ml-2 h-5 w-5" />
-                  </Button>
-                </a>
+                <div className="flex flex-wrap items-center gap-3">
+                  <a href="/bir-gorusme-planla">
+                    <Button
+                      size="lg"
+                      className="text-lg rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white border-0"
+                    >
+                      Ücretsiz demo görüşmesi ayarla
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                  </a>
+
+                  <a href="/havadurumu" target="_blank" rel="noreferrer">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="text-lg rounded-full bg-white/80 hover:bg-white"
+                    >
+                      Hava durumu videosunu aç
+                      <Clapperboard className="ml-2 h-5 w-5" />
+                    </Button>
+                  </a>
+                </div>
                 <p className="mt-3 text-xs text-gray-500 sm:mt-5 sm:text-xl lg:text-lg xl:text-m">
                   Desteklenen sosyal medya platformları
                 </p>
@@ -183,436 +196,78 @@ export default function HomePage() {
         </div>
       </section>
 
+      <PhotosGallerySection
+        className="pt-0 pb-8"
+        title="Website Projeleri"
+        description="Web ve mobil projelerimizden seçili örnekleri aşağıda filtreleyerek inceleyebilirsin."
+        photos={websiteProjectsGalleryPhotos}
+        layout="instagram"
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 my-16">
         <div className="border-t-2 border-gray-300"></div>
       </div>
 
       <BentoGrid className="mx-auto my-20">
         <BentoGridItem
-                  title="Profesyonel Sosyal Medya Yönetimi"
-                  description="Markanızın sosyal medya varlığını güçlendiren, stratejik içerik planlama ve topluluk yönetimi hizmetleri."
-                  profileName="Social Media Pro"
-                  profileIcon={<Camera className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative w-[550px] h-[480px] overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="h-full w-full object-cover"
-                        >
-                          <source src="/sosyal-medya-video.webm" type="video/webm" />
-                        </video>
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Send className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Viral Video İçerikleri"
-                  description="Ürün ve hizmetlerinizi görsel olarak anlatan, profesyonel video animasyonlar."
-                  profileName="Content Creator"
-                  profileIcon={<Clapperboard className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative w-[550px] h-[480px] overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="h-full w-full object-cover"
-                        >
-                          <source src="/video4_noaudio_trimmed.webm" type="video/webm" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Send className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Viral Video İçerikleri"
-                  description="Ürün ve hizmetlerinizi görsel olarak anlatan, profesyonel video animasyonlar."
-                  profileName="Viral Studio"
-                  profileIcon={<Sparkles className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative w-[550px] h-[480px] overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="h-full w-full object-cover"
-                        >
-                          <source src="/yeni-video.webm" type="video/webm" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Send className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Viral Video İçerikleri"
-                  description="Ürün ve hizmetlerinizi görsel olarak anlatan, profesyonel video animasyonlar."
-                  profileName="Graphic Designer"
-                  profileIcon={<Rocket className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative w-[550px] h-[480px] overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="h-full w-full object-cover"
-                        >
-                          <source src="/new-video.webm" type="video/webm" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Send className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Özel Grafik Tasarımlar"
-                  description="Markanıza özel, dikkat çekici ve profesyonel grafik tasarım çözümleri."
-                  profileName="Animation Pro"
-                  profileIcon={<Star className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full max-w-[1000px] items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative aspect-square w-full  overflow-hidden rounded-lg">
-                        <img 
-                          src="/frame.png" 
-                          alt="Frame Design" 
-                          className="absolute inset-0 h-full w-full object-contain"
+          title="Instagram Profil Yönetimi"
+          description="Profesyonel Instagram profil yönetimi ve içerik stratejisi ile takipçi kitlenizi büyütün."
+          profileName="Social Media"
+          profileIcon={<Trophy className="w-5 h-5" />}
+          whiteProfileIcon={true}
+          header={
+            <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 p-4">
+              <div className="w-full max-w-[320px] rounded-lg bg-white shadow-sm">
+                {/* Profile Header */}
+                <div className="space-y-3 p-4">
+                  <div className="flex items-center gap-4">
+                    <div className="h-20 w-20 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
+                      <div className="h-full w-full rounded-full bg-white p-[2px]">
+                        <img
+                          src="/instagram5.jpg"
+                          alt="Profile"
+                          className="h-full w-full rounded-full object-cover"
                         />
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
                       </div>
                     </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Profesyonel Logo Animasyonları"
-                  description="İşletmeniz için profesyonel video çekimleri ve kurguları."
-                  profileName="3D Studio"
-                  profileIcon={<Briefcase className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative h-full w-full overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="absolute inset-0 h-full w-full object-cover"
-                        >
-                          <source src="/final_video.mp4" type="video/mp4" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
+                    <div className="grid flex-1 grid-cols-3 gap-2 text-center">
+                      <div>
+                        <div className="text-sm font-semibold">1.2K</div>
+                        <div className="text-xs text-gray-500">Posts</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold">45.8K</div>
+                        <div className="text-xs text-gray-500">Followers</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-semibold">892</div>
+                        <div className="text-xs text-gray-500">Following</div>
                       </div>
                     </div>
-                  }
-                  className="md:col-span-1 md:row-span-1"
-                />
-                <BentoGridItem
-                  title="Profesyonel 3D Animasyon ve VR Efektleri"
-                  description="İşletmeniz için profesyonel video çekimleri ve kurguları."
-                  profileName="Brand Hotel"
-                  profileIcon={<Lightbulb className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative h-full w-full overflow-hidden rounded-lg bg-black">
-                        <video 
-                          autoPlay 
-                          loop 
-                          muted 
-                          playsInline
-                          className="absolute inset-0 h-full w-full object-cover"
-                        >
-                          <source src="/bentogrid-item-492.mp4" type="video/mp4" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-1"
-                />
-                <BentoGridItem
-                  title="Instagram Profil Yönetimi"
-                  description="Profesyonel Instagram profil yönetimi ve içerik stratejisi ile takipçi kitlenizi büyütün."
-                  profileName="Social Media"
-                  profileIcon={<Trophy className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 p-4">
-                      <div className="w-full max-w-[320px] bg-white rounded-lg shadow-sm">
-                        {/* Profile Header */}
-                        <div className="p-4 space-y-3">
-                          <div className="flex items-center gap-4">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-                              <div className="w-full h-full rounded-full bg-white p-[2px]">
-                                <img 
-                                  src="/instagram5.jpg" 
-                                  alt="Profile"
-                                  className="w-full h-full rounded-full object-cover"
-                                />
-                              </div>
-                            </div>
-                            <div className="flex-1 grid grid-cols-3 gap-2 text-center">
-                              <div>
-                                <div className="font-semibold text-sm">1.2K</div>
-                                <div className="text-xs text-gray-500">Posts</div>
-                              </div>
-                              <div>
-                                <div className="font-semibold text-sm">45.8K</div>
-                                <div className="text-xs text-gray-500">Followers</div>
-                              </div>
-                              <div>
-                                <div className="font-semibold text-sm">892</div>
-                                <div className="text-xs text-gray-500">Following</div>
-                              </div>
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-semibold text-sm">Brand Hotel</div>
-                            <div className="text-xs text-gray-600 mt-1">Professional Account</div>
-                          </div>
-                        </div>
-                        
-                        {/* Grid Posts */}
-                        <div className="grid grid-cols-3 gap-[2px] bg-gray-100">
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
-                            <div key={i} className="aspect-square overflow-hidden">
-                              <img 
-                                src={`/instagram${i}.jpg`} 
-                                alt={`Instagram post ${i}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-2 md:row-span-2"
-                />
-                <BentoGridItem
-                  title="Özel Grafik Tasarımlar"
-                  description="Markanıza özel, dikkat çekici ve profesyonel grafik tasarım çözümleri."
-                  profileName="Design Expert"
-                  profileIcon={<Palette className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="h-full w-full max-w-[1000px] items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative aspect-square w-full  overflow-hidden rounded-lg">
-                        <img 
-                          src="tayf.png"
-                          alt="Logo Animation" 
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-2"
-                />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold">Brand Hotel</div>
+                    <div className="mt-1 text-xs text-gray-600">Professional Account</div>
+                  </div>
+                </div>
 
-                <BentoGridItem
-                  title="Profesyonel Video İçerikler"
-                  description="İşletmeniz için profesyonel video çekimleri ve kurguları."
-                  profileName="Pro Video Team"
-                  profileIcon={<Code2 className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative h-full w-full overflow-hidden rounded-lg bg-black">
-                        <video
-                          autoPlay 
-                          loop
-                          muted
-                          playsInline
-                          className="absolute inset-0 h-full w-full object-cover"
-                        >
-                          <source src="/downloaded_video.mp4" type="video/mp4" />
-                        </video>
-                        
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
+                {/* Grid Posts */}
+                <div className="grid grid-cols-3 gap-[2px] bg-gray-100">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((i) => (
+                    <div key={i} className="aspect-square overflow-hidden">
+                      <img
+                        src={`/instagram${i}.jpg`}
+                        alt={`Instagram post ${i}`}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
-                  }
-                  className="md:col-span-1 md:row-span-1"
-                />
-                <BentoGridItem
-                  title="Profesyonel Video İçerikler"
-                  description="İşletmeniz için profesyonel video çekimleri ve kurguları."
-                  profileName="Video Studio"
-                  profileIcon={<Gauge className="w-5 h-5" />}
-                  whiteProfileIcon={true}
-                  header={
-                    <div className="flex h-full w-full items-center justify-center rounded-lg overflow-hidden">
-                      <div className="relative h-full w-full overflow-hidden rounded-lg bg-black">
-                        <video
-                          autoPlay 
-                          loop
-                          muted
-                          playsInline
-                          className="absolute inset-0 h-full w-full object-cover"
-                        >
-                          <source src="/vimeo-video-original.mp4" type="video/mp4" />
-                        </video>
-                        {/* Action buttons */}
-                        <div className="absolute bottom-0 right-0 left-0 flex gap-3 items-center justify-end p-4 bg-gradient-to-t from-black/30 to-transparent">
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Heart className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <MessageCircle className="w-6 h-6" />
-                          </button>
-                          <button className="text-white hover:scale-110 transition-transform drop-shadow-lg">
-                            <Bookmark className="w-6 h-6" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  }
-                  className="md:col-span-1 md:row-span-1"
-                />
+                  ))}
+                </div>
+              </div>
+            </div>
+          }
+          className="md:col-span-2 md:row-span-2"
+        />
       </BentoGrid>
       <section className="py-16 bg-white w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
