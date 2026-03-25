@@ -4,49 +4,32 @@ export type SliderVideo = {
   category: string;
   date: string;
   src?: string;
-  siteUrl?: string;
-  openInNewTab?: boolean;
 };
 
 export const videos: SliderVideo[] = [
   {
-    id: "medusa-frontend.webm",
-    title: "E-ticaret",
-    category: "E-commerce",
-    date: "March 2026",
-    src: "/medusa-frontend.webm",
-    siteUrl: "https://storefront-production-f35a.up.railway.app/dk/store",
+    id: "711863471",
+    title: "Cineprint",
+    category: "Documentary",
+    date: "May 2022",
   },
   {
-    id: "havadurumu.webm",
-    title: "Hava Durumu",
-    category: "Weather",
-    date: "March 2026",
-    src: "/havadurumu.webm",
-    siteUrl: "https://havadurumu-fawn.vercel.app/",
+    id: "478246234",
+    title: "Yosemite",
+    category: "Sci-Fi",
+    date: "June 2022",
   },
   {
-    id: "bursa-gunluk-kiralik-daireler.webm",
+    id: "387407107",
+    title: "Orihima",
+    category: "Art",
+    date: "July 2022",
+  },
+  {
+    id: "bursa-gunluk-kiralik-daireler",
     title: "Bursa Günlük Kiralık Daireler",
     category: "Nature",
-    date: "July 2022",
-    src: "/bursa-gunluk-kiralik.webm",
-    siteUrl: "https://bursagunlukkiralikdaireler.com/",
-  },
-  {
-    id: "uzmantasimaci.webm",
-    title: "Uzman Taşımacı",
-    category: "Nature",
-    date: "March 2026",
-    src: "/uzmantasimaci.webm",
-    siteUrl: "https://uzmantasimaci.com/",
-  },
-  {
-    id: "benti-textile",
-    title: "Benti Textile",
-    category: "Nature",
     date: "August 2022",
-    src: "/benti-textile.webm",
-    siteUrl: "https://bentitextile.com/",
+    src: "/bursa-gunluk-kiralik-daireler-1920x1080.webm",
   },
 ];
