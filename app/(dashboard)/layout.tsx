@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { use, useState, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { Button } from '@/components/ui/button';
 import { CircleIcon, Home, LogOut } from 'lucide-react';
 import {
@@ -34,11 +34,11 @@ function UserMenu() {
       <>
         <Link
           href="/pricing"
-          className="text-sm font-medium text-gray-700 hover:text-gray-900"
+          className="text-sm font-medium text-blue-700 hover:text-blue-900"
         >
           Pricing
         </Link>
-        <Button asChild className="rounded-full">
+        <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700">
           <Link href="/sign-up">Sign Up</Link>
         </Button>
       </>
@@ -48,7 +48,7 @@ function UserMenu() {
   return (
     <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
       <DropdownMenuTrigger>
-        <Avatar className="cursor-pointer size-9">
+        <Avatar className="size-9 cursor-pointer">
           <AvatarImage alt={user.name || ''} />
           <AvatarFallback>
             {user.email
@@ -80,11 +80,11 @@ function UserMenu() {
 
 function Header() {
   return (
-    <header className="border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+    <header className="border-b border-blue-100 bg-white">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center">
-          <CircleIcon className="h-6 w-6 text-orange-500" />
-          <span className="ml-2 text-xl font-semibold text-gray-900">ACME</span>
+          <CircleIcon className="h-6 w-6 text-blue-600" />
+          <span className="ml-2 text-xl font-semibold text-blue-950">NoteFlow</span>
         </Link>
         <div className="flex items-center space-x-4">
           <Suspense fallback={<div className="h-9" />}>
@@ -98,7 +98,7 @@ function Header() {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="flex flex-col min-h-screen">
+    <section className="flex min-h-screen flex-col">
       <Header />
       {children}
     </section>
