@@ -372,6 +372,41 @@ export const removeTeamMember = validatedActionWithUser(
       return { error: 'User is not part of a team' };
     }
 
+    if (userWithTeam.role !== 'owner') {
+      return { error: 'Only team owners can remove members' };
+    }
+
+    const memberToRemove = await db
+      .select()
+      .from(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.id, memberId),
+          eq(teamMembers.teamId, userWithTeam.teamId)
+        )
+      )
+      .limit(1);
+
+    if (memberToRemove.length === 0) {
+      return { error: 'Member not found' };
+    }
+
+    if (memberToRemove[0].role === 'owner') {
+      const owners = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(teamMembers)
+        .where(
+          and(
+            eq(teamMembers.teamId, userWithTeam.teamId),
+            eq(teamMembers.role, 'owner')
+          )
+        );
+
+      if (owners[0].count <= 1) {
+        return { error: 'Cannot remove the last owner of the team' };
+      }
+    }
+
     await db
       .delete(teamMembers)
       .where(
@@ -404,6 +439,10 @@ export const inviteTeamMember = validatedActionWithUser(
 
     if (!userWithTeam?.teamId) {
       return { error: 'User is not part of a team' };
+    }
+
+    if (userWithTeam.role !== 'owner') {
+      return { error: 'Only team owners can invite members' };
     }
 
     const existingMember = await db

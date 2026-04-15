@@ -38,7 +38,10 @@ function SubscriptionSkeleton() {
 }
 
 function ManageSubscription() {
+  const { data: user } = useSWR<User>('/api/user', fetcher);
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  const isOwner =
+    teamData?.teamMembers.find((m) => m.userId === user?.id)?.role === 'owner';
 
   return (
     <Card className="mb-8">
@@ -61,7 +64,7 @@ function ManageSubscription() {
               </p>
             </div>
             <form action={customerPortalAction}>
-              <Button type="submit" variant="outline">
+              <Button type="submit" variant="outline" disabled={!isOwner}>
                 Manage Subscription
               </Button>
             </form>
@@ -94,7 +97,10 @@ function TeamMembersSkeleton() {
 }
 
 function TeamMembers() {
+  const { data: user } = useSWR<User>('/api/user', fetcher);
   const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  const isOwner =
+    teamData?.teamMembers.find((m) => m.userId === user?.id)?.role === 'owner';
   const [removeState, removeAction, isRemovePending] = useActionState<
     ActionState,
     FormData
@@ -124,19 +130,10 @@ function TeamMembers() {
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {teamData.teamMembers.map((member, index) => (
+          {teamData.teamMembers.map((member) => (
             <li key={member.id} className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Avatar>
-                  {/* 
-                    This app doesn't save profile images, but here
-                    is how you'd show them:
-
-                    <AvatarImage
-                      src={member.user.image || ''}
-                      alt={getUserDisplayName(member.user)}
-                    />
-                  */}
                   <AvatarFallback>
                     {getUserDisplayName(member.user)
                       .split(' ')
@@ -153,7 +150,7 @@ function TeamMembers() {
                   </p>
                 </div>
               </div>
-              {index > 1 ? (
+              {isOwner && member.userId !== user?.id ? (
                 <form action={removeAction}>
                   <input type="hidden" name="memberId" value={member.id} />
                   <Button
@@ -189,7 +186,9 @@ function InviteTeamMemberSkeleton() {
 
 function InviteTeamMember() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
-  const isOwner = user?.role === 'owner';
+  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
+  const isOwner =
+    teamData?.teamMembers.find((m) => m.userId === user?.id)?.role === 'owner';
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
     FormData
