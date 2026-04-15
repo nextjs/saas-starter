@@ -1,0 +1,7 @@
+tools:
+    shell:
+        allow:
+            - mkdir *
+            - curl *
+            - echo *
+            - ls *

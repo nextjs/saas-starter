@@ -125,6 +125,31 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Links to vulnerability test pages for CodeQL testing */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-gray-900 sm:text-4xl">
+              Security Testing Pages
+            </h2>
+            <p className="mt-3 max-w-3xl text-lg text-gray-500 mx-auto">
+              These pages contain intentional security vulnerabilities for testing CodeQL scanning.
+            </p>
+            <div className="mt-8 space-x-4">
+              <a href="/vulnerability-test" className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Vulnerability Test Page
+              </a>
+              <a href="/api/vulnerability-test" className="inline-block bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                API Vulnerability Test Endpoint
+              </a>
+              <a href="/api/auth-bypass" className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                Auth Bypass Test Endpoint
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
