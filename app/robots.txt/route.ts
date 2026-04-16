@@ -1,27 +1,28 @@
-import { db } from "@/lib/db/drizzle";
-import { appSettings } from "@/lib/db/schema";
+/**
+ * app/robots.txt/route.ts
+ * Genera il file robots.txt dinamicamente tramite Next.js Route Handler.
+ * Aggiornare SITE_URL con il dominio di produzione reale.
+ */
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://librolo.it";
 
-export async function GET() {
-  const rows = await db.select().from(appSettings);
-  const map = Object.fromEntries(rows.map((r) => [r.key, r.value]));
-
-  // Dominio dalle impostazioni generali, con fallback
-  let domain = map["app_domain"]?.trim() ?? "";
-  if (domain && !/^https?:\/\//i.test(domain)) domain = `https://${domain}`;
-  domain = domain.replace(/\/$/, "") || "http://localhost:3000";
-
-  const content =
-    map["robots_txt"]?.trim() ||
-    `User-agent: *\nAllow: /\n\n# Blocca l'area admin\nDisallow: /admin/\n\n# Sitemap\nSitemap: ${domain}/sitemap.xml`;
+export function GET() {
+  const content = [
+    "User-agent: *",
+    "Allow: /",
+    "Disallow: /admin/",
+    "Disallow: /api/",
+    "Disallow: /dashboard/",
+    "",
+    `Sitemap: ${SITE_URL}/sitemap.xml`,
+  ].join("\n");
 
   return new NextResponse(content, {
     status: 200,
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, must-revalidate",
+      "Cache-Control": "public, max-age=86400, stale-while-revalidate=3600",
     },
   });
 }
