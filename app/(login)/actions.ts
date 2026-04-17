@@ -341,7 +341,12 @@ export const deleteAccount = validatedActionWithUser(
           .limit(1);
 
         if (team.length > 0 && team[0].stripeSubscriptionId) {
-          await stripe.subscriptions.cancel(team[0].stripeSubscriptionId);
+          try {
+            await stripe.subscriptions.cancel(team[0].stripeSubscriptionId);
+          } catch (error) {
+            console.error('Failed to cancel Stripe subscription:', error);
+            // Continue with team cleanup even if Stripe cancellation fails
+          }
         }
 
         await db.delete(teamMembers).where(eq(teamMembers.teamId, userWithTeam.teamId));
