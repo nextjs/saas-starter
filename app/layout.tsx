@@ -15,11 +15,13 @@ export const viewport: Viewport = {
 
 const manrope = Manrope({ subsets: ['latin'] });
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
+  const [user, team] = await Promise.all([getUser(), getTeamForUser()]);
+
   return (
     <html
       lang="en"
@@ -29,10 +31,8 @@ export default function RootLayout({
         <SWRConfig
           value={{
             fallback: {
-              // We do NOT await here
-              // Only components that read this data will suspend
-              '/api/user': getUser(),
-              '/api/team': getTeamForUser()
+              '/api/user': user,
+              '/api/team': team
             }
           }}
         >
