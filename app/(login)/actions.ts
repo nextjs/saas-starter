@@ -19,7 +19,7 @@ import {
 import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createCheckoutSession } from '@/lib/payments/stripe';
+import { createCheckoutSession, stripe } from '@/lib/payments/stripe';
 import { getUser, getUserWithTeam } from '@/lib/db/queries';
 import {
   validatedAction,
@@ -323,14 +323,46 @@ export const deleteAccount = validatedActionWithUser(
       .where(eq(users.id, user.id));
 
     if (userWithTeam?.teamId) {
-      await db
-        .delete(teamMembers)
+      const owners = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(teamMembers)
         .where(
           and(
-            eq(teamMembers.userId, user.id),
-            eq(teamMembers.teamId, userWithTeam.teamId)
+            eq(teamMembers.teamId, userWithTeam.teamId),
+            eq(teamMembers.role, 'owner')
           )
         );
+
+      if (owners[0].count === 1 && userWithTeam.role === 'owner') {
+        const team = await db
+          .select()
+          .from(teams)
+          .where(eq(teams.id, userWithTeam.teamId))
+          .limit(1);
+
+        if (team.length > 0 && team[0].stripeSubscriptionId) {
+          try {
+            await stripe.subscriptions.cancel(team[0].stripeSubscriptionId);
+          } catch (error) {
+            console.error('Failed to cancel Stripe subscription:', error);
+            // Continue with team cleanup even if Stripe cancellation fails
+          }
+        }
+
+        await db.delete(teamMembers).where(eq(teamMembers.teamId, userWithTeam.teamId));
+        await db.delete(activityLogs).where(eq(activityLogs.teamId, userWithTeam.teamId));
+        await db.delete(invitations).where(eq(invitations.teamId, userWithTeam.teamId));
+        await db.delete(teams).where(eq(teams.id, userWithTeam.teamId));
+      } else {
+        await db
+          .delete(teamMembers)
+          .where(
+            and(
+              eq(teamMembers.userId, user.id),
+              eq(teamMembers.teamId, userWithTeam.teamId)
+            )
+          );
+      }
     }
 
     (await cookies()).delete('session');

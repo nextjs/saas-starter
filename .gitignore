@@ -39,3 +39,8 @@ next-env.d.ts
 # Docker
 postgres_data/
 .env*.local
+
+#agent 
+.agent
+.agents
+.qwen
