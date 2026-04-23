@@ -112,8 +112,6 @@ In your Vercel project settings (or during deployment), add all the necessary en
 
 While this template is intentionally minimal and to be used as a learning resource, there are other paid versions in the community which are more full-featured:
 
-- https://achromatic.dev
-- https://shipfa.st
-- https://makerkit.dev
-- https://zerotoshipped.com
 - https://turbostarter.dev
+- https://makerkit.dev
+- https://achromatic.dev

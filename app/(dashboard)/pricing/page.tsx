@@ -1,12 +1,12 @@
+import { cacheLife } from 'next/cache';
 import { checkoutAction } from '@/lib/payments/actions';
 import { Check } from 'lucide-react';
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { SubmitButton } from './submit-button';
 
-// Prices are fresh for one hour max
-export const revalidate = 3600;
-
 export default async function PricingPage() {
+  'use cache';
+  cacheLife('hours');
   const [prices, products] = await Promise.all([
     getStripePrices(),
     getStripeProducts(),
