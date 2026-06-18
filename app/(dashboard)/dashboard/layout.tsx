@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Users, Settings, Shield, Activity, Menu } from 'lucide-react';
+import { Users, Settings, Shield, Activity, Menu, Briefcase } from 'lucide-react';
 
 export default function DashboardLayout({
   children
@@ -15,6 +15,7 @@ export default function DashboardLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navItems = [
+    { href: '/dashboard/jobs', icon: Briefcase, label: 'Jobs' },
     { href: '/dashboard', icon: Users, label: 'Team' },
     { href: '/dashboard/general', icon: Settings, label: 'General' },
     { href: '/dashboard/activity', icon: Activity, label: 'Activity' },
@@ -48,12 +49,18 @@ export default function DashboardLayout({
           }`}
         >
           <nav className="h-full overflow-y-auto p-4">
-            {navItems.map((item) => (
+            {navItems.map((item) => {
+              const isActive =
+                item.href === '/dashboard/jobs'
+                  ? pathname.startsWith('/dashboard/jobs')
+                  : pathname === item.href;
+
+              return (
               <Link key={item.href} href={item.href} passHref>
                 <Button
-                  variant={pathname === item.href ? 'secondary' : 'ghost'}
+                  variant={isActive ? 'secondary' : 'ghost'}
                   className={`shadow-none my-1 w-full justify-start ${
-                    pathname === item.href ? 'bg-gray-100' : ''
+                    isActive ? 'bg-gray-100' : ''
                   }`}
                   onClick={() => setIsSidebarOpen(false)}
                 >
@@ -61,7 +68,8 @@ export default function DashboardLayout({
                   {item.label}
                 </Button>
               </Link>
-            ))}
+              );
+            })}
           </nav>
         </aside>
 

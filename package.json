@@ -8,7 +8,8 @@
     "db:seed": "npx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "stripe:seed": "tsx lib/payments/seed-stripe.ts"
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.1.7",
@@ -25,6 +26,7 @@
     "jose": "^6.0.11",
     "lucide-react": "^0.511.0",
     "next": "15.6.0-canary.59",
+    "pdfkit": "^0.19.1",
     "postcss": "^8.5.3",
     "postgres": "^3.4.5",
     "radix-ui": "^1.4.2",
@@ -38,5 +40,8 @@
     "tw-animate-css": "^1.3.0",
     "typescript": "^5.8.3",
     "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "@types/pdfkit": "^0.17.6"
   }
 }

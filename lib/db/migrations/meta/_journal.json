@@ -8,6 +8,27 @@
       "when": 1726443359662,
       "tag": "0000_soft_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1781770121552,
+      "tag": "0001_overrated_hex",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781774375242,
+      "tag": "0002_magical_prism",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1781775660439,
+      "tag": "0003_opposite_mojo",
+      "breakpoints": true
     }
   ]
 }
