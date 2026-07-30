@@ -22,6 +22,16 @@ type SessionData = {
   expires: string;
 };
 
+export function getSessionCookieOptions(expires: Date) {
+  return {
+    expires,
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax' as const,
+    path: '/'
+  };
+}
+
 export async function signToken(payload: SessionData) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: 'HS256' })
@@ -50,10 +60,9 @@ export async function setSession(user: NewUser) {
     expires: expiresInOneDay.toISOString(),
   };
   const encryptedSession = await signToken(session);
-  (await cookies()).set('session', encryptedSession, {
-    expires: expiresInOneDay,
-    httpOnly: true,
-    secure: true,
-    sameSite: 'lax',
-  });
+  (await cookies()).set(
+    'session',
+    encryptedSession,
+    getSessionCookieOptions(expiresInOneDay)
+  );
 }

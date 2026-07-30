@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { signToken, verifyToken } from '@/lib/auth/session';
+import {
+  getSessionCookieOptions,
+  signToken,
+  verifyToken
+} from '@/lib/auth/session';
 
 const protectedRoutes = '/dashboard';
 
@@ -26,10 +30,7 @@ export async function middleware(request: NextRequest) {
           ...parsed,
           expires: expiresInOneDay.toISOString()
         }),
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        expires: expiresInOneDay
+        ...getSessionCookieOptions(expiresInOneDay)
       });
     } catch (error) {
       console.error('Error updating session:', error);
