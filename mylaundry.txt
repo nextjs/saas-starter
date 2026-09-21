@@ -1,0 +1,220 @@
+# Prompt untuk Hermes — Deploy LaundryKu ke EasyPanel
+
+> Salin seluruh isi blok di bawah ini ke Hermes.
+> Ganti dulu semua yang bertanda `[ isi sendiri ]`.
+> Baris yang ditandai **OPSIONAL** boleh dibiarkan kosong — aplikasi tetap jalan
+> penuh dalam mode simulasi, hanya WhatsApp/email/pembayaran yang belum benar-benar terkirim.
+
+---
+
+```
+Tugas: deploy aplikasi "LaundryKu" (Next.js 15 + PostgreSQL) ke EasyPanel saya.
+Kerjakan lewat UI EasyPanel. Jangan mengubah kode aplikasi sama sekali — repo
+sudah berisi Dockerfile dan entrypoint yang siap pakai.
+
+=====================================================================
+AKSES
+=====================================================================
+EasyPanel URL   : [ http://43.129.38.56:3000/projects/elyasr-pribadi/app/absensielyasr-app ]
+Login EasyPanel : kamu sudah punya
+Nama project    : laundryku
+
+Repository Git  : push dan commit sendiri ya
+Branch          : main ]
+Akses repo      : public ]
+
+Domain aplikasi : mylaundy.gampangin.biz.id
+
+=====================================================================
+LANGKAH 0 — PERIKSA DULU, LAPORKAN KALAU TIDAK MEMENUHI
+=====================================================================
+1. Cek RAM VPS. Minimal 2 GB, disarankan 4 GB.
+   Kalau RAM < 2 GB: JANGAN lanjut deploy. Tambahkan swap 2 GB dulu,
+   lalu lapor ke saya sebelum melanjutkan.
+   Alasan: `next build` rakus memori dan akan terbunuh OOM tanpa pesan jelas.
+2. Cek sisa disk. Butuh minimal 20 GB bebas.
+3. Pastikan DNS domain di atas sudah mengarah ke IP VPS ini.
+
+=====================================================================
+LANGKAH 1 — BUAT SERVICE POSTGRES
+=====================================================================
+Service #1
+  Tipe     : Postgres
+  Name     : laundryku-db
+  Versi    : 16 atau lebih baru
+  Password : terserah kamu
+  
+Setelah dibuat, catat "Internal Connection URL". Bentuknya:
+  postgresql://postgres:PASSWORD@laundryku-db:5432/postgres
+
+PENTING: hostname-nya adalah NAMA SERVICE (laundryku-db), bukan localhost dan
+bukan IP publik VPS. Jangan expose port Postgres ke internet.
+
+=====================================================================
+LANGKAH 2 — BUAT SERVICE APLIKASI
+=====================================================================
+Service #2
+  Tipe   : App
+  Name   : laundryku-app
+
+  Source:
+    Git repository = (lihat bagian AKSES di atas)
+    Branch         = (lihat bagian AKSES di atas)
+
+  Build:
+    Metode = Dockerfile      <-- WAJIB Dockerfile, JANGAN Nixpacks
+    Path   = Dockerfile
+    Alasan: Dockerfile repo ini menjalankan migrasi database otomatis setiap
+    container start. Nixpacks tidak melakukannya, dan aplikasi akan naik
+    dengan database kosong.
+
+  Domains:
+    Host = (domain dari bagian AKSES)
+    Port = 3000
+    HTTPS/SSL = aktifkan (Let's Encrypt)
+
+=====================================================================
+LANGKAH 3 — ENVIRONMENT VARIABLES (di service laundryku-app)
+=====================================================================
+
+--- WAJIB ---
+POSTGRES_URL=postgresql://postgres:[ password Postgres dari Langkah 1 ]@laundryku-db:5432/postgres
+AUTH_SECRET=[ generate dengan: openssl rand -hex 32 ]
+BASE_URL=https://[ domain dari bagian AKSES ]
+
+PERINGATAN KERAS soal BASE_URL:
+  Kalau salah atau lupa diisi, nilainya diam-diam jatuh ke http://localhost:3000
+  dan TIDAK ADA ERROR apa pun yang muncul. Akibatnya:
+    - tautan undangan anggota mengarah ke localhost -> tidak bisa diklik siapa pun
+    - tautan reset password mengarah ke localhost  -> pengguna terkunci permanen
+    - redirect setelah pembayaran gagal
+  Semuanya tetap terlihat "berhasil" di layar. Isi lengkap dengan https://,
+  TANPA garis miring di akhir. Verifikasi ulang setelah deploy.
+
+--- OPSIONAL: NOTIFIKASI WHATSAPP ---
+(kosongkan = mode simulasi; pesan tercatat di log tapi tidak dikirim)
+WA_PROVIDER=fonnte
+WA_TOKEN=[ isi sendiri — token dari dashboard Fonnte ]
+
+--- OPSIONAL: EMAIL (undangan anggota & reset password) ---
+(kosongkan = mode simulasi)
+EMAIL_PROVIDER=resend
+RESEND_API_KEY=[ isi sendiri ]
+EMAIL_FROM=LaundryKu <noreply@[ isi sendiri — domain terverifikasi ]>
+
+--- OPSIONAL: PEMBAYARAN LANGGANAN ---
+(kosongkan = mode simulasi)
+BILLING_PROVIDER=xendit
+XENDIT_SECRET_KEY=[ isi sendiri ]
+XENDIT_CALLBACK_TOKEN=[ isi sendiri ]
+
+Jangan menambahkan variabel lain. Jangan membuat file .env di dalam container —
+semua env diatur lewat UI EasyPanel.
+
+=====================================================================
+LANGKAH 4 — DEPLOY
+=====================================================================
+Klik Deploy, lalu pantau tab Logs.
+
+Deploy yang SEHAT menampilkan urutan ini:
+  ==> Menunggu database siap...
+  ==> Database siap.
+  ==> Menjalankan migrasi database...
+  ==> Migrasi selesai.
+  ==> Menyiapkan paket langganan...
+  3 paket disiapkan.
+  ==> Menjalankan aplikasi: pnpm start
+
+Kalau salah satu baris itu tidak muncul, JANGAN dianggap berhasil.
+Hentikan, salin log lengkapnya, dan laporkan ke saya.
+
+=====================================================================
+LANGKAH 5 — VERIFIKASI (wajib, jangan dilewati)
+=====================================================================
+1. curl https://[domain]/api/health
+   Harus membalas persis: {"status":"ok","db":"ok"}
+   Kalau "db":"unreachable" -> POSTGRES_URL salah.
+
+2. Buka https://[domain]/pricing
+   Harus menampilkan 3 paket: Gratis, Pro (Rp 99.000), Bisnis (Rp 249.000).
+   Kalau error -> seed paket gagal, cek log.
+
+3. Buka https://[domain]/sign-up, buat akun uji, selesaikan onboarding
+   (isi outlet + centang layanan). Harus mendarat di halaman POS Kasir.
+
+4. Buka https://[domain]/dashboard/langganan
+   Harus tampil "Paket sekarang: Pro" dengan status "Uji Coba".
+
+5. Konfirmasi HTTPS aktif dan sertifikatnya valid (bukan self-signed).
+
+Laporkan hasil kelima poin ini satu per satu.
+
+=====================================================================
+LANGKAH 6 — BACKUP DATABASE (jangan dilewati)
+=====================================================================
+Aktifkan backup terjadwal pada service laundryku-db.
+  Jadwal : harian
+  Tujuan : [ isi sendiri — S3 / Cloudflare R2 / Backblaze B2 / DO Spaces ]
+  Kredensial storage: [ isi sendiri ]
+
+Tujuan backup HARUS di luar VPS ini. Backup yang tersimpan di disk VPS yang
+sama bukan backup — kalau disknya rusak, database dan cadangannya hilang bersamaan.
+
+Setelah dikonfigurasi, jalankan satu backup manual dan konfirmasi filenya
+benar-benar sampai di storage tujuan.
+
+=====================================================================
+LANGKAH 7 — HANYA KALAU PEMBAYARAN DIAKTIFKAN
+=====================================================================
+Daftarkan webhook di dashboard Xendit:
+  URL: https://[domain]/api/billing/webhook
+
+Catatan: selama BILLING_PROVIDER masih simulasi, endpoint ini sengaja membalas
+404. Itu perilaku yang benar, bukan bug.
+
+=====================================================================
+JANGAN LAKUKAN
+=====================================================================
+- JANGAN menjalankan `pnpm db:seed` atau `pnpm db:seed:laundry` di produksi.
+  Keduanya membuat akun contoh test@test.com dengan password admin123 dan
+  data laundry palsu.
+- JANGAN mengubah kode, Dockerfile, atau docker-entrypoint.sh.
+- JANGAN pakai Nixpacks.
+- JANGAN expose port Postgres ke internet.
+- JANGAN commit atau menempelkan nilai env asli ke mana pun selain UI EasyPanel.
+
+=====================================================================
+KALAU ADA MASALAH — RUJUKAN CEPAT
+=====================================================================
+Build terbunuh tanpa pesan          -> RAM habis, tambah swap
+"Database tidak bisa dihubungi..."  -> POSTGRES_URL salah (cek nama service)
+Halaman Langganan error             -> tabel paket kosong, redeploy
+Tautan reset/undangan ke localhost  -> BASE_URL belum diisi
+Email/WA tidak terkirim tanpa error -> masih mode simulasi, cek env
+
+Panduan lengkap ada di file DEPLOY_EASYPANEL.md di dalam repo.
+
+=====================================================================
+LAPORAN AKHIR YANG SAYA MAU
+=====================================================================
+1. Status tiap service (laundryku-db, laundryku-app)
+2. Hasil kelima verifikasi di Langkah 5
+3. Konfirmasi backup sudah jalan dan filenya sampai di storage
+4. Daftar env yang TERISI (jangan tampilkan nilainya, cukup nama variabelnya)
+5. Apa pun yang tidak sesuai harapan, walau kecil
+```
+
+---
+
+## Catatan untuk Anda sendiri (jangan ikut disalin)
+
+**Yang paling mungkin gagal:** RAM VPS. Kalau di bawah 2 GB, `next build` akan
+mati saat build tanpa pesan yang jelas. Cek dulu sebelum menyuruh Hermes mulai.
+
+**Yang paling mudah terlewat:** `BASE_URL`. Ini satu-satunya kesalahan konfigurasi
+di daftar ini yang **tidak menghasilkan error apa pun** — semuanya tampak normal
+sampai ada orang yang mencoba klik tautan reset password.
+
+**Boleh deploy tanpa kredensial apa pun** (WA, email, Xendit dikosongkan).
+Aplikasi jalan penuh dalam mode simulasi. Ini justru cara yang saya sarankan
+untuk deploy pertama: pastikan infrastrukturnya benar dulu, kredensial menyusul.

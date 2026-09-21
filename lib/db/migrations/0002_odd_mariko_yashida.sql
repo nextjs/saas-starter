@@ -1,0 +1,1 @@
+ALTER TABLE "outlets" ADD CONSTRAINT "outlets_team_kode_nota_unique" UNIQUE("team_id","kode_nota");

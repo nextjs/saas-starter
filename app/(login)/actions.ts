@@ -19,8 +19,10 @@ import {
 import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
-import { createCheckoutSession } from '@/lib/payments/stripe';
 import { getUser, getUserWithTeam } from '@/lib/db/queries';
+import { cekBatasPengguna } from '@/lib/billing/batas';
+import { JenisEmail, StatusEmail, TeamRole } from '@/lib/laundry/enums';
+import { emailUndangan, kirimDanCatat } from '@/lib/email/kirim';
 import {
   validatedAction,
   validatedActionWithUser
@@ -91,10 +93,10 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
     logActivity(foundTeam?.id, foundUser.id, ActivityType.SIGN_IN)
   ]);
 
+  // Pemilihan paket kini ditangani setelah masuk, di /dashboard/langganan.
   const redirectTo = formData.get('redirect') as string | null;
   if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: foundTeam, priceId });
+    redirect('/dashboard/langganan');
   }
 
   redirect('/dashboard');
@@ -128,7 +130,9 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
   const newUser: NewUser = {
     email,
     passwordHash,
-    role: 'owner' // Default role, will be overridden if there's an invitation
+    // Peran tenant sesungguhnya ada di team_members.role; kolom ini hanya
+    // penanda bawaan starter. Disamakan hurufnya agar tidak ada dua konvensi.
+    role: TeamRole.OWNER
   };
 
   const [createdUser] = await db.insert(users).values(newUser).returning();
@@ -195,7 +199,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
     }
 
     teamId = createdTeam.id;
-    userRole = 'owner';
+    userRole = TeamRole.OWNER;
 
     await logActivity(teamId, createdUser.id, ActivityType.CREATE_TEAM);
   }
@@ -214,11 +218,11 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
   const redirectTo = formData.get('redirect') as string | null;
   if (redirectTo === 'checkout') {
-    const priceId = formData.get('priceId') as string;
-    return createCheckoutSession({ team: createdTeam, priceId });
+    redirect('/dashboard/langganan');
   }
 
-  redirect('/dashboard');
+  // Tenant baru belum punya outlet — onboarding yang menyambut, bukan dashboard kosong.
+  redirect('/dashboard/mulai');
 });
 
 export async function signOut() {
@@ -393,7 +397,7 @@ export const removeTeamMember = validatedActionWithUser(
 
 const inviteTeamMemberSchema = z.object({
   email: z.string().email('Invalid email address'),
-  role: z.enum(['member', 'owner'])
+  role: z.nativeEnum(TeamRole)
 });
 
 export const inviteTeamMember = validatedActionWithUser(
@@ -405,6 +409,11 @@ export const inviteTeamMember = validatedActionWithUser(
     if (!userWithTeam?.teamId) {
       return { error: 'User is not part of a team' };
     }
+
+    // Undangan tertunda ikut dihitung, kalau tidak batas bisa dilewati dengan
+    // mengundang banyak orang sekaligus sebelum satu pun menerima.
+    const lewatBatas = await cekBatasPengguna(userWithTeam.teamId);
+    if (lewatBatas) return lewatBatas;
 
     const existingMember = await db
       .select()
@@ -437,12 +446,39 @@ export const inviteTeamMember = validatedActionWithUser(
     }
 
     // Create a new invitation
-    await db.insert(invitations).values({
+    const [undangan] = await db
+      .insert(invitations)
+      .values({
+        teamId: userWithTeam.teamId,
+        email,
+        role,
+        invitedBy: user.id,
+        status: 'pending'
+      })
+      .returning();
+
+    const [tim] = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, userWithTeam.teamId))
+      .limit(1);
+
+    const { subjek, isi } = emailUndangan({
+      namaTim: tim?.name ?? 'tim Anda',
+      namaPengundang: user.name || user.email,
+      peran: role,
+      inviteId: undangan.id,
+      email
+    });
+
+    // Kegagalan kirim tidak membatalkan undangannya: barisnya sudah tersimpan
+    // dan bisa dikirim ulang tanpa mengulang dari awal (PRD-FASE-4.md §1).
+    const hasilEmail = await kirimDanCatat({
       teamId: userWithTeam.teamId,
-      email,
-      role,
-      invitedBy: user.id,
-      status: 'pending'
+      jenis: JenisEmail.UNDANGAN,
+      tujuan: email,
+      subjek,
+      isi
     });
 
     await logActivity(
@@ -451,9 +487,19 @@ export const inviteTeamMember = validatedActionWithUser(
       ActivityType.INVITE_TEAM_MEMBER
     );
 
-    // TODO: Send invitation email and include ?inviteId={id} to sign-up URL
-    // await sendInvitationEmail(email, userWithTeam.team.name, role)
-
-    return { success: 'Invitation sent successfully' };
+    // Pesannya menyebut apa yang benar-benar terjadi. Sebelumnya di sini
+    // tertulis "Invitation sent successfully" padahal tidak ada email apa pun
+    // yang dikirim — pemilik mengira sudah beres, orangnya tidak pernah tahu.
+    if (hasilEmail.status === StatusEmail.GAGAL) {
+      return {
+        success: `Undangan untuk ${email} tersimpan, tapi emailnya gagal dikirim (${hasilEmail.galat ?? 'penyebab tidak diketahui'}). Coba kirim ulang dari daftar undangan.`
+      };
+    }
+    if (hasilEmail.status === StatusEmail.SIMULASI) {
+      return {
+        success: `Undangan untuk ${email} dibuat. Email berjalan dalam mode simulasi — isinya tercatat di log, tapi belum benar-benar dikirim.`
+      };
+    }
+    return { success: `Undangan sudah dikirim ke ${email}.` };
   }
 );

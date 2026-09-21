@@ -9,7 +9,7 @@ import {
   CardTitle,
   CardFooter
 } from '@/components/ui/card';
-import { customerPortalAction } from '@/lib/payments/actions';
+import Link from 'next/link';
 import { useActionState } from 'react';
 import { TeamDataWithMembers, User } from '@/lib/db/schema';
 import { removeTeamMember, inviteTeamMember } from '@/app/(login)/actions';
@@ -17,6 +17,8 @@ import useSWR from 'swr';
 import { Suspense } from 'react';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { TeamRole } from '@/lib/laundry/enums';
+import { UndanganTertunda } from '@/components/undangan-tertunda';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle } from 'lucide-react';
 
@@ -31,41 +33,29 @@ function SubscriptionSkeleton() {
   return (
     <Card className="mb-8 h-[140px]">
       <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+        <CardTitle>Langganan</CardTitle>
       </CardHeader>
     </Card>
   );
 }
 
 function ManageSubscription() {
-  const { data: teamData } = useSWR<TeamDataWithMembers>('/api/team', fetcher);
-
+  // Rincian paket, pemakaian, dan riwayat tagihan ada di halaman tersendiri —
+  // kartu ini hanya pintu masuknya.
   return (
     <Card className="mb-8">
       <CardHeader>
-        <CardTitle>Team Subscription</CardTitle>
+        <CardTitle>Langganan</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-            <div className="mb-4 sm:mb-0">
-              <p className="font-medium">
-                Current Plan: {teamData?.planName || 'Free'}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {teamData?.subscriptionStatus === 'active'
-                  ? 'Billed monthly'
-                  : teamData?.subscriptionStatus === 'trialing'
-                  ? 'Trial period'
-                  : 'No active subscription'}
-              </p>
-            </div>
-            <form action={customerPortalAction}>
-              <Button type="submit" variant="outline">
-                Manage Subscription
-              </Button>
-            </form>
-          </div>
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <p className="text-sm text-muted-foreground">
+            Lihat paket yang sedang aktif, sisa masa berlaku, dan pemakaian dibanding
+            batas paket.
+          </p>
+          <Button asChild variant="outline">
+            <Link href="/dashboard/langganan">Kelola Langganan</Link>
+          </Button>
         </div>
       </CardContent>
     </Card>
@@ -189,7 +179,7 @@ function InviteTeamMemberSkeleton() {
 
 function InviteTeamMember() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
-  const isOwner = user?.role === 'owner';
+  const isOwner = user?.role === TeamRole.OWNER;
   const [inviteState, inviteAction, isInvitePending] = useActionState<
     ActionState,
     FormData
@@ -218,19 +208,22 @@ function InviteTeamMember() {
           <div>
             <Label>Role</Label>
             <RadioGroup
-              defaultValue="member"
+              defaultValue={TeamRole.KASIR}
               name="role"
-              className="flex space-x-4"
+              className="flex flex-wrap gap-x-4"
               disabled={!isOwner}
             >
-              <div className="flex items-center space-x-2 mt-2">
-                <RadioGroupItem value="member" id="member" />
-                <Label htmlFor="member">Member</Label>
-              </div>
-              <div className="flex items-center space-x-2 mt-2">
-                <RadioGroupItem value="owner" id="owner" />
-                <Label htmlFor="owner">Owner</Label>
-              </div>
+              {[
+                { nilai: TeamRole.KASIR, label: 'Kasir' },
+                { nilai: TeamRole.PRODUKSI, label: 'Produksi' },
+                { nilai: TeamRole.MANAJER, label: 'Manajer' },
+                { nilai: TeamRole.OWNER, label: 'Owner' },
+              ].map((r) => (
+                <div key={r.nilai} className="mt-2 flex items-center space-x-2">
+                  <RadioGroupItem value={r.nilai} id={`role-${r.nilai}`} />
+                  <Label htmlFor={`role-${r.nilai}`}>{r.label}</Label>
+                </div>
+              ))}
             </RadioGroup>
           </div>
           {inviteState?.error && (
@@ -279,6 +272,7 @@ export default function SettingsPage() {
       <Suspense fallback={<TeamMembersSkeleton />}>
         <TeamMembers />
       </Suspense>
+      <UndanganTertunda />
       <Suspense fallback={<InviteTeamMemberSkeleton />}>
         <InviteTeamMember />
       </Suspense>

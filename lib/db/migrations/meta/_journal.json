@@ -8,6 +8,41 @@
       "when": 1726443359662,
       "tag": "0000_soft_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1787667785092,
+      "tag": "0001_eminent_pete_wisdom",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787669207290,
+      "tag": "0002_odd_mariko_yashida",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1787671254521,
+      "tag": "0003_bored_lady_vermin",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1787672797578,
+      "tag": "0004_powerful_hulk",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1787701958813,
+      "tag": "0005_daily_masked_marvel",
+      "breakpoints": true
     }
   ]
 }

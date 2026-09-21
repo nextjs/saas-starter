@@ -1,0 +1,10 @@
+# Skrip shell WAJIB berakhiran LF.
+#
+# Repo ini dikembangkan di Windows dengan core.autocrlf=true. Tanpa aturan ini,
+# docker-entrypoint.sh ikut ter-checkout dengan CRLF, dan container gagal start
+# dengan pesan yang menyesatkan: "exec /usr/local/bin/docker-entrypoint.sh:
+# no such file or directory" — padahal berkasnya jelas ada. Yang tidak ditemukan
+# adalah interpreter `/bin/sh\r`.
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
