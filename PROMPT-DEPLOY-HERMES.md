@@ -1,4 +1,4 @@
-# Prompt untuk Hermes — Deploy LaundryKu ke EasyPanel
+# Prompt untuk Hermes — Deploy Laundry SaaS ke EasyPanel
 
 > Salin seluruh isi blok di bawah ini ke Hermes.
 > Ganti dulu semua yang bertanda `[ isi sendiri ]`.
@@ -8,7 +8,7 @@
 ---
 
 ```
-Tugas: deploy aplikasi "LaundryKu" (Next.js 15 + PostgreSQL) ke EasyPanel saya.
+Tugas: deploy aplikasi "Laundry SaaS" (Next.js 15 + PostgreSQL) ke EasyPanel saya.
 Kerjakan lewat UI EasyPanel. Jangan mengubah kode aplikasi sama sekali — repo
 sudah berisi Dockerfile dan entrypoint yang siap pakai.
 
@@ -17,13 +17,13 @@ AKSES
 =====================================================================
 EasyPanel URL   : [ isi sendiri — mis. https://panel.domain-saya.com ]
 Login EasyPanel : [ isi sendiri ]
-Nama project    : [ isi sendiri — mis. laundryku ]
+Nama project    : [ isi sendiri — mis. laundry-saas ]
 
-Repository Git  : [ isi sendiri — mis. https://github.com/user/laundryku.git ]
+Repository Git  : [ isi sendiri — mis. https://github.com/user/laundry-saas.git ]
 Branch          : [ isi sendiri — mis. main ]
 Akses repo      : [ isi sendiri — public / deploy key / PAT ]
 
-Domain aplikasi : [ isi sendiri — mis. app.laundryku.id ]
+Domain aplikasi : [ isi sendiri — mis. app.laundry-saas.id ]
 (DNS A record sudah saya arahkan ke IP VPS. Konfirmasi dulu sudah menyebar
 sebelum mengaktifkan HTTPS.)
 
@@ -42,14 +42,14 @@ LANGKAH 1 — BUAT SERVICE POSTGRES
 =====================================================================
 Service #1
   Tipe     : Postgres
-  Name     : laundryku-db
+  Name     : laundry-saas-db
   Versi    : 16 atau lebih baru
   Password : [ isi sendiri — atau generate acak 32 karakter, lalu beri tahu saya ]
 
 Setelah dibuat, catat "Internal Connection URL". Bentuknya:
-  postgresql://postgres:PASSWORD@laundryku-db:5432/postgres
+  postgresql://postgres:***@laundry-saas-db:5432/postgres
 
-PENTING: hostname-nya adalah NAMA SERVICE (laundryku-db), bukan localhost dan
+PENTING: hostname-nya adalah NAMA SERVICE (laundry-saas-db), bukan localhost dan
 bukan IP publik VPS. Jangan expose port Postgres ke internet.
 
 =====================================================================
@@ -57,7 +57,7 @@ LANGKAH 2 — BUAT SERVICE APLIKASI
 =====================================================================
 Service #2
   Tipe   : App
-  Name   : laundryku-app
+  Name   : laundry-saas-app
 
   Source:
     Git repository = (lihat bagian AKSES di atas)
@@ -76,11 +76,11 @@ Service #2
     HTTPS/SSL = aktifkan (Let's Encrypt)
 
 =====================================================================
-LANGKAH 3 — ENVIRONMENT VARIABLES (di service laundryku-app)
+LANGKAH 3 — ENVIRONMENT VARIABLES (di service laundry-saas-app)
 =====================================================================
 
 --- WAJIB ---
-POSTGRES_URL=postgresql://postgres:[ password Postgres dari Langkah 1 ]@laundryku-db:5432/postgres
+POSTGRES_URL=postgresql://postgres:***@laundry-saas-db:5432/postgres
 AUTH_SECRET=[ generate dengan: openssl rand -hex 32 ]
 BASE_URL=https://[ domain dari bagian AKSES ]
 
@@ -102,7 +102,7 @@ WA_TOKEN=[ isi sendiri — token dari dashboard Fonnte ]
 (kosongkan = mode simulasi)
 EMAIL_PROVIDER=resend
 RESEND_API_KEY=[ isi sendiri ]
-EMAIL_FROM=LaundryKu <noreply@[ isi sendiri — domain terverifikasi ]>
+EMAIL_FROM=Laundry SaaS <noreply@[ isi sendiri — domain terverifikasi ]>
 
 --- OPSIONAL: PEMBAYARAN LANGGANAN ---
 (kosongkan = mode simulasi)
@@ -154,7 +154,7 @@ Laporkan hasil kelima poin ini satu per satu.
 =====================================================================
 LANGKAH 6 — BACKUP DATABASE (jangan dilewati)
 =====================================================================
-Aktifkan backup terjadwal pada service laundryku-db.
+Aktifkan backup terjadwal pada service laundry-saas-db.
   Jadwal : harian
   Tujuan : [ isi sendiri — S3 / Cloudflare R2 / Backblaze B2 / DO Spaces ]
   Kredensial storage: [ isi sendiri ]
@@ -199,7 +199,7 @@ Panduan lengkap ada di file DEPLOY_EASYPANEL.md di dalam repo.
 =====================================================================
 LAPORAN AKHIR YANG SAYA MAU
 =====================================================================
-1. Status tiap service (laundryku-db, laundryku-app)
+1. Status tiap service (laundry-saas-db, laundry-saas-app)
 2. Hasil kelima verifikasi di Langkah 5
 3. Konfirmasi backup sudah jalan dan filenya sampai di storage
 4. Daftar env yang TERISI (jangan tampilkan nilainya, cukup nama variabelnya)

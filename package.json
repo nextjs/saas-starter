@@ -1,4 +1,7 @@
 {
+  "name": "laundry-saas",
+  "version": "1.0.0",
+  "description": "SaaS multi-tenant untuk operasional laundry — Next.js + PostgreSQL + Drizzle",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

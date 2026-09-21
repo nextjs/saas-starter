@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "laundryku-dev",
+      "name": "laundry-saas-dev",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": [
         "dev"

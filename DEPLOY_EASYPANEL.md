@@ -1,4 +1,4 @@
-# Deploy LaundryKu ke VPS + EasyPanel
+# Deploy Laundry SaaS ke VPS + EasyPanel
 
 Panduan ini mengasumsikan VPS dengan EasyPanel terpasang, dan Postgres dijalankan
 sebagai service EasyPanel di VPS yang sama.
@@ -24,14 +24,14 @@ kena OOM gagalnya membingungkan (proses terbunuh tanpa pesan jelas).
 
 Di project EasyPanel Anda: **+ Service → Postgres**.
 
-- Name: `laundryku-db`
+- Name: `laundry-saas-db`
 - Password: buat yang panjang dan acak
 - Simpan **Internal Connection URL** yang ditampilkan EasyPanel
 
 Bentuknya kira-kira:
 
 ```
-postgresql://postgres:PASSWORD@laundryku-db:5432/postgres
+postgresql://postgres:***@laundry-saas-db:5432/postgres
 ```
 
 > Hostname-nya **nama service**, bukan `localhost`. Postgres dan aplikasi berada
@@ -64,7 +64,7 @@ Isi di tab **Environment** milik service aplikasi.
 ### Wajib
 
 ```
-POSTGRES_URL=postgresql://postgres:PASSWORD@laundryku-db:5432/postgres
+POSTGRES_URL=postgresql://postgres:***@laundry-saas-db:5432/postgres
 AUTH_SECRET=<hasil perintah di bawah>
 BASE_URL=https://domain-anda.com
 ```
@@ -102,7 +102,7 @@ WA_TOKEN=<token dari dashboard Fonnte>
 ```
 EMAIL_PROVIDER=resend
 RESEND_API_KEY=<kunci Resend>
-EMAIL_FROM=LaundryKu <noreply@domain-anda.com>
+EMAIL_FROM=Laundry SaaS <noreply@domain-anda.com>
 ```
 
 Atau lewat SMTP:
@@ -110,7 +110,7 @@ Atau lewat SMTP:
 ```
 EMAIL_PROVIDER=smtp
 SMTP_URL=smtps://user:password@smtp.domain.com:465
-EMAIL_FROM=LaundryKu <noreply@domain-anda.com>
+EMAIL_FROM=Laundry SaaS <noreply@domain-anda.com>
 ```
 
 > **Jangan mengirim email langsung dari IP VPS.** IP VPS baru hampir selalu

@@ -9,7 +9,7 @@ import 'server-only';
  *
  * Env yang dipakai:
  *   EMAIL_PROVIDER = resend | smtp | simulasi   (default: simulasi)
- *   EMAIL_FROM     = alamat pengirim, mis. "LaundryKu <noreply@domain.com>"
+ *   EMAIL_FROM     = alamat pengirim, mis. "Laundry SaaS <noreply@domain.com>"
  *   RESEND_API_KEY = kunci Resend
  *   SMTP_URL       = smtp://user:pass@host:port  (dipakai kalau provider = smtp)
  */
@@ -30,7 +30,7 @@ export function pengirimAktif(): NamaPengirim {
 }
 
 function alamatPengirim(): string {
-  return process.env.EMAIL_FROM ?? 'LaundryKu <noreply@laundryku.local>';
+  return process.env.EMAIL_FROM ?? 'Laundry SaaS <noreply@laundry-saas.local>';
 }
 
 async function kirimResend(
