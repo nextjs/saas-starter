@@ -4,34 +4,28 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Lock, Trash2, Loader2 } from 'lucide-react';
-import { useActionState } from 'react';
-import { updatePassword, deleteAccount } from '@/app/(login)/actions';
-
-type PasswordState = {
-  currentPassword?: string;
-  newPassword?: string;
-  confirmPassword?: string;
-  error?: string;
-  success?: string;
-};
+import { Trash2, Loader2 } from 'lucide-react';
+import { useActionState, useEffect } from 'react';
+import { signOut } from 'next-auth/react';
+import { deleteAccount } from '@/app/(login)/actions';
 
 type DeleteState = {
-  password?: string;
+  confirmation?: string;
   error?: string;
   success?: string;
 };
 
 export default function SecurityPage() {
-  const [passwordState, passwordAction, isPasswordPending] = useActionState<
-    PasswordState,
-    FormData
-  >(updatePassword, {});
-
   const [deleteState, deleteAction, isDeletePending] = useActionState<
     DeleteState,
     FormData
   >(deleteAccount, {});
+
+  useEffect(() => {
+    if (deleteState.success) {
+      void signOut({ callbackUrl: '/sign-in' });
+    }
+  }, [deleteState.success]);
 
   return (
     <section className="flex-1 p-4 lg:p-8">
@@ -40,78 +34,13 @@ export default function SecurityPage() {
       </h1>
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Password</CardTitle>
+          <CardTitle>Sign-in method</CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4" action={passwordAction}>
-            <div>
-              <Label htmlFor="current-password" className="mb-2">
-                Current Password
-              </Label>
-              <Input
-                id="current-password"
-                name="currentPassword"
-                type="password"
-                autoComplete="current-password"
-                required
-                minLength={8}
-                maxLength={100}
-                defaultValue={passwordState.currentPassword}
-              />
-            </div>
-            <div>
-              <Label htmlFor="new-password" className="mb-2">
-                New Password
-              </Label>
-              <Input
-                id="new-password"
-                name="newPassword"
-                type="password"
-                autoComplete="new-password"
-                required
-                minLength={8}
-                maxLength={100}
-                defaultValue={passwordState.newPassword}
-              />
-            </div>
-            <div>
-              <Label htmlFor="confirm-password" className="mb-2">
-                Confirm New Password
-              </Label>
-              <Input
-                id="confirm-password"
-                name="confirmPassword"
-                type="password"
-                required
-                minLength={8}
-                maxLength={100}
-                defaultValue={passwordState.confirmPassword}
-              />
-            </div>
-            {passwordState.error && (
-              <p className="text-red-500 text-sm">{passwordState.error}</p>
-            )}
-            {passwordState.success && (
-              <p className="text-green-500 text-sm">{passwordState.success}</p>
-            )}
-            <Button
-              type="submit"
-              className="bg-orange-500 hover:bg-orange-600 text-white"
-              disabled={isPasswordPending}
-            >
-              {isPasswordPending ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
-                </>
-              ) : (
-                <>
-                  <Lock className="mr-2 h-4 w-4" />
-                  Update Password
-                </>
-              )}
-            </Button>
-          </form>
+          <p className="text-sm text-gray-500">
+            Sign in using the Google or Facebook account connected to this
+            profile. Manage your password through that provider.
+          </p>
         </CardContent>
       </Card>
 
@@ -126,16 +55,15 @@ export default function SecurityPage() {
           <form action={deleteAction} className="space-y-4">
             <div>
               <Label htmlFor="delete-password" className="mb-2">
-                Confirm Password
+                Type DELETE to confirm
               </Label>
               <Input
                 id="delete-password"
-                name="password"
-                type="password"
+                name="confirmation"
+                type="text"
                 required
-                minLength={8}
-                maxLength={100}
-                defaultValue={deleteState.password}
+                pattern="DELETE"
+                defaultValue={deleteState.confirmation}
               />
             </div>
             {deleteState.error && (

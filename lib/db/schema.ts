@@ -35,10 +35,19 @@ export const users = pgTable("users", {
   name: varchar("name", { length: 100 }),
   email: varchar("email", { length: 255 }).notNull().unique(),
   passwordHash: text("password_hash").notNull(),
+  emailVerified: timestamp("email_verified"),
   role: varchar("role", { length: 20 }).notNull().default("member"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   deletedAt: timestamp("deleted_at"),
+});
+
+export const emailSignupTokens = pgTable("email_signup_tokens", {
+  email: varchar("email", { length: 255 }).primaryKey(),
+  passwordHash: text("password_hash").notNull(),
+  tokenHash: text("token_hash").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 export const teams = pgTable("teams", {

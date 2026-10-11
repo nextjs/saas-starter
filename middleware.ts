@@ -1,46 +1,72 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { signToken, verifyToken } from '@/lib/auth/session';
+import { getToken } from 'next-auth/jwt';
 
 const protectedRoutes = '/dashboard';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const sessionCookie = request.cookies.get('session');
   const isProtectedRoute = pathname.startsWith(protectedRoutes);
+  const secureCookie = request.nextUrl.protocol === 'https:';
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET ?? process.env.AUTH_SECRET,
+    secureCookie,
+  });
+  const sessionCookieNames = [
+    'next-auth.session-token',
+    '__Secure-next-auth.session-token',
+  ];
+  const hasSessionCookie = request.cookies
+    .getAll()
+    .some(({ name }) =>
+      sessionCookieNames.some(
+        (cookieName) => name === cookieName || name.startsWith(`${cookieName}.`),
+      ),
+    );
 
-  if (isProtectedRoute && !sessionCookie) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
-  }
-
-  let res = NextResponse.next();
-
-  if (sessionCookie && request.method === 'GET') {
-    try {
-      const parsed = await verifyToken(sessionCookie.value);
-      const expiresInOneDay = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-      res.cookies.set({
-        name: 'session',
-        value: await signToken({
-          ...parsed,
-          expires: expiresInOneDay.toISOString()
-        }),
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax',
-        expires: expiresInOneDay
-      });
-    } catch (error) {
-      console.error('Error updating session:', error);
-      res.cookies.delete('session');
-      if (isProtectedRoute) {
-        return NextResponse.redirect(new URL('/sign-in', request.url));
+  const response = NextResponse.next();
+  if (!token && hasSessionCookie) {
+    const expiredAt = new Date(0);
+    for (const { name } of request.cookies.getAll()) {
+      if (
+        sessionCookieNames.some(
+          (cookieName) =>
+            name === cookieName || name.startsWith(`${cookieName}.`),
+        )
+      ) {
+        response.cookies.set({
+          name,
+          value: '',
+          expires: expiredAt,
+          path: '/',
+          httpOnly: true,
+          secure: name.startsWith('__Secure-'),
+          sameSite: 'lax',
+        });
       }
     }
   }
 
-  return res;
+  if (
+    isProtectedRoute &&
+    (!token ||
+      (token.provider !== 'google' &&
+        token.provider !== 'facebook' &&
+        token.provider !== 'email'))
+  ) {
+    const redirectResponse = NextResponse.redirect(
+      new URL('/sign-in', request.url),
+    );
+    if (!token && hasSessionCookie) {
+      for (const expiredCookie of response.cookies.getAll()) {
+        redirectResponse.cookies.set(expiredCookie);
+      }
+    }
+    return redirectResponse;
+  }
+
+  return response;
 }
 
 export const config = {
