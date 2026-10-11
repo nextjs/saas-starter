@@ -2,18 +2,15 @@ import { checkoutAction } from "@/lib/payments/actions";
 import { Check } from "lucide-react";
 import { getStripePrices, getStripeProducts } from "@/lib/payments/stripe";
 import { SubmitButton } from "./submit-button";
+import type { StripePrice, StripeProduct } from "@/types/stripe";
 
 // Prices are fresh for one hour max
 export const revalidate = 3600;
 
 export default async function PricingPage() {
-  const [prices, products] = await Promise.all([
-    getStripePrices(),
-    getStripeProducts(),
-  ]);
+  const [prices, products]: [StripePrice[], StripeProduct[]] =
+    await Promise.all([getStripePrices(), getStripeProducts()]);
 
-  console.log("Prices", prices);
-  console.log("Products", products);
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div>

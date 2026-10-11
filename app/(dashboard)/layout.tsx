@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { use, useState, Suspense } from "react";
+import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
-import { CircleIcon, Home, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 function UserMenu() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { data: user } = useSWR<User>("/api/user", fetcher);
+  const { data: session } = useSWR("/api/auth/session", fetcher);
   const router = useRouter();
 
   async function handleSignOut() {
@@ -55,22 +56,25 @@ function UserMenu() {
         <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
           <DropdownMenuTrigger>
             <Avatar className="cursor-pointer size-9">
-              <AvatarImage alt={user.name || ""} />
+              <AvatarImage
+                src={session?.user?.image ?? undefined}
+                alt={session?.user?.name ?? "User avatar"}
+              />
               <AvatarFallback>
-                {user.email
+                {(user.name ?? user.email)
                   .split(" ")
-                  .map((n) => n[0])
+                  .map((n: string) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="flex flex-col gap-1">
-            <DropdownMenuItem className="cursor-pointer">
+            {/* <DropdownMenuItem className="cursor-pointer">
               <Link href="/dashboard" className="flex w-full items-center">
                 <Home className="mr-2 h-4 w-4" />
                 <span>Dashboard</span>
               </Link>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
             <form action={handleSignOut} className="w-full">
               <button type="submit" className="flex w-full">
                 <DropdownMenuItem className="w-full flex-1 cursor-pointer">

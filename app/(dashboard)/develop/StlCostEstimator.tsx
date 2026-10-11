@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,7 @@ import type { StlAnalysis, StlEstimate, StlSettings } from "@/lib/stl-estimate";
 
 type MeshData = StlAnalysis;
 type EstimateResult = StlEstimate;
+type AuthStatus = "checking" | "signed-in" | "signed-out" | "error";
 
 function getLocalDateString(date: Date) {
   const year = date.getFullYear();
@@ -321,6 +323,7 @@ export default function StlCostEstimator() {
   const [quantity, setQuantity] = useState(1);
   const [projectName, setProjectName] = useState("");
   const [requestedByDate, setRequestedByDate] = useState("");
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("checking");
   const [quoteSubmitting, setQuoteSubmitting] = useState(false);
   const [quoteToast, setQuoteToast] = useState<QuoteToast | null>(null);
   const [estimateLoading, setEstimateLoading] = useState(false);
@@ -331,6 +334,30 @@ export default function StlCostEstimator() {
   const quoteToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const checkSession = async () => {
+      try {
+        const response = await fetch("/api/auth/session");
+        if (!response.ok) {
+          throw new Error("Unable to check sign-in status.");
+        }
+        const session = (await response.json()) as { user?: unknown };
+        if (!cancelled) {
+          setAuthStatus(session.user ? "signed-in" : "signed-out");
+        }
+      } catch {
+        if (!cancelled) setAuthStatus("error");
+      }
+    };
+
+    void checkSession();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const showQuoteToast = (toast: QuoteToast) => {
     if (quoteToastTimeoutRef.current) {
@@ -462,6 +489,7 @@ export default function StlCostEstimator() {
 
   const submitQuote = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (authStatus !== "signed-in") return;
     if (!mesh || !stlFile || !result) return;
     if (!projectName.trim() || !requestedByDate) return;
 
@@ -906,6 +934,28 @@ export default function StlCostEstimator() {
                     We’ll use the name and email address from your signed-in
                     account.
                   </p>
+                  {authStatus === "signed-out" && (
+                    <p className="text-sm text-muted-foreground">
+                      <Link
+                        href="/sign-in"
+                        className="font-medium text-primary underline"
+                      >
+                        Sign in
+                      </Link>{" "}
+                      to submit a quote request.
+                    </p>
+                  )}
+                  {authStatus === "checking" && (
+                    <p className="text-sm text-muted-foreground" role="status">
+                      Checking sign-in status…
+                    </p>
+                  )}
+                  {authStatus === "error" && (
+                    <p className="text-sm text-destructive" role="alert">
+                      Unable to check sign-in status. Refresh the page and try
+                      again.
+                    </p>
+                  )}
                   {stlFile && stlFile.size > 20 * 1024 * 1024 && (
                     <p className="text-sm text-destructive" role="alert">
                       This STL is over 20 MB and cannot be attached to a quote
@@ -914,8 +964,9 @@ export default function StlCostEstimator() {
                   )}
                   <Button
                     type="submit"
-                    className="w-full"
+                    className="w-full cursor-pointer"
                     disabled={
+                      authStatus !== "signed-in" ||
                       quoteSubmitting ||
                       !stlFile ||
                       stlFile.size > 20 * 1024 * 1024 ||

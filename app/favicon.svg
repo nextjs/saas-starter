@@ -22,19 +22,19 @@
   <g id="icon">
   
     <!-- BOTTOM ORANGE LAYER (lowest) -->
-    <path fill="#f15908" d="M 140 355 L 0 285 L 0 250 L 140 320 Z"/> <!-- front -->
-    <path fill="#fc690e" d="M 140 355 L 140 320 L 280 250 L 280 285 Z"/> <!-- side -->
-    <path fill="#eb945f" d="M 0 250 L 35 232.5 L 140 285 L 245 232.5 L 280 250 L 140 320 Z"/> <!-- top -->
+    <path fill="#8B0000" d="M 140 355 L 0 285 L 0 250 L 140 320 Z"/> <!-- front -->
+    <path fill="#B71C1C" d="M 140 355 L 140 320 L 280 250 L 280 285 Z"/> <!-- side -->
+    <path fill="#E30613" d="M 0 250 L 35 232.5 L 140 285 L 245 232.5 L 280 250 L 140 320 Z"/> <!-- top -->
     
     <!-- MIDDLE TEAL LAYER -->
-    <path fill="#00475a" d="M 140 265 L 0 195 L 0 160 L 140 230 Z"/> <!-- front -->
-    <path fill="#01586d" d="M 140 265 L 140 230 L 280 160 L 280 195 Z"/> <!-- side -->
-    <path fill="#026076" d="M 0 160 L 35 142.5 L 140 195 L 245 142.5 L 280 160 L 140 230 Z"/> <!-- top -->
+    <path fill="#0A0A0A" d="M 140 265 L 0 195 L 0 160 L 140 230 Z"/> <!-- front -->
+    <path fill="#111111" d="M 140 265 L 140 230 L 280 160 L 280 195 Z"/> <!-- side -->
+    <path fill="#1A1A1A" d="M 0 160 L 35 142.5 L 140 195 L 245 142.5 L 280 160 L 140 230 Z"/> <!-- top -->
     
     <!-- TOP TEAL LAYER -->
-    <path fill="#00475a" d="M 140 175 L 0 105 L 0 70 L 140 140 Z"/> <!-- front -->
-    <path fill="#01586d" d="M 140 175 L 140 140 L 280 70 L 280 105 Z"/> <!-- side -->
-    <path fill="#026076" fill-rule="evenodd" d="
+    <path fill="#0A0A0A" d="M 140 175 L 0 105 L 0 70 L 140 140 Z"/> <!-- front -->
+    <path fill="#111111" d="M 140 175 L 140 140 L 280 70 L 280 105 Z"/> <!-- side -->
+    <path fill="#1A1A1A" fill-rule="evenodd" d="
       M 0 70 L 140 0 L 280 70 L 140 140 Z
       M 70 70 L 140 35 L 210 70 L 140 105 Z
     "/> <!-- top + hole -->
