@@ -11,7 +11,7 @@ This is a starter template for building a SaaS application using **Next.js** wit
 - Dashboard pages with CRUD operations on users/teams
 - Basic RBAC with Owner and Member roles
 - Subscription management with Stripe Customer Portal
-- Email/password authentication with JWTs stored to cookies
+- Google and Facebook authentication using NextAuth
 - Global middleware to protect logged-in routes
 - Local middleware to protect Server Actions or validate Zod schemas
 - Activity logging system for any user events
@@ -53,12 +53,13 @@ pnpm db:migrate
 pnpm db:seed
 ```
 
-This will create the following user and team:
+The seeded user and team are sample data. The seeded test account is marked
+verified for local development; new email/password accounts must verify using
+the link sent to their signup address.
 
-- User: `test@test.com`
-- Password: `admin123`
-
-You can also create new users through the `/sign-up` route.
+Configure Google and Facebook OAuth credentials plus Mailgun email settings in
+`.env` before signing in. Email/password signup requires following the
+verification link sent to the signup address.
 
 Finally, run the Next.js development server:
 
@@ -73,6 +74,49 @@ You can listen for Stripe webhooks locally through their CLI to handle subscript
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
 ```
+
+## STL Quote Requests
+
+The STL estimator can email the quote details and a ZIP archive of the uploaded
+model to `quotes@lastlayer.ca` through Mailgun. Configure these server-side
+environment variables in `.env.local` for local development and in your
+deployment settings for production:
+
+- `MAILGUN_API_KEY`: a private Mailgun API key.
+- `MAILGUN_DOMAIN`: a sending domain configured in Mailgun.
+- `MAILGUN_FROM_EMAIL`: a verified sender address for that domain.
+- `MAILGUN_API_BASE_URL`: optional; defaults to `https://api.mailgun.net`. Use
+  `https://api.eu.mailgun.net` for an EU Mailgun account.
+
+Quote requests require a project name, a requested print date, and an STL file
+no larger than 20 MB. The signed-in account's name and email are included
+automatically. STL analysis and estimate calculations run on the server;
+submitting a quote requires an authenticated Google, Facebook, or verified
+email account. The STL is emailed to the quotes address only when the user
+submits the quote form. Never expose the Mailgun API key in client-side code
+or commit it to the repository.
+
+## Authentication
+
+Set `NEXTAUTH_URL` and `NEXTAUTH_SECRET`, then configure `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`, and `FACEBOOK_CLIENT_SECRET`.
+NextAuth's Upstash Redis adapter uses the Vercel Upstash integration variables
+`KV_REST_API_URL` and `KV_REST_API_TOKEN` (or the corresponding
+`SASSStarter_KV_REST_API_URL` and `SASSStarter_KV_REST_API_TOKEN` names already
+provided in this project's environment). Point these at the
+`upstash-kv-beige-grass` database; NextAuth stores provider users and account
+records there using its own key prefix.
+Configure Mailgun as described above to deliver signup verification links.
+Register the callback URL `https://your-domain/api/auth/callback/google` with
+Google and `https://your-domain/api/auth/callback/facebook` with Facebook.
+For local development, use `http://localhost:3000/api/auth/callback/google`
+and `http://localhost:3000/api/auth/callback/facebook`.
+Run `pnpm db:migrate` to add the verified-email and signup-token database
+fields before deploying the email signup flow.
+NextAuth sessions continue to use signed JWT cookies because the email/password
+Credentials provider requires JWT sessions. The adapter stores NextAuth OAuth
+users and provider-account records in Upstash; the app's teams, profile, and
+email-verification records remain in Postgres.
 
 ## Testing Payments
 
@@ -106,7 +150,8 @@ In your Vercel project settings (or during deployment), add all the necessary en
 2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
 3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
 4. `POSTGRES_URL`: Set this to your production database URL.
-5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+5. `NEXTAUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
+6. Configure `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `FACEBOOK_CLIENT_ID`, and `FACEBOOK_CLIENT_SECRET`.
 
 ## Other Templates
 
