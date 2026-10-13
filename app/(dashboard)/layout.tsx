@@ -36,16 +36,16 @@ function UserMenu() {
   return (
     <>
       <Link
+        href="/develop"
+        className="text-sm font-medium text-gray-700 hover:text-gray-900"
+      >
+        Make It
+      </Link>
+      <Link
         href="/products"
         className="text-sm font-medium text-gray-700 hover:text-gray-900"
       >
         Products
-      </Link>
-      <Link
-        href="/develop"
-        className="text-sm font-medium text-gray-700 hover:text-gray-900"
-      >
-        Develop
       </Link>
       {!user && (
         <Button asChild className="rounded-full">
