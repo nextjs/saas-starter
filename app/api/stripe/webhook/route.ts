@@ -1,10 +1,15 @@
-import Stripe from 'stripe';
-import { handleSubscriptionChange, stripe } from '@/lib/payments/stripe';
+import type Stripe from 'stripe';
+import { handleSubscriptionChange, getStripe } from '@/lib/payments/stripe';
+import { isStripeWebhookEnabled } from '@/lib/payments/config';
 import { NextRequest, NextResponse } from 'next/server';
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-
 export async function POST(request: NextRequest) {
+  if (!isStripeWebhookEnabled()) {
+    return NextResponse.json({ error: 'Payments are disabled.' }, { status: 503 });
+  }
+
+  const stripe = getStripe();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
   const payload = await request.text();
   const signature = request.headers.get('stripe-signature') as string;
 

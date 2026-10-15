@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Loader2, PlusCircle } from 'lucide-react';
+import { usePaymentsEnabled } from '@/components/payments-provider';
 
 type ActionState = {
   error?: string;
@@ -270,12 +271,15 @@ function InviteTeamMember() {
 }
 
 export default function SettingsPage() {
+  const paymentsEnabled = usePaymentsEnabled();
   return (
     <section className="flex-1 p-4 lg:p-8">
       <h1 className="text-lg lg:text-2xl font-medium mb-6">Team Settings</h1>
-      <Suspense fallback={<SubscriptionSkeleton />}>
-        <ManageSubscription />
-      </Suspense>
+      {paymentsEnabled && (
+        <Suspense fallback={<SubscriptionSkeleton />}>
+          <ManageSubscription />
+        </Suspense>
+      )}
       <Suspense fallback={<TeamMembersSkeleton />}>
         <TeamMembers />
       </Suspense>

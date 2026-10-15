@@ -2,11 +2,24 @@ import { checkoutAction } from '@/lib/payments/actions';
 import { Check } from 'lucide-react';
 import { getStripePrices, getStripeProducts } from '@/lib/payments/stripe';
 import { SubmitButton } from './submit-button';
+import { isPaymentsEnabled } from '@/lib/payments/config';
 
 // Prices are fresh for one hour max
 export const revalidate = 3600;
 
 export default async function PricingPage() {
+  if (!isPaymentsEnabled()) {
+    return (
+      <main className="max-w-3xl mx-auto px-4 py-12">
+        <h1 className="text-3xl font-medium mb-4">Payments are unavailable</h1>
+        <p>
+          Subscriptions and purchases are disabled. You can still create an
+          account and use the community.
+        </p>
+      </main>
+    );
+  }
+
   const [prices, products] = await Promise.all([
     getStripePrices(),
     getStripeProducts(),

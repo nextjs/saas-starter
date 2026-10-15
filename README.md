@@ -34,22 +34,26 @@ pnpm install
 
 ## Running Locally
 
-[Install](https://docs.stripe.com/stripe-cli) and log in to your Stripe account:
+Payments are disabled by default. Stripe credentials and the Stripe CLI are not
+needed to build the app, create accounts, or use the Postgres-backed dashboard.
+Copy the environment example and configure your development database, base URL,
+and a randomly generated authentication secret:
 
 ```bash
-stripe login
+cp .env.example .env
+openssl rand -hex 32
 ```
 
-Use the included setup script to create your `.env` file:
-
-```bash
-pnpm db:setup
-```
-
-Run the database migrations and seed the database with a default user and team:
+Set `POSTGRES_URL`, `BASE_URL`, and `AUTH_SECRET` in `.env`, and keep
+`PAYMENTS_ENABLED=false`. Start your Postgres instance, then run the migrations:
 
 ```bash
 pnpm db:migrate
+```
+
+Create an account through `/sign-up`, or optionally seed a local demo user/team:
+
+```bash
 pnpm db:seed
 ```
 
@@ -68,7 +72,38 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the app in action.
 
-You can listen for Stripe webhooks locally through their CLI to handle subscription change events:
+The disabled mode hides pricing navigation and subscription controls. `/pricing`
+shows an unavailable message, checkout and webhook endpoints return HTTP 503,
+and payment server actions redirect to the unavailable pricing page. Setting
+only a Stripe key cannot enable payments: both `PAYMENTS_ENABLED=true` and a
+nonempty `STRIPE_SECRET_KEY` are required. Webhooks additionally require
+`STRIPE_WEBHOOK_SECRET`. Do not opt in for the community prototype.
+
+The interactive `pnpm db:setup` helper is intended for Stripe-enabled setups;
+use the manual `.env` steps above for development without payments. Seeding is
+optional and not idempotent; it skips Stripe products and prices when disabled.
+
+Validate the app with:
+
+```bash
+pnpm build
+pnpm exec tsc --noEmit
+node --test tests/payments-config.test.mjs
+# After pnpm build, with pnpm start running locally and payments disabled:
+TEST_BASE_URL=http://127.0.0.1:3000 node --test tests/payments-disabled.test.mjs
+```
+
+The Node test commands use native TypeScript loading (Node 22.18+ or Node 24).
+
+In Codex Cloud, if Turbopack needs the platform's trusted proxy certificates,
+set `NEXT_TURBOPACK_EXPERIMENTAL_USE_SYSTEM_TLS_CERTS=1` for build and dev commands.
+Allow `fonts.googleapis.com` and `fonts.gstatic.com` for the Google Font download.
+Keep TLS verification enabled.
+
+## Optional Stripe integration
+
+For a separately authorized payment integration, the original Stripe CLI webhook
+forwarding command is:
 
 ```bash
 stripe listen --forward-to localhost:3000/api/stripe/webhook
@@ -76,7 +111,8 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 
 ## Testing Payments
 
-To test Stripe payments, use the following test card details:
+Only when payments have deliberately been enabled with Stripe test credentials,
+use the following test card details:
 
 - Card Number: `4242 4242 4242 4242`
 - Expiration: Any future date
@@ -103,8 +139,8 @@ When you're ready to deploy your SaaS application to production, follow these st
 In your Vercel project settings (or during deployment), add all the necessary environment variables. Make sure to update the values for the production environment, including:
 
 1. `BASE_URL`: Set this to your production domain.
-2. `STRIPE_SECRET_KEY`: Use your Stripe secret key for the production environment.
-3. `STRIPE_WEBHOOK_SECRET`: Use the webhook secret from the production webhook you created in step 1.
+2. `PAYMENTS_ENABLED`: Keep `false` to leave all payments disabled. Enabling payments is a separate integration step.
+3. `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`: Optional when payments are disabled; configure only for an intentionally enabled Stripe integration.
 4. `POSTGRES_URL`: Set this to your production database URL.
 5. `AUTH_SECRET`: Set this to a random string. `openssl rand -base64 32` will generate one.
 

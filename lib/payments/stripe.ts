@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { isPaymentsEnabled } from './config';
 import { redirect } from 'next/navigation';
 import { Team } from '@/lib/db/schema';
 import {
@@ -7,9 +8,18 @@ import {
   updateTeamSubscription
 } from '@/lib/db/queries';
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-04-30.basil'
-});
+let stripe: Stripe | undefined;
+
+export function getStripe() {
+  if (!isPaymentsEnabled()) {
+    throw new Error('Payments are disabled.');
+  }
+
+  // Importing payment helpers must never require credentials or create a client.
+  return (stripe ??= new Stripe(process.env.STRIPE_SECRET_KEY!, {
+    apiVersion: '2025-04-30.basil'
+  }));
+}
 
 export async function createCheckoutSession({
   team,
@@ -18,6 +28,10 @@ export async function createCheckoutSession({
   team: Team | null;
   priceId: string;
 }) {
+  if (!isPaymentsEnabled()) {
+    redirect('/pricing');
+  }
+  const stripe = getStripe();
   const user = await getUser();
 
   if (!team || !user) {
@@ -47,6 +61,10 @@ export async function createCheckoutSession({
 }
 
 export async function createCustomerPortalSession(team: Team) {
+  if (!isPaymentsEnabled()) {
+    redirect('/pricing');
+  }
+  const stripe = getStripe();
   if (!team.stripeCustomerId || !team.stripeProductId) {
     redirect('/pricing');
   }
@@ -117,6 +135,9 @@ export async function createCustomerPortalSession(team: Team) {
 export async function handleSubscriptionChange(
   subscription: Stripe.Subscription
 ) {
+  if (!isPaymentsEnabled()) {
+    throw new Error('Payments are disabled.');
+  }
   const customerId = subscription.customer as string;
   const subscriptionId = subscription.id;
   const status = subscription.status;
@@ -147,6 +168,8 @@ export async function handleSubscriptionChange(
 }
 
 export async function getStripePrices() {
+  if (!isPaymentsEnabled()) return [];
+  const stripe = getStripe();
   const prices = await stripe.prices.list({
     expand: ['data.product'],
     active: true,
@@ -165,6 +188,8 @@ export async function getStripePrices() {
 }
 
 export async function getStripeProducts() {
+  if (!isPaymentsEnabled()) return [];
+  const stripe = getStripe();
   const products = await stripe.products.list({
     active: true,
     expand: ['data.default_price']
