@@ -179,7 +179,7 @@ async function createStripeWebhook(): Promise<string> {
 }
 
 function generateAuthSecret(): string {
-  console.log('Step 5: Generating AUTH_SECRET...');
+  console.log('Step 5: Generating NEXTAUTH_SECRET...');
   return crypto.randomBytes(32).toString('hex');
 }
 
@@ -200,14 +200,19 @@ async function main() {
   const STRIPE_SECRET_KEY = await getStripeSecretKey();
   const STRIPE_WEBHOOK_SECRET = await createStripeWebhook();
   const BASE_URL = 'http://localhost:3000';
-  const AUTH_SECRET = generateAuthSecret();
+  const NEXTAUTH_SECRET = generateAuthSecret();
 
   await writeEnvFile({
     POSTGRES_URL,
     STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET,
     BASE_URL,
-    AUTH_SECRET,
+    NEXTAUTH_URL: BASE_URL,
+    NEXTAUTH_SECRET,
+    GOOGLE_CLIENT_ID: '',
+    GOOGLE_CLIENT_SECRET: '',
+    FACEBOOK_CLIENT_ID: '',
+    FACEBOOK_CLIENT_SECRET: '',
   });
 
   console.log('🎉 Setup completed successfully!');

@@ -50,6 +50,7 @@ async function seed() {
       {
         email: email,
         passwordHash: passwordHash,
+        emailVerified: new Date(),
         role: "owner",
       },
     ])

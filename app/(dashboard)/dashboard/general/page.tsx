@@ -50,12 +50,14 @@ function AccountForm({
         </Label>
         <Input
           id="email"
-          name="email"
           type="email"
           placeholder="Enter your email"
           defaultValue={emailValue}
-          required
+          readOnly
         />
+        <p className="mt-1 text-sm text-gray-500">
+          Email is managed by your Google or Facebook account.
+        </p>
       </div>
     </>
   );

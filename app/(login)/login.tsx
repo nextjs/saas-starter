@@ -1,141 +1,256 @@
 'use client';
 
-import Link from 'next/link';
-import { useActionState } from 'react';
+import { useState } from 'react';
+import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import { getProviders, signIn } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { CircleIcon, Loader2 } from 'lucide-react';
-import { signIn, signUp } from './actions';
-import { ActionState } from '@/lib/auth/middleware';
 
 export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
   const searchParams = useSearchParams();
+  const [pendingProvider, setPendingProvider] = useState<
+    'google' | 'facebook' | null
+  >(null);
+  const [error, setError] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [emailPending, setEmailPending] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [oauthProviders, setOauthProviders] = useState({
+    google: false,
+    facebook: false,
+    loaded: false,
+  });
+  const oauthError = searchParams.get('error');
   const redirect = searchParams.get('redirect');
   const priceId = searchParams.get('priceId');
-  const inviteId = searchParams.get('inviteId');
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(
-    mode === 'signin' ? signIn : signUp,
-    { error: '' }
-  );
+  const callbackUrl =
+    redirect === 'checkout' && priceId
+      ? `/api/stripe/checkout/start?priceId=${encodeURIComponent(priceId)}`
+      : '/dashboard';
+
+  useEffect(() => {
+    let active = true;
+    void getProviders()
+      .then((providers) => {
+        if (!active) return;
+        setOauthProviders({
+          google: Boolean(providers?.google),
+          facebook: Boolean(providers?.facebook),
+          loaded: true,
+        });
+      })
+      .catch(() => {
+        if (active) setOauthProviders((current) => ({ ...current, loaded: true }));
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  async function continueWith(provider: 'google' | 'facebook') {
+    setPendingProvider(provider);
+    setError('');
+    try {
+      await signIn(provider, { callbackUrl });
+    } catch {
+      setError('Unable to start sign-in. Please try again.');
+      setPendingProvider(null);
+    }
+  }
+
+  async function submitEmail(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError('');
+    setEmailPending(true);
+
+    try {
+      if (mode === 'signup') {
+        if (password !== confirmPassword) {
+          throw new Error('Passwords do not match.');
+        }
+        const response = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const body = (await response.json()) as { error?: string };
+        if (!response.ok) {
+          throw new Error(body.error ?? 'Unable to start signup.');
+        }
+        setVerificationSent(true);
+      } else {
+        const result = await signIn('credentials', {
+          email,
+          password,
+          callbackUrl,
+          redirect: false,
+        });
+        if (result?.error || !result?.url) {
+          throw new Error(
+            'Unable to sign in. Check your email and password, and verify your email address.',
+          );
+        }
+        window.location.assign(result.url);
+      }
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'Unable to continue. Please try again.',
+      );
+    } finally {
+      setEmailPending(false);
+    }
+  }
 
   return (
-    <div className="min-h-[100dvh] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <div className="flex min-h-[100dvh] flex-col justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full sm:max-w-md">
         <div className="flex justify-center">
           <CircleIcon className="h-12 w-12 text-orange-500" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {mode === 'signin'
-            ? 'Sign in to your account'
-            : 'Create your account'}
+          {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
         </h2>
+        <p className="mt-3 text-center text-sm text-gray-600">
+          {mode === 'signin'
+            ? 'Sign in with email or continue with Google or Facebook.'
+            : 'Create an account with email, Google, or Facebook.'}
+        </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <form className="space-y-6" action={formAction}>
-          <input type="hidden" name="redirect" value={redirect || ''} />
-          <input type="hidden" name="priceId" value={priceId || ''} />
-          <input type="hidden" name="inviteId" value={inviteId || ''} />
-          <div>
-            <Label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </Label>
-            <div className="mt-1">
+      <div className="mx-auto mt-8 w-full space-y-3 sm:max-w-md">
+        {searchParams.get('verified') === '1' && (
+          <p className="text-center text-sm text-green-700" role="status">
+            Email verified. You can now sign in.
+          </p>
+        )}
+        {oauthError && (
+          <p className="text-center text-sm text-red-600" role="alert">
+            {oauthError === 'OAuthSignin'
+              ? 'Unable to start Google or Facebook sign-in. Check the OAuth client credentials and that the provider allows this site’s callback URL.'
+              : oauthError === 'OAuthCallback'
+                ? 'The identity provider returned an error. Check the provider app settings and try again.'
+                : 'Social sign-in failed. Please try again or use email sign-in.'}
+          </p>
+        )}
+        {verificationSent ? (
+          <p className="text-center text-sm text-green-700" role="status">
+            If this address can be registered, we’ve sent a verification link.
+            Check your inbox and follow the link to activate your account.
+          </p>
+        ) : (
+          <form className="space-y-3" onSubmit={submitEmail}>
+            <Input
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="Email address"
+              maxLength={255}
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <Input
+              type="password"
+              name="password"
+              autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+              placeholder="Password"
+              minLength={8}
+              maxLength={100}
+              required
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+            />
+            {mode === 'signup' && (
               <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                defaultValue={state.email}
-                required
-                maxLength={50}
-                className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
-              />
-            </div>
-          </div>
-
-          <div>
-            <Label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </Label>
-            <div className="mt-1">
-              <Input
-                id="password"
-                name="password"
                 type="password"
-                autoComplete={
-                  mode === 'signin' ? 'current-password' : 'new-password'
-                }
-                defaultValue={state.password}
-                required
+                name="confirmPassword"
+                autoComplete="new-password"
+                placeholder="Confirm password"
                 minLength={8}
                 maxLength={100}
-                className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-orange-500 focus:border-orange-500 focus:z-10 sm:text-sm"
-                placeholder="Enter your password"
+                required
+                value={confirmPassword}
+                onChange={(event) => setConfirmPassword(event.target.value)}
               />
-            </div>
-          </div>
-
-          {state?.error && (
-            <div className="text-red-500 text-sm">{state.error}</div>
-          )}
-
-          <div>
+            )}
             <Button
               type="submit"
-              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-full shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-              disabled={pending}
+              className="w-full rounded-full"
+              disabled={emailPending || pendingProvider !== null}
             >
-              {pending ? (
-                <>
-                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                  Loading...
-                </>
-              ) : mode === 'signin' ? (
-                'Sign in'
-              ) : (
-                'Sign up'
-              )}
+              {emailPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {mode === 'signup' ? 'Sign up with email' : 'Sign in with email'}
             </Button>
-          </div>
-        </form>
-
-        <div className="mt-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300" />
+          </form>
+        )}
+        {(oauthProviders.google || oauthProviders.facebook) && (
+          <>
+            <div className="flex items-center gap-3 py-1 text-xs text-gray-500">
+              <span className="h-px flex-1 bg-gray-300" />
+              OR
+              <span className="h-px flex-1 bg-gray-300" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">
-                {mode === 'signin'
-                  ? 'New to our platform?'
-                  : 'Already have an account?'}
-              </span>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <Link
-              href={`${mode === 'signin' ? '/sign-up' : '/sign-in'}${
-                redirect ? `?redirect=${redirect}` : ''
-              }${priceId ? `&priceId=${priceId}` : ''}`}
-              className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            >
-              {mode === 'signin'
-                ? 'Create an account'
-                : 'Sign in to existing account'}
-            </Link>
-          </div>
-        </div>
+            {oauthProviders.google && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full rounded-full"
+                disabled={pendingProvider !== null}
+                onClick={() => void continueWith('google')}
+              >
+                {pendingProvider === 'google' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Continue with Google
+              </Button>
+            )}
+            {oauthProviders.facebook && (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full rounded-full"
+                disabled={pendingProvider !== null}
+                onClick={() => void continueWith('facebook')}
+              >
+                {pendingProvider === 'facebook' ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Continue with Facebook
+              </Button>
+            )}
+          </>
+        )}
+        {oauthProviders.loaded &&
+          !oauthProviders.google &&
+          !oauthProviders.facebook && (
+            <p className="text-center text-sm text-gray-500">
+              Google and Facebook sign-in are unavailable until their OAuth
+              credentials are configured.
+            </p>
+          )}
+        {error && (
+          <p className="text-center text-sm text-red-600" role="alert">
+            {error}
+          </p>
+        )}
+        <p className="pt-2 text-center text-sm text-gray-600">
+          {mode === 'signin' ? (
+            <>
+              New here? <Link className="underline" href="/sign-up">Create an account</Link>
+            </>
+          ) : (
+            <>
+              Already registered? <Link className="underline" href="/sign-in">Sign in</Link>
+            </>
+          )}
+        </p>
       </div>
     </div>
   );
