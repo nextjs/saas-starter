@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
       const subscription = event.data.object as Stripe.Subscription;
-      await handleSubscriptionChange(subscription);
+      await handleSubscriptionChange(subscription, event.created);
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);

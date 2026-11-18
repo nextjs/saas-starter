@@ -1,0 +1,21 @@
+{
+  "rule": "After both events are delivered in any order, a stale customer.subscription.updated (created=100) must not leave the team on the Plus plan once customer.subscription.deleted (created=200) arrived",
+  "setup": "INSERT INTO teams (id, name, stripe_customer_id, stripe_subscription_id, stripe_product_id, plan_name, subscription_status) VALUES (1, 't', 'cus_1', 'sub_1', 'prod_a', 'Base', 'active')",
+  "requests": [
+    {
+      "statements": [
+        "UPDATE teams SET stripe_subscription_id = 'sub_1', stripe_product_id = 'prod_b', plan_name = 'Plus', subscription_status = 'active', stripe_event_created = 100 WHERE id = 1 AND (stripe_event_created IS NULL OR stripe_event_created <= 100)"
+      ]
+    },
+    {
+      "statements": [
+        "UPDATE teams SET stripe_subscription_id = NULL, stripe_product_id = NULL, plan_name = NULL, subscription_status = 'canceled', stripe_event_created = 200 WHERE id = 1 AND (stripe_event_created IS NULL OR stripe_event_created <= 200)"
+      ]
+    }
+  ],
+  "invariant": "SELECT coalesce(plan_name, '') <> 'Plus' FROM teams WHERE id = 1",
+  "isolation": [
+    "read committed"
+  ],
+  "notes": "Webhook handler SQL (lib/db/queries.ts updateTeamSubscription) with event.created guard. Event 100 is older than event 200."
+}

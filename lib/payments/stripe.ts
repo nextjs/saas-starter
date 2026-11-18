@@ -115,7 +115,8 @@ export async function createCustomerPortalSession(team: Team) {
 }
 
 export async function handleSubscriptionChange(
-  subscription: Stripe.Subscription
+  subscription: Stripe.Subscription,
+  eventCreated?: number
 ) {
   const customerId = subscription.customer as string;
   const subscriptionId = subscription.id;
@@ -135,14 +136,14 @@ export async function handleSubscriptionChange(
       stripeProductId: plan?.product as string,
       planName: (plan?.product as Stripe.Product).name,
       subscriptionStatus: status
-    });
+    }, eventCreated);
   } else if (status === 'canceled' || status === 'unpaid') {
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: null,
       stripeProductId: null,
       planName: null,
       subscriptionStatus: status
-    });
+    }, eventCreated);
   }
 }
 

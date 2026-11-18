@@ -1,4 +1,4 @@
-import { desc, and, eq, isNull } from 'drizzle-orm';
+import { desc, and, eq, isNull, lte, or } from 'drizzle-orm';
 import { db } from './drizzle';
 import { activityLogs, teamMembers, teams, users } from './schema';
 import { cookies } from 'next/headers';
@@ -53,15 +53,29 @@ export async function updateTeamSubscription(
     stripeProductId: string | null;
     planName: string | null;
     subscriptionStatus: string;
-  }
+  },
+  eventCreated?: number
 ) {
+  // Stripe does not guarantee delivery order. When the caller passes the
+  // event timestamp, an event older than the last one applied is ignored.
   await db
     .update(teams)
     .set({
       ...subscriptionData,
+      ...(eventCreated !== undefined && { stripeEventCreated: eventCreated }),
       updatedAt: new Date()
     })
-    .where(eq(teams.id, teamId));
+    .where(
+      eventCreated === undefined
+        ? eq(teams.id, teamId)
+        : and(
+            eq(teams.id, teamId),
+            or(
+              isNull(teams.stripeEventCreated),
+              lte(teams.stripeEventCreated, eventCreated)
+            )
+          )
+    );
 }
 
 export async function getUserWithTeam(userId: number) {

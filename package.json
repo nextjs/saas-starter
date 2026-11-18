@@ -8,7 +8,9 @@
     "db:seed": "npx tsx lib/db/seed.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "npm run test:race",
+    "test:race": "npx -y viberaven@1.10.0 race . --spec viberaven.race.json --migrations lib/db/migrations"
   },
   "dependencies": {
     "@tailwindcss/postcss": "4.1.7",
