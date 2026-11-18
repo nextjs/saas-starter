@@ -82,6 +82,10 @@ To test Stripe payments, use the following test card details:
 - Expiration: Any future date
 - CVC: Any 3-digit number
 
+### Webhook concurrency test
+
+Stripe can deliver webhook events late, twice, or out of order. `pnpm test:race` runs the Stripe webhook's database writes in every possible order on a real Postgres with [VibeRaven](https://viberaven.dev) (`npx -y viberaven race`), and fails if any order breaks the rule in `viberaven.race.json`. It also runs in `npm test`. Add a rule there when you add a webhook handler.
+
 ## Going to Production
 
 When you're ready to deploy your SaaS application to production, follow these steps:
