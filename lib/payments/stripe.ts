@@ -115,8 +115,14 @@ export async function createCustomerPortalSession(team: Team) {
 }
 
 export async function handleSubscriptionChange(
-  subscription: Stripe.Subscription
+  eventSubscription: Stripe.Subscription
 ) {
+  // Stripe does not guarantee event order, so the payload can be older than the
+  // current state. Read the subscription from Stripe instead of trusting it.
+  const subscription = await stripe.subscriptions.retrieve(
+    eventSubscription.id,
+    { expand: ['items.data.price.product'] }
+  );
   const customerId = subscription.customer as string;
   const subscriptionId = subscription.id;
   const status = subscription.status;
@@ -128,12 +134,22 @@ export async function handleSubscriptionChange(
     return;
   }
 
+  // An old subscription's late event must not touch a team that moved to a
+  // newer subscription.
+  if (
+    team.stripeSubscriptionId &&
+    team.stripeSubscriptionId !== subscriptionId
+  ) {
+    return;
+  }
+
   if (status === 'active' || status === 'trialing') {
-    const plan = subscription.items.data[0]?.plan;
+    const product = subscription.items.data[0]?.price
+      .product as Stripe.Product;
     await updateTeamSubscription(team.id, {
       stripeSubscriptionId: subscriptionId,
-      stripeProductId: plan?.product as string,
-      planName: (plan?.product as Stripe.Product).name,
+      stripeProductId: product.id,
+      planName: product.name,
       subscriptionStatus: status
     });
   } else if (status === 'canceled' || status === 'unpaid') {
